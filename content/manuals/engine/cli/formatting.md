@@ -1,126 +1,119 @@
 ---
-description: CLI and log output formatting reference
+description: CLI 与日志输出格式化参考
 keywords: format, formatting, output, templates, log
-title: Format command and log output
+title: 格式化命令与日志输出
 weight: 40
 aliases:
   - /engine/admin/formatting/
   - /config/formatting/
 ---
 
-Docker supports [Go templates](https://golang.org/pkg/text/template/) which you
-can use to manipulate the output format of certain commands and log drivers.
+Docker 支持使用 [Go 模板](https://golang.org/pkg/text/template/) 来控制部分命令和日志驱动的输出格式。
 
-Docker provides a set of basic functions to manipulate template elements.
-All of these examples use the `docker inspect` command, but many other CLI
-commands have a `--format` flag, and many of the CLI command references
-include examples of customizing the output format.
+Docker 还提供了一组基础函数，用于在模板中处理各个元素。下面的示例均使用 `docker inspect`，但很多 CLI 命令都支持 `--format` 标志，并在参考文档中给出了自定义输出格式的示例。
 
 > [!NOTE]
 >
-> When using the `--format` flag, you need to observe your shell environment.
-> In a POSIX shell, you can run the following with a single quote:
+> 使用 `--format` 时请注意你的 shell 行为差异。
+> 在 POSIX shell 中，可直接使用单引号：
 >
 > ```console
 > $ docker inspect --format '{{join .Args " , "}}'
 > ```
 >
-> Otherwise, in a Windows shell (for example, PowerShell), you need to use single quotes, but
-> escape the double quotes inside the parameters as follows:
+> 在 Windows（如 PowerShell）中，同样使用单引号，但需要对参数中的双引号进行转义：
 >
 > ```console
 > $ docker inspect --format '{{join .Args \" , \"}}'
 > ```
->
 
-## join
+## join（连接）
 
-`join` concatenates a list of strings to create a single string.
-It puts a separator between each element in the list.
+`join` 将字符串列表连接为单个字符串，并在各元素之间插入分隔符。
 
 ```console
 $ docker inspect --format '{{join .Args " , "}}' container
 ```
 
-## table
+## table（表格）
 
-`table` specifies which fields you want to see its output.
+`table` 指定输出中应包含哪些字段。
 
 ```console
 $ docker image list --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Size}}"
 ```
 
-## json
+## json（JSON 编码）
 
-`json` encodes an element as a json string.
+`json` 将元素编码为 JSON 字符串。
 
 ```console
 $ docker inspect --format '{{json .Mounts}}' container
 ```
 
-## lower
+## lower（转小写）
 
-`lower` transforms a string into its lowercase representation.
+`lower` 将字符串转换为小写。
 
 ```console
 $ docker inspect --format "{{lower .Name}}" container
 ```
 
-## split
+## split（分割）
 
-`split` slices a string into a list of strings separated by a separator.
+`split` 按给定分隔符将字符串切分为字符串列表。
 
 ```console
 $ docker inspect --format '{{split .Image ":"}}' container
 ```
 
-## title
+## title（首字母大写）
 
-`title` capitalizes the first character of a string.
+`title` 将字符串的首字符大写。
 
 ```console
 $ docker inspect --format "{{title .Name}}" container
 ```
 
-## upper
+## upper（转大写）
 
-`upper` transforms a string into its uppercase representation.
+`upper` 将字符串转换为大写。
 
 ```console
 $ docker inspect --format "{{upper .Name}}" container
 ```
 
-## pad
+## pad（填充）
 
-`pad` adds whitespace padding to a string. You can specify the number of spaces to add before and after the string.
+`pad` 为字符串添加空格填充。你可以分别指定前后填充的空格数量。
 
 ```console
 $ docker image list --format '{{pad .Repository 5 10}}'
 ```
 
-This example adds 5 spaces before the image repository name and 10 spaces after.
+上例在镜像仓库名之前添加 5 个空格、之后添加 10 个空格。
 
-## truncate
+## truncate（截断）
 
-`truncate` shortens a string to a specified length. If the string is shorter than the specified length, it remains unchanged.
+`truncate` 将字符串截断到指定长度；若原字符串更短，则保持不变。
 
 ```console
 $ docker image list --format '{{truncate .Repository 15}}'
 ```
 
-This example displays the image repository name, truncating it to the first 15 characters if it's longer.
+上例将镜像仓库名截断为最多 15 个字符。
 
-## println
+## println（换行输出）
 
-`println` prints each value on a new line.
+`println` 将每个值单独输出在一行。
 
 ```console
 $ docker inspect --format='{{range .NetworkSettings.Networks}}{{println .IPAddress}}{{end}}' container
 ```
 
-## Hint
+## 提示
 
-To find out what data can be printed, show all content as json:
+想了解可用的数据字段，可先以 JSON 形式输出整条记录：
 
 ```console
 $ docker container ls --format='{{json .}}'

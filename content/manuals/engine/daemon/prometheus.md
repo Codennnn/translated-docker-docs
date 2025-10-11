@@ -1,7 +1,7 @@
 ---
-description: Collecting Docker metrics with Prometheus
+description: 使用 Prometheus 采集 Docker 指标
 keywords: prometheus, metrics
-title: Collect Docker metrics with Prometheus
+title: 使用 Prometheus 采集 Docker 指标
 aliases:
   - /engine/admin/prometheus/
   - /config/thirdparty/monitoring/
@@ -9,35 +9,30 @@ aliases:
   - /config/daemon/prometheus/
 ---
 
-[Prometheus](https://prometheus.io/) is an open-source systems monitoring and
-alerting toolkit. You can configure Docker as a Prometheus target.
+[Prometheus](https://prometheus.io/) 是一个开源的系统监控与告警工具集。
+你可以将 Docker 配置为 Prometheus 的抓取目标。
 
 > [!WARNING]
 >
-> The available metrics and the names of those metrics are in active
-> development and may change at any time.
+> 可用的指标及其名称仍在不断演进，可能随时发生变更。
 
-Currently, you can only monitor Docker itself. You can't currently monitor your
-application using the Docker target.
+目前，你只能监控 Docker 本身；暂不支持通过 Docker 目标直接监控你的应用。
 
-## Example
+## 示例
 
-The following example shows you how to configure your Docker daemon, set up
-Prometheus to run as a container on your local machine, and monitor your Docker
-instance using Prometheus.
+下面的示例演示如何配置 Docker 守护进程、在本机以容器方式运行 Prometheus，
+并通过 Prometheus 监控你的 Docker 实例。
 
-### Configure the daemon
+### 配置守护进程
 
-To configure the Docker daemon as a Prometheus target, you need to specify the
-`metrics-address` in the `daemon.json` configuration file. This daemon expects
-the file to be located at one of the following locations by default. If the
-file doesn't exist, create it.
+要将 Docker 守护进程配置为 Prometheus 目标，需要在 `daemon.json` 中设置 `metrics-address`。
+默认情况下，该文件位于以下位置之一；如不存在，请新建。
 
-- **Linux**: `/etc/docker/daemon.json`
-- **Windows Server**: `C:\ProgramData\docker\config\daemon.json`
-- **Docker Desktop**: Open the Docker Desktop settings and select **Docker Engine** to edit the file.
+- **Linux**：`/etc/docker/daemon.json`
+- **Windows Server**：`C:\\ProgramData\\docker\\config\\daemon.json`
+- **Docker Desktop**：打开 Docker Desktop 设置，选择 **Docker Engine** 进行编辑。
 
-Add the following configuration:
+添加如下配置：
 
 ```json
 {
@@ -45,60 +40,55 @@ Add the following configuration:
 }
 ```
 
-Save the file, or in the case of Docker Desktop for Mac or Docker Desktop for
-Windows, save the configuration. Restart Docker.
+保存文件；在 Docker Desktop for Mac / Windows 上则保存配置。然后重启 Docker。
 
-Docker now exposes Prometheus-compatible metrics on port 9323 via the loopback
-interface. You can configure it to use the wildcard address `0.0.0.0` instead,
-but this will expose the Prometheus port to the wider network. Consider your
-threat model carefully when deciding which option best suits your environment.
+此时 Docker 会通过回环地址在 9323 端口暴露 Prometheus 兼容的指标。
+也可以将地址改为通配 `0.0.0.0`，但这会将该端口暴露给更广泛的网络范围。
+请结合你的威胁模型谨慎选择。
 
-### Create a Prometheus configuration
+### 创建 Prometheus 配置
 
-Copy the following configuration file and save it to a location of your choice,
-for example `/tmp/prometheus.yml`. This is a stock Prometheus configuration file,
-except for the addition of the Docker job definition at the bottom of the file.
+复制以下配置文件，保存到任意位置（如 `/tmp/prometheus.yml`）。
+这是一个标准的 Prometheus 配置，仅在底部额外添加了 `docker` 抓取任务。
 
 ```yml
-# my global config
+# 全局配置
 global:
-  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
-  # scrape_timeout is set to the global default (10s).
+  scrape_interval: 15s # 抓取间隔为 15 秒（默认 1 分钟）
+  evaluation_interval: 15s # 规则评估间隔为 15 秒（默认 1 分钟）
+  # 抓取超时使用全局默认值（10 秒）
 
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
+  # 与外部系统（联邦、远端存储、Alertmanager）交互时，附加到时序/告警的数据标签
   external_labels:
     monitor: "codelab-monitor"
 
-# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+# 仅加载一次规则，并按全局 evaluation_interval 定期评估
 rule_files:
   # - "first.rules"
   # - "second.rules"
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
+# 抓取配置：此示例包含一个抓取端点（Prometheus 自身）
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # 该 job 名会作为标签 `job=<job_name>` 附加到所有被抓取的时序中
   - job_name: prometheus
 
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
+    # metrics_path 默认为 '/metrics'
+    # scheme 默认为 'http'
 
     static_configs:
       - targets: ["localhost:9090"]
 
   - job_name: docker
-      # metrics_path defaults to '/metrics'
-      # scheme defaults to 'http'.
+      # metrics_path 默认为 '/metrics'
+      # scheme 默认为 'http'
 
     static_configs:
       - targets: ["host.docker.internal:9323"]
 ```
 
-### Run Prometheus in a container
+### 以容器运行 Prometheus
 
-Next, start a Prometheus container using this configuration.
+接着使用该配置启动一个 Prometheus 容器：
 
 ```console
 $ docker run --name my-prometheus \
@@ -108,56 +98,46 @@ $ docker run --name my-prometheus \
     prom/prometheus
 ```
 
-If you're using Docker Desktop, the `--add-host` flag is optional. This flag
-makes sure that the host's internal IP gets exposed to the Prometheus
-container. Docker Desktop does this by default. The host IP is exposed as the
-`host.docker.internal` hostname. This matches the configuration defined in
-`prometheus.yml` in the previous step.
+如果你使用的是 Docker Desktop，`--add-host` 标志是可选的。
+该标志用于确保宿主机的内部 IP 对 Prometheus 容器可用。Docker Desktop 默认会这样处理，
+并将宿主机 IP 暴露为主机名 `host.docker.internal`，与前一步 `prometheus.yml` 的配置一致。
 
-### Open the Prometheus Dashboard
+### 打开 Prometheus 仪表盘
 
-Verify that the Docker target is listed at `http://localhost:9090/targets/`.
+访问 `http://localhost:9090/targets/`，确认能看到 Docker 目标。
 
 ![Prometheus targets page](images/prometheus-targets.webp)
 
 > [!NOTE]
 >
-> You can't access the endpoint URLs on this page directly if you use Docker
-> Desktop.
+> 如果使用 Docker Desktop，无法直接访问此页面中列出的端点 URL。
 
-### Use Prometheus
+### 使用 Prometheus
 
-Create a graph. Select the **Graphs** link in the Prometheus UI. Choose a metric
-from the combo box to the right of the **Execute** button, and click
-**Execute**. The screenshot below shows the graph for
-`engine_daemon_network_actions_seconds_count`.
+创建一个图表：在 Prometheus UI 中选择 **Graphs**，从 **Execute** 右侧的下拉框中选择一个指标，
+点击 **Execute**。下图展示了 `engine_daemon_network_actions_seconds_count` 指标的曲线。
 
 ![Idle Prometheus report](images/prometheus-graph_idle.webp)
 
-The graph shows a pretty idle Docker instance, unless you're already running
-active workloads on your system.
+如果你的系统没有运行活跃的任务，图表通常会显示较为空闲的状态。
 
-To make the graph more interesting, run a container that uses some network
-actions by starting downloading some packages using a package manager:
+为使图表更有变化，可以运行一个会产生网络行为的容器，例如使用包管理器下载若干软件包：
 
 ```console
 $ docker run --rm alpine apk add git make musl-dev go
 ```
 
-Wait a few seconds (the default scrape interval is 15 seconds) and reload your
-graph. You should see an uptick in the graph, showing the increased network
-traffic caused by the container you just ran.
+等待数秒（默认抓取间隔 15 秒）后刷新图表，你应能看到曲线出现上升，
+这反映了刚才运行的容器带来的网络流量增加。
 
 ![Prometheus report showing traffic](images/prometheus-graph_load.webp)
 
-## Next steps
+## 进一步阅读
 
-The example provided here shows how to run Prometheus as a container on your
-local system. In practice, you'll probably be running Prometheus on another
-system or as a cloud service somewhere. You can set up the Docker daemon as a
-Prometheus target in such contexts too. Configure the `metrics-addr` of the
-daemon and add the address of the daemon as a scrape endpoint in your
-Prometheus configuration.
+本文示例展示了如何在本地系统中以容器方式运行 Prometheus。实际使用中，你可能会在
+其他服务器或云服务上部署 Prometheus。在这些场景下，同样可以将 Docker 守护进程
+设置为 Prometheus 的抓取目标：配置守护进程的 `metrics-addr`，并在 Prometheus 配置中
+将该地址添加为抓取端点。
 
 ```yaml
 - job_name: docker
@@ -165,5 +145,5 @@ Prometheus configuration.
     - targets: ["docker.daemon.example:<PORT>"]
 ```
 
-For more information about Prometheus, refer to the
-[Prometheus documentation](https://prometheus.io/docs/introduction/overview/)
+更多 Prometheus 相关信息，参阅
+[Prometheus 文档](https://prometheus.io/docs/introduction/overview/)

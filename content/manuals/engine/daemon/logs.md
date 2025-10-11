@@ -1,27 +1,23 @@
 ---
-title: Read the daemon logs
-description: How to read the event logs for the Docker daemon
+title: 查看守护进程日志
+description: 了解如何读取 Docker 守护进程的事件日志
 keywords: docker, daemon, configuration, troubleshooting, logging
 aliases:
   - /config/daemon/logs/
 ---
 
-The daemon logs may help you diagnose problems. The logs may be saved in one of
-a few locations, depending on the operating system configuration and the logging
-subsystem used:
+守护进程日志有助于诊断问题。日志保存位置取决于操作系统配置和所用的日志子系统，可能位于以下位置：
 
-| Operating system                   | Location                                                                                                                                 |
+| 操作系统                            | 日志位置                                                                                                                                 |
 | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| Linux                              | Use the command `journalctl -xu docker.service` (or read `/var/log/syslog` or `/var/log/messages`, depending on your Linux Distribution) |
-| macOS (`dockerd` logs)             | `~/Library/Containers/com.docker.docker/Data/log/vm/dockerd.log`                                                                         |
-| macOS (`containerd` logs)          | `~/Library/Containers/com.docker.docker/Data/log/vm/containerd.log`                                                                      |
-| Windows (WSL2) (`dockerd` logs)    | `%LOCALAPPDATA%\Docker\log\vm\dockerd.log`                                                                                               |
-| Windows (WSL2) (`containerd` logs) | `%LOCALAPPDATA%\Docker\log\vm\containerd.log`                                                                                            |
-| Windows (Windows containers)       | Logs are in the Windows Event Log                                                                                                        |
+| Linux                              | 使用 `journalctl -xu docker.service`（或根据发行版查看 `/var/log/syslog` 或 `/var/log/messages`）                                           |
+| macOS（`dockerd` 日志）             | `~/Library/Containers/com.docker.docker/Data/log/vm/dockerd.log`                                                                         |
+| macOS（`containerd` 日志）          | `~/Library/Containers/com.docker.docker/Data/log/vm/containerd.log`                                                                      |
+| Windows（WSL2）（`dockerd` 日志）    | `%LOCALAPPDATA%\Docker\log\vm\dockerd.log`                                                                                               |
+| Windows（WSL2）（`containerd` 日志） | `%LOCALAPPDATA%\Docker\log\vm\containerd.log`                                                                                            |
+| Windows（Windows 容器）             | 查看 Windows 事件日志                                                                                                                     |
 
-To view the `dockerd` logs on macOS, open a terminal Window, and use the `tail`
-command with the `-f` flag to "follow" the logs. Logs will be printed until you
-terminate the command using `CTRL+c`:
+在 macOS 上查看 `dockerd` 日志：打开终端，使用 `tail -f` 持续跟随输出；按 `CTRL+c` 终止：
 
 ```console
 $ tail -f ~/Library/Containers/com.docker.docker/Data/log/vm/dockerd.log
@@ -35,17 +31,14 @@ $ tail -f ~/Library/Containers/com.docker.docker/Data/log/vm/dockerd.log
 ^C
 ```
 
-## Enable debugging
+## 启用调试日志
 
-There are two ways to enable debugging. The recommended approach is to set the
-`debug` key to `true` in the `daemon.json` file. This method works for every
-Docker platform.
+启用调试有两种方法。推荐在 `daemon.json` 中将 `debug` 设为 `true`，该方法适用于所有 Docker 平台。
 
-1.  Edit the `daemon.json` file, which is usually located in `/etc/docker/`. You
-    may need to create this file, if it doesn't yet exist. On macOS or Windows,
-    don't edit the file directly. Instead, edit the file through the Docker Desktop settings.
+1.  编辑位于 `/etc/docker/` 的 `daemon.json`（如不存在需新建）。在 macOS 或 Windows 上不要直接编辑该文件，
+    请在 Docker Desktop 设置中修改。
 
-2.  If the file is empty, add the following:
+2.  如果文件为空，添加以下内容：
 
     ```json
     {
@@ -53,75 +46,59 @@ Docker platform.
     }
     ```
 
-    If the file already contains JSON, just add the key `"debug": true`, being
-    careful to add a comma to the end of the line if it's not the last line
-    before the closing bracket. Also verify that if the `log-level` key is set,
-    it's set to either `info` or `debug`. `info` is the default, and possible
-    values are `debug`, `info`, `warn`, `error`, `fatal`.
+    如果已有其他 JSON 配置，仅需添加 `"debug": true`。若该键不是最后一项，注意在行尾添加逗号。
+    同时检查 `log-level`（如已设置）是否为 `info` 或 `debug`。`info` 为默认值，可选：`debug`、`info`、`warn`、`error`、`fatal`。
 
-3.  Send a `HUP` signal to the daemon to cause it to reload its configuration.
-    On Linux hosts, use the following command.
+3.  向守护进程发送 `HUP` 信号以重新加载配置。在 Linux 上使用：
 
     ```console
     $ sudo kill -SIGHUP $(pidof dockerd)
     ```
 
-    On Windows hosts, restart Docker.
+    在 Windows 上，重启 Docker。
 
-Instead of following this procedure, you can also stop the Docker daemon and
-restart it manually with the debug flag `-D`. However, this may result in Docker
-restarting with a different environment than the one the hosts' startup scripts
-create, and this may make debugging more difficult.
+你也可以停止 Docker 守护进程，并使用 `-D` 标志手动启动以开启调试。
+但这样可能绕过宿主机启动脚本设置的环境，反而增加调试难度。
 
-## Force a stack trace to be logged
+## 强制输出堆栈跟踪
 
-If the daemon is unresponsive, you can force a full stack trace to be logged by
-sending a `SIGUSR1` signal to the daemon.
+当守护进程无响应时，可以向其发送 `SIGUSR1` 信号，强制记录完整的堆栈跟踪。
 
-- **Linux**:
+- **Linux**：
 
   ```console
   $ sudo kill -SIGUSR1 $(pidof dockerd)
   ```
 
-- **Windows Server**:
+- **Windows Server**：
 
-  Download [docker-signal](https://github.com/moby/docker-signal).
+  下载 [docker-signal](https://github.com/moby/docker-signal)。
 
-  Get the process ID of dockerd `Get-Process dockerd`.
+  获取 dockerd 的进程 ID：`Get-Process dockerd`。
 
-  Run the executable with the flag `--pid=<PID of daemon>`.
+  运行可执行文件并传入 `--pid=<daemon 的 PID>`。
 
-This forces a stack trace to be logged but doesn't stop the daemon. Daemon logs
-show the stack trace or the path to a file containing the stack trace if it was
-logged to a file.
+这会强制写入堆栈跟踪，但不会停止守护进程。日志中会显示堆栈内容，或指向保存堆栈的文件路径。
 
-The daemon continues operating after handling the `SIGUSR1` signal and dumping
-the stack traces to the log. The stack traces can be used to determine the state
-of all goroutines and threads within the daemon.
+守护进程在处理完 `SIGUSR1` 并输出堆栈后会继续运行。堆栈可用于分析守护进程中所有 goroutine 与线程的状态。
 
-## View stack traces
+## 查看堆栈跟踪
 
-The Docker daemon log can be viewed by using one of the following methods:
+可以通过以下方式查看 Docker 守护进程日志：
 
-- By running `journalctl -u docker.service` on Linux systems using `systemctl`
-- `/var/log/messages`, `/var/log/daemon.log`, or `/var/log/docker.log` on older
-  Linux systems
+- 在使用 `systemctl` 的 Linux 系统上执行 `journalctl -u docker.service`
+- 对于较旧的 Linux 系统，可查看 `/var/log/messages`、`/var/log/daemon.log` 或 `/var/log/docker.log`
 
 > [!NOTE]
 >
-> It isn't possible to manually generate a stack trace on Docker Desktop for
-> Mac or Docker Desktop for Windows. However, you can click the Docker taskbar
-> icon and choose **Troubleshoot** to send information to Docker if you run into
-> issues.
+> 在 Docker Desktop for Mac / Windows 上，无法手动生成堆栈跟踪。
+> 如遇问题，可点击任务栏中的 Docker 图标，选择 **Troubleshoot** 以发送诊断信息。
 
-Look in the Docker logs for a message like the following:
+在 Docker 日志中查找类似如下的消息：
 
 ```text
 ...goroutine stacks written to /var/run/docker/goroutine-stacks-2017-06-02T193336z.log
 ```
 
-The locations where Docker saves these stack traces and dumps depends on your
-operating system and configuration. You can sometimes get useful diagnostic
-information straight from the stack traces and dumps. Otherwise, you can provide
-this information to Docker for help diagnosing the problem.
+Docker 保存堆栈跟踪和转储的位置取决于操作系统与配置。你可以直接从这些信息中获取诊断线索，
+或将其提供给 Docker 以协助定位问题。

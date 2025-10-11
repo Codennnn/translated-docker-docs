@@ -1,7 +1,7 @@
 ---
-description: Learn how to configure the Docker daemon to use an HTTP proxy
+description: 了解如何为 Docker 守护进程配置 HTTP 代理
 keywords: dockerd, daemon, configuration, proxy, networking, http_proxy, https_proxy, no_proxy, systemd, environment variables
-title: Daemon proxy configuration
+title: 守护进程代理配置
 weight: 30
 aliases:
   - /articles/host_integration/
@@ -14,32 +14,31 @@ aliases:
 
 <a name="httphttps-proxy"><!-- included for deep-links to old section --></a>
 
-If your organization uses a proxy server to connect to the internet, you may
-need to configure the Docker daemon to use the proxy server. The daemon uses
-a proxy server to access images stored on Docker Hub and other registries,
-and to reach other nodes in a Docker swarm.
+如果你的组织通过代理服务器访问互联网，你可能需要为 Docker 守护进程配置代理。
+守护进程会使用代理去访问 Docker Hub 和其他镜像仓库中的镜像，
+以及与 Docker Swarm 中的其他节点通信。
 
-This page describes how to configure a proxy for the Docker daemon. For
-instructions on configuring proxy settings for the Docker CLI, see [Configure
-Docker CLI to use a proxy server](/manuals/engine/cli/proxy.md).
+本页介绍如何为 Docker 守护进程配置代理。关于为 Docker CLI 配置代理，参见
+[为 Docker CLI 配置代理](/manuals/engine/cli/proxy.md)。
 
 > [!IMPORTANT]
-> Proxy configurations specified in the `daemon.json` are ignored by Docker
-> Desktop. If you use Docker Desktop, you can configure proxies using the
-> [Docker Desktop settings](/manuals/desktop/settings-and-maintenance/settings.md#proxies).
+> Docker Desktop 会忽略在 `daemon.json` 中设置的代理配置。
+> 如果你使用 Docker Desktop，请在
+> [Docker Desktop 设置](/manuals/desktop/settings-and-maintenance/settings.md#proxies)
+> 中配置代理。
 
-There are two ways you can configure these settings:
+你可以通过两种方式进行配置：
 
-- [Configuring the daemon](#daemon-configuration) through a configuration file or CLI flags
-- Setting [environment variables](#environment-variables) on the system
+- 通过配置文件或 CLI 标志进行[守护进程配置](#daemon-configuration)
+- 在系统上设置[环境变量](#environment-variables)
 
-Configuring the daemon directly takes precedence over environment variables.
+直接在守护进程中配置的设置优先生效，高于环境变量。
 
-## Daemon configuration
+## 守护进程配置
 
-You may configure proxy behavior for the daemon in the `daemon.json` file,
-or using CLI flags for the `--http-proxy` or `--https-proxy` flags for the
-`dockerd` command. Configuration using `daemon.json` is recommended.
+可以在 `daemon.json` 中为守护进程配置代理，
+或在 `dockerd` 命令上使用 `--http-proxy`、`--https-proxy` 等 CLI 标志。
+推荐使用 `daemon.json` 进行配置。
 
 ```json
 {
@@ -51,16 +50,15 @@ or using CLI flags for the `--http-proxy` or `--https-proxy` flags for the
 }
 ```
 
-After changing the configuration file, restart the daemon for the proxy configuration to take effect:
+修改配置文件后，重启守护进程以使代理配置生效：
 
 ```console
 $ sudo systemctl restart docker
 ```
 
-## Environment variables
+## 环境变量
 
-The Docker daemon checks the following environment variables in its start-up
-environment to configure HTTP or HTTPS proxy behavior:
+Docker 守护进程在启动环境中检查以下环境变量，以配置 HTTP/HTTPS 代理行为：
 
 - `HTTP_PROXY`
 - `http_proxy`
@@ -69,48 +67,44 @@ environment to configure HTTP or HTTPS proxy behavior:
 - `NO_PROXY`
 - `no_proxy`
 
-### systemd unit file
+### systemd unit 文件
 
-If you're running the Docker daemon as a systemd service, you can create a
-systemd drop-in file that sets the variables for the `docker` service.
+如果你将 Docker 守护进程作为 systemd 服务运行，可以通过创建 systemd drop-in 文件，
+为 `docker` 服务设置这些环境变量。
 
-> **Note for rootless mode**
+> **Rootless 模式提示**
 >
-> The location of systemd configuration files are different when running Docker
-> in [rootless mode](/manuals/engine/security/rootless.md). When running in
-> rootless mode, Docker is started as a user-mode systemd service, and uses
-> files stored in each users' home directory in
-> `~/.config/systemd/<user>/docker.service.d/`. In addition, `systemctl` must
-> be executed without `sudo` and with the `--user` flag. Select the "Rootless
-> mode" tab if you are running Docker in rootless mode.
+> 当以[无根（rootless）模式](/manuals/engine/security/rootless.md)运行 Docker 时，
+> systemd 配置文件的位置不同。此时 Docker 作为用户态 systemd 服务启动，
+> 并使用保存在用户主目录中的文件：`~/.config/systemd/<user>/docker.service.d/`。
+> 此外，`systemctl` 需要在无 `sudo` 的情况下并带上 `--user` 标志执行。
+> 如果你处于 rootless 模式，请切换到“Rootless mode”标签查看对应说明。
 
 {{< tabs >}}
 {{< tab name="Regular install" >}}
 
-1. Create a systemd drop-in directory for the `docker` service:
+1. 为 `docker` 服务创建一个 systemd drop-in 目录：
 
    ```console
    $ sudo mkdir -p /etc/systemd/system/docker.service.d
    ```
 
-2. Create a file named `/etc/systemd/system/docker.service.d/http-proxy.conf`
-   that adds the `HTTP_PROXY` environment variable:
+2. 创建 `/etc/systemd/system/docker.service.d/http-proxy.conf` 文件，
+   写入 `HTTP_PROXY` 环境变量：
 
    ```systemd
    [Service]
    Environment="HTTP_PROXY=http://proxy.example.com:3128"
    ```
 
-   If you are behind an HTTPS proxy server, set the `HTTPS_PROXY` environment
-   variable:
+   如果位于 HTTPS 代理之后，设置 `HTTPS_PROXY` 环境变量：
 
    ```systemd
    [Service]
    Environment="HTTPS_PROXY=https://proxy.example.com:3129"
    ```
 
-   Multiple environment variables can be set; to set both a non-HTTPS and a
-   HTTPs proxy;
+   可以同时设置多个环境变量；例如同时设置 HTTP 与 HTTPS 代理：
 
    ```systemd
    [Service]
@@ -120,33 +114,27 @@ systemd drop-in file that sets the variables for the `docker` service.
 
    > [!NOTE]
    >
-   > Special characters in the proxy value, such as `#?!()[]{}`, must be double
-   > escaped using `%%`. For example:
+   > 代理字符串中的特殊字符（如 `#?!()[]{}`）必须使用 `%%` 进行双重转义。例如：
    >
    > ```systemd
    > [Service]
    > Environment="HTTP_PROXY=http://domain%%5Cuser:complex%%23pass@proxy.example.com:3128/"
    > ```
 
-3. If you have internal Docker registries that you need to contact without
-   proxying, you can specify them via the `NO_PROXY` environment variable.
+3. 如果有内部 Docker 镜像仓库需要直连（不走代理），可以通过 `NO_PROXY` 环境变量指定。
 
-   The `NO_PROXY` variable specifies a string that contains comma-separated
-   values for hosts that should be excluded from proxying. These are the options
-   you can specify to exclude hosts:
+   `NO_PROXY` 为以逗号分隔的主机列表，用于指定不使用代理的目标。可用形式包括：
 
-   - IP address prefix (`1.2.3.4`)
-   - Domain name, or a special DNS label (`*`)
-   - A domain name matches that name and all subdomains. A domain name with a
-     leading "." matches subdomains only. For example, given the domains
-     `foo.example.com` and `example.com`:
-     - `example.com` matches `example.com` and `foo.example.com`, and
-     - `.example.com` matches only `foo.example.com`
-   - A single asterisk (`*`) indicates that no proxying should be done
-   - Literal port numbers are accepted by IP address prefixes (`1.2.3.4:80`) and
-     domain names (`foo.example.com:80`)
+   - IP 地址或前缀（如 `1.2.3.4`）
+   - 域名，或特殊 DNS 通配符（`*`）
+   - 域名匹配该域及其所有子域；以点开头（如 `.example.com`）仅匹配子域。
+     例如，在存在 `foo.example.com` 与 `example.com` 时：
+     - `example.com` 同时匹配 `example.com` 和 `foo.example.com`
+     - `.example.com` 仅匹配 `foo.example.com`
+   - 单个星号（`*`）表示不使用任何代理
+   - 可带端口号，如 IP `1.2.3.4:80` 或域名 `foo.example.com:80`
 
-   Example:
+   示例：
 
    ```systemd
    [Service]
@@ -155,15 +143,14 @@ systemd drop-in file that sets the variables for the `docker` service.
    Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
    ```
 
-4. Flush changes and restart Docker
+4. 刷新配置并重启 Docker：
 
    ```console
    $ sudo systemctl daemon-reload
    $ sudo systemctl restart docker
    ```
 
-5. Verify that the configuration has been loaded and matches the changes you
-   made, for example:
+5. 验证配置已加载且与修改一致，例如：
 
    ```console
    $ sudo systemctl show --property=Environment docker
@@ -174,30 +161,28 @@ systemd drop-in file that sets the variables for the `docker` service.
 {{< /tab >}}
 {{< tab name="Rootless mode" >}}
 
-1. Create a systemd drop-in directory for the `docker` service:
+1. 为 `docker` 服务创建 systemd drop-in 目录：
 
    ```console
    $ mkdir -p ~/.config/systemd/user/docker.service.d
    ```
 
-2. Create a file named `~/.config/systemd/user/docker.service.d/http-proxy.conf`
-   that adds the `HTTP_PROXY` environment variable:
+2. 创建 `~/.config/systemd/user/docker.service.d/http-proxy.conf` 文件，
+   写入 `HTTP_PROXY` 环境变量：
 
    ```systemd
    [Service]
    Environment="HTTP_PROXY=http://proxy.example.com:3128"
    ```
 
-   If you are behind an HTTPS proxy server, set the `HTTPS_PROXY` environment
-   variable:
+   如果位于 HTTPS 代理之后，设置 `HTTPS_PROXY` 环境变量：
 
    ```systemd
    [Service]
    Environment="HTTPS_PROXY=https://proxy.example.com:3129"
    ```
 
-   Multiple environment variables can be set; to set both a non-HTTPS and a
-   HTTPs proxy;
+   可以同时设置多个环境变量；例如同时设置 HTTP 与 HTTPS 代理：
 
    ```systemd
    [Service]
@@ -207,33 +192,27 @@ systemd drop-in file that sets the variables for the `docker` service.
 
    > [!NOTE]
    >
-   > Special characters in the proxy value, such as `#?!()[]{}`, must be double
-   > escaped using `%%`. For example:
+   > 代理字符串中的特殊字符（如 `#?!()[]{}`）必须使用 `%%` 进行双重转义。例如：
    >
    > ```systemd
    > [Service]
    > Environment="HTTP_PROXY=http://domain%%5Cuser:complex%%23pass@proxy.example.com:3128/"
    > ```
 
-3. If you have internal Docker registries that you need to contact without
-   proxying, you can specify them via the `NO_PROXY` environment variable.
+3. 如果有内部 Docker 镜像仓库需要直连（不走代理），可以通过 `NO_PROXY` 环境变量指定。
 
-   The `NO_PROXY` variable specifies a string that contains comma-separated
-   values for hosts that should be excluded from proxying. These are the options
-   you can specify to exclude hosts:
+   `NO_PROXY` 为以逗号分隔的主机列表，用于指定不使用代理的目标。可用形式包括：
 
-   - IP address prefix (`1.2.3.4`)
-   - Domain name, or a special DNS label (`*`)
-   - A domain name matches that name and all subdomains. A domain name with a
-     leading "." matches subdomains only. For example, given the domains
-     `foo.example.com` and `example.com`:
-     - `example.com` matches `example.com` and `foo.example.com`, and
-     - `.example.com` matches only `foo.example.com`
-   - A single asterisk (`*`) indicates that no proxying should be done
-   - Literal port numbers are accepted by IP address prefixes (`1.2.3.4:80`) and
-     domain names (`foo.example.com:80`)
+   - IP 地址或前缀（如 `1.2.3.4`）
+   - 域名，或特殊 DNS 通配符（`*`）
+   - 域名匹配该域及其所有子域；以点开头（如 `.example.com`）仅匹配子域。
+     例如，在存在 `foo.example.com` 与 `example.com` 时：
+     - `example.com` 同时匹配 `example.com` 和 `foo.example.com`
+     - `.example.com` 仅匹配 `foo.example.com`
+   - 单个星号（`*`）表示不使用任何代理
+   - 可带端口号，如 IP `1.2.3.4:80` 或域名 `foo.example.com:80`
 
-   Example:
+   示例：
 
    ```systemd
    [Service]
@@ -242,15 +221,14 @@ systemd drop-in file that sets the variables for the `docker` service.
    Environment="NO_PROXY=localhost,127.0.0.1,docker-registry.example.com,.corp"
    ```
 
-4. Flush changes and restart Docker
+4. 刷新配置并重启 Docker：
 
    ```console
    $ systemctl --user daemon-reload
    $ systemctl --user restart docker
    ```
 
-5. Verify that the configuration has been loaded and matches the changes you
-   made, for example:
+5. 验证配置已加载且与修改一致，例如：
 
    ```console
    $ systemctl --user show --property=Environment docker

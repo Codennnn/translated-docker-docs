@@ -1,8 +1,8 @@
 ---
-description: Configuring the Docker daemon
+description: 配置 Docker 守护进程
 keywords: docker, daemon, configuration
-title: Docker daemon configuration overview
-linkTitle: Daemon
+title: Docker 守护进程配置概览
+linkTitle: 守护进程
 weight: 60
 aliases:
   - /articles/chef/
@@ -28,53 +28,46 @@ aliases:
   - /config/daemon/
 ---
 
-This page shows you how to customize the Docker daemon, `dockerd`.
+本页介绍如何自定义 Docker 守护进程 `dockerd`。
 
 > [!NOTE]
 >
-> This page is for users who've installed Docker Engine manually. If you're
-> using Docker Desktop, refer to the [settings page](/manuals/desktop/settings-and-maintenance/settings.md#docker-engine).
+> 本页面面向手动安装 Docker Engine 的用户。若你使用 Docker Desktop，请参阅
+> [设置页面](/manuals/desktop/settings-and-maintenance/settings.md#docker-engine)。
 
-## Configure the Docker daemon
+## 配置 Docker 守护进程
 
-There are two ways to configure the Docker daemon:
+配置 Docker 守护进程有两种方式：
 
-- Use a JSON configuration file. This is the preferred option, since it keeps
-  all configurations in a single place.
-- Use flags when starting `dockerd`.
+- 使用 JSON 配置文件（推荐，集中管理所有配置）。
+- 在启动 `dockerd` 时通过命令行标志传参。
 
-You can use both of these options together as long as you don't specify the same
-option both as a flag and in the JSON file. If that happens, the Docker daemon
-won't start and prints an error message.
+两者可以同时使用，但不能对同一选项既在命令行标志中声明，又在 JSON 文件中配置。
+否则 Docker 守护进程将无法启动并输出错误信息。
 
-### Configuration file
+### 配置文件
 
-The following table shows the location where the Docker daemon expects to find
-the configuration file by default, depending on your system and how you're
-running the daemon.
+下表给出了 Docker 守护进程默认查找配置文件的位置，具体取决于系统与运行方式：
 
-| OS and configuration | File location                              |
+| 操作系统与方式         | 文件位置                                     |
 | -------------------- | ------------------------------------------ |
-| Linux, regular setup | `/etc/docker/daemon.json`                  |
-| Linux, rootless mode | `~/.config/docker/daemon.json`             |
-| Windows              | `C:\ProgramData\docker\config\daemon.json` |
+| Linux（常规）         | `/etc/docker/daemon.json`                  |
+| Linux（rootless）     | `~/.config/docker/daemon.json`             |
+| Windows              | `C:\\ProgramData\\docker\\config\\daemon.json` |
 
-For rootless mode, the daemon respects the `XDG_CONFIG_HOME` variable. If set,
-the expected file location is `$XDG_CONFIG_HOME/docker/daemon.json`.
+在 rootless 模式下，守护进程会遵循 `XDG_CONFIG_HOME` 变量；若设置，该文件位于 `$XDG_CONFIG_HOME/docker/daemon.json`。
 
-You can also explicitly specify the location of the configuration file on
-startup, using the `dockerd --config-file` flag.
+你也可以在启动时通过 `dockerd --config-file` 显式指定配置文件位置。
 
-Learn about the available configuration options in the
-[dockerd reference docs](/reference/cli/dockerd.md#daemon-configuration-file)
+有关可用配置项，参阅
+[dockerd 参考文档](/reference/cli/dockerd.md#daemon-configuration-file)
 
-### Configuration using flags
+### 使用标志进行配置
 
-You can also start the Docker daemon manually and configure it using flags.
-This can be useful for troubleshooting problems.
+你也可以手动启动 Docker 守护进程，并通过标志进行配置。
+这在排查问题时很有用。
 
-Here's an example of how to manually start the Docker daemon, using the same
-configurations as shown in the previous JSON configuration:
+下面示例展示如何手动启动守护进程，使用与前文 JSON 配置等效的参数：
 
 ```console
 $ dockerd --debug \
@@ -84,27 +77,24 @@ $ dockerd --debug \
   --host tcp://192.168.59.3:2376
 ```
 
-Learn about the available configuration options in the
-[dockerd reference docs](/reference/cli/dockerd.md), or by
-running:
+更多可用配置项请参阅
+[dockerd 参考文档](/reference/cli/dockerd.md)，或运行：
 
 ```console
 $ dockerd --help
 ```
 
-## Daemon data directory
+## 守护进程数据目录
 
-The Docker daemon persists all data in a single directory. This tracks
-everything related to Docker, including containers, images, volumes, service
-definition, and secrets.
+Docker 守护进程会将数据持久化到单一目录中，其中包含与 Docker 相关的一切，
+如容器、镜像、卷、服务定义与机密等。
 
-By default this directory is:
+默认数据目录：
 
-- `/var/lib/docker` on Linux.
-- `C:\ProgramData\docker` on Windows.
+- Linux：`/var/lib/docker`
+- Windows：`C:\\ProgramData\\docker`
 
-You can configure the Docker daemon to use a different directory, using the
-`data-root` configuration option. For example:
+可以通过 `data-root` 配置项更改该目录，例如：
 
 ```json
 {
@@ -112,18 +102,15 @@ You can configure the Docker daemon to use a different directory, using the
 }
 ```
 
-Since the state of a Docker daemon is kept on this directory, make sure you use
-a dedicated directory for each daemon. If two daemons share the same directory,
-for example, an NFS share, you are going to experience errors that are difficult
-to troubleshoot.
+由于守护进程的状态保存在该目录中，请确保每个守护进程使用独立的目录。
+如果多个守护进程共享同一目录（例如通过 NFS 共享），将导致难以排查的错误。
 
-## Next steps
+## 进一步阅读
 
-Many specific configuration options are discussed throughout the Docker
-documentation. Some places to go next include:
+关于更多具体配置项，你可以继续阅读：
 
-- [Automatically start containers](/manuals/engine/containers/start-containers-automatically.md)
-- [Limit a container's resources](/manuals/engine/containers/resource_constraints.md)
-- [Configure storage drivers](/manuals/engine/storage/drivers/select-storage-driver.md)
-- [Container security](/manuals/engine/security/_index.md)
-- [Configure the Docker daemon to use a proxy](./proxy.md)
+- [容器开机自启](/manuals/engine/containers/start-containers-automatically.md)
+- [限制容器资源](/manuals/engine/containers/resource_constraints.md)
+- [配置存储驱动](/manuals/engine/storage/drivers/select-storage-driver.md)
+- [容器安全](/manuals/engine/security/_index.md)
+- [为 Docker 守护进程配置代理](./proxy.md)

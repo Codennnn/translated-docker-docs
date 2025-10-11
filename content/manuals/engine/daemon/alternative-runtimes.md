@@ -1,56 +1,51 @@
 ---
-title: Alternative container runtimes
+title: 可选容器运行时
 description: |
-  Docker Engine uses runc as the default container runtime, but you
-  can specify alternative runtimes using the CLI or by configuring
-  the daemon
+  Docker Engine 默认使用 runc 作为容器运行时，你也可以通过 CLI 或配置守护进程
+  来指定其他运行时
 keywords: engine, runtime, containerd, runtime v2, shim
 aliases:
   - /engine/alternative-runtimes/
 ---
 
-Docker Engine uses containerd for managing the container lifecycle,
-which includes creating, starting, and stopping containers.
-By default, containerd uses runc as its container runtime.
+Docker Engine 使用 containerd 管理容器生命周期，
+包括创建、启动与停止容器。默认情况下，containerd 使用 runc 作为容器运行时。
 
-## What runtimes can I use?
+## 我可以使用哪些运行时？
 
-You can use any runtime that implements the containerd 
-[shim API](https://github.com/containerd/containerd/blob/main/core/runtime/v2/README.md).
-Such runtimes ship with a containerd shim, and you can use them without any
-additional configuration. See [Use containerd shims](#use-containerd-shims).
+任何实现了 containerd
+[shim API](https://github.com/containerd/containerd/blob/main/core/runtime/v2/README.md)
+的运行时都可与 Docker 协同使用。
+这类运行时自带 containerd shim，通常无需额外配置即可使用。
+参见[使用 containerd shim](#use-containerd-shims)。
 
-Examples of runtimes that implement their own containerd shims include:
+以下运行时实现了各自的 containerd shim：
 
 - [Wasmtime](https://wasmtime.dev/)
 - [gVisor](https://github.com/google/gvisor)
 - [Kata Containers](https://katacontainers.io/)
 
-You can also use runtimes designed as drop-in replacements for runc. Such
-runtimes depend on the runc containerd shim for invoking the runtime binary.
-You must manually register such runtimes in the daemon configuration.
+你也可以使用作为 runc 即插即用替代品（drop-in replacement）设计的运行时。
+这类运行时依赖 runc 的 containerd shim 来调用运行时二进制。
+需要在守护进程配置中手动注册此类运行时。
 
 [youki](https://github.com/youki-dev/youki)
-is one example of a runtime that can function as a runc drop-in replacement.
-Refer to the [youki example](#youki) explaining the setup.
+即为可作为 runc 替代品的一个示例。设置方法见[youki 示例](#youki)。
 
-## Use containerd shims
+## 使用 containerd shim
 
-containerd shims let you use alternative runtimes without having to change the
-configuration of the Docker daemon. To use a containerd shim, install the shim
-binary on `PATH` on the system where the Docker daemon is running.
+containerd shim 允许你在无需修改 Docker 守护进程配置的情况下使用其他运行时。
+要使用某个 shim，请将其可执行文件安装到运行 Docker 守护进程的系统 `PATH` 中。
 
-To use a shim with `docker run`, specify the fully qualified name of the
-runtime as the value to the `--runtime` flag:
+在 `docker run` 中使用 shim 时，通过 `--runtime` 标志传入运行时的完整名称：
 
 ```console
 $ docker run --runtime io.containerd.kata.v2 hello-world
 ```
 
-### Use a containerd shim without installing on PATH
+### 在未安装到 PATH 的情况下使用 containerd shim
 
-You can use a shim without installing it on `PATH`, in which case you need to
-register the shim in the daemon configuration as follows:
+也可以不将 shim 安装到 `PATH`，此时需要在守护进程配置中注册该 shim，如下所示：
 
 ```json
 {
@@ -62,22 +57,20 @@ register the shim in the daemon configuration as follows:
 }
 ```
 
-To use the shim, specify the name that you assigned to it:
+使用时，传入你为该 shim 指定的名称：
 
 ```console
 $ docker run --runtime foo hello-world
 ```
 
-### Configure shims
+### 配置 shim
 
-If you need to pass additional configuration for a containerd shim, you can
-use the `runtimes` option in the daemon configuration file.
+如需为 containerd shim 传递额外配置，可在守护进程配置文件中使用 `runtimes` 选项。
 
-1. Edit the daemon configuration file by adding a `runtimes` entry for the
-   shim you want to configure.
+1. 编辑守护进程配置文件，为目标 shim 添加一个 `runtimes` 条目。
 
-   - Specify the fully qualified name for the runtime in `runtimeType` key
-   - Add your runtime configuration under the `options` key
+   - 在 `runtimeType` 中指定运行时的完整名称
+   - 在 `options` 中添加运行时的相关配置
 
    ```json
    {
@@ -93,52 +86,50 @@ use the `runtimes` option in the daemon configuration file.
    }
    ```
 
-2. Reload the daemon's configuration.
+2. 重新加载守护进程配置。
 
    ```console
    # systemctl reload docker
    ```
 
-3. Use the customized runtime using the `--runtime` flag for `docker run`.
+3. 在 `docker run` 中通过 `--runtime` 标志使用该自定义运行时。
 
    ```console
    $ docker run --runtime gvisor hello-world
    ```
 
-For more information about the configuration options for containerd shims, see
-[Configure containerd shims](/reference/cli/dockerd.md#configure-containerd-shims).
+有关 containerd shim 配置项的更多信息，参见
+[配置 containerd shim](/reference/cli/dockerd.md#configure-containerd-shims)。
 
-## Examples
+## 示例
 
-The following examples show you how to set up and use alternative container
-runtimes with Docker Engine.
+以下示例展示如何在 Docker Engine 中配置并使用其他容器运行时。
 
 - [youki](#youki)
 - [Wasmtime](#wasmtime)
 
 ### youki
 
-youki is a container runtime written in Rust.
-youki claims to be faster and use less memory than runc,
-making it a good choice for resource-constrained environments.
+youki 是用 Rust 编写的容器运行时。
+相较 runc，youki 号称速度更快、内存占用更低，
+适用于资源受限的环境。
 
-youki functions as a drop-in replacement for runc, meaning it relies on the
-runc shim to invoke the runtime binary. When you register runtimes acting as
-runc replacements, you configure the path to the runtime executable, and
-optionally a set of runtime arguments. For more information, see
-[Configure runc drop-in replacements](/reference/cli/dockerd.md#configure-runc-drop-in-replacements).
+youki 可作为 runc 的即插即用替代品，这意味着它依赖 runc shim 来调用运行时二进制。
+当注册作为 runc 替代品的运行时时，需要配置运行时可执行文件的路径，
+以及可选的运行时参数。详见
+[配置 runc 的替代运行时](/reference/cli/dockerd.md#configure-runc-drop-in-replacements)。
 
-To add youki as a container runtime:
+将 youki 添加为容器运行时：
 
-1. Install youki and its dependencies.
+1. 安装 youki 及其依赖。
 
-   For instructions, refer to the
-   [official setup guide](https://youki-dev.github.io/youki/user/basic_setup.html).
+   安装步骤参见
+   [官方指南](https://youki-dev.github.io/youki/user/basic_setup.html)。
 
-2. Register youki as a runtime for Docker by editing the Docker daemon
-   configuration file, located at `/etc/docker/daemon.json` by default.
+2. 通过编辑 Docker 守护进程配置文件（默认位于 `/etc/docker/daemon.json`），
+   将 youki 注册为 Docker 运行时。
 
-   The `path` key should specify the path to wherever you installed youki.
+   `path` 键应指向 youki 的安装路径。
 
    ```console
    # cat > /etc/docker/daemon.json <<EOF
@@ -152,13 +143,13 @@ To add youki as a container runtime:
    EOF
    ```
 
-3. Reload the daemon's configuration.
+3. 重新加载守护进程配置。
 
    ```console
    # systemctl reload docker
    ```
 
-Now you can run containers that use youki as a runtime.
+现在即可使用 youki 作为运行时来运行容器。
 
 ```console
 $ docker run --rm --runtime youki hello-world
@@ -168,17 +159,16 @@ $ docker run --rm --runtime youki hello-world
 
 {{< summary-bar feature_name="Wasmtime" >}}
 
-Wasmtime is a
+Wasmtime 是
 [Bytecode Alliance](https://bytecodealliance.org/)
-project, and a Wasm runtime that lets you run Wasm containers.
-Running Wasm containers with Docker provides two layers of security.
-You get all the benefits from container isolation,
-plus the added sandboxing provided by the Wasm runtime environment.
+项目下的 Wasm 运行时，可运行 Wasm 容器。
+在 Docker 中运行 Wasm 容器可获得两层安全防护：
+一方面具备容器隔离带来的益处，另一方面享有 Wasm 运行时环境提供的额外沙箱。
 
-To add Wasmtime as a container runtime, follow these steps:
+将 Wasmtime 添加为容器运行时的步骤：
 
-1. Turn on the [containerd image store](/manuals/engine/storage/containerd.md)
-   feature in the daemon configuration file.
+1. 在守护进程配置文件中开启
+   [containerd 镜像存储](/manuals/engine/storage/containerd.md)。
 
    ```json
    {
@@ -188,16 +178,16 @@ To add Wasmtime as a container runtime, follow these steps:
    }
    ```
 
-2. Restart the Docker daemon.
+2. 重启 Docker 守护进程。
 
    ```console
    # systemctl restart docker
    ```
 
-3. Install the Wasmtime containerd shim on `PATH`.
+3. 安装 Wasmtime 的 containerd shim 到 `PATH`。
 
-   The following command Dockerfile builds the Wasmtime binary from source
-   and exports it to `./containerd-shim-wasmtime-v1`.
+   下面的命令会通过一个内联 Dockerfile 从源码构建 Wasmtime 二进制，
+   并导出为 `./containerd-shim-wasmtime-v1`：
 
    ```console
    $ docker build --output . - <<EOF
@@ -212,13 +202,13 @@ To add Wasmtime as a container runtime, follow these steps:
    EOF
    ```
 
-   Put the binary in a directory on `PATH`.
+   将该二进制放置到 `PATH` 中的目录：
 
    ```console
    $ mv ./containerd-shim-wasmtime-v1 /usr/local/bin
    ```
 
-Now you can run containers that use Wasmtime as a runtime.
+现在即可使用 Wasmtime 作为运行时来运行容器。
 
 ```console
 $ docker run --rm \
@@ -227,9 +217,9 @@ $ docker run --rm \
  michaelirwin244/wasm-example
 ```
 
-## Related information
+## 相关信息
 
-- To learn more about the configuration options for container runtimes,
-  see [Configure container runtimes](/reference/cli/dockerd.md#configure-container-runtimes).
-- You can configure which runtime that the daemon should use as its default.
-  Refer to [Configure the default container runtime](/reference/cli/dockerd.md#configure-the-default-container-runtime).
+- 关于容器运行时的更多配置项，参见
+  [配置容器运行时](/reference/cli/dockerd.md#configure-container-runtimes)。
+- 你可以配置守护进程的默认运行时，参见
+  [配置默认容器运行时](/reference/cli/dockerd.md#configure-the-default-container-runtime)。

@@ -1,43 +1,36 @@
 ---
-title: Start the daemon
+title: 启动守护进程
 weight: 10
-description: Starting the Docker daemon manually
+description: 手动启动 Docker 守护进程
 keywords: docker, daemon, configuration, troubleshooting
 aliases:
   - /config/daemon/start/
 ---
 
-This page shows how to start the daemon, either manually or using OS utilities.
+本页介绍如何启动守护进程，可以手动启动，也可以通过操作系统的服务管理器启动。
 
-## Start the daemon using operating system utilities
+## 使用操作系统的服务管理器启动
 
-On a typical installation the Docker daemon is started by a system utility, not
-manually by a user. This makes it easier to automatically start Docker when the
-machine reboots.
+在典型安装中，Docker 守护进程由系统服务管理器启动，而不是由用户手动启动。这样可以在机器重启时自动启动 Docker。
 
-The command to start Docker depends on your operating system. Check the correct
-page under [Install Docker](/manuals/engine/install/_index.md).
+启动命令因操作系统而异。请在 [安装 Docker](/manuals/engine/install/_index.md) 文档中查找对应页面。
 
-### Start with systemd
+### 使用 systemd 启动
 
-On some operating systems, like Ubuntu and Debian, the Docker daemon service
-starts automatically. Use the following command to start it manually:
+在 Ubuntu、Debian 等操作系统上，Docker 守护进程服务通常会自动启动。你也可以手动执行：
 
 ```console
 $ sudo systemctl start docker
 ```
 
-If you want Docker to start at boot, see
-[Configure Docker to start on boot](/manuals/engine/install/linux-postinstall.md#configure-docker-to-start-on-boot-with-systemd).
+如果希望开机时自动启动，请参见
+[使用 systemd 配置开机自启](/manuals/engine/install/linux-postinstall.md#configure-docker-to-start-on-boot-with-systemd)。
 
-## Start the daemon manually
+## 手动启动守护进程
 
-If you don't want to use a system utility to manage the Docker daemon, or just
-want to test things out, you can manually run it using the `dockerd` command.
-You may need to use `sudo`, depending on your operating system configuration.
+如果你不想使用系统服务管理器来管理 Docker 守护进程，或仅用于测试，可以直接使用 `dockerd` 命令手动运行。是否需要 `sudo` 取决于你的操作系统配置。
 
-When you start Docker this way, it runs in the foreground and sends its logs
-directly to your terminal.
+以这种方式启动时，Docker 以前台方式运行，并将日志直接输出到终端：
 
 ```console
 $ dockerd
@@ -47,5 +40,4 @@ INFO[0000] +job serveapi(unix:///var/run/docker.sock)
 INFO[0000] Listening for HTTP on unix (/var/run/docker.sock)
 ```
 
-To stop Docker when you have started it manually, issue a `Ctrl+C` in your
-terminal.
+若以手动方式启动，需要停止 Docker 时，请在终端中按 `Ctrl+C`。

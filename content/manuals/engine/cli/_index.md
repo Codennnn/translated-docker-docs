@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: CLI
+title: 命令行（CLI）
 weight: 50
 ---

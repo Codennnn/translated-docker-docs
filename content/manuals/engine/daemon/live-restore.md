@@ -1,7 +1,7 @@
 ---
-description: Learn how to keep containers running when the daemon isn't available
+description: 了解如何在守护进程不可用时保持容器继续运行
 keywords: docker, upgrade, daemon, dockerd, live-restore, daemonless container
-title: Live restore
+title: 实时恢复（Live restore）
 weight: 40
 aliases:
   - /config/containers/live-restore/
@@ -9,28 +9,25 @@ aliases:
   - /engine/containers/live-restore/
 ---
 
-By default, when the Docker daemon terminates, it shuts down running containers.
-You can configure the daemon so that containers remain running if the daemon
-becomes unavailable. This functionality is called _live restore_. The live restore
-option helps reduce container downtime due to daemon crashes, planned outages,
-or upgrades.
+默认情况下，Docker 守护进程退出时会停止正在运行的容器。
+你可以配置守护进程，使其在不可用时容器仍保持运行。这项功能称为 _live restore_。
+启用后，可在守护进程崩溃、计划停机或升级期间，显著减少容器停机时间。
 
 > [!NOTE]
 >
-> Live restore isn't supported for Windows containers, but it does work for
-> Linux containers running on Docker Desktop for Windows.
+> Windows 容器不支持 Live restore。
+> 但在 Docker Desktop for Windows 中运行的 Linux 容器支持该功能。
 
-## Enable live restore
+## 启用 Live restore
 
-There are two ways to enable the live restore setting to keep containers alive
-when the daemon becomes unavailable. **Only do one of the following**.
+当守护进程不可用时，要让容器保持运行，可以通过以下两种方式启用 Live restore。
+**二选一，不要同时使用。**
 
-- Add the configuration to the daemon configuration file. On Linux, this
-  defaults to `/etc/docker/daemon.json`. On Docker Desktop for Mac or Docker
-  Desktop for Windows, select the Docker icon from the task bar, then click
-  **Settings** -> **Docker Engine**.
+- 在守护进程配置文件中添加配置。Linux 上默认路径为 `/etc/docker/daemon.json`。
+  在 Docker Desktop for Mac / Windows 中，点击任务栏 Docker 图标，依次进入
+  **Settings** -> **Docker Engine**。
 
-  - Use the following JSON to enable `live-restore`.
+  - 使用以下 JSON 启用 `live-restore`：
 
     ```json
     {
@@ -38,47 +35,38 @@ when the daemon becomes unavailable. **Only do one of the following**.
     }
     ```
 
-  - Restart the Docker daemon. On Linux, you can avoid a restart (and avoid any
-    downtime for your containers) by reloading the Docker daemon. If you use
-    `systemd`, then use the command `systemctl reload docker`. Otherwise, send a
-    `SIGHUP` signal to the `dockerd` process.
+  - 重启 Docker 守护进程。在 Linux 上，你也可以通过重新加载守护进程来避免重启
+    （从而避免容器停机）。若使用 `systemd`，执行 `systemctl reload docker`；
+    否则，向 `dockerd` 进程发送 `SIGHUP` 信号。
 
-- If you prefer, you can start the `dockerd` process manually with the
-  `--live-restore` flag. This approach isn't recommended because it doesn't
-  set up the environment that `systemd` or another process manager would use
-  when starting the Docker process. This can cause unexpected behavior.
+- 也可以手动以 `--live-restore` 标志启动 `dockerd` 进程。
+  但这种方式不建议使用，因为它不会像 `systemd` 或其他进程管理器那样设置运行环境，
+  可能导致意外行为。
 
-## Live restore during upgrades
+## 升级期间的 Live restore
 
-Live restore allows you to keep containers running across Docker daemon updates,
-but is only supported when installing patch releases (`YY.MM.x`), not for
-major (`YY.MM`) daemon upgrades.
+Live restore 支持守护进程更新期间保持容器不间断运行，
+但仅适用于安装补丁版本（`YY.MM.x`），不支持跨主版本（`YY.MM`）升级。
 
-If you skip releases during an upgrade, the daemon may not restore its
-connection to the containers. If the daemon can't restore the connection, it
-can't manage the running containers and you must stop them manually.
+如果升级时跳过了多个版本，守护进程可能无法恢复与容器的连接。
+一旦无法恢复连接，守护进程将无法管理运行中的容器，你需要手动停止它们。
 
-## Live restore upon restart
+## 重启后的 Live restore
 
-The live restore option only works to restore containers if the daemon options,
-such as bridge IP addresses and graph driver, didn't change. If any of these
-daemon-level configuration options have changed, the live restore may not work
-and you may need to manually stop the containers.
+仅当守护进程的关键参数未改变（例如网桥 IP、存储驱动等）时，Live restore 才能成功恢复容器。
+如果这些守护进程级别的配置发生变化，Live restore 可能失效，你可能需要手动停止容器。
 
-## Impact of live restore on running containers
+## 对运行中容器的影响
 
-If the daemon is down for a long time, running containers may fill up the FIFO
-log the daemon normally reads. A full log blocks containers from logging more
-data. The default buffer size is 64K. If the buffers fill, you must restart
-the Docker daemon to flush them.
+如果守护进程长时间不可用，运行中的容器可能会填满守护进程平时读取的 FIFO 日志。
+一旦缓冲区被占满，容器将无法继续写入日志。默认缓冲区大小为 64K。
+若缓冲区已满，你必须重启 Docker 守护进程以清空。
 
-On Linux, you can modify the kernel's buffer size by changing
-`/proc/sys/fs/pipe-max-size`. You can't modify the buffer size on Docker Desktop for
-Mac or Docker Desktop for Windows.
+在 Linux 上，可以通过修改 `/proc/sys/fs/pipe-max-size` 来调整内核缓冲区大小。
+在 Docker Desktop for Mac / Windows 上无法调整该缓冲区大小。
 
-## Live restore and Swarm mode
+## 与 Swarm 模式的关系
 
-The live restore option only pertains to standalone containers, and not to Swarm
-services. Swarm services are managed by Swarm managers. If Swarm managers are
-not available, Swarm services continue to run on worker nodes but can't be
-managed until enough Swarm managers are available to maintain a quorum.
+Live restore 仅适用于独立容器，不适用于 Swarm 服务。Swarm 服务由管理节点负责调度与管理。
+当管理节点不可用时，服务仍会在工作节点上继续运行，但直到管理节点恢复至可用法定数量前，
+它们无法被管理。
