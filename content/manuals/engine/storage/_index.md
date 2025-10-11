@@ -1,6 +1,6 @@
 ---
-description: Overview of persisting data in containers
-title: Storage
+description: 在容器中持久化数据的概览
+title: 存储
 weight: 20
 keywords: storage, persistence, data persistence, volumes, mounts, bind mounts, tmpfs
 aliases:
@@ -8,79 +8,49 @@ aliases:
   - /storage/
 ---
 
-By default all files created inside a container are stored on a writable
-container layer that sits on top of the read-only, immutable image layers.
+默认情况下，容器内创建的所有文件都会写入容器的可写层，该可写层叠加在只读、不可变的镜像层之上。
 
-Data written to the container layer doesn't persist when the container is
-destroyed. This means that it can be difficult to get the data out of the
-container if another process needs it.
+当容器被销毁时，写入可写层的数据不会保留。这意味着当其他进程需要这些数据时，你很难从容器中把数据取出来。
 
-The writable layer is unique per container. You can't easily extract the data
-from the writeable layer to the host, or to another container.
+每个容器的可写层都是唯一且相互独立的。你无法轻易将可写层中的数据提取到宿主机，或迁移到其他容器。
 
-## Storage mount options
+## 存储挂载选项
 
-Docker supports the following types of storage mounts for storing data outside
-of the writable layer of the container:
+Docker 支持以下几种方式，将数据存放在容器可写层之外：
 
-- [Volume mounts](#volume-mounts)
-- [Bind mounts](#bind-mounts)
-- [tmpfs mounts](#tmpfs-mounts)
-- [Named pipes](#named-pipes)
+- [卷挂载](#volume-mounts)
+- [绑定挂载](#bind-mounts)
+- [tmpfs 挂载](#tmpfs-mounts)
+- [命名管道](#named-pipes)
 
-No matter which type of mount you choose to use, the data looks the same from
-within the container. It is exposed as either a directory or an individual file
-in the container's filesystem.
+无论你选择哪种挂载方式，从容器内部看，数据的呈现方式相同：要么是一个目录，要么是容器文件系统中的单个文件。
 
-### Volume mounts
+### 卷挂载
 
-Volumes are persistent storage mechanisms managed by the Docker daemon. They
-retain data even after the containers using them are removed. Volume data is
-stored on the filesystem on the host, but in order to interact with the data in
-the volume, you must mount the volume to a container. Directly accessing or
-interacting with the volume data is unsupported, undefined behavior, and may
-result in the volume or its data breaking in unexpected ways.
+卷是由 Docker 守护进程管理的持久化存储机制。即便删除了使用该卷的容器，数据仍会保留。卷的数据存放在宿主机的文件系统上，但要访问卷中的数据，必须将该卷挂载到容器里。直接在宿主机上访问或修改卷数据是不被支持的、行为未定义，可能导致卷或其中的数据以不可预期的方式损坏。
 
-Volumes are ideal for performance-critical data processing and long-term
-storage needs. Since the storage location is managed on the daemon host,
-volumes provide the same raw file performance as accessing the host filesystem
-directly.
+卷非常适合性能敏感的数据处理与长期存储需求。由于存储位置由守护进程所在的主机管理，卷通常能提供接近直接访问宿主机文件系统的原始文件性能。
 
-### Bind mounts
+### 绑定挂载
 
-Bind mounts create a direct link between a host system path and a container,
-allowing access to files or directories stored anywhere on the host. Since they
-aren't isolated by Docker, both non-Docker processes on the host and container
-processes can modify the mounted files simultaneously.
+绑定挂载在宿主机的某个路径与容器之间建立直接关联，使容器可以访问宿主机任意位置的文件或目录。由于它不受 Docker 隔离，宿主机上的非 Docker 进程与容器内的进程都可以同时修改这些被挂载的文件。
 
-Use bind mounts when you need to be able to access files from both the
-container and the host.
+当你需要容器与宿主机同时访问同一份文件时，使用绑定挂载更合适。
 
-### tmpfs mounts
+### tmpfs 挂载
 
-A tmpfs mount stores files directly in the host machine's memory, ensuring the
-data is not written to disk. This storage is ephemeral: the data is lost when
-the container is stopped or restarted, or when the host is rebooted. tmpfs
-mounts do not persist data either on the Docker host or within the container's
-filesystem.
+tmpfs 挂载将文件直接存放在宿主机内存中，确保数据不会写入磁盘。这是一种临时存储：当容器停止或重启，或宿主机重启时，数据会丢失。tmpfs 不会将数据持久化到 Docker 宿主机或容器的文件系统中。
 
-These mounts are suitable for scenarios requiring temporary, in-memory storage,
-such as caching intermediate data, handling sensitive information like
-credentials, or reducing disk I/O. Use tmpfs mounts only when the data does not
-need to persist beyond the current container session.
+这类挂载适用于需要临时、内存级存储的场景，例如缓存中间数据、处理凭据等敏感信息，或减少磁盘 I/O。仅当数据无需在当前容器会话之外保留时，才使用 tmpfs 挂载。
 
-### Named pipes
+### 命名管道
 
-[Named pipes](https://docs.microsoft.com/en-us/windows/desktop/ipc/named-pipes)
-can be used for communication between the Docker host and a container. Common
-use case is to run a third-party tool inside of a container and connect to the
-Docker Engine API using a named pipe.
+[命名管道](https://docs.microsoft.com/en-us/windows/desktop/ipc/named-pipes)
+可用于 Docker 宿主机与容器之间的通信。常见用法是在容器内运行第三方工具，并通过命名管道连接到 Docker 引擎 API。
 
-## Next steps
+## 进一步阅读
 
-- Learn more about [volumes](./volumes.md).
-- Learn more about [bind mounts](./bind-mounts.md).
-- Learn more about [tmpfs mounts](./tmpfs.md).
-- Learn more about [storage drivers](/engine/storage/drivers/), which
-  are not related to bind mounts or volumes, but allow you to store data in a
-  container's writable layer.
+- 了解更多关于[卷](./volumes.md)。
+- 了解更多关于[绑定挂载](./bind-mounts.md)。
+- 了解更多关于[tmpfs 挂载](./tmpfs.md)。
+- 了解更多关于[存储驱动](/engine/storage/drivers/)。存储驱动与绑定挂载或卷无关，它们用于管理容器可写层上的数据存储。

@@ -1,34 +1,29 @@
 ---
-title: containerd image store with Docker Engine
-linkTitle: containerd image store
+title: 在 Docker Engine 中使用 containerd 镜像存储
+linkTitle: containerd 镜像存储
 weight: 50
 keywords: containerd, snapshotters, image store, docker engine
-description: Learn how to enable the containerd image store on Docker Engine
+description: 了解如何在 Docker Engine 上启用 containerd 镜像存储
 aliases:
   - /storage/containerd/
 ---
 
 {{< summary-bar feature_name="containerd" >}}
 
-containerd, the industry-standard container runtime, uses snapshotters instead
-of the classic storage drivers for storing image and container data.
-While the `overlay2` driver still remains the default driver for Docker Engine,
-you can opt in to using containerd snapshotters as an experimental feature.
+industry 标准的容器运行时 containerd 使用 snapshotter（快照器）来存储镜像与容器数据，替代经典的存储驱动。
+虽然 `overlay2` 仍是 Docker Engine 的默认存储驱动，但你可以选择启用 containerd 的 snapshotter 功能（当前为实验特性）。
 
-To learn more about the containerd image store and its benefits, refer to
-[containerd image store on Docker Desktop](/manuals/desktop/features/containerd.md).
+要了解 containerd 镜像存储及其优势，请参阅
+[Docker Desktop 上的 containerd 镜像存储](/manuals/desktop/features/containerd.md)。
 
-## Enable containerd image store on Docker Engine
+## 在 Docker Engine 上启用 containerd 镜像存储
 
-Switching to containerd snapshotters causes you to temporarily lose images and
-containers created using the classic storage drivers.
-Those resources still exist on your filesystem, and you can retrieve them by
-turning off the containerd snapshotters feature.
+切换到 containerd snapshotter 后，你将暂时看不到此前使用经典存储驱动创建的镜像与容器。
+这些资源仍保留在文件系统中；关闭 snapshotter 功能后即可再次访问它们。
 
-The following steps explain how to enable the containerd snapshotters feature.
+以下步骤演示如何启用 containerd snapshotter 功能：
 
-1. Add the following configuration to your `/etc/docker/daemon.json`
-   configuration file:
+1. 在 `/etc/docker/daemon.json` 配置文件中添加如下内容：
 
    ```json
    {
@@ -38,19 +33,18 @@ The following steps explain how to enable the containerd snapshotters feature.
    }
    ```
 
-2. Save the file.
-3. Restart the daemon for the changes to take effect.
+2. 保存文件。
+3. 重启 Docker 守护进程使配置生效：
 
    ```console
    $ sudo systemctl restart docker
    ```
 
-After restarting the daemon, running `docker info` shows that you're using
-containerd snapshotter storage drivers.
+守护进程重启后，运行 `docker info` 会显示已在使用 containerd snapshotter 存储驱动：
 
 ```console
 $ docker info -f '{{ .DriverStatus }}'
 [[driver-type io.containerd.snapshotter.v1]]
 ```
 
-Docker Engine uses the `overlayfs` containerd snapshotter by default.
+Docker Engine 默认使用 `overlayfs` 类型的 containerd snapshotter。

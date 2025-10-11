@@ -1,6 +1,6 @@
 ---
-description: Using tmpfs mounts
-title: tmpfs mounts
+description: 使用 tmpfs 挂载
+title: tmpfs 挂载
 weight: 30
 keywords: storage, persistence, data persistence, tmpfs
 aliases:
@@ -8,148 +8,114 @@ aliases:
   - /storage/tmpfs/
 ---
 
-[Volumes](volumes.md) and [bind mounts](bind-mounts.md) let you share files
-between the host machine and container so that you can persist data even after
-the container is stopped.
+[卷](volumes.md) 与[绑定挂载](bind-mounts.md)可在宿主机与容器之间共享文件，从而在容器停止后依然持久化数据。
 
-If you're running Docker on Linux, you have a third option: tmpfs mounts.
-When you create a container with a tmpfs mount, the container can create
-files outside the container's writable layer.
+如果你在 Linux 上运行 Docker，还有第三种选择：tmpfs 挂载。当你为容器使用 tmpfs 挂载时，容器会在自身可写层之外创建文件。
 
-As opposed to volumes and bind mounts, a tmpfs mount is temporary, and only
-persisted in the host memory. When the container stops, the tmpfs mount is
-removed, and files written there won't be persisted.
+与卷和绑定挂载不同，tmpfs 挂载是临时的，只存在于宿主机内存中。容器停止时，tmpfs 挂载会被移除，写入其中的文件不会被持久化。
 
-tmpfs mounts are best used for cases when you do not want the data to persist
-either on the host machine or within the container. This may be for security
-reasons or to protect the performance of the container when your application
-needs to write a large volume of non-persistent state data.
+当你既不希望数据保存在宿主机上，也不希望保存在容器内时，最适合使用 tmpfs 挂载。这通常出于安全考虑，或是在应用需要写入大量非持久化状态数据时，避免影响容器性能。
 
 > [!IMPORTANT]
-> tmpfs mounts in Docker map directly to
-> [tmpfs](https://en.wikipedia.org/wiki/Tmpfs) in the Linux kernel. As such,
-> the temporary data may be written to a swap file, and thereby persisted to
-> the filesystem.
+> Docker 中的 tmpfs 挂载直接映射为 Linux 内核的 [tmpfs](https://en.wikipedia.org/wiki/Tmpfs)。
+> 因此，临时数据可能会写入交换分区（swap），从而间接持久化到文件系统。
 
-## Mounting over existing data
+## 在已有数据之上进行挂载
 
-If you create a tmpfs mount into a directory in the container in which files or
-directories exist, the pre-existing files are obscured by the mount. This is
-similar to if you were to save files into `/mnt` on a Linux host, and then
-mounted a USB drive into `/mnt`. The contents of `/mnt` would be obscured by
-the contents of the USB drive until the USB drive was unmounted.
+如果你把 tmpfs 挂载到容器内本就包含文件或子目录的目录上，该目录中原有的内容会被挂载“遮蔽”。这类似于在 Linux 宿主机上向 `/mnt` 保存了文件后，再把一个 U 盘挂载到 `/mnt`：在卸载 U 盘之前，`/mnt` 下原有内容都会被 U 盘内容遮蔽。
 
-With containers, there's no straightforward way of removing a mount to reveal
-the obscured files again. Your best option is to recreate the container without
-the mount.
+在容器内部，没有直接“移除挂载并恢复显示被遮蔽文件”的简便做法。最稳妥的方法是：重新创建一个不包含该挂载的容器。
 
-## Limitations of tmpfs mounts
+## tmpfs 挂载的限制
 
-- Unlike volumes and bind mounts, you can't share tmpfs mounts between containers.
-- This functionality is only available if you're running Docker on Linux.
-- Setting permissions on tmpfs may cause them to [reset after container restart](https://github.com/docker/for-linux/issues/138). In some cases [setting the uid/gid](https://github.com/docker/compose/issues/3425#issuecomment-423091370) can serve as a workaround.
+- 与卷或绑定挂载不同，多个容器之间无法共享同一个 tmpfs 挂载。
+- 仅当你在 Linux 上运行 Docker 时才可用。
+- 在 tmpfs 上设置权限，可能会[在容器重启后被重置](https://github.com/docker/for-linux/issues/138)。某些情况下，[设置 uid/gid](https://github.com/docker/compose/issues/3425#issuecomment-423091370) 可以作为变通方案。
 
-## Syntax
+## 语法
 
-To mount a tmpfs with the `docker run` command, you can use either the
-`--mount` or `--tmpfs` flag.
+使用 `docker run` 挂载 tmpfs 时，可以使用 `--mount` 或 `--tmpfs` 参数。
 
 ```console
 $ docker run --mount type=tmpfs,dst=<mount-path>
 $ docker run --tmpfs <mount-path>
 ```
 
-In general, `--mount` is preferred. The main difference is that the `--mount`
-flag is more explicit. On the other hand, `--tmpfs` is less verbose and gives
-you more flexibility as it lets you set more mount options.
+一般推荐使用 `--mount`，因为它更显式。另一方面，`--tmpfs` 更简洁，同时支持设置更多挂载选项，灵活性更高。
 
-The `--tmpfs` flag cannot be used with swarm services. You must use `--mount`.
+在 Swarm 服务中不能使用 `--tmpfs`，必须使用 `--mount`。
 
-### Options for --tmpfs
+### --tmpfs 的可选项
 
-The `--tmpfs` flag consists of two fields, separated by a colon character
-(`:`).
+`--tmpfs` 参数由两个以冒号（`:`）分隔的字段组成。
 
 ```console
 $ docker run --tmpfs <mount-path>[:opts]
 ```
 
-The first field is the container path to mount into a tmpfs. The second field
-is optional and lets you set mount options. Valid mount options for `--tmpfs`
-include:
+第一个字段是容器内要作为 tmpfs 的挂载路径。第二个字段为可选项，用于设置挂载参数。`--tmpfs` 支持的有效选项包括：
 
-| Option       | Description                                                                                 |
-| ------------ | ------------------------------------------------------------------------------------------- |
-| `ro`         | Creates a read-only tmpfs mount.                                                            |
-| `rw`         | Creates a read-write tmpfs mount (default behavior).                                        |
-| `nosuid`     | Prevents `setuid` and `setgid` bits from being honored during execution.                    |
-| `suid`       | Allows `setuid` and `setgid` bits to be honored during execution (default behavior).        |
-| `nodev`      | Device files can be created but are not functional (access results in an error).            |
-| `dev`        | Device files can be created and are fully functional.                                       |
-| `exec`       | Allows the execution of executable binaries in the mounted file system.                     |
-| `noexec`     | Does not allow the execution of executable binaries in the mounted file system.             |
-| `sync`       | All I/O to the file system is done synchronously.                                           |
-| `async`      | All I/O to the file system is done asynchronously (default behavior).                       |
-| `dirsync`    | Directory updates within the file system are done synchronously.                            |
-| `atime`      | Updates file access time each time the file is accessed.                                    |
-| `noatime`    | Does not update file access times when the file is accessed.                                |
-| `diratime`   | Updates directory access times each time the directory is accessed.                         |
-| `nodiratime` | Does not update directory access times when the directory is accessed.                      |
-| `size`       | Specifies the size of the tmpfs mount, for example, `size=64m`.                             |
-| `mode`       | Specifies the file mode (permissions) for the tmpfs mount (for example, `mode=1777`).       |
-| `uid`        | Specifies the user ID for the owner of the tmpfs mount (for example, `uid=1000`).           |
-| `gid`        | Specifies the group ID for the owner of the tmpfs mount (for example, `gid=1000`).          |
-| `nr_inodes`  | Specifies the maximum number of inodes for the tmpfs mount (for example, `nr_inodes=400k`). |
-| `nr_blocks`  | Specifies the maximum number of blocks for the tmpfs mount (for example, `nr_blocks=1024`). |
+| 选项         | 说明                                                      |
+| ------------ | --------------------------------------------------------- |
+| `ro`         | 创建只读的 tmpfs 挂载。                                   |
+| `rw`         | 创建读写的 tmpfs 挂载（默认）。                           |
+| `nosuid`     | 禁止在执行时生效 `setuid` 与 `setgid` 位。                |
+| `suid`       | 允许在执行时生效 `setuid` 与 `setgid` 位（默认）。        |
+| `nodev`      | 允许创建设备文件，但不可使用（访问会报错）。              |
+| `dev`        | 允许创建设备文件，且可正常使用。                          |
+| `exec`       | 允许在该挂载的文件系统中执行二进制文件。                  |
+| `noexec`     | 不允许在该挂载的文件系统中执行二进制文件。                |
+| `sync`       | 对该文件系统的所有 I/O 同步执行。                         |
+| `async`      | 对该文件系统的所有 I/O 异步执行（默认）。                 |
+| `dirsync`    | 目录更新以同步方式进行。                                  |
+| `atime`      | 每次访问文件时更新访问时间。                              |
+| `noatime`    | 访问文件时不更新访问时间。                                |
+| `diratime`   | 每次访问目录时更新目录访问时间。                          |
+| `nodiratime` | 访问目录时不更新访问时间。                                |
+| `size`       | 指定 tmpfs 挂载的大小，例如 `size=64m`。                  |
+| `mode`       | 指定 tmpfs 挂载的文件权限（例如 `mode=1777`）。           |
+| `uid`        | 指定 tmpfs 挂载所有者的用户 ID（例如 `uid=1000`）。       |
+| `gid`        | 指定 tmpfs 挂载所有者的用户组 ID（例如 `gid=1000`）。     |
+| `nr_inodes`  | 指定该 tmpfs 的最大 inode 数量（例如 `nr_inodes=400k`）。 |
+| `nr_blocks`  | 指定该 tmpfs 的最大块数量（例如 `nr_blocks=1024`）。      |
 
 ```console {title="Example"}
 $ docker run --tmpfs /data:noexec,size=1024,mode=1777
 ```
 
-Not all tmpfs mount features available in the Linux mount command are supported
-with the `--tmpfs` flag. If you require advanced tmpfs options or features, you
-may need to use a privileged container or configure the mount outside of
-Docker.
+并非 Linux `mount` 命令支持的所有 tmpfs 能力都能通过 `--tmpfs` 使用。如果需要更高级的 tmpfs 选项或功能，你可能需要运行特权容器，或在 Docker 之外配置该挂载。
 
 > [!CAUTION]
-> Running containers with `--privileged` grants elevated permissions and can
-> expose the host system to security risks. Use this option only when
-> absolutely necessary and in trusted environments.
+> 使用 `--privileged` 运行容器会赋予其更高权限，可能使宿主机暴露于安全风险之中。仅在确有必要且环境可信时使用该选项。
 
 ```console
 $ docker run --privileged -it debian sh
 /# mount -t tmpfs -o <options> tmpfs /data
 ```
 
-### Options for --mount
+### --mount 的可选项
 
-The `--mount` flag consists of multiple key-value pairs, separated by commas
-and each consisting of a `<key>=<value>` tuple. The order of the keys isn't
-significant.
+`--mount` 由多个以逗号分隔的键值对组成，每个都是 `<key>=<value>` 元组。键的顺序不重要。
 
 ```console
 $ docker run --mount type=tmpfs,dst=<mount-path>[,<key>=<value>...]
 ```
 
-Valid options for `--mount type=tmpfs` include:
+`--mount type=tmpfs` 支持的有效选项包括：
 
-| Option                         | Description                                                                                                            |
-| :----------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `destination`, `dst`, `target` | Container path to mount into a tmpfs.                                                                                  |
-| `tmpfs-size`                   | Size of the tmpfs mount in bytes. If unset, the default maximum size of a tmpfs volume is 50% of the host's total RAM. |
-| `tmpfs-mode`                   | File mode of the tmpfs in octal. For instance, `700` or `0770`. Defaults to `1777` or world-writable.                  |
+| 选项                           | 说明                                                                                     |
+| :----------------------------- | :--------------------------------------------------------------------------------------- |
+| `destination`, `dst`, `target` | 在容器内作为 tmpfs 的挂载路径。                                                          |
+| `tmpfs-size`                   | 以字节为单位指定 tmpfs 挂载的大小。若未设置，默认最大值为宿主机总内存的 50%。            |
+| `tmpfs-mode`                   | 以八进制指定 tmpfs 的文件权限，例如 `700` 或 `0770`。默认值为 `1777`（即所有用户可写）。 |
 
 ```console {title="Example"}
 $ docker run --mount type=tmpfs,dst=/app,tmpfs-size=21474836480,tmpfs-mode=1770
 ```
 
-## Use a tmpfs mount in a container
+## 在容器中使用 tmpfs 挂载
 
-To use a `tmpfs` mount in a container, use the `--tmpfs` flag, or use the
-`--mount` flag with `type=tmpfs` and `destination` options. There is no
-`source` for `tmpfs` mounts. The following example creates a `tmpfs` mount at
-`/app` in a Nginx container. The first example uses the `--mount` flag and the
-second uses the `--tmpfs` flag.
+要在容器中使用 `tmpfs` 挂载，可以使用 `--tmpfs` 参数，或使用 `--mount` 并指定 `type=tmpfs` 与 `destination`。tmpfs 挂载没有 `source`。下面示例在 Nginx 容器中于 `/app` 创建一个 `tmpfs` 挂载。第一个示例使用 `--mount`，第二个示例使用 `--tmpfs`。
 
 {{< tabs >}}
 {{< tab name="`--mount`" >}}
@@ -162,8 +128,7 @@ $ docker run -d \
   nginx:latest
 ```
 
-Verify that the mount is a `tmpfs` mount by looking in the `Mounts` section of
-the `docker inspect` output:
+通过 `docker inspect` 输出中的 `Mounts` 部分验证该挂载是否为 `tmpfs`：
 
 ```console
 $ docker inspect tmptest --format '{{ json .Mounts }}'
@@ -181,8 +146,7 @@ $ docker run -d \
   nginx:latest
 ```
 
-Verify that the mount is a `tmpfs` mount by looking in the `Mounts` section of
-the `docker inspect` output:
+同样可以通过 `docker inspect` 的 `Mounts` 部分进行验证：
 
 ```console
 $ docker inspect tmptest --format '{{ json .Mounts }}'
@@ -192,15 +156,15 @@ $ docker inspect tmptest --format '{{ json .Mounts }}'
 {{< /tab >}}
 {{< /tabs >}}
 
-Stop and remove the container:
+停止并删除容器：
 
 ```console
 $ docker stop tmptest
 $ docker rm tmptest
 ```
 
-## Next steps
+## 进一步阅读
 
-- Learn about [volumes](volumes.md)
-- Learn about [bind mounts](bind-mounts.md)
-- Learn about [storage drivers](/engine/storage/drivers/)
+- 了解[卷](volumes.md)
+- 了解[绑定挂载](bind-mounts.md)
+- 了解[存储驱动](/engine/storage/drivers/)
