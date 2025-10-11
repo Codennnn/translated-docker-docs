@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Core concepts
+title: 核心概念
 weight: 10
 ---

@@ -1,13 +1,12 @@
 ---
-title: Bake targets
-linkTitle: Targets
+title: Bake 目标
+linkTitle: 目标
 weight: 20
-description: Learn how to define and use targets in Bake
+description: 了解如何在 Bake 中定义与使用目标
 keywords: bake, target, targets, buildx, docker, buildkit, default
 ---
 
-A target in a Bake file represents a build invocation. It holds all the
-information you would normally pass to a `docker build` command using flags.
+在 Bake 文件中，目标（target）表示一次构建调用。它承载了你通常通过 `docker build` 命令行参数（flags）传入的全部配置信息。
 
 ```hcl {title=docker-bake.hcl}
 target "webapp" {
@@ -17,23 +16,21 @@ target "webapp" {
 }
 ```
 
-To build a target with Bake, pass name of the target to the `bake` command.
+使用 Bake 构建某个目标时，将目标名称传给 `bake` 命令即可：
 
 ```console
 $ docker buildx bake webapp
 ```
 
-You can build multiple targets at once by passing multiple target names to the
-`bake` command.
+你也可以一次性构建多个目标，只需传入多个目标名称：
 
 ```console
 $ docker buildx bake webapp api tests
 ```
 
-## Default target
+## 默认目标
 
-If you don't specify a target when running `docker buildx bake`, Bake will
-build the target named `default`.
+当你未在 `docker buildx bake` 中显式指定目标时，Bake 会构建名为 `default` 的目标。
 
 ```hcl {title=docker-bake.hcl}
 target "default" {
@@ -43,23 +40,21 @@ target "default" {
 }
 ```
 
-To build this target, run `docker buildx bake` without any arguments:
+要构建该默认目标，直接运行不带任何参数的 `docker buildx bake`：
 
 ```console
 $ docker buildx bake
 ```
 
-## Target properties
+## 目标可配置项
 
-The properties you can set for a target closely resemble the CLI flags for
-`docker build`, with a few additional properties that are specific to Bake.
+目标可设置的属性与 `docker build` 的 CLI 标志非常相近，同时还包含少数 Bake 专属属性。
 
-For all the properties you can set for a target, see the [Bake reference](/build/bake/reference#target).
+目标可设置属性的完整列表见 [Bake 参考](/build/bake/reference#target)。
 
-## Grouping targets
+## 目标分组
 
-You can group targets together using the `group` block. This is useful when you
-want to build multiple targets at once.
+你可以使用 `group` 块将多个目标分组，便于一次性构建：
 
 ```hcl {title=docker-bake.hcl}
 group "all" {
@@ -89,61 +84,55 @@ target "tests" {
 }
 ```
 
-To build all the targets in a group, pass the name of the group to the `bake`
-command.
+要构建某个分组中的全部目标，把该分组名传给 `bake` 命令：
 
 ```console
 $ docker buildx bake all
 ```
 
-## Pattern matching for targets and groups
+## 目标与分组的模式匹配
 
-Bake supports shell-style wildcard patterns when specifying target or grouped targets.
-This makes it easier to build multiple targets without listing each one explicitly.
+Bake 在指定目标或目标分组时支持类 shell 的通配符，使你无需逐一列出每个目标：
 
-Supported patterns:
+支持的模式：
 
-- `*` matches any sequence of characters
-- `?` matches any single character
-- `[abc]` matches any character in brackets
+- `*`：匹配任意长度的任意字符序列
+- `?`：匹配任意单个字符
+- `[abc]`：匹配方括号内给定集合中的任意一个字符
 
 > [!NOTE]
 >
-> Always wrap wildcard patterns in quotes. Without quotes, your shell will expand the
-> wildcard to match files in the current directory, which usually causes errors.
+> 请始终为通配符模式加上引号。若不加引号，shell 会先在当前目录对通配符做文件名展开，通常会导致错误。
 
-Examples: 
+示例： 
 
 ```console
-# Match all targets starting with 'foo-'
+# 匹配所有以 'foo-' 开头的目标
 $ docker buildx bake "foo-*"
 
-# Match all targets
+# 匹配所有目标
 $ docker buildx bake "*"
 
-# Matches: foo-baz, foo-caz, foo-daz, etc.
+# 匹配：foo-baz、foo-caz、foo-daz 等
 $ docker buildx bake "foo-?az"
 
-# Matches: foo-bar, boo-bar
+# 匹配：foo-bar、boo-bar
 $ docker buildx bake "[fb]oo-bar"
 
-# Matches: mtx-a-b-d, mtx-a-b-e, mtx-a-b-f
+# 匹配：mtx-a-b-d、mtx-a-b-e、mtx-a-b-f
 $ docker buildx bake "mtx-a-b-*"
 ``` 
 
-You can also combine multiple patterns:
+你也可以组合多个模式：
 
 ```console
 $ docker buildx bake "foo*" "tests"
 ```
 
-## Additional resources
+## 更多资源
 
-Refer to the following pages to learn more about Bake's features:
+想进一步了解 Bake 的能力，请参阅：
 
-- Learn how to use [variables](./variables.md) in Bake to make your build
-  configuration more flexible.
-- Learn how you can use matrices to build multiple images with different
-  configurations in [Matrices](./matrices.md).
-- Head to the [Bake file reference](/build/bake/reference/) to learn about all
-  the properties you can set in a Bake file, and its syntax.
+- 在 Bake 中使用[变量](./variables.md)，让构建配置更灵活。
+- 在 [矩阵](./matrices.md)中了解如何用矩阵一次构建多组不同配置的镜像。
+- 前往 [Bake 文件参考](/build/bake/reference/)，查看 Bake 文件支持的全部属性及语法。

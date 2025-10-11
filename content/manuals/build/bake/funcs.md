@@ -1,21 +1,20 @@
 ---
-title: Functions
+title: 函数
 weight: 60
-description: Learn about built-in and user-defined HCL functions with Bake
-keywords: build, buildx, bake, buildkit, hcl, functions, user-defined, built-in, custom, gocty
+description: 了解 Bake 中内置与自定义的 HCL 函数
+keywords: 构建, buildx, bake, buildkit, hcl, 函数, 自定义, 内置, 自定义函数, gocty
 aliases:
   - /build/customize/bake/hcl-funcs/
   - /build/bake/hcl-funcs/
 ---
 
-HCL functions are great for when you need to manipulate values in your build
-configuration in more complex ways than just concatenation or interpolation.
+当你需要以比简单拼接或插值更复杂的方式处理构建配置中的值时，HCL 函数非常有用。
 
-## Standard library
+## 标准库
 
-Bake ships with built-in support for the [standard library functions](/manuals/build/bake/stdlib.md).
+Bake 内置支持[标准库函数](/manuals/build/bake/stdlib.md)。
 
-The following example shows the `add` function:
+下面示例展示 `add` 函数：
 
 ```hcl {title=docker-bake.hcl}
 variable "TAG" {
@@ -56,13 +55,11 @@ $ docker buildx bake --print webapp
 }
 ```
 
-## User-defined functions
+## 自定义函数
 
-You can create [user-defined functions](https://github.com/hashicorp/hcl/tree/main/ext/userfunc)
-that do just what you want, if the built-in standard library functions don't
-meet your needs.
+当内置标准库函数无法满足需求时，你可以创建[自定义函数](https://github.com/hashicorp/hcl/tree/main/ext/userfunc)来精确完成所需逻辑。
 
-The following example defines an `increment` function.
+下面示例定义一个 `increment` 函数。
 
 ```hcl {title=docker-bake.hcl}
 function "increment" {
@@ -104,14 +101,13 @@ $ docker buildx bake --print webapp
 }
 ```
 
-## Variables in functions
+## 在函数中使用变量
 
-You can make references to [variables](./variables) and standard library
-functions inside your functions.
+你可以在函数内部引用[变量](./variables)与标准库函数。
 
-You can't reference user-defined functions from other functions.
+不能在函数中引用其他自定义函数。
 
-The following example uses a global variable (`REPO`) in a custom function.
+下面的示例在自定义函数中使用了一个全局变量（`REPO`）。
 
 ```hcl {title=docker-bake.hcl}
 # docker-bake.hcl
@@ -129,8 +125,7 @@ target "webapp" {
 }
 ```
 
-Printing the Bake file with the `--print` flag shows that the `tag` function
-uses the value of `REPO` to set the prefix of the tag.
+使用 `--print` 标志打印时可以看到，`tag` 函数使用 `REPO` 的值来设置标签的前缀。
 
 ```console
 $ docker buildx bake --print webapp

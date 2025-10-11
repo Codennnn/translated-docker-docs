@@ -1,14 +1,12 @@
 ---
-title: Inheritance in Bake
-linkTitle: Inheritance
+title: Bake 中的继承
+linkTitle: 继承
 weight: 30
-description: Learn how to inherit attributes from other targets in Bake
-keywords: buildx, buildkit, bake, inheritance, targets, attributes
+description: 了解如何在 Bake 中从其他目标继承属性
+keywords: buildx, buildkit, bake, 继承, 目标, 属性
 ---
 
-Targets can inherit attributes from other targets, using the `inherits`
-attribute. For example, imagine that you have a target that builds a Docker
-image for a development environment:
+目标可以使用 `inherits` 属性从其他目标继承属性。比如，假设你有一个用于开发环境的镜像构建目标：
 
 ```hcl {title=docker-bake.hcl}
 target "app-dev" {
@@ -23,10 +21,7 @@ target "app-dev" {
 }
 ```
 
-You can create a new target that uses the same build configuration, but with
-slightly different attributes for a production build. In this example, the
-`app-release` target inherits the `app-dev` target, but overrides the `tags`
-attribute and adds a new `platforms` attribute:
+你可以创建一个新的目标，复用相同的构建配置，但针对生产环境做一些属性调整。在下面的示例中，`app-release` 目标继承了 `app-dev`，同时覆盖了 `tags` 属性并新增 `platforms` 属性：
 
 ```hcl {title=docker-bake.hcl}
 target "app-release" {
@@ -36,12 +31,9 @@ target "app-release" {
 }
 ```
 
-## Common reusable targets
+## 通用可复用目标
 
-One common inheritance pattern is to define a common target that contains
-shared attributes for all or many of the build targets in the project. For
-example, the following `_common` target defines a common set of build
-arguments:
+一种常见的继承模式是定义一个公共目标，集中放置项目中全部或多数构建目标需要共享的属性。比如，下面的 `_common` 目标定义了一组通用的构建参数：
 
 ```hcl {title=docker-bake.hcl}
 target "_common" {
@@ -52,8 +44,7 @@ target "_common" {
 }
 ```
 
-You can then inherit the `_common` target in other targets to apply the shared
-attributes:
+随后，你可以在其他目标中继承 `_common`，以应用这些共享属性：
 
 ```hcl {title=docker-bake.hcl}
 target "lint" {
@@ -82,11 +73,9 @@ target "binaries" {
 }
 ```
 
-## Overriding inherited attributes
+## 覆盖继承的属性
 
-When a target inherits another target, it can override any of the inherited
-attributes. For example, the following target overrides the `args` attribute
-from the inherited target:
+当一个目标继承了另一个目标时，它可以覆盖任意继承而来的属性。比如，下面的目标覆盖了继承目标中的 `args` 属性：
 
 ```hcl {title=docker-bake.hcl}
 target "app-dev" {
@@ -98,17 +87,13 @@ target "app-dev" {
 }
 ```
 
-The `GO_VERSION` argument in `app-release` is set to `1.17`, overriding the
-`GO_VERSION` argument from the `app-dev` target.
+在 `app-dev` 中，`GO_VERSION` 被设置为 `1.17`，从而覆盖了 `_common` 目标中的同名参数。
 
-For more information about overriding attributes, see the [Overriding
-configurations](./overrides.md) page.
+关于覆盖属性的更多信息，参见[覆盖配置](./overrides.md)。
 
-## Inherit from multiple targets
+## 从多个目标继承
 
-The `inherits` attribute is a list, meaning you can reuse attributes from
-multiple other targets. In the following example, the app-release target reuses
-attributes from both the `app-dev` and `_common` targets.
+`inherits` 属性是一个列表，这意味着你可以同时复用多个其他目标的属性。下面的示例中，`app-release` 同时复用了 `app-dev` 与 `_common` 的属性：
 
 ```hcl {title=docker-bake.hcl}
 target "_common" {
@@ -137,23 +122,13 @@ target "app-release" {
 }
 ```
 
-When inheriting attributes from multiple targets and there's a conflict, the
-target that appears last in the inherits list takes precedence. The previous
-example defines the `BUILDKIT_CONTEXT_KEEP_GIT_DIR` in the `_common` target and
-overrides it in the `app-dev` target.
+当从多个目标继承且出现属性冲突时，`inherits` 列表中靠后的目标优先生效。上面的示例在 `_common` 中定义了 `BUILDKIT_CONTEXT_KEEP_GIT_DIR`，并在 `app-dev` 中进行了覆盖。
 
-The `app-release` target inherits both `app-dev` target and the `_common` target.
-The `BUILDKIT_CONTEXT_KEEP_GIT_DIR` argument is set to 0 in the `app-dev` target
-and 1 in the `_common` target. The `BUILDKIT_CONTEXT_KEEP_GIT_DIR` argument in
-the `app-release` target is set to 1, not 0, because the `_common` target appears
-last in the inherits list.
+`app-release` 同时继承了 `app-dev` 与 `_common`。由于 `app-dev` 中该参数为 0，而 `_common` 中为 1，且 `_common` 在 `inherits` 列表中靠后，因此 `app-release` 中该参数最终为 1（而非 0）。
 
-## Reusing single attributes from targets
+## 复用目标中的单个属性
 
-If you only want to inherit a single attribute from a target, you can reference
-an attribute from another target using dot notation. For example, in the
-following Bake file, the `bar` target reuses the `tags` attribute from the
-`foo` target:
+如果只想从某个目标复用单个属性，可以使用点号语法引用其他目标的属性。例如，下面的 Bake 文件中，`bar` 目标复用了 `foo` 目标的 `tags` 属性：
 
 ```hcl {title=docker-bake.hcl}
 target "foo" {

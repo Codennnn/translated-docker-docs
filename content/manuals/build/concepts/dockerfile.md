@@ -1,7 +1,7 @@
 ---
-title: Dockerfile overview
+title: Dockerfile 概览
 weight: 20
-description: Learn about Dockerfiles and how to use them with Docker Images to build and package your software
+description: 了解 Dockerfile，以及如何将其与镜像配合用于构建与打包软件
 keywords: build, buildx, buildkit, getting started, dockerfile
 aliases:
 - /build/hellobuild/
@@ -12,57 +12,42 @@ aliases:
 
 ## Dockerfile
 
-It all starts with a Dockerfile.
+一切从 Dockerfile 开始。
 
-Docker builds images by reading the instructions from a Dockerfile. A
-Dockerfile is a text file containing instructions for building your source
-code. The Dockerfile instruction syntax is defined by the specification
-reference in the [Dockerfile reference](/reference/dockerfile.md).
+Docker 通过读取 Dockerfile 中的指令来构建镜像。Dockerfile 是一个包含构建指令的文本文件，用于描述如何从源码构建你的应用。Dockerfile 指令语法由规范定义，详见 [Dockerfile 参考](/reference/dockerfile.md)。
 
-Here are the most common types of instructions:
+以下是最常见的指令类型：
 
-| Instruction                                               | Description                                                                                                                                                                                              |
+| 指令                                                      | 说明                                                                                                                                                                                                     |
 |-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`FROM <image>`](/reference/dockerfile.md#from)           | Defines a base for your image.                                                                                                                                                                           |
-| [`RUN <command>`](/reference/dockerfile.md#run)           | Executes any commands in a new layer on top of the current image and commits the result. `RUN` also has a shell form for running commands.                                                               |
-| [`WORKDIR <directory>`](/reference/dockerfile.md#workdir) | Sets the working directory for any `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, and `ADD` instructions that follow it in the Dockerfile.                                                                          |
-| [`COPY <src> <dest>`](/reference/dockerfile.md#copy)      | Copies new files or directories from `<src>` and adds them to the filesystem of the container at the path `<dest>`.                                                                                      |
-| [`CMD <command>`](/reference/dockerfile.md#cmd)           | Lets you define the default program that is run once you start the container based on this image. Each Dockerfile only has one `CMD`, and only the last `CMD` instance is respected when multiple exist. |
+| [`FROM <image>`](/reference/dockerfile.md#from)           | 为你的镜像定义基础镜像。                                                                                                                                                                                 |
+| [`RUN <command>`](/reference/dockerfile.md#run)           | 在当前镜像之上创建新的一层执行命令并提交结果。`RUN` 也支持以 shell 形式运行命令。                                                                                                                         |
+| [`WORKDIR <directory>`](/reference/dockerfile.md#workdir) | 为其后的 `RUN`、`CMD`、`ENTRYPOINT`、`COPY` 与 `ADD` 指令设置工作目录。                                                                                                                                    |
+| [`COPY <src> <dest>`](/reference/dockerfile.md#copy)      | 将 `<src>` 中的新文件或目录复制到容器文件系统的 `<dest>` 路径。                                                                                                                                            |
+| [`CMD <command>`](/reference/dockerfile.md#cmd)           | 定义基于该镜像启动容器时默认运行的程序。每个 Dockerfile 只能有一个 `CMD`；如果存在多个定义，仅最后一个会生效。                                                                                             |
 
-Dockerfiles are crucial inputs for image builds and can facilitate automated,
-multi-layer image builds based on your unique configurations. Dockerfiles can
-start simple and grow with your needs to support more complex scenarios.
+Dockerfile 是构建镜像的关键输入，可基于你的配置实现自动化、分层的镜像构建。Dockerfile 可以从简单开始，随着需求增加逐步演进以支持更复杂的场景。
 
 ### Filename
 
-The default filename to use for a Dockerfile is `Dockerfile`, without a file
-extension. Using the default name allows you to run the `docker build` command
-without having to specify additional command flags.
+Dockerfile 的默认文件名为 `Dockerfile`（无扩展名）。使用默认文件名可以在运行 `docker build` 时无需额外指定相关参数。
 
-Some projects may need distinct Dockerfiles for specific purposes. A common
-convention is to name these `<something>.Dockerfile`. You can specify the
-Dockerfile filename using the `--file` flag for the `docker build` command.
-Refer to the
-[`docker build` CLI reference](/reference/cli/docker/buildx/build.md#file)
-to learn about the `--file` flag.
+某些项目可能需要为特定目的准备不同的 Dockerfile。常见约定是命名为 `<something>.Dockerfile`。你可以在 `docker build` 命令中通过 `--file` 选项指定 Dockerfile 文件名。关于 `--file` 的更多信息，参见
+[`docker build` CLI 参考](/reference/cli/docker/buildx/build.md#file)。
 
 > [!NOTE]
 >
-> We recommend using the default (`Dockerfile`) for your project's primary
-> Dockerfile.
+> 建议你的项目主 Dockerfile 使用默认文件名（`Dockerfile`）。
 
 ## Docker images
 
-Docker images consist of layers. Each layer is the result of a build
-instruction in the Dockerfile. Layers are stacked sequentially, and each one is
-a delta representing the changes applied to the previous layer.
+Docker 镜像由多层组成。每一层对应 Dockerfile 中的一条构建指令。各层按顺序堆叠，每层都是相对于前一层的变更（delta）。
 
 ### Example
 
-Here's what a typical workflow for building applications with Docker looks like.
+下面展示一个使用 Docker 构建应用的典型工作流。
 
-The following example code shows a small "Hello World" application written in
-Python, using the Flask framework.
+以下示例代码是一个使用 Flask 框架编写的简易 Python“Hello World”应用：
 
 ```python
 from flask import Flask
@@ -73,15 +58,13 @@ def hello():
     return "Hello World!"
 ```
 
-In order to ship and deploy this application without Docker Build, you would
-need to make sure that:
+如果不使用 Docker Build 来交付和部署该应用，你需要确保：
 
-- The required runtime dependencies are installed on the server
-- The Python code gets uploaded to the server's filesystem
-- The server starts your application, using the necessary parameters
+- 服务器已安装所需的运行时依赖
+- 将 Python 代码上传到服务器的文件系统
+- 服务器以正确参数启动你的应用
 
-The following Dockerfile creates a container image, which has all the
-dependencies installed and that automatically starts your application.
+下面的 Dockerfile 会创建一个容器镜像，预装所有依赖，并可自动启动你的应用：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -100,27 +83,23 @@ EXPOSE 8000
 CMD ["flask", "run", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-Here's a breakdown of what this Dockerfile does:
+下面按模块解析这个 Dockerfile 的作用：
 
-- [Dockerfile syntax](#dockerfile-syntax)
-- [Base image](#base-image)
-- [Environment setup](#environment-setup)
-- [Comments](#comments)
-- [Installing dependencies](#installing-dependencies)
-- [Copying files](#copying-files)
-- [Setting environment variables](#setting-environment-variables)
-- [Exposed ports](#exposed-ports)
-- [Starting the application](#starting-the-application)
+- [Dockerfile 语法](#dockerfile-syntax)
+- [基础镜像](#base-image)
+- [环境准备](#environment-setup)
+- [注释](#comments)
+- [安装依赖](#installing-dependencies)
+- [复制文件](#copying-files)
+- [设置环境变量](#setting-environment-variables)
+- [暴露端口](#exposed-ports)
+- [启动应用](#starting-the-application)
 
 ### Dockerfile syntax
 
-The first line to add to a Dockerfile is a [`# syntax` parser directive](/reference/dockerfile.md#syntax).
-While optional, this directive instructs the Docker builder what syntax to use
-when parsing the Dockerfile, and allows older Docker versions with [BuildKit enabled](../buildkit/_index.md#getting-started)
-to use a specific [Dockerfile frontend](../buildkit/frontend.md) before
-starting the build. [Parser directives](/reference/dockerfile.md#parser-directives)
-must appear before any other comment, whitespace, or Dockerfile instruction in
-your Dockerfile, and should be the first line in Dockerfiles.
+Dockerfile 的第一行通常是 [`# syntax` 解析指令](/reference/dockerfile.md#syntax)。
+该指令虽为可选，但用于告知构建器在解析 Dockerfile 时采用的语法；同时也允许启用 [BuildKit](../buildkit/_index.md#getting-started) 的旧版 Docker 在构建开始前选择特定的 [Dockerfile 前端](../buildkit/frontend.md)。
+[解析指令](/reference/dockerfile.md#parser-directives) 必须出现在任何注释、空白或 Dockerfile 指令之前，且应当是 Dockerfile 的第一行。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -128,160 +107,119 @@ your Dockerfile, and should be the first line in Dockerfiles.
 
 > [!TIP]
 >
-> We recommend using `docker/dockerfile:1`, which always points to the latest
-> release of the version 1 syntax. BuildKit automatically checks for updates of
-> the syntax before building, making sure you are using the most current version.
+> 建议使用 `docker/dockerfile:1`，它始终指向 v1 语法的最新发布版本。BuildKit 会在构建前自动检查语法更新，确保你使用的是最新版本。
 
 ### Base image
 
-The line following the syntax directive defines what base image to use:
+语法指令之后的一行用于指定要使用的基础镜像：
 
 ```dockerfile
 FROM ubuntu:22.04
 ```
 
-The [`FROM` instruction](/reference/dockerfile.md#from) sets your base
-image to the 22.04 release of Ubuntu. All instructions that follow are executed
-in this base image: an Ubuntu environment. The notation `ubuntu:22.04`, follows
-the `name:tag` standard for naming Docker images. When you build images, you
-use this notation to name your images. There are many public images you can
-leverage in your projects, by importing them into your build steps using the
-Dockerfile `FROM` instruction.
+[`FROM` 指令](/reference/dockerfile.md#from) 将基础镜像设置为 Ubuntu 22.04。后续的所有指令都在该基础镜像（Ubuntu 环境）中执行。
+`ubuntu:22.04` 使用了镜像命名的 `name:tag` 约定。在构建镜像时，你同样会用这种方式为镜像命名。你可以在项目中通过 Dockerfile 的 `FROM` 指令引入大量公共镜像，以此复用其能力。
 
-[Docker Hub](https://hub.docker.com/search?image_filter=official&q=&type=image)
-contains a large set of official images that you can use for this purpose.
+[Docker Hub](https://hub.docker.com/search?image_filter=official&q=&type=image) 提供了数量可观的官方镜像，供你直接使用。
 
 ### Environment setup
 
-The following line executes a build command inside the base image.
+下面这行会在基础镜像中执行一个构建命令：
 
 ```dockerfile
 # install app dependencies
 RUN apt-get update && apt-get install -y python3 python3-pip
 ```
 
-This [`RUN` instruction](/reference/dockerfile.md#run) executes a
-shell in Ubuntu that updates the APT package index and installs Python tools in
-the container.
+该 [`RUN` 指令](/reference/dockerfile.md#run) 会在 Ubuntu 中启动一个 shell，更新 APT 包索引，并在容器内安装所需的 Python 工具。
 
 ### Comments
 
-Note the `# install app dependencies` line. This is a comment. Comments in
-Dockerfiles begin with the `#` symbol. As your Dockerfile evolves, comments can
-be instrumental to document how your Dockerfile works for any future readers
-and editors of the file, including your future self.
+注意 `# install app dependencies` 这一行。这是一条注释。Dockerfile 中的注释以 `#` 开头。随着 Dockerfile 的演进，合理的注释有助于为后续阅读与维护（包括未来的你）记录其工作方式。
 
 > [!NOTE]
 >
-> You might've noticed that comments are denoted using the same symbol as the
-> [syntax directive](#dockerfile-syntax) on the first line of the file.
-> The symbol is only interpreted as a directive if the pattern matches a
-> directive and appears at the beginning of the Dockerfile. Otherwise, it's
-> treated as a comment.
+> 你可能注意到，注释与文件第一行的[语法指令](#dockerfile-syntax)都使用了相同的符号 `#`。只有当模式匹配指令且出现在 Dockerfile 开头时，才会被解析为指令；否则会被视为普通注释。
 
 ### Installing dependencies
 
-The second `RUN` instruction installs the `flask` dependency required by the
-Python application.
+第二条 `RUN` 指令安装该 Python 应用所需的 `flask` 依赖：
 
 ```dockerfile
 RUN pip install flask==3.0.*
 ```
 
-A prerequisite for this instruction is that `pip` is installed into the build
-container. The first `RUN` command installs `pip`, which ensures that we can
-use the command to install the flask web framework.
+该指令的前提是构建容器中已安装 `pip`。第一条 `RUN` 命令已完成 `pip` 的安装，保证我们可以使用它来安装 Flask Web 框架。
 
 ### Copying files
 
-The next instruction uses the
-[`COPY` instruction](/reference/dockerfile.md#copy) to copy the
-`hello.py` file from the local build context into the root directory of our image.
+接下来使用 [`COPY` 指令](/reference/dockerfile.md#copy) 将本地构建上下文中的 `hello.py` 文件复制到镜像的根目录：
 
 ```dockerfile
 COPY hello.py /
 ```
 
-A [build context](./context.md) is the set of files that you can access
-in Dockerfile instructions such as `COPY` and `ADD`.
+[构建上下文](./context.md) 是指你在 Dockerfile 指令（如 `COPY`、`ADD`）中可以访问的文件集合。
 
-After the `COPY` instruction, the `hello.py` file is added to the filesystem
-of the build container.
+执行 `COPY` 后，`hello.py` 会被添加到构建容器的文件系统中。
 
 ### Setting environment variables
 
-If your application uses environment variables, you can set environment variables
-in your Docker build using the [`ENV` instruction](/reference/dockerfile.md#env).
+如果你的应用使用环境变量，可以通过 [`ENV` 指令](/reference/dockerfile.md#env) 在构建过程中设置它们：
 
 ```dockerfile
 ENV FLASK_APP=hello
 ```
 
-This sets a Linux environment variable we'll need later. Flask, the framework
-used in this example, uses this variable to start the application. Without this,
-flask wouldn't know where to find our application to be able to run it.
+这会设置一个稍后需要的 Linux 环境变量。示例中使用的 Flask 框架会依赖该变量来启动应用。没有它，Flask 将无法找到并运行我们的应用。
 
 ### Exposed ports
 
-The [`EXPOSE` instruction](/reference/dockerfile.md#expose) marks that
-our final image has a service listening on port `8000`.
+[`EXPOSE` 指令](/reference/dockerfile.md#expose) 用于声明最终镜像有一个服务监听在 `8000` 端口。
 
 ```dockerfile
 EXPOSE 8000
 ```
 
-This instruction isn't required, but it is a good practice and helps tools and
-team members understand what this application is doing.
+该指令并非必需，但属于良好实践，有助于工具与团队成员理解应用行为。
 
 ### Starting the application
 
-Finally, [`CMD` instruction](/reference/dockerfile.md#cmd) sets the
-command that is run when the user starts a container based on this image.
+最后，[`CMD` 指令](/reference/dockerfile.md#cmd) 用于设置基于该镜像启动容器时执行的命令：
 
 ```dockerfile
 CMD ["flask", "run", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-This command starts the flask development server listening on all addresses
-on port `8000`. The example here uses the "exec form" version of `CMD`.
-It's also possible to use the "shell form":
+上述命令会启动 Flask 开发服务器，监听在所有地址的 `8000` 端口。这里使用的是 `CMD` 的“exec 形式”。你也可以使用“shell 形式”：
 
 ```dockerfile
 CMD flask run --host 0.0.0.0 --port 8000
 ```
 
-There are subtle differences between these two versions,
-for example in how they trap signals like `SIGTERM` and `SIGKILL`.
-For more information about these differences, see
-[Shell and exec form](/reference/dockerfile.md#shell-and-exec-form)
+两种形式之间存在一些细微差异，例如处理 `SIGTERM`、`SIGKILL` 等信号的方式。更多差异说明，参见
+[Shell 与 exec 形式](/reference/dockerfile.md#shell-and-exec-form)。
 
 ## Building
 
-To build a container image using the Dockerfile example from the
-[previous section](#example), you use the `docker build` command:
+要基于[上一节](#example)的 Dockerfile 构建容器镜像，请使用 `docker build` 命令：
 
 ```console
 $ docker build -t test:latest .
 ```
 
-The `-t test:latest` option specifies the name and tag of the image.
+选项 `-t test:latest` 用于指定镜像的名称与标签。
 
-The single dot (`.`) at the end of the command sets the
-[build context](./context.md) to the current directory. This means that the
-build expects to find the Dockerfile and the `hello.py` file in the directory
-where the command is invoked. If those files aren't there, the build fails.
+命令末尾的一个点（`.`）将[构建上下文](./context.md)指定为当前目录。这意味着构建会在执行命令的目录中查找 Dockerfile 与 `hello.py` 文件；如果它们不存在，构建会失败。
 
-After the image has been built, you can run the application as a container with
-`docker run`, specifying the image name:
+镜像构建完成后，你可以使用 `docker run` 并指定镜像名称，以容器的形式运行该应用：
 
 ```console
 $ docker run -p 127.0.0.1:8000:8000 test:latest
 ```
 
-This publishes the container's port 8000 to `http://localhost:8000` on the
-Docker host.
+这会将容器的 8000 端口映射到 Docker 主机上的 `http://localhost:8000`。
 
 > [!TIP]
 >
-> To improve linting, code navigation, and vulnerability scanning of your Dockerfiles in Visual Studio Code
-> see [Docker VS Code Extension](https://marketplace.visualstudio.com/items?itemName=docker.docker).
+> 如果你在 Visual Studio Code 中编写 Dockerfile，想改进语法检查、代码导航与漏洞扫描能力，参见 [Docker VS Code 扩展](https://marketplace.visualstudio.com/items?itemName=docker.docker)。

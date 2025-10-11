@@ -1,13 +1,12 @@
 ---
-title: Building with Bake from a Compose file
-description: Build your compose services with Bake
+title: 从 Compose 文件使用 Bake 构建
+description: 使用 Bake 构建你的 Compose 服务
 keywords: build, buildx, bake, buildkit, compose, yaml
 aliases:
   - /build/customize/bake/compose-file/
 ---
 
-Bake supports the [Compose file format](/reference/compose-file/_index.md)
-to parse a Compose file and translate each service to a [target](reference.md#target).
+Bake 支持 [Compose 文件格式](/reference/compose-file/_index.md)，可以解析 Compose 文件，并将每个服务转换为一个[目标](reference.md#target)。
 
 ```yaml
 # compose.yaml
@@ -92,18 +91,16 @@ $ docker buildx bake --print
 }
 ```
 
-The compose format has some limitations compared to the HCL format:
+与 HCL 格式相比，Compose 格式存在一些限制：
 
-- Specifying variables or global scope attributes is not yet supported
-- `inherits` service field is not supported, but you can use [YAML anchors](/reference/compose-file/fragments.md)
-  to reference other services, as demonstrated in the previous example with `&build-dev`.
+- 暂不支持定义变量或全局作用域属性
+- 不支持 `inherits` 服务字段，但你可以使用 [YAML 锚点](/reference/compose-file/fragments.md)
+  引用其他服务，如上例中的 `&build-dev` 所示。
 
-## `.env` file
+## `.env` 文件
 
-You can declare default environment variables in an environment file named
-`.env`. This file will be loaded from the current working directory,
-where the command is executed and applied to compose definitions passed
-with `-f`.
+你可以在名为 `.env` 的环境文件中声明默认环境变量。该文件会从执行命令的当前工作目录中加载，
+并应用到通过 `-f` 传入的 Compose 定义。
 
 ```yaml
 # compose.yaml
@@ -142,14 +139,12 @@ $ docker buildx bake --print
 
 > [!NOTE]
 >
-> System environment variables take precedence over environment variables
-> in `.env` file.
+> 系统环境变量的优先级高于 `.env` 文件中的同名变量。
 
-## Extension field with `x-bake`
+## 使用 `x-bake` 的扩展字段
 
-Where some fields are not available in the compose specification, you can use
-the [special extension](/reference/compose-file/extension.md) field
-`x-bake` in your compose file to evaluate extra fields:
+当 Compose 规范未提供某些字段时，你可以在 Compose 文件中使用
+[`x-bake` 扩展字段](/reference/compose-file/extension.md) 来补充额外的构建选项：
 
 ```yaml
 # compose.yaml
@@ -261,7 +256,7 @@ $ docker buildx bake --print
 }
 ```
 
-Complete list of valid fields for `x-bake`:
+可在 `x-bake` 中使用的字段：
 
 - `cache-from`
 - `cache-to`

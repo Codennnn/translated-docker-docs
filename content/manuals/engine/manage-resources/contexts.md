@@ -1,44 +1,41 @@
 ---
-title: Docker contexts
-description: Learn about managing multiple daemons from a single client with contexts
+title: Docker 上下文
+description: 了解如何使用上下文在单个客户端管理多个守护进程
 keywords: engine, context, cli, daemons, remote
 aliases:
   - /engine/context/working-with-contexts/
 ---
 
-## Introduction
+## 简介
 
-This guide shows how you can use contexts to manage Docker daemons from a single client.
+本指南介绍如何使用“上下文”（context）让一个 Docker 客户端同时管理多个 Docker 守护进程。
 
-Each context contains all information required to manage resources on the daemon.
-The `docker context` command makes it easy to configure these contexts and switch between them.
+每个上下文都包含与守护进程上资源交互所需的全部信息。`docker context` 命令可帮助你轻松配置与切换上下文。
 
-As an example, a single Docker client might be configured with two contexts:
+例如，一个 Docker 客户端可以同时配置两个上下文：
 
-- A default context running locally
-- A remote, shared context
+- 本地运行的默认上下文
+- 远程的共享上下文
 
-Once these contexts are configured,
-you can use the `docker context use <context-name>` command
-to switch between them.
+完成配置后，你可以使用 `docker context use <context-name>` 在它们之间切换。
 
-## Prerequisites
+## 前提条件
 
-To follow the examples in this guide, you'll need:
+要跟随本文示例操作，你需要：
 
-- A Docker client that supports the top-level `context` command
+- 支持顶级 `context` 命令的 Docker 客户端
 
-Run `docker context` to verify that your Docker client supports contexts.
+运行 `docker context` 验证你的 Docker 客户端是否支持上下文功能。
 
-## The anatomy of a context
+## 上下文的组成
 
-A context is a combination of several properties. These include:
+一个上下文由多项属性构成，包括：
 
-- Name and description
-- Endpoint configuration
-- TLS info
+- 名称与描述
+- 端点配置
+- TLS 信息
 
-To list available contexts, use the `docker context ls` command.
+使用 `docker context ls` 列出所有可用上下文。
 
 ```console
 $ docker context ls
@@ -46,16 +43,11 @@ NAME        DESCRIPTION                               DOCKER ENDPOINT           
 default *                                             unix:///var/run/docker.sock
 ```
 
-This shows a single context called "default".
-It's configured to talk to a daemon through the local `/var/run/docker.sock` Unix socket.
+上述结果展示了一个名为 "default" 的上下文。它通过本地的 Unix 套接字 `/var/run/docker.sock` 与守护进程通信。
 
-The asterisk in the `NAME` column indicates that this is the active context.
-This means all `docker` commands run against this context,
-unless overridden with environment variables such as `DOCKER_HOST` and `DOCKER_CONTEXT`,
-or on the command-line with the `--context` and `--host` flags.
+`NAME` 列中的星号表示该上下文处于激活状态。也就是说，所有 `docker` 命令默认都会作用在该上下文上，除非你通过 `DOCKER_HOST`、`DOCKER_CONTEXT` 环境变量，或命令行的 `--context`、`--host` 标志进行覆盖。
 
-Dig a bit deeper with `docker context inspect`.
-The following example shows how to inspect the context called `default`.
+你可以使用 `docker context inspect` 深入查看详情。以下示例展示如何检查名为 `default` 的上下文：
 
 ```console
 $ docker context inspect default
@@ -78,12 +70,11 @@ $ docker context inspect default
 ]
 ```
 
-### Create a new context
+### 创建新上下文
 
-You can create new contexts with the `docker context create` command.
+使用 `docker context create` 可以创建新的上下文。
 
-The following example creates a new context called `docker-test` and specifies
-the host endpoint of the context to TCP socket `tcp://docker:2375`.
+下面的示例创建一个名为 `docker-test` 的上下文，并将其主机端点设置为 TCP 套接字 `tcp://docker:2375`。
 
 ```console
 $ docker context create docker-test --docker host=tcp://docker:2375
@@ -91,10 +82,10 @@ docker-test
 Successfully created context "docker-test"
 ```
 
-The new context is stored in a `meta.json` file below `~/.docker/contexts/`.
-Each new context you create gets its own `meta.json` stored in a dedicated sub-directory of `~/.docker/contexts/`.
+新建的上下文会存储在 `~/.docker/contexts/` 目录下的 `meta.json` 文件中。
+你创建的每个上下文都会在 `~/.docker/contexts/` 的独立子目录中拥有自己的 `meta.json` 文件。
 
-You can view the new context with `docker context ls` and `docker context inspect <context-name>`.
+可以通过 `docker context ls` 和 `docker context inspect <context-name>` 查看新上下文。
 
 ```console
 $ docker context ls
@@ -103,13 +94,13 @@ default *                                             unix:///var/run/docker.soc
 docker-test                                           tcp://docker:2375
 ```
 
-The current context is indicated with an asterisk ("\*").
+当前正在使用的上下文会以星号（"*"）标识。
 
-## Use a different context
+## 使用其他上下文
 
-You can use `docker context use` to switch between contexts.
+你可以通过 `docker context use` 在上下文之间切换。
 
-The following command will switch the `docker` CLI to use the `docker-test` context.
+以下命令将把 `docker` CLI 切换为使用 `docker-test` 上下文：
 
 ```console
 $ docker context use docker-test
@@ -117,7 +108,7 @@ docker-test
 Current context is now "docker-test"
 ```
 
-Verify the operation by listing all contexts and ensuring the asterisk ("\*") is against the `docker-test` context.
+再次列出上下文，确认星号（"*"）已显示在 `docker-test` 上下文上：
 
 ```console
 $ docker context ls
@@ -126,12 +117,11 @@ default                                               unix:///var/run/docker.soc
 docker-test *                                         tcp://docker:2375
 ```
 
-`docker` commands will now target endpoints defined in the `docker-test` context.
+现在，`docker` 命令会指向 `docker-test` 上下文中定义的端点。
 
-You can also set the current context using the `DOCKER_CONTEXT` environment variable.
-The environment variable overrides the context set with `docker context use`.
+也可以通过 `DOCKER_CONTEXT` 环境变量设置当前上下文。该变量会覆盖通过 `docker context use` 设置的值。
 
-Use the appropriate command below to set the context to `docker-test` using an environment variable.
+根据你的环境，使用下面合适的命令把上下文设置为 `docker-test`：
 
 {{< tabs >}}
 {{< tab name="PowerShell" >}}
@@ -150,42 +140,36 @@ $ export DOCKER_CONTEXT=docker-test
 {{< /tab >}}
 {{< /tabs >}}
 
-Run `docker context ls` to verify that the `docker-test` context is now the
-active context.
+运行 `docker context ls` 验证 `docker-test` 已成为当前激活的上下文。
 
-You can also use the global `--context` flag to override the context.
-The following command uses a context called `production`.
+你也可以使用全局 `--context` 标志临时覆盖上下文。以下命令使用名为 `production` 的上下文：
 
 ```console
 $ docker --context production container ls
 ```
 
-## Exporting and importing Docker contexts
+## 导出与导入 Docker 上下文
 
-You can use the `docker context export` and `docker context import` commands
-to export and import contexts on different hosts.
+你可以使用 `docker context export` 与 `docker context import` 在不同主机之间导出/导入上下文。
 
-The `docker context export` command exports an existing context to a file.
-The file can be imported on any host that has the `docker` client installed.
+`docker context export` 会把现有上下文导出为一个文件；任何安装了 `docker` 客户端的主机都可以导入它。
 
-### Exporting and importing a context
+### 导出与导入示例
 
-The following example exports an existing context called `docker-test`.
-It will be written to a file called `docker-test.dockercontext`.
+下面示例导出名为 `docker-test` 的上下文，写入到 `docker-test.dockercontext` 文件：
 
 ```console
 $ docker context export docker-test
 Written file "docker-test.dockercontext"
 ```
 
-Check the contents of the export file.
+你也可以查看导出文件的内容：
 
 ```console
 $ cat docker-test.dockercontext
 ```
 
-Import this file on another host using `docker context import`
-to create context with the same configuration.
+在另一台主机上使用 `docker context import` 导入该文件，即可创建相同配置的上下文：
 
 ```console
 $ docker context import docker-test docker-test.dockercontext
@@ -193,15 +177,15 @@ docker-test
 Successfully imported context "docker-test"
 ```
 
-You can verify that the context was imported with `docker context ls`.
+可通过 `docker context ls` 验证导入是否成功。
 
-The format of the import command is `docker context import <context-name> <context-file>`.
+导入命令格式：`docker context import <context-name> <context-file>`。
 
-## Updating a context
+## 更新上下文
 
-You can use `docker context update` to update fields in an existing context.
+使用 `docker context update` 可以更新已有上下文中的字段。
 
-The following example updates the description field in the existing `docker-test` context.
+以下示例把已存在的 `docker-test` 上下文的描述字段更新为 "Test context"：
 
 ```console
 $ docker context update docker-test --description "Test context"

@@ -1,116 +1,89 @@
 ---
-description: Learn about labels, a tool to manage metadata on Docker objects.
+description: 了解标签（labels），这是一种用于管理 Docker 对象元数据的机制。
 keywords: labels, metadata, docker, annotations
-title: Docker object labels
+title: Docker 对象标签
 aliases:
   - /engine/userguide/labels-custom-metadata/
   - /config/labels-custom-metadata/
 ---
 
-Labels are a mechanism for applying metadata to Docker objects, including:
+标签是一种将元数据应用到 Docker 对象上的机制，适用于以下对象：
 
-- Images
-- Containers
-- Local daemons
-- Volumes
-- Networks
-- Swarm nodes
-- Swarm services
+- 镜像（Images）
+- 容器（Containers）
+- 本地守护进程（Local daemons）
+- 卷（Volumes）
+- 网络（Networks）
+- Swarm 节点（Swarm nodes）
+- Swarm 服务（Swarm services）
 
-You can use labels to organize your images, record licensing information, annotate
-relationships between containers, volumes, and networks, or in any way that makes
-sense for your business or application.
+你可以使用标签来组织镜像、记录许可信息、标注容器/卷/网络之间的关系，或以任何适合你业务与应用的方式来管理对象。
 
-## Label keys and values
+## 标签键与值
 
-A label is a key-value pair, stored as a string. You can specify multiple labels
-for an object, but each key must be unique within an object. If the
-same key is given multiple values, the most-recently-written value overwrites
-all previous values.
+标签是一个以字符串形式存储的键值对。你可以为同一个对象指定多个标签，但在同一对象内每个键必须唯一。如果同一个键被多次赋值，则最新写入的值会覆盖之前的值。
 
-### Key format recommendations
+### 键名格式建议
 
-A label key is the left-hand side of the key-value pair. Keys are alphanumeric
-strings which may contain periods (`.`), underscores (`_`), slashes (`/`), and hyphens (`-`). Most Docker users use
-images created by other organizations, and the following guidelines help to
-prevent inadvertent duplication of labels across objects, especially if you plan
-to use labels as a mechanism for automation.
+标签键是键值对的左侧。键名是字母数字字符串，可包含点（`.`）、下划线（`_`）、斜杠（`/`）和连字符（`-`）。多数 Docker 用户会使用由其他组织创建的镜像，遵循以下准则有助于避免在不同对象之间意外重复标签，尤其当你计划将标签用于自动化时：
 
-- Authors of third-party tools should prefix each label key with the
-  reverse DNS notation of a domain they own, such as `com.example.some-label`.
+- 第三方工具的作者应当在每个标签键前加上自己拥有域名的反向 DNS 前缀，例如 `com.example.some-label`。
 
-- Don't use a domain in your label key without the domain owner's permission.
+- 未经域名所有者许可，请勿在标签键中使用该域名。
 
-- The `com.docker.*`, `io.docker.*`, and `org.dockerproject.*` namespaces are
-  reserved by Docker for internal use.
+- `com.docker.*`、`io.docker.*` 和 `org.dockerproject.*` 命名空间由 Docker 保留用于内部用途。
 
-- Label keys should begin and end with a lower-case letter and should only
-  contain lower-case alphanumeric characters, the period character (`.`), and
-  the hyphen character (`-`). Consecutive periods or hyphens aren't allowed.
+- 标签键应以小写字母开头和结尾，且仅包含小写字母数字、点（`.`）和连字符（`-`）。不允许连续的点或连字符。
 
-- The period character (`.`) separates namespace "fields". Label keys without
-  namespaces are reserved for CLI use, allowing users of the CLI to interactively
-  label Docker objects using shorter typing-friendly strings.
+- 点（`.`）用于分隔命名空间“字段”。无命名空间的标签键保留给 CLI 使用，便于用户在交互式场景中以更短的、便于输入的字符串为 Docker 对象打标签。
 
-These guidelines aren't currently enforced and additional guidelines may apply
-to specific use cases.
+上述准则当前并非强制执行，特定用例可能还需遵循其他约束。
 
-### Value guidelines
+### 值的建议
 
-Label values can contain any data type that can be represented as a string,
-including (but not limited to) JSON, XML, CSV, or YAML. The only requirement is
-that the value be serialized to a string first, using a mechanism specific to
-the type of structure. For instance, to serialize JSON into a string, you might
-use the `JSON.stringify()` JavaScript method.
+标签的值可以是任何可序列化为字符串的数据类型，包括（但不限于）JSON、XML、CSV 或 YAML。唯一的要求是：先将该值序列化为字符串，序列化方式取决于其数据结构类型。例如，要把 JSON 序列化为字符串，可以使用 JavaScript 的 `JSON.stringify()` 方法。
 
-Since Docker doesn't deserialize the value, you can't treat a JSON or XML
-document as a nested structure when querying or filtering by label value unless
-you build this functionality into third-party tooling.
+由于 Docker 不会反序列化标签值，因此在按标签值进行查询或过滤时，不能将 JSON 或 XML 文档当作嵌套结构来处理，除非你在第三方工具中自行实现相关能力。
 
-## Manage labels on objects
+## 在对象上管理标签
 
-Each type of object with support for labels has mechanisms for adding and
-managing them and using them as they relate to that type of object. These links
-provide a good place to start learning about how you can use labels in your
-Docker deployments.
+每种支持标签的对象类型，都提供了添加、管理以及结合该对象场景使用标签的机制。下面的链接是了解如何在部署中使用标签的良好起点：
 
-Labels on images, containers, local daemons, volumes, and networks are static for
-the lifetime of the object. To change these labels you must recreate the object.
-Labels on Swarm nodes and services can be updated dynamically.
+镜像、容器、本地守护进程、卷与网络上的标签在对象整个生命周期内是静态的。如需修改这些标签，你必须重新创建对象。Swarm 节点与服务上的标签则可以动态更新。
 
-- Images and containers
+ - 镜像与容器
 
-  - [Adding labels to images](/reference/dockerfile.md#label)
-  - [Overriding a container's labels at runtime](/reference/cli/docker/container/run.md#label)
-  - [Inspecting labels on images or containers](/reference/cli/docker/inspect.md)
-  - [Filtering images by label](/reference/cli/docker/image/ls.md#filter)
-  - [Filtering containers by label](/reference/cli/docker/container/ls.md#filter)
+  - [为镜像添加标签](/reference/dockerfile.md#label)
+  - [在运行时覆盖容器的标签](/reference/cli/docker/container/run.md#label)
+  - [查看镜像或容器上的标签](/reference/cli/docker/inspect.md)
+  - [按标签筛选镜像](/reference/cli/docker/image/ls.md#filter)
+  - [按标签筛选容器](/reference/cli/docker/container/ls.md#filter)
 
-- Local Docker daemons
+ - 本地 Docker 守护进程
 
-  - [Adding labels to a Docker daemon at runtime](/reference/cli/dockerd.md)
-  - [Inspecting a Docker daemon's labels](/reference/cli/docker/system/info.md)
+  - [在运行时为 Docker 守护进程添加标签](/reference/cli/dockerd.md)
+  - [查看 Docker 守护进程的标签](/reference/cli/docker/system/info.md)
 
-- Volumes
+ - 卷
 
-  - [Adding labels to volumes](/reference/cli/docker/volume/create.md)
-  - [Inspecting a volume's labels](/reference/cli/docker/volume/inspect.md)
-  - [Filtering volumes by label](/reference/cli/docker/volume/ls.md#filter)
+  - [为卷添加标签](/reference/cli/docker/volume/create.md)
+  - [查看卷的标签](/reference/cli/docker/volume/inspect.md)
+  - [按标签筛选卷](/reference/cli/docker/volume/ls.md#filter)
 
-- Networks
+ - 网络
 
-  - [Adding labels to a network](/reference/cli/docker/network/create.md)
-  - [Inspecting a network's labels](/reference/cli/docker/network/inspect.md)
-  - [Filtering networks by label](/reference/cli/docker/network/ls.md#filter)
+  - [为网络添加标签](/reference/cli/docker/network/create.md)
+  - [查看网络的标签](/reference/cli/docker/network/inspect.md)
+  - [按标签筛选网络](/reference/cli/docker/network/ls.md#filter)
 
-- Swarm nodes
+ - Swarm 节点
 
-  - [Adding or updating a Swarm node's labels](/reference/cli/docker/node/update.md#label-add)
-  - [Inspecting a Swarm node's labels](/reference/cli/docker/node/inspect.md)
-  - [Filtering Swarm nodes by label](/reference/cli/docker/node/ls.md#filter)
+  - [添加或更新 Swarm 节点的标签](/reference/cli/docker/node/update.md#label-add)
+  - [查看 Swarm 节点的标签](/reference/cli/docker/node/inspect.md)
+  - [按标签筛选 Swarm 节点](/reference/cli/docker/node/ls.md#filter)
 
-- Swarm services
-  - [Adding labels when creating a Swarm service](/reference/cli/docker/service/create.md#label)
-  - [Updating a Swarm service's labels](/reference/cli/docker/service/update.md)
-  - [Inspecting a Swarm service's labels](/reference/cli/docker/service/inspect.md)
-  - [Filtering Swarm services by label](/reference/cli/docker/service/ls.md#filter)
+ - Swarm 服务
+  - [创建 Swarm 服务时添加标签](/reference/cli/docker/service/create.md#label)
+  - [更新 Swarm 服务的标签](/reference/cli/docker/service/update.md)
+  - [查看 Swarm 服务的标签](/reference/cli/docker/service/inspect.md)
+  - [按标签筛选 Swarm 服务](/reference/cli/docker/service/ls.md#filter)

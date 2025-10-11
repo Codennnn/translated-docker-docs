@@ -1,28 +1,24 @@
 ---
-title: Multi-stage builds
-linkTitle: Multi-stage
+title: 多阶段构建
+linkTitle: 多阶段
 weight: 10
 description: |
-  Learn about multi-stage builds and how you can use
-  them to improve your builds and get smaller images
+  了解多阶段构建的概念与用法，帮助优化构建流程并生成更小的镜像
 keywords: build, best practices
 aliases:
 - /engine/userguide/eng-image/multistage-build/
 - /develop/develop-images/multistage-build/
 ---
 
-Multi-stage builds are useful to anyone who has struggled to optimize
-Dockerfiles while keeping them easy to read and maintain.
+如果你正在努力优化 Dockerfile，同时又希望保持其可读性与可维护性，那么多阶段构建（multi-stage builds）将非常有帮助。
 
-## Use multi-stage builds
+## 使用多阶段构建
 
-With multi-stage builds, you use multiple `FROM` statements in your Dockerfile.
-Each `FROM` instruction can use a different base, and each of them begins a new
-stage of the build. You can selectively copy artifacts from one stage to
-another, leaving behind everything you don't want in the final image.
+在多阶段构建中，你可以在 Dockerfile 中使用多个 `FROM` 指令。
+每个 `FROM` 指令都可以使用不同的基础镜像，并从该指令开始一个新的构建阶段。
+你可以在阶段之间有选择地复制构建产物，只将需要的内容带入下一个阶段，把不需要的内容留在前面的阶段，避免进入最终镜像。
 
-The following Dockerfile has two separate stages: one for building a binary,
-and another where the binary gets copied from the first stage into the next stage.
+下面这个 Dockerfile 包含两个独立阶段：第一阶段用于编译生成二进制文件；第二阶段只从第一阶段复制该二进制文件。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -44,30 +40,24 @@ COPY --from=0 /bin/hello /bin/hello
 CMD ["/bin/hello"]
 ```
 
-You only need the single Dockerfile. No need for a separate build script. Just
-run `docker build`.
+只需一个 Dockerfile 即可，无需额外的构建脚本。直接运行 `docker build` 即可。
 
 ```console
 $ docker build -t hello .
 ```
 
-The end result is a tiny production image with nothing but the binary inside.
-None of the build tools required to build the application are included in the
-resulting image.
+最终你会得到一个极小的生产镜像，其中只包含二进制文件本身。
+用于构建应用的工具链不会进入最终镜像。
 
-How does it work? The second `FROM` instruction starts a new build stage with
-the `scratch` image as its base. The `COPY --from=0` line copies just the
-built artifact from the previous stage into this new stage. The Go SDK and any
-intermediate artifacts are left behind, and not saved in the final image.
+它是如何做到的？第二个 `FROM` 指令以 `scratch` 作为基础镜像开启了一个新的构建阶段。
+`COPY --from=0` 只从前一阶段复制已构建好的产物。Go SDK 以及其他中间产物都留在前一阶段，不会被保存到最终镜像中。
 
-## Name your build stages
+## 为构建阶段命名
 
-By default, the stages aren't named, and you refer to them by their integer
-number, starting with 0 for the first `FROM` instruction. However, you can
-name your stages, by adding an `AS <NAME>` to the `FROM` instruction. This
-example improves the previous one by naming the stages and using the name in
-the `COPY` instruction. This means that even if the instructions in your
-Dockerfile are re-ordered later, the `COPY` doesn't break.
+默认情况下，阶段没有名称，你需要用序号来引用它们（第一个 `FROM` 的阶段序号为 0）。
+你也可以通过在 `FROM` 指令后添加 `AS <NAME>` 来为阶段命名。
+下面的示例在前文基础上为阶段命名，并在 `COPY` 指令中使用该名称。
+这样即使将来你调整了 Dockerfile 中指令的顺序，`COPY` 也不会出错。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -89,41 +79,34 @@ COPY --from=build /bin/hello /bin/hello
 CMD ["/bin/hello"]
 ```
 
-## Stop at a specific build stage
+## 在指定阶段停止构建
 
-When you build your image, you don't necessarily need to build the entire
-Dockerfile including every stage. You can specify a target build stage. The
-following command assumes you are using the previous `Dockerfile` but stops at
-the stage named `build`:
+构建镜像时，并不一定要执行 Dockerfile 中的所有阶段。你可以指定一个目标阶段（target）。
+下面的命令基于上一个示例的 `Dockerfile`，但在名为 `build` 的阶段处停止：
 
 ```console
 $ docker build --target build -t hello .
 ```
 
-A few scenarios where this might be useful are:
+这种方式适用于以下场景：
 
-- Debugging a specific build stage
-- Using a `debug` stage with all debugging symbols or tools enabled, and a
-  lean `production` stage
-- Using a `testing` stage in which your app gets populated with test data, but
-  building for production using a different stage which uses real data
+- 调试某个特定构建阶段
+- 使用包含调试符号或工具的 `debug` 阶段，同时保留一个精简的 `production` 阶段
+- 使用 `testing` 阶段向应用注入测试数据，但在生产构建时改用使用真实数据的其他阶段
 
-## Use an external image as a stage
+## 将外部镜像用作阶段
 
-When using multi-stage builds, you aren't limited to copying from stages you
-created earlier in your Dockerfile. You can use the `COPY --from` instruction to
-copy from a separate image, either using the local image name, a tag available
-locally or on a Docker registry, or a tag ID. The Docker client pulls the image
-if necessary and copies the artifact from there. The syntax is:
+在多阶段构建中，你不仅可以从本 Dockerfile 中较早的阶段复制文件，还可以通过 `COPY --from` 从独立的镜像复制。
+可以使用本地镜像名、本地或仓库（registry）可用的标签，或镜像的摘要（ID）。
+如有需要，Docker 客户端会先拉取该镜像，然后从中复制相应的产物。语法如下：
 
 ```dockerfile
 COPY --from=nginx:latest /etc/nginx/nginx.conf /nginx.conf
 ```
 
-## Use a previous stage as a new stage
+## 复用已有阶段作为新阶段
 
-You can pick up where a previous stage left off by referring to it when using
-the `FROM` directive. For example:
+在使用 `FROM` 指令时，你可以引用之前的阶段，从该阶段继续构建。例如：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -140,16 +123,14 @@ COPY source2.cpp source.cpp
 RUN g++ -o /binary source.cpp
 ```
 
-## Differences between legacy builder and BuildKit
+## 传统构建器与 BuildKit 的差异
 
-The legacy Docker Engine builder processes all stages of a Dockerfile leading
-up to the selected `--target`. It will build a stage even if the selected
-target doesn't depend on that stage.
+传统的 Docker Engine 构建器会处理 Dockerfile 中直到所选 `--target` 的所有阶段。
+即使目标阶段并不依赖某个阶段，也会把它构建出来。
 
-[BuildKit](../buildkit/_index.md) only builds the stages that the target stage
-depends on.
+[BuildKit](../buildkit/_index.md) 只会构建目标阶段所依赖的那些阶段。
 
-For example, given the following Dockerfile:
+例如，给定如下 Dockerfile：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -163,9 +144,8 @@ FROM base AS stage2
 RUN echo "stage2"
 ```
 
-With [BuildKit enabled](../buildkit/_index.md#getting-started), building the
-`stage2` target in this Dockerfile means only `base` and `stage2` are processed.
-There is no dependency on `stage1`, so it's skipped.
+在[启用 BuildKit](../buildkit/_index.md#getting-started) 的情况下，构建该 Dockerfile 的 `stage2` 目标时，只有 `base` 与 `stage2` 会被处理。
+由于 `stage2` 不依赖 `stage1`，因此 `stage1` 会被跳过。
 
 ```console
 $ DOCKER_BUILDKIT=1 docker build --no-cache -f Dockerfile --target stage2 .
@@ -183,8 +163,7 @@ $ DOCKER_BUILDKIT=1 docker build --no-cache -f Dockerfile --target stage2 .
  => => writing image sha256:f55003b607cef37614f607f0728e6fd4d113a4bf7ef12210da338c716f2cfd15    0.0s
 ```
 
-On the other hand, building the same target without BuildKit results in all
-stages being processed:
+相反，如果未启用 BuildKit，构建同一个目标将会处理所有阶段：
 
 ```console
 $ DOCKER_BUILDKIT=0 docker build --no-cache -f Dockerfile --target stage2 .
@@ -213,4 +192,4 @@ Removing intermediate container bbc025b93175
 Successfully built 09fc3770a9c4
 ```
 
-The legacy builder processes `stage1`, even if `stage2` doesn't depend on it.
+传统构建器仍会处理 `stage1`，即使 `stage2` 并不依赖它。

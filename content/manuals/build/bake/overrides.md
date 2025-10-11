@@ -1,17 +1,14 @@
 ---
-title: Overriding configurations
-description: Learn how to override configurations in Bake files to build with different attributes.
+title: 覆盖配置
+description: 了解如何在 Bake 文件中覆盖配置，以使用不同属性进行构建。
 keywords: build, buildx, bake, buildkit, hcl, json, overrides, configuration
 aliases:
   - /build/bake/configuring-build/
 ---
 
-Bake supports loading build definitions from files, but sometimes you need even
-more flexibility to configure these definitions. For example, you might want to
-override an attribute when building in a particular environment or for a
-specific target.
+Bake 支持从文件加载构建定义，但有时你需要更灵活的方式来配置这些定义。例如，你可能希望在特定环境下，或针对某个特定目标构建时，覆盖某项属性。
 
-The following list of attributes can be overridden:
+以下属性可以被覆盖：
 
 - `args`
 - `attest`
@@ -32,23 +29,20 @@ The following list of attributes can be overridden:
 - `tags`
 - `target`
 
-To override these attributes, you can use the following methods:
+要覆盖这些属性，你可以使用以下方法：
 
-- [File overrides](#file-overrides)
-- [CLI overrides](#command-line)
-- [Environment variable overrides](#environment-variables)
+- [文件覆盖](#file-overrides)
+- [命令行覆盖](#command-line)
+- [环境变量覆盖](#environment-variables)
 
-## File overrides
+## 文件覆盖
 
-You can load multiple Bake files that define build configurations for your
-targets. This is useful when you want to separate configurations into different
-files for better organization, or to conditionally override configurations
-based on which files are loaded.
+你可以加载多个 Bake 文件来为目标定义构建配置。这对于将配置拆分到不同文件以便更好地组织管理，或根据加载的文件有条件地覆盖配置，非常有用。
 
-### Default file lookup
+### 默认文件查找顺序
 
-You can use the `--file` or `-f` flag to specify which files to load.
-If you don't specify any files, Bake will use the following lookup order:
+你可以使用 `--file` 或 `-f` 指定要加载的文件。
+如果未指定，Bake 会按以下顺序进行查找：
 
 1. `compose.yaml`
 2. `compose.yml`
@@ -59,8 +53,7 @@ If you don't specify any files, Bake will use the following lookup order:
 7. `docker-bake.override.json`
 8. `docker-bake.override.hcl`
 
-If more than one Bake file is found, all files are loaded and merged into a
-single definition. Files are merged according to the lookup order.
+如果找到多个 Bake 文件，所有文件都会被加载并合并为单一定义。文件按上述查找顺序进行合并。
 
 ```console
 $ docker buildx bake --print
@@ -71,14 +64,11 @@ $ docker buildx bake --print
  => => reading docker-bake.override.hcl 65B / 65B
 ```
 
-If merged files contain duplicate attribute definitions, those definitions are
-either merged or overridden by the last occurrence, depending on the attribute.
+当合并的文件包含重复的属性定义时，具体会被合并或由最后出现的定义覆盖，取决于该属性的合并策略。
 
-Bake will attempt to load all of the files in the order they are found. If
-multiple files define the same target, attributes are either merged or
-overridden. In the case of overrides, the last one loaded takes precedence.
+Bake 会按发现顺序尝试加载所有文件。若多个文件定义了相同的目标，这些属性会被合并或被覆盖；发生覆盖时，以最后加载的定义为准。
 
-For example, given the following files:
+例如，给定以下文件：
 
 ```hcl {title=docker-bake.hcl}
 variable "TAG" {
@@ -96,8 +86,7 @@ variable "TAG" {
 }
 ```
 
-Since `docker-bake.override.hcl` is loaded last in the default lookup order,
-the `TAG` variable is overridden with the value `bar`.
+由于 `docker-bake.override.hcl` 在默认查找顺序中最后加载，`TAG` 变量被覆盖为 `bar`。
 
 ```console
 $ docker buildx bake --print
@@ -112,15 +101,11 @@ $ docker buildx bake --print
 }
 ```
 
-### Manual file overrides
+### 手动指定文件覆盖
 
-You can use the `--file` flag to explicitly specify which files to load,
-and use this as a way to conditionally apply override files.
+你可以通过 `--file` 标志显式指定要加载的文件，并以此按需应用覆盖文件。
 
-For example, you can create a file that defines a set of configurations for a
-specific environment, and load it only when building for that environment. The
-following example shows how to load an `override.hcl` file that sets the `TAG`
-variable to `bar`. The `TAG` variable is then used in the `default` target.
+例如，你可以创建一个文件来定义特定环境的一组配置，并只在该环境构建时加载它。下面的示例展示了如何加载一个将 `TAG` 变量设置为 `bar` 的 `overrides.hcl` 文件。随后，`TAG` 变量会在 `default` 目标中被使用。
 
 ```hcl {title=docker-bake.hcl}
 variable "TAG" {
@@ -138,8 +123,7 @@ variable "TAG" {
 }
 ```
 
-Printing the build configuration without the `--file` flag shows the `TAG`
-variable is set to the default value `foo`.
+在不使用 `--file` 的情况下打印构建配置时，可以看到 `TAG` 变量为默认值 `foo`。
 
 ```console
 $ docker buildx bake --print
@@ -156,8 +140,7 @@ $ docker buildx bake --print
 }
 ```
 
-Using the `--file` flag to load the `overrides.hcl` file overrides the `TAG`
-variable with the value `bar`.
+使用 `--file` 加载 `overrides.hcl` 后，`TAG` 变量会被覆盖为 `bar`。
 
 ```console
 $ docker buildx bake -f docker-bake.hcl -f overrides.hcl --print
@@ -174,10 +157,9 @@ $ docker buildx bake -f docker-bake.hcl -f overrides.hcl --print
 }
 ```
 
-## Command line
+## 命令行
 
-You can also override target configurations from the command line with the
-[`--set` flag](/reference/cli/docker/buildx/bake.md#set):
+你也可以使用命令行中的[`--set` 标志](/reference/cli/docker/buildx/bake.md#set)覆盖目标配置：
 
 ```hcl
 # docker-bake.hcl
@@ -212,8 +194,7 @@ $ docker buildx bake --set app.args.mybuildarg=bar --set app.platform=linux/arm6
 }
 ```
 
-Pattern matching syntax defined in [https://golang.org/pkg/path/#Match](https://golang.org/pkg/path/#Match)
-is also supported:
+同时支持 [https://golang.org/pkg/path/#Match](https://golang.org/pkg/path/#Match) 中定义的模式匹配语法：
 
 ```console
 $ docker buildx bake --set foo*.args.mybuildarg=value  # overrides build arg for all targets starting with "foo"
@@ -221,7 +202,7 @@ $ docker buildx bake --set *.platform=linux/arm64      # overrides platform for 
 $ docker buildx bake --set foo*.no-cache               # bypass caching only for targets starting with "foo"
 ```
 
-Complete list of attributes that can be overridden with `--set` are:
+通过 `--set` 可覆盖的属性包括：
 
 - `args`
 - `attest`
@@ -242,17 +223,14 @@ Complete list of attributes that can be overridden with `--set` are:
 - `tags`
 - `target`
 
-## Environment variables
+## 环境变量
 
-You can also use environment variables to override configurations.
+你也可以使用环境变量来覆盖配置。
 
-Bake lets you use environment variables to override the value of a `variable`
-block. Only `variable` blocks can be overridden with environment variables.
-This means you need to define the variables in the bake file and then set the
-environment variable with the same name to override it.
+Bake 允许使用环境变量覆盖 `variable` 块的值。只有 `variable` 块可以被环境变量覆盖。
+这意味着你需要先在 Bake 文件中定义变量，然后设置同名环境变量来覆盖它。
 
-The following example shows how you can define a `TAG` variable with a default
-value in the Bake file, and override it with an environment variable.
+下面的示例展示了如何在 Bake 文件中定义带默认值的 `TAG` 变量，并通过环境变量进行覆盖。
 
 ```hcl
 variable "TAG" {
@@ -271,8 +249,7 @@ $ export TAG=$(git rev-parse --short HEAD)
 $ docker buildx bake --print webapp
 ```
 
-The `TAG` variable is overridden with the value of the environment variable,
-which is the short commit hash generated by `git rev-parse --short HEAD`.
+此时，`TAG` 变量被覆盖为环境变量的值，即 `git rev-parse --short HEAD` 生成的短提交哈希。
 
 ```json
 {
@@ -291,14 +268,11 @@ which is the short commit hash generated by `git rev-parse --short HEAD`.
 }
 ```
 
-### Type coercion
+### 类型转换
 
-Overriding non-string variables with environment variables is supported. Values
-passed as environment variables are coerced into suitable types first.
+支持使用环境变量覆盖非字符串类型变量。通过环境变量传入的值会先被转换为合适的类型。
 
-The following example defines a `PORT` variable. The `backend` target uses the
-`PORT` variable as-is, and the `frontend` target uses the value of `PORT`
-incremented by one.
+下面的示例定义了 `PORT` 变量：`backend` 目标直接使用该值，`frontend` 目标使用 `PORT` 自增 1 的结果。
 
 ```hcl
 variable "PORT" {
@@ -322,9 +296,7 @@ target "frontend" {
 }
 ```
 
-Overriding `PORT` using an environment variable will first coerce the value
-into the expected type, an integer, before the expression in the `frontend`
-target runs.
+使用环境变量覆盖 `PORT` 时，值会先被转换为期望的类型（整数），然后再执行 `frontend` 目标中的表达式。
 
 ```console
 $ PORT=7070 docker buildx bake --print

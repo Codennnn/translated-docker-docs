@@ -1,10 +1,10 @@
 ---
-title: Remote Bake file definition
-description: Build with Bake using a remote file definition using Git or HTTP
+title: 远程 Bake 文件定义
+description: 使用 Git 或 HTTP 的远程定义，通过 Bake 执行构建
 keywords: build, buildx, bake, file, remote, git, http
 ---
 
-You can build Bake files directly from a remote Git repository or HTTPS URL:
+你可以直接从远程 Git 仓库或 HTTPS URL 加载并构建 Bake 文件：
 
 ```console
 $ docker buildx bake "https://github.com/docker/cli.git#v20.10.11" --print
@@ -15,11 +15,10 @@ $ docker buildx bake "https://github.com/docker/cli.git#v20.10.11" --print
 #1 DONE 2.9s
 ```
 
-This fetches the Bake definition from the specified remote location and
-executes the groups or targets defined in that file. If the remote Bake
-definition doesn't specify a build context, the context is automatically set to
-the Git remote. For example, [this case](https://github.com/docker/cli/blob/2776a6d694f988c0c1df61cad4bfac0f54e481c8/docker-bake.hcl#L17-L26)
-uses `https://github.com/docker/cli.git`:
+该命令会从指定的远程位置获取 Bake 定义，并执行文件中定义的分组或目标。
+如果远程 Bake 定义未显式指定构建上下文，Bake 会将上下文自动设置为对应的 Git 远程。
+例如，[此示例](https://github.com/docker/cli/blob/2776a6d694f988c0c1df61cad4bfac0f54e481c8/docker-bake.hcl#L17-L26)
+使用了 `https://github.com/docker/cli.git`：
 
 ```json
 {
@@ -45,11 +44,10 @@ uses `https://github.com/docker/cli.git`:
 }
 ```
 
-## Use the local context with a remote definition
+## 在远程定义中使用本地上下文
 
-When building with a remote Bake definition, you may want to consume local
-files relative to the directory where the Bake command is executed. You can
-define contexts as relative to the command context using a `cwd://` prefix.
+当使用远程 Bake 定义进行构建时，可能希望使用相对于命令执行目录的本地文件。
+你可以通过 `cwd://` 前缀，将上下文定义为相对于命令上下文的路径。
 
 ```hcl {title="https://github.com/dvdksn/buildx/blob/bake-remote-example/docker-bake.hcl"}
 target "default" {
@@ -77,19 +75,14 @@ $ docker buildx bake "https://github.com/dvdksn/buildx.git#bake-remote-example"
 #8 0.102 /bin/sh: stop: not found
 ```
 
-You can append a path to the `cwd://` prefix if you want to use a specific
-local directory as a context. Note that if you do specify a path, it must be
-within the working directory where the command gets executed. If you use an
-absolute path, or a relative path leading outside of the working directory,
-Bake will throw an error.
+如果需要将特定本地目录作为上下文，可以在 `cwd://` 前缀后追加路径。
+注意：追加的路径必须位于命令执行时的工作目录之内；若使用绝对路径，或相对路径指向工作目录之外，Bake 将报错。
 
-### Local named contexts
+### 本地命名上下文
 
-You can also use the `cwd://` prefix to define local directories in the Bake
-execution context as named contexts.
+你也可以使用 `cwd://` 前缀，将 Bake 执行上下文中的本地目录定义为命名上下文。
 
-The following example defines the `docs` context as `./src/docs/content`,
-relative to the current working directory where Bake is run as a named context.
+下面示例将当前工作目录下的 `./src/docs/content` 定义为名为 `docs` 的上下文：
 
 ```hcl {title=docker-bake.hcl}
 target "default" {
@@ -100,14 +93,11 @@ target "default" {
 }
 ```
 
-By contrast, if you omit the `cwd://` prefix, the path would be resolved
-relative to the build context.
+相反，如果省略 `cwd://` 前缀，路径会相对于“构建上下文”进行解析。
 
-## Specify the Bake definition to use
+## 指定要使用的 Bake 定义
 
-When loading a Bake file from a remote Git repository, if the repository
-contains more than one Bake file, you can specify which Bake definition to use
-with the `--file` or `-f` flag:
+当从远程 Git 仓库加载 Bake 文件时，如果该仓库包含多个 Bake 文件，可以使用 `--file` 或 `-f` 指定要使用的定义：
 
 ```console
 docker buildx bake -f bake.hcl "https://github.com/crazy-max/buildx.git#remote-with-local"
@@ -120,12 +110,11 @@ docker buildx bake -f bake.hcl "https://github.com/crazy-max/buildx.git#remote-w
 #4 DONE 0.3s
 ```
 
-## Combine local and remote Bake definitions
+## 组合本地与远程 Bake 定义
 
-You can also combine remote definitions with local ones using the `cwd://`
-prefix with `-f`.
+你也可以结合使用远程定义与本地定义，配合 `-f` 与 `cwd://` 前缀。
 
-Given the following local Bake definition in the current working directory:
+假设当前工作目录中有如下本地 Bake 定义：
 
 ```hcl
 # local.hcl
@@ -136,11 +125,10 @@ target "default" {
 }
 ```
 
-The following example uses `-f` to specify two Bake definitions:
+下面的示例使用 `-f` 指定两个 Bake 定义：
 
-- `-f bake.hcl`: this definition is loaded relative to the Git URL.
-- `-f cwd://local.hcl`: this definition is loaded relative to the current
-  working directory where the Bake command is executed.
+- `-f bake.hcl`：相对于 Git URL 加载该定义。
+- `-f cwd://local.hcl`：相对于运行 Bake 命令的当前工作目录加载该定义。
 
 ```console
 docker buildx bake -f bake.hcl -f cwd://local.hcl "https://github.com/crazy-max/buildx.git#remote-with-local" --print
@@ -166,13 +154,9 @@ docker buildx bake -f bake.hcl -f cwd://local.hcl "https://github.com/crazy-max/
 }
 ```
 
-One case where combining local and remote Bake definitions becomes necessary is
-when you're building with a remote Bake definition in GitHub Actions and want
-to use the [metadata-action](https://github.com/docker/metadata-action) to
-generate tags, annotations, or labels. The metadata action generates a Bake
-file available in the runner's local Bake execution context. To use both the
-remote definition and the local "metadata-only" Bake file, specify both files
-and use the `cwd://` prefix for the metadata Bake file:
+有时需要组合本地与远程定义，例如在 GitHub Actions 中使用远程 Bake 定义构建，同时配合
+[metadata-action](https://github.com/docker/metadata-action) 生成标签、注解或标签（label）。
+该 Action 会在 Runner 的本地 Bake 执行上下文中生成一个 Bake 文件。若要同时使用远程定义与本地“仅包含元数据”的 Bake 文件，请同时指定两者，并为元数据 Bake 文件使用 `cwd://` 前缀：
 
 ```yml
       - name: Build
@@ -184,17 +168,14 @@ and use the `cwd://` prefix for the metadata Bake file:
           targets: build
 ```
 
-## Remote definition in a private repository
+## 私有仓库中的远程定义
 
-If you want to use a remote definition that lives in a private repository,
-you may need to specify credentials for Bake to use when fetching the definition.
+如果要使用位于私有仓库中的远程定义，拉取定义时可能需要为 Bake 指定凭据。
 
-If you can authenticate to the private repository using the default `SSH_AUTH_SOCK`,
-then you don't need to specify any additional authentication parameters for Bake.
-Bake automatically uses your default agent socket.
+如果你可以通过默认的 `SSH_AUTH_SOCK` 认证访问该私有仓库，则无需为 Bake 额外指定认证参数；
+Bake 会自动使用默认代理套接字。
 
-For authentication using an HTTP token, or custom SSH agents,
-use the following environment variables to configure Bake's authentication strategy:
+对于使用 HTTP Token 或自定义 SSH 代理的认证方式，可通过以下环境变量配置 Bake 的认证策略：
 
 - [`BUILDX_BAKE_GIT_AUTH_TOKEN`](../building/variables.md#buildx_bake_git_auth_token)
 - [`BUILDX_BAKE_GIT_AUTH_HEADER`](../building/variables.md#buildx_bake_git_auth_header)

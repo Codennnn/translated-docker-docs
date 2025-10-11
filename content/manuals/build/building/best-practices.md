@@ -1,8 +1,8 @@
 ---
-title: Building best practices
-linkTitle: Best practices
+title: 构建最佳实践
+linkTitle: 最佳实践
 weight: 70
-description: Hints, tips and guidelines for writing clean, reliable Dockerfiles
+description: 编写简洁、可靠 Dockerfile 的提示、技巧与指南
 keywords: base images, dockerfile, best practices, hub, official image
 tags: [Best practices]
 aliases:
@@ -16,84 +16,49 @@ aliases:
   - /develop/security-best-practices/
 ---
 
-## Use multi-stage builds
+## 使用多阶段构建
 
-Multi-stage builds let you reduce the size of your final image, by creating a
-cleaner separation between the building of your image and the final output.
-Split your Dockerfile instructions into distinct stages to make sure that the
-resulting output only contains the files that are needed to run the application.
+多阶段构建通过将构建过程与最终产物明确分离，帮助你显著减少最终镜像体积。将 Dockerfile 指令划分到不同阶段，确保最终输出只包含运行应用所需的文件。
 
-Using multiple stages can also let you build more efficiently by executing
-build steps in parallel.
+多阶段还可并行执行部分步骤，从而提升构建效率。
 
-See [Multi-stage builds](/manuals/build/building/multi-stage.md) for more
-information.
+更多信息参见 [多阶段构建](/manuals/build/building/multi-stage.md)。
 
-### Create reusable stages
+### 创建可复用阶段
 
-If you have multiple images with a lot in common, consider creating a reusable
-stage that includes the shared components, and basing your unique stages on
-that. Docker only needs to build the common stage once. This means that your derivative images use memory
-on the Docker host more efficiently and load more quickly.
+如果多个镜像有大量共性，建议把共享组件放在一个可复用的阶段中，其他阶段基于它构建。公共阶段只需构建一次，这能更高效地使用主机内存并加快派生镜像的加载速度。
 
-It's also easier to maintain a common base stage ("Don't repeat yourself"),
-than it is to have multiple different stages doing similar things.
+维护一个公共基础阶段（“不要重复自己”）也比在多个阶段中重复类似逻辑更易管理。
 
-## Choose the right base image
+## 选择合适的基础镜像
 
-The first step towards achieving a secure image is to choose the right base
-image. When choosing an image, ensure it's built from a trusted source and keep
-it small.
+构建安全镜像的第一步是选择合适的基础镜像。选择镜像时，应确保其来自可信来源并尽量保持精简。
 
-- [Docker Official Images](https://hub.docker.com/search?image_filter=official)
-  are a curated collection that have clear documentation, promote best
-  practices, and are regularly updated. They provide a trusted starting point
-  for many applications.
+- [Docker 官方镜像](https://hub.docker.com/search?image_filter=official)：经过精选、文档完善、倡导最佳实践并定期更新，为众多应用提供可信的起点。
 
-- [Verified Publisher](https://hub.docker.com/search?image_filter=store) images
-  are high-quality images published and maintained by the organizations
-  partnering with Docker, with Docker verifying the authenticity of the content
-  in their repositories.
+- [经过验证的发布者](https://hub.docker.com/search?image_filter=store)镜像：由与 Docker 合作的组织发布与维护，Docker 会验证其仓库内容的真实性与可信度。
 
-- [Docker-Sponsored Open Source](https://hub.docker.com/search?image_filter=open_source)
-  are published and maintained by open source projects sponsored by Docker
-  through an [open source program](../../docker-hub/image-library/trusted-content.md#docker-sponsored-open-source-software-images).
+- [Docker 资助的开源项目](https://hub.docker.com/search?image_filter=open_source)：由 Docker 通过其[开源计划](../../docker-hub/image-library/trusted-content.md#docker-sponsored-open-source-software-images)资助的开源项目发布并维护。
 
-When you pick your base image, look out for the badges indicating that the
-image is part of these programs.
+挑选基础镜像时，留意标识徽章以确认该镜像属于上述项目。
 
 ![Docker Hub Official and Verified Publisher images](../images/hub-official-images.webp)
 
-When building your own image from a Dockerfile, ensure you choose a minimal base
-image that matches your requirements. A smaller base image not only offers
-portability and fast downloads, but also shrinks the size of your image and
-minimizes the number of vulnerabilities introduced through the dependencies.
+当你从 Dockerfile 构建自有镜像时，请选择满足需求的最小化基础镜像。更小的基础镜像不仅便于分发与下载更快，还能减少最终镜像体积，并尽量降低依赖引入的漏洞数量。
 
-You should also consider using two types of base image: one for building and
-unit testing, and another (typically slimmer) image for production. In the
-later stages of development, your image may not require build tools such as
-compilers, build systems, and debugging tools. A small image with minimal
-dependencies can considerably lower the attack surface.
+同时可以考虑为不同阶段选择不同类型的基础镜像：一个用于构建与单元测试，另一个（通常更小）用于生产。开发后期通常不再需要编译器、构建系统、调试工具等。依赖更少的小镜像可显著降低攻击面。
 
-## Rebuild your images often
+## 频繁重建镜像
 
-Docker images are immutable. Building an image is taking a snapshot of that
-image at that moment. That includes any base images, libraries, or other
-software you use in your build. To keep your images up-to-date and secure, make
-sure to rebuild your image often, with updated dependencies.
+Docker 镜像是不可变的。构建镜像相当于在当下对其（以及所用的基础镜像、库与其他软件）拍了一个快照。为确保镜像最新且安全，请在依赖更新后频繁重建镜像。
 
-To ensure that you're getting the latest versions of dependencies in your build,
-you can use the `--no-cache` option to avoid cache hits.
+为确保获取依赖的最新版本，可使用 `--no-cache` 以避免缓存命中。
 
 ```console
 $ docker build --no-cache -t my-image:my-tag .
 ```
 
-The following Dockerfile uses the `24.04` tag of the `ubuntu` image. Over time,
-that tag may resolve to a different underlying version of the `ubuntu` image,
-as the publisher rebuilds the image with new security patches and updated
-libraries. Using the `--no-cache`, you can avoid cache hits and ensure a fresh
-download of base images and dependencies.
+下面的 Dockerfile 使用 `ubuntu` 镜像的 `24.04` 标签。随着发布者不断用安全补丁与新库重建镜像，该标签可能会指向不同的底层版本。使用 `--no-cache` 可避免缓存命中，确保基础镜像与依赖被全新下载。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -101,68 +66,46 @@ FROM ubuntu:24.04
 RUN apt-get -y update && apt-get install -y --no-install-recommends python3
 ```
 
-Also consider [pinning base image versions](#pin-base-image-versions).
+同时也可考虑[固定基础镜像版本](#pin-base-image-versions)。
 
-## Exclude with .dockerignore
+## 使用 .dockerignore 排除文件
 
-To exclude files not relevant to the build, without restructuring your source
-repository, use a `.dockerignore` file. This file supports exclusion patterns
-similar to `.gitignore` files.
+若不想改动源码结构，又需要排除与构建无关的文件，请使用 `.dockerignore`。其排除模式与 `.gitignore` 类似。
 
-For example, to exclude all files with the `.md` extension:
+例如，排除所有 `.md` 扩展名的文件：
 
 ```plaintext
 *.md
 ```
 
-For information on creating one, see
-[Dockerignore file](/manuals/build/concepts/context.md#dockerignore-files).
+如何创建与编写该文件，参见
+[Dockerignore 文件](/manuals/build/concepts/context.md#dockerignore-files)。
 
-## Create ephemeral containers
+## 创建短暂性容器
 
-The image defined by your Dockerfile should generate containers that are as
-ephemeral as possible. Ephemeral means that the container can be stopped
-and destroyed, then rebuilt and replaced with an absolute minimum set up and
-configuration.
+Dockerfile 定义的镜像应尽量生成“短暂性（ephemeral）”容器。即容器可被随时停止和销毁，再以最少的设置与配置重建并替换。
 
-Refer to [Processes](https://12factor.net/processes) under _The Twelve-factor App_
-methodology to get a feel for the motivations of running containers in such a
-stateless fashion.
+可参考《十二要素应用》中的[进程](https://12factor.net/processes)一节，理解以无状态方式运行容器的动机。
 
-## Don't install unnecessary packages
+## 不要安装不必要的软件包
 
-Avoid installing extra or unnecessary packages just because they might be nice to have. For example, you don’t need to include a text editor in a database image.
+避免因为“可能有用”而安装额外或不必要的软件包。例如，数据库镜像中通常不需要包含文本编辑器。
 
-When you avoid installing extra or unnecessary packages, your images have reduced complexity, reduced dependencies, reduced file sizes, and reduced build times.
+避免不必要的软件包可降低镜像复杂度与依赖、减小镜像体积，并缩短构建时间。
 
-## Decouple applications
+## 解耦应用
 
-Each container should have only one concern. Decoupling applications into
-multiple containers makes it easier to scale horizontally and reuse containers.
-For instance, a web application stack might consist of three separate
-containers, each with its own unique image, to manage the web application,
-database, and an in-memory cache in a decoupled manner.
+每个容器应只聚焦一件事。将应用解耦为多个容器，便于水平扩展与复用。例如，一个 Web 应用栈可由三个容器组成，分别使用独立镜像管理 Web 应用、数据库与内存缓存。
 
-Limiting each container to one process is a good rule of thumb, but it's not a
-hard and fast rule. For example, not only can containers be
-[spawned with an init process](/manuals/engine/containers/multi-service_container.md),
-some programs might spawn additional processes of their own accord. For
-instance, [Celery](https://docs.celeryq.dev/) can spawn multiple worker
-processes, and [Apache](https://httpd.apache.org/) can create one process per
-request.
+将每个容器限制为一个进程是不错的经验法则，但并非硬性规定。例如，容器可以[以 init 进程启动](/manuals/engine/containers/multi-service_container.md)；某些程序也会自行派生额外进程，如 [Celery](https://docs.celeryq.dev/) 可启动多个 worker，[Apache](https://httpd.apache.org/) 可能为每个请求创建一条进程。
 
-Use your best judgment to keep containers as clean and modular as possible. If
-containers depend on each other, you can use [Docker container networks](/manuals/engine/network/_index.md)
-to ensure that these containers can communicate.
+请根据具体情况尽量保持容器简洁与模块化。若容器间存在依赖，可使用 [Docker 容器网络](/manuals/engine/network/_index.md) 保障通信。
 
-## Sort multi-line arguments
+## 对多行参数排序
 
-Whenever possible, sort multi-line arguments alphanumerically to make maintenance easier.
-This helps to avoid duplication of packages and make the
-list much easier to update. This also makes PRs a lot easier to read and
-review. Adding a space before a backslash (`\`) helps as well.
+尽量按字母顺序对多行参数进行排序，以便维护。这有助于避免包名重复、简化更新列表，也能让评审更易读。反斜杠（`\`）前添加一个空格也有助于可读性。
 
-Here’s an example from the [buildpack-deps image](https://github.com/docker-library/buildpack-deps):
+如下示例来自 [buildpack-deps 镜像](https://github.com/docker-library/buildpack-deps)：
 
 ```dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -174,112 +117,68 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 ```
 
-## Leverage build cache
+## 善用构建缓存
 
-When building an image, Docker steps through the instructions in your
-Dockerfile, executing each in the order specified. For each instruction, Docker
-checks whether it can reuse the instruction from the build cache.
+构建镜像时，Docker 会按顺序执行 Dockerfile 中的每条指令。对每条指令，Docker 都会检查是否可以复用构建缓存。
 
-Understanding how the build cache works, and how cache invalidation occurs,
-is critical for ensuring faster builds.
-For more information about the Docker build cache and how to optimize your builds,
-see [Docker build cache](/manuals/build/cache/_index.md).
+理解构建缓存的工作机制与失效方式，对提升构建速度至关重要。更多内容参见[构建缓存](/manuals/build/cache/_index.md)。
 
-## Pin base image versions
+## 固定基础镜像版本 {#pin-base-image-versions}
 
-Image tags are mutable, meaning a publisher can update a tag to point to a new
-image. This is useful because it lets publishers update tags to point to
-newer versions of an image. And as an image consumer, it means you
-automatically get the new version when you re-build your image.
+镜像标签是可变的，发布者可以更新同一标签以指向新的镜像版本。这便于发布者用同一标签提供更新版本；而对使用者而言，重建镜像时会自动获得新版本。
 
-For example, if you specify `FROM alpine:3.21` in your Dockerfile, `3.21`
-resolves to the latest patch version for `3.21`.
+例如，Dockerfile 中指定 `FROM alpine:3.21`，该标签会解析为 3.21 的最新补丁版本。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 FROM alpine:3.21
 ```
 
-At one point in time, the `3.21` tag might point to version 3.21.1 of the
-image. If you rebuild the image 3 months later, the same tag might point to a
-different version, such as 3.21.4. This publishing workflow is best practice,
-and most publishers use this tagging strategy, but it isn't enforced.
+某个时间点，`3.21` 标签可能指向 3.21.1；三个月后重建，同一标签可能已指向 3.21.4。该发布流程属于最佳实践，多数发布者采用此策略，但并非强制。
 
-The downside with this is that you're not guaranteed to get the same for every
-build. This could result in breaking changes, and it means you also don't have
-an audit trail of the exact image versions that you're using.
+其缺点是你无法保证每次构建都得到完全一致的内容。这可能带来破坏性变更，也缺乏所用镜像版本的审计追踪。
 
-To fully secure your supply chain integrity, you can pin the image version to a
-specific digest. By pinning your images to a digest, you're guaranteed to
-always use the same image version, even if a publisher replaces the tag with a
-new image. For example, the following Dockerfile pins the Alpine image to the
-same tag as earlier, `3.21`, but this time with a digest reference as well.
+若要更好地保障供应链完整性，可将镜像固定到特定摘要（digest）。这样即使发布者更新了标签，你仍会使用完全相同的镜像版本。如下 Dockerfile 仍使用 `3.21` 标签，但同时指定了摘要：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 FROM alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
 ```
 
-With this Dockerfile, even if the publisher updates the `3.21` tag, your builds
-would still use the pinned image version:
-`a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c`.
+这样即便发布者更新了 `3.21` 标签，你的构建仍会使用固定的镜像版本：
+`a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c`。
 
-While this helps you avoid unexpected changes, it's also more tedious to have
-to look up and include the image digest for base image versions manually each
-time you want to update it. And you're opting out of automated security fixes,
-which is likely something you want to get.
+虽然这有助于避免意外变更，但每次升级都需手动查找与更新摘要，流程更繁琐；同时也意味着你不会自动获得安全修复（通常是你希望获得的）。
 
-Docker Scout's default [**Up-to-Date Base Images**
-policy](../../scout/policy/_index.md#up-to-date-base-images) checks whether the
-base image version you're using is in fact the latest version. This policy also
-checks if pinned digests in your Dockerfile correspond to the correct version.
-If a publisher updates an image that you've pinned, the policy evaluation
-returns a non-compliant status, indicating that you should update your image.
+Docker Scout 默认的 [**最新基础镜像** 策略](../../scout/policy/_index.md#up-to-date-base-images) 会检查你所用的基础镜像是否为最新版本，也会校验 Dockerfile 中固定的摘要是否与正确版本对应。若发布者更新了你所固定的镜像，该策略会标记为不合规，提示需要更新。
 
-Docker Scout also supports an automated remediation workflow for keeping your
-base images up-to-date. When a new image digest is available, Docker Scout can
-automatically raise a pull request on your repository to update your
-Dockerfiles to use the latest version. This is better than using a tag that
-changes the version automatically, because you're in control and you have an
-audit trail of when and how the change occurred.
+Docker Scout 还支持自动修复流程，帮助保持基础镜像的最新状态。当有新的镜像摘要发布时，Docker Scout 可在你的仓库自动创建 PR，更新 Dockerfile 以使用最新版本。相比自动变动的标签方式，这种方案能让你掌控变更并保留完整审计记录。
 
-For more information about automatically updating your base images with Docker
-Scout, see [Remediation](/manuals/scout/policy/remediation.md).
+关于使用 Docker Scout 自动更新基础镜像的更多信息，参见[修复](/manuals/scout/policy/remediation.md)。
 
-## Build and test your images in CI
+## 在 CI 中构建并测试镜像
 
-When you check in a change to source control or create a pull request, use
-[GitHub Actions](../ci/github-actions/_index.md) or another CI/CD pipeline to
-automatically build and tag a Docker image and test it.
+当代码提交或创建 Pull Request 时，使用 [GitHub Actions](../ci/github-actions/_index.md) 或其他 CI/CD 流水线自动构建并打标签，并对镜像进行测试。
 
-## Dockerfile instructions
+## Dockerfile 指令
 
-Follow these recommendations on how to properly use the [Dockerfile instructions](/reference/dockerfile.md)
-to create an efficient and maintainable Dockerfile.
+按照以下建议合理使用 [Dockerfile 指令](/reference/dockerfile.md)，以创建高效、可维护的 Dockerfile。
 
 > [!TIP]
 >
-> To improve linting, code navigation, and vulnerability scanning of your Dockerfiles in Visual Studio Code
-> see [Docker VS Code Extension](https://marketplace.visualstudio.com/items?itemName=docker.docker).
+> 在 Visual Studio Code 中改进 Dockerfile 的语法检查、代码导航与漏洞扫描，请参见 [Docker VS Code 扩展](https://marketplace.visualstudio.com/items?itemName=docker.docker)。
 
 ### FROM
 
-Whenever possible, use current official images as the basis for your
-images. Docker recommends the [Alpine image](https://hub.docker.com/_/alpine/) as it
-is tightly controlled and small in size (currently under 6 MB), while still
-being a full Linux distribution.
+尽可能使用当前的官方镜像作为基础镜像。Docker 推荐使用 [Alpine 镜像](https://hub.docker.com/_/alpine/)：它体积小（目前不足 6 MB）、管控严格，同时仍是一个完整的 Linux 发行版。
 
-For more information about the `FROM` instruction, see [Dockerfile reference for the FROM instruction](/reference/dockerfile.md#from).
+关于 `FROM` 指令，参见 [Dockerfile 参考：FROM](/reference/dockerfile.md#from)。
 
 ### LABEL
 
-You can add labels to your image to help organize images by project, record
-licensing information, to aid in automation, or for other reasons. For each
-label, add a line beginning with `LABEL` with one or more key-value pairs.
-The following examples show the different acceptable formats. Explanatory comments are included inline.
+你可以为镜像添加标签（label），用于按项目组织、记录许可证信息、辅助自动化等。每个标签以 `LABEL` 开头，后接一个或多个键值对。以下示例展示了多种可接受格式，并在行内附有说明注释。
 
-Strings with spaces must be quoted or the spaces must be escaped. Inner
-quote characters (`"`), must also be escaped. For example:
+包含空格的字符串必须加引号或转义空格；内部引号字符（`"`）也需转义。例如：
 
 ```dockerfile
 # Set one or more individual labels
@@ -290,17 +189,14 @@ LABEL com.example.release-date="2015-02-12"
 LABEL com.example.version.is-production=""
 ```
 
-An image can have more than one label. Prior to Docker 1.10, it was recommended
-to combine all labels into a single `LABEL` instruction, to prevent extra layers
-from being created. This is no longer necessary, but combining labels is still
-supported. For example:
+一个镜像可以包含多个标签。Docker 1.10 之前建议将所有标签合并为一条 `LABEL` 指令以避免额外层产生；如今已不再必要，但仍然支持合并写法。例如：
 
 ```dockerfile
 # Set multiple labels on one line
 LABEL com.example.version="0.0.1-beta" com.example.release-date="2015-02-12"
 ```
 
-The above example can also be written as:
+上述示例也可写成：
 
 ```dockerfile
 # Set multiple labels at once, using line-continuation characters to break long lines
@@ -311,20 +207,13 @@ LABEL vendor=ACME\ Incorporated \
       com.example.release-date="2015-02-12"
 ```
 
-See [Understanding object labels](/manuals/engine/manage-resources/labels.md)
-for guidelines about acceptable label keys and values. For information about
-querying labels, refer to the items related to filtering in
-[Managing labels on objects](/manuals/engine/manage-resources/labels.md#manage-labels-on-objects).
-See also [LABEL](/reference/dockerfile.md#label) in the Dockerfile reference.
+关于可接受的标签键与值，参见[理解对象标签](/manuals/engine/manage-resources/labels.md)；关于如何查询标签，参见[管理对象标签](/manuals/engine/manage-resources/labels.md#manage-labels-on-objects)中与过滤相关的内容。另见 Dockerfile 参考中的 [LABEL](/reference/dockerfile.md#label)。
 
 ### RUN
 
-Split long or complex `RUN` statements on multiple lines separated with
-backslashes to make your Dockerfile more readable, understandable, and
-maintainable.
+将较长或复杂的 `RUN` 语句使用反斜杠拆分为多行，使 Dockerfile 更易读、更易理解与维护。
 
-For example, you can chain commands with the `&&` operator, and use
-escape characters to break long commands into multiple lines.
+例如，可以使用 `&&` 链接命令，并配合转义字符将长命令拆分为多行：
 
 ```dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -333,11 +222,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     package-foo
 ```
 
-By default, backslash escapes a newline character, but you can change it with
-the [`escape` directive](/reference/dockerfile.md#escape).
+默认情况下，反斜杠用于转义换行；你也可以通过 [`escape` 指令](/reference/dockerfile.md#escape) 更改该行为。
 
-You can also use here documents to run multiple commands without chaining them
-with a pipeline operator:
+也可以使用 here document 在不通过管道连接的情况下运行多条命令：
 
 ```dockerfile
 RUN <<EOF
@@ -349,16 +236,13 @@ apt-get install -y --no-install-recommends \
 EOF
 ```
 
-For more information about `RUN`, see [Dockerfile reference for the RUN instruction](/reference/dockerfile.md#run).
+关于 `RUN` 指令，参见 [Dockerfile 参考：RUN](/reference/dockerfile.md#run)。
 
 #### apt-get
 
-One common use case for `RUN` instructions in Debian-based images is to install
-software using `apt-get`. Because `apt-get` installs packages, the `RUN
-apt-get` command has several counter-intuitive behaviors to look out for.
+在基于 Debian 的镜像中，`RUN` 的常见用法是通过 `apt-get` 安装软件。由于 `apt-get` 的特性，`RUN apt-get` 存在一些不直观的注意事项。
 
-Always combine `RUN apt-get update` with `apt-get install` in the same `RUN`
-statement. For example:
+务必在同一条 `RUN` 中组合执行 `apt-get update` 与 `apt-get install`，例如：
 
 ```dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -367,8 +251,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     package-foo
 ```
 
-Using `apt-get update` alone in a `RUN` statement causes caching issues and
-subsequent `apt-get install` instructions to fail. For example, this issue will occur in the following Dockerfile:
+在单独的 `RUN` 中执行 `apt-get update` 会导致缓存问题，从而使后续的 `apt-get install` 失败。例如，下列 Dockerfile 中会出现该问题：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -378,8 +261,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends curl
 ```
 
-After building the image, all layers are in the Docker cache. Suppose you later
-modify `apt-get install` by adding an extra package as shown in the following Dockerfile:
+首次构建后，所有层已进入缓存。若随后修改 `apt-get install`（如下增加一个包）：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -389,17 +271,9 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends curl nginx
 ```
 
-Docker sees the initial and modified instructions as identical and reuses the
-cache from previous steps. As a result the `apt-get update` isn't executed
-because the build uses the cached version. Because the `apt-get update` isn't
-run, your build can potentially get an outdated version of the `curl` and
-`nginx` packages.
+Docker 会认为变更前后的相关步骤相同并复用缓存，导致 `apt-get update` 未被重新执行，从而可能安装到过期版本的 `curl` 与 `nginx`。
 
-Using `RUN apt-get update && apt-get install -y --no-install-recommends` ensures your Dockerfile
-installs the latest package versions with no further coding or manual
-intervention. This technique is known as cache busting. You can also achieve
-cache busting by specifying a package version. This is known as version pinning.
-For example:
+使用 `RUN apt-get update && apt-get install -y --no-install-recommends` 可在无需额外编码与人工干预的情况下安装最新版本。这种做法被称为“破坏缓存（cache busting）”。你也可以通过指定包版本来实现，称为“版本固定（version pinning）”，例如：
 
 ```dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -408,12 +282,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     package-foo=1.3.*
 ```
 
-Version pinning forces the build to retrieve a particular version regardless of
-what’s in the cache. This technique can also reduce failures due to unanticipated changes
-in required packages.
+版本固定会强制构建获取指定版本，而不受缓存影响。这也能减少因依赖包的非预期变更而导致的失败。
 
-Below is a well-formed `RUN` instruction that demonstrates all the `apt-get`
-recommendations.
+下面是一个良好实践的 `RUN` 示例，体现了上述 `apt-get` 相关建议：
 
 ```dockerfile
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -432,34 +303,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 ```
 
-The `s3cmd` argument specifies a version `1.1.*`. If the image previously
-used an older version, specifying the new one causes a cache bust of `apt-get
-update` and ensures the installation of the new version. Listing packages on
-each line can also prevent mistakes in package duplication.
+其中 `s3cmd` 指定了 `1.1.*` 版本。如果之前使用的是旧版本，那么指定新版本会触发 `apt-get update` 的缓存失效，确保安装最新版本。将软件包逐行列出也有助于避免重复。
 
-In addition, when you clean up the apt cache by removing `/var/lib/apt/lists` it
-reduces the image size, since the apt cache isn't stored in a layer. Since the
-`RUN` statement starts with `apt-get update`, the package cache is always
-refreshed prior to `apt-get install`.
+此外，删除 `/var/lib/apt/lists` 清理 apt 缓存可以减小镜像大小（apt 缓存不会存入层）。由于 `RUN` 以 `apt-get update` 开始，`apt-get install` 之前的包索引始终是最新的。
 
-Official Debian and Ubuntu images [automatically run `apt-get clean`](https://github.com/debuerreotype/debuerreotype/blob/c9542ab785e72696eb2908a6dbc9220abbabef39/scripts/debuerreotype-minimizing-config#L87-L109), so explicit invocation is not required.
+官方 Debian 与 Ubuntu 镜像会[自动运行 `apt-get clean`](https://github.com/debuerreotype/debuerreotype/blob/c9542ab785e72696eb2908a6dbc9220abbabef39/scripts/debuerreotype-minimizing-config#L87-L109)，无需显式调用。
 
-#### Using pipes
+#### 使用管道
 
-Some `RUN` commands depend on the ability to pipe the output of one command into another, using the pipe character (`|`), as in the following example:
+某些 `RUN` 命令依赖通过管道符（`|`）将一个命令的输出传递给另一个命令，例如：
 
 ```dockerfile
 RUN wget -O - https://some.site | wc -l > /number
 ```
 
-Docker executes these commands using the `/bin/sh -c` interpreter, which only
-evaluates the exit code of the last operation in the pipe to determine success.
-In the example above, this build step succeeds and produces a new image so long
-as the `wc -l` command succeeds, even if the `wget` command fails.
+Docker 使用 `/bin/sh -c` 解释器执行这些命令，它只根据管道中最后一个命令的退出码来判断成功与否。在上面的例子里，只要 `wc -l` 成功，该步骤就会被视为成功，即使 `wget` 失败。
 
-If you want the command to fail due to an error at any stage in the pipe,
-prepend `set -o pipefail &&` to ensure that an unexpected error prevents the
-build from inadvertently succeeding. For example:
+如果希望在管道任一阶段出错都能让命令失败，可在前面加上 `set -o pipefail &&`，以避免构建在异常情况下“误成功”。例如：
 
 ```dockerfile
 RUN set -o pipefail && wget -O - https://some.site | wc -l > /number
@@ -467,11 +327,9 @@ RUN set -o pipefail && wget -O - https://some.site | wc -l > /number
 
 > [!NOTE]
 >
-> Not all shells support the `-o pipefail` option.
+> 并非所有 shell 都支持 `-o pipefail` 选项。
 >
-> In cases such as the `dash` shell on
-> Debian-based images, consider using the _exec_ form of `RUN` to explicitly
-> choose a shell that does support the `pipefail` option. For example:
+> 在某些环境（如 Debian 系镜像中的 `dash`）下，可考虑使用 `RUN` 的 exec 形式显式选择支持 `pipefail` 的 shell。例如：
 >
 > ```dockerfile
 > RUN ["/bin/bash", "-c", "set -o pipefail && wget -O - https://some.site | wc -l > /number"]
@@ -479,52 +337,28 @@ RUN set -o pipefail && wget -O - https://some.site | wc -l > /number
 
 ### CMD
 
-The `CMD` instruction should be used to run the software contained in your
-image, along with any arguments. `CMD` should almost always be used in the form
-of `CMD ["executable", "param1", "param2"]`. Thus, if the image is for a
-service, such as Apache and Rails, you would run something like `CMD
-["apache2","-DFOREGROUND"]`. Indeed, this form of the instruction is recommended
-for any service-based image.
+`CMD` 用于指定运行镜像内软件及其参数。通常应采用 `CMD ["executable", "param1", "param2"]` 的形式。例如，服务类镜像（如 Apache、Rails）可以使用 `CMD ["apache2","-DFOREGROUND"]`。对服务型镜像，推荐使用该形式。
 
-In most other cases, `CMD` should be given an interactive shell, such as bash,
-Python and perl. For example, `CMD ["perl", "-de0"]`, `CMD ["python"]`, or `CMD
-["php", "-a"]`. Using this form means that when you execute something like
-`docker run -it python`, you’ll get dropped into a usable shell, ready to go.
-`CMD` should rarely be used in the manner of `CMD ["param", "param"]` in
-conjunction with [`ENTRYPOINT`](/reference/dockerfile.md#entrypoint), unless
-you and your expected users are already quite familiar with how `ENTRYPOINT`
-works.
+在其他多数情况下，可将 `CMD` 设为交互式 shell（如 bash、Python、perl），例如：`CMD ["perl", "-de0"]`、`CMD ["python"]`、`CMD ["php", "-a"]`。这样执行 `docker run -it python` 时会进入可用的 shell。
+除非你与用户都非常熟悉 [`ENTRYPOINT`](/reference/dockerfile.md#entrypoint) 的工作方式，否则不建议将 `CMD` 写成 `CMD ["param", "param"]` 并与 `ENTRYPOINT` 搭配使用。
 
-For more information about `CMD`, see [Dockerfile reference for the CMD instruction](/reference/dockerfile.md#cmd).
+关于 `CMD` 指令，参见 [Dockerfile 参考：CMD](/reference/dockerfile.md#cmd)。
 
 ### EXPOSE
 
-The `EXPOSE` instruction indicates the ports on which a container listens
-for connections. Consequently, you should use the common, traditional port for
-your application. For example, an image containing the Apache web server would
-use `EXPOSE 80`, while an image containing MongoDB would use `EXPOSE 27017` and
-so on.
+`EXPOSE` 指令声明容器监听的端口。请使用应用常见的默认端口。例如，Apache 使用 `EXPOSE 80`，MongoDB 使用 `EXPOSE 27017` 等。
 
-For external access, your users can execute `docker run` with a flag indicating
-how to map the specified port to the port of their choice.
-For container linking, Docker provides environment variables for the path from
-the recipient container back to the source (for example, `MYSQL_PORT_3306_TCP`).
+对外访问时，用户可通过 `docker run` 的参数指定端口映射。对于容器间链接，Docker 提供了从接收方容器到源容器的环境变量（例如 `MYSQL_PORT_3306_TCP`）。
 
-For more information about `EXPOSE`, see [Dockerfile reference for the EXPOSE instruction](/reference/dockerfile.md#expose).
+关于 `EXPOSE` 指令，参见 [Dockerfile 参考：EXPOSE](/reference/dockerfile.md#expose)。
 
 ### ENV
 
-To make new software easier to run, you can use `ENV` to update the
-`PATH` environment variable for the software your container installs. For
-example, `ENV PATH=/usr/local/nginx/bin:$PATH` ensures that `CMD ["nginx"]`
-just works.
+为使新安装的软件更易运行，你可以通过 `ENV` 更新 `PATH` 环境变量。例如，`ENV PATH=/usr/local/nginx/bin:$PATH` 可保证 `CMD ["nginx"]` 直接生效。
 
-The `ENV` instruction is also useful for providing the required environment
-variables specific to services you want to containerize, such as Postgres’s
-`PGDATA`.
+`ENV` 也适用于设置容器化服务所需的特定环境变量，例如 Postgres 的 `PGDATA`。
 
-Lastly, `ENV` can also be used to set commonly used version numbers so that
-version bumps are easier to maintain, as seen in the following example:
+此外，你还可用 `ENV` 定义常用的版本号，以便集中维护版本升级，例如：
 
 ```dockerfile
 ENV PG_MAJOR=9.3
@@ -533,14 +367,9 @@ RUN curl -SL https://example.com/postgres-$PG_VERSION.tar.xz | tar -xJC /usr/src
 ENV PATH=/usr/local/postgres-$PG_MAJOR/bin:$PATH
 ```
 
-Similar to having constant variables in a program, as opposed to hard-coding
-values, this approach lets you change a single `ENV` instruction to
-automatically bump the version of the software in your container.
+类似于程序中的常量，这种做法避免硬编码，只需修改一处 `ENV` 即可为容器内的软件完成版本升级。
 
-Each `ENV` line creates a new intermediate layer, just like `RUN` commands. This
-means that even if you unset the environment variable in a future layer, it
-still persists in this layer and its value can be dumped. You can test this by
-creating a Dockerfile like the following, and then building it.
+每条 `ENV` 与 `RUN` 一样都会创建新的中间层。这意味着即便之后取消该环境变量，它仍保留在已有层中，并可被读取。你可以用如下 Dockerfile 验证这一点：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -556,13 +385,7 @@ $ docker run --rm test sh -c 'echo $ADMIN_USER'
 mark
 ```
 
-To prevent this and unset the environment variable, use a `RUN` command
-with shell commands, to set, use, and unset the variable all in a single layer.
-You can separate your commands with `;` or `&&`. If you use the second method,
-and one of the commands fails, the `docker build` also fails. This is usually a
-good idea. Using `\` as a line continuation character for Linux Dockerfiles
-improves readability. You could also put all of the commands into a shell script
-and have the `RUN` command just run that shell script.
+若要避免这一问题，可在同一条 `RUN` 中通过 shell 命令设置、使用并取消变量。命令可使用 `;` 或 `&&` 分隔。后者在任一命令失败时会使 `docker build` 失败，通常更好。Linux Dockerfile 中使用 `\` 作为续行符有助于可读性。你也可以把命令写成脚本，再通过 `RUN` 执行该脚本。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -578,43 +401,24 @@ $ docker run --rm test sh -c 'echo $ADMIN_USER'
 
 ```
 
-For more information about `ENV`, see [Dockerfile reference for the ENV instruction](/reference/dockerfile.md#env).
+关于 `ENV` 指令，参见 [Dockerfile 参考：ENV](/reference/dockerfile.md#env)。
 
 ### ADD or COPY
 
-`ADD` and `COPY` are functionally similar. `COPY` supports basic copying of
-files into the container, from the [build context](/manuals/build/concepts/context.md)
-or from a stage in a [multi-stage build](/manuals/build/building/multi-stage.md).
-`ADD` supports features for fetching files from remote HTTPS and Git URLs, and
-extracting tar files automatically when adding files from the build context.
+`ADD` 与 `COPY` 在功能上类似。`COPY` 支持将文件从[构建上下文](/manuals/build/concepts/context.md)或[多阶段构建](/manuals/build/building/multi-stage.md)中的某阶段复制到容器；`ADD` 额外支持从远程 HTTPS 与 Git URL 拉取文件，并在从构建上下文添加时自动解压 tar 包。
 
-You'll mostly want to use `COPY` for copying files from one stage to another in
-a multi-stage build. If you need to add files from the build context to the
-container temporarily to execute a `RUN` instruction, you can often substitute
-the `COPY` instruction with a bind mount instead. For example, to temporarily
-add a `requirements.txt` file for a `RUN pip install` instruction:
+在多阶段构建中，通常优先使用 `COPY` 在阶段之间复制文件。若仅为执行某次 `RUN` 临时将构建上下文中的文件放入容器，可考虑使用绑定挂载替代 `COPY`。例如，为 `RUN pip install` 临时引入 `requirements.txt`：
 
 ```dockerfile
 RUN --mount=type=bind,source=requirements.txt,target=/tmp/requirements.txt \
     pip install --requirement /tmp/requirements.txt
 ```
 
-Bind mounts are more efficient than `COPY` for including files from the build
-context in the container. Note that bind-mounted files are only added
-temporarily for a single `RUN` instruction, and don't persist in the final
-image. If you need to include files from the build context in the final image,
-use `COPY`.
+相较 `COPY`，绑定挂载在引入构建上下文文件到容器时更高效。需注意，绑定挂载的文件仅在单次 `RUN` 中临时可见，最终镜像中不会保留；若需要保留，请使用 `COPY`。
 
-The `ADD` instruction is best for when you need to download a remote artifact
-as part of your build. `ADD` is better than manually adding files using
-something like `wget` and `tar`, because it ensures a more precise build cache.
-`ADD` also has built-in support for checksum validation of the remote
-resources, and a protocol for parsing branches, tags, and subdirectories from
-[Git URLs](/reference/cli/docker/buildx/build.md#git-repositories).
+当需要在构建过程中下载远程工件时，优先使用 `ADD`。与手动 `wget`/`tar` 相比，`ADD` 能更好地利用构建缓存；同时内置了远程资源校验以及解析 [Git URL](/reference/cli/docker/buildx/build.md#git-repositories) 中分支、标签与子目录的能力。
 
-The following example uses `ADD` to download a .NET installer. Combined with
-multi-stage builds, only the .NET runtime remains in the final stage, no
-intermediate files.
+下面的示例使用 `ADD` 下载 .NET 安装包。结合多阶段构建，最终阶段仅保留 .NET 运行时，不含中间文件：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -638,45 +442,39 @@ COPY --from=installer /dotnet /usr/share/dotnet
 RUN ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
 ```
 
-For more information about `ADD` or `COPY`, see the following:
-- [Dockerfile reference for the ADD instruction](/reference/dockerfile.md#add)
-- [Dockerfile reference for the COPY instruction](/reference/dockerfile.md#copy)
+关于 `ADD` 与 `COPY`，参见：
+- [Dockerfile 参考：ADD](/reference/dockerfile.md#add)
+- [Dockerfile 参考：COPY](/reference/dockerfile.md#copy)
 
 
 ### ENTRYPOINT
 
-The best use for `ENTRYPOINT` is to set the image's main command, allowing that
-image to be run as though it was that command, and then use `CMD` as the
-default flags.
+`ENTRYPOINT` 最佳用法是设定镜像的主命令，使镜像像该命令一样被执行；随后用 `CMD` 指定默认参数。
 
-The following is an example of an image for the command line tool `s3cmd`:
+以下是命令行工具 `s3cmd` 的镜像示例：
 
 ```dockerfile
 ENTRYPOINT ["s3cmd"]
 CMD ["--help"]
 ```
 
-You can use the following command to run the image and show the command's help:
+可通过以下命令运行镜像并显示帮助：
 
 ```console
 $ docker run s3cmd
 ```
 
-Or, you can use the right parameters to execute a command, like in the following example:
+或者传入参数执行命令，例如：
 
 ```console
 $ docker run s3cmd ls s3://mybucket
 ```
 
-This is useful because the image name can double as a reference to the binary as
-shown in the command above.
+这种方式的好处是镜像名可直接作为可执行程序的引用，如上所示。
 
-The `ENTRYPOINT` instruction can also be used in combination with a helper
-script, allowing it to function in a similar way to the command above, even
-when starting the tool may require more than one step.
+`ENTRYPOINT` 也可与辅助脚本配合使用，即便启动工具需要多步，也能以类似方式工作。
 
-For example, the [Postgres Official Image](https://hub.docker.com/_/postgres/)
-uses the following script as its `ENTRYPOINT`:
+例如，[Postgres 官方镜像](https://hub.docker.com/_/postgres/) 将以下脚本作为 `ENTRYPOINT`：
 
 ```bash
 #!/bin/bash
@@ -696,10 +494,9 @@ exec "$@"
 ```
 
 
-This script uses [the `exec` Bash command](https://wiki.bash-hackers.org/commands/builtin/exec) so that the final running application becomes the container's PID 1. This allows the application to receive any Unix signals sent to the container. For more information, see the [`ENTRYPOINT` reference](/reference/dockerfile.md#entrypoint).
+该脚本使用了 [Bash 的 `exec` 命令](https://wiki.bash-hackers.org/commands/builtin/exec)，使最终运行的应用成为容器的 PID 1，从而接收发往容器的 Unix 信号。更多信息参见 [`ENTRYPOINT` 参考](/reference/dockerfile.md#entrypoint)。
 
-In the following example, a helper script is copied into the container and run via `ENTRYPOINT` on
-container start:
+如下示例将辅助脚本复制进容器，并在容器启动时由 `ENTRYPOINT` 执行：
 
 ```dockerfile
 COPY ./docker-entrypoint.sh /
@@ -707,42 +504,37 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["postgres"]
 ```
 
-This script lets you interact with Postgres in several ways.
+该脚本支持多种方式与 Postgres 交互。
 
-It can simply start Postgres:
+可直接启动 Postgres：
 
 ```console
 $ docker run postgres
 ```
 
-Or, you can use it to run Postgres and pass parameters to the server:
+也可启动 Postgres 并向服务器传参：
 
 ```console
 $ docker run postgres postgres --help
 ```
 
-Lastly, you can use it to start a totally different tool, such as Bash:
+最后，它还可以启动完全不同的工具，例如 Bash：
 
 ```console
 $ docker run --rm -it postgres bash
 ```
 
-For more information about `ENTRYPOINT`, see [Dockerfile reference for the ENTRYPOINT instruction](/reference/dockerfile.md#entrypoint).
+关于 `ENTRYPOINT` 指令，参见 [Dockerfile 参考：ENTRYPOINT](/reference/dockerfile.md#entrypoint)。
 
 ### VOLUME
 
-You should use the `VOLUME` instruction to expose any database storage area,
-configuration storage, or files and folders created by your Docker container. You
-are strongly encouraged to use `VOLUME` for any combination of mutable or user-serviceable
-parts of your image.
+对于数据库存储、配置存储，或容器运行中创建的文件与目录，建议使用 `VOLUME` 暴露出来。强烈建议将镜像中需要修改或由用户维护的部分使用 `VOLUME` 管理。
 
-For more information about `VOLUME`, see [Dockerfile reference for the VOLUME instruction](/reference/dockerfile.md#volume).
+关于 `VOLUME` 指令，参见 [Dockerfile 参考：VOLUME](/reference/dockerfile.md#volume)。
 
 ### USER
 
-If a service can run without privileges, use `USER` to change to a non-root
-user. Start by creating the user and group in the Dockerfile with something
-like the following example:
+若服务无需特权即可运行，请使用 `USER` 切换到非 root 用户。可先在 Dockerfile 中创建用户与用户组，例如：
 
 ```dockerfile
 RUN groupadd -r postgres && useradd --no-log-init -r -g postgres postgres
@@ -750,61 +542,36 @@ RUN groupadd -r postgres && useradd --no-log-init -r -g postgres postgres
 
 > [!NOTE]
 >
-> Consider an explicit UID/GID.
+> 建议显式指定 UID/GID。
 >
-> Users and groups in an image are assigned a non-deterministic UID/GID in that
-> the "next" UID/GID is assigned regardless of image rebuilds. So, if it’s
-> critical, you should assign an explicit UID/GID.
+> 镜像中的用户与用户组会被分配“非确定性”的 UID/GID（与是否重建无关，按“下一个”分配）。若对此有严格要求，请显式指定。
 
 > [!NOTE]
 >
-> Due to an [unresolved bug](https://github.com/golang/go/issues/13548) in the
-> Go archive/tar package's handling of sparse files, attempting to create a user
-> with a significantly large UID inside a Docker container can lead to disk
-> exhaustion because `/var/log/faillog` in the container layer is filled with
-> NULL (\0) characters. A workaround is to pass the `--no-log-init` flag to
-> `useradd`. The Debian/Ubuntu `adduser` wrapper does not support this flag.
+> 由于 Go archive/tar 在处理稀疏文件时存在[未解决的缺陷](https://github.com/golang/go/issues/13548)，在容器内创建 UID 特别大的用户可能导致磁盘耗尽（容器层的 `/var/log/faillog` 被填充为大量空字符 \0）。可通过为 `useradd` 传入 `--no-log-init` 规避。Debian/Ubuntu 的 `adduser` 包装脚本不支持该参数。
 
-Avoid installing or using `sudo` as it has unpredictable TTY and
-signal-forwarding behavior that can cause problems. If you absolutely need
-functionality similar to `sudo`, such as initializing the daemon as `root` but
-running it as non-`root`, consider using [“gosu”](https://github.com/tianon/gosu).
+避免安装或使用 `sudo`，其 TTY 与信号转发行为在容器中不可预期。若确有需要（如以 root 初始化守护进程、随后降权运行），建议使用 [gosu](https://github.com/tianon/gosu)。
 
-Lastly, to reduce layers and complexity, avoid switching `USER` back and forth
-frequently.
+此外，为减少层数与复杂度，避免频繁切换 `USER`。
 
-For more information about `USER`, see [Dockerfile reference for the USER instruction](/reference/dockerfile.md#user).
+关于 `USER` 指令，参见 [Dockerfile 参考：USER](/reference/dockerfile.md#user)。
 
 ### WORKDIR
 
-For clarity and reliability, you should always use absolute paths for your
-`WORKDIR`. Also, you should use `WORKDIR` instead of proliferating instructions
-like `RUN cd … && do-something`, which are hard to read, troubleshoot, and
-maintain.
+为清晰与可靠起见，应始终为 `WORKDIR` 使用绝对路径。同时，优先使用 `WORKDIR`，不要扩散类似 `RUN cd … && do-something` 的写法——那样不易读、不易排障与维护。
 
-For more information about `WORKDIR`, see [Dockerfile reference for the `WORKDIR` instruction](/reference/dockerfile.md#workdir).
+关于 `WORKDIR` 指令，参见 [Dockerfile 参考：WORKDIR](/reference/dockerfile.md#workdir)。
 
 ### ONBUILD
 
-An `ONBUILD` command executes after the current Dockerfile build completes.
-`ONBUILD` executes in any child image derived `FROM` the current image. Think
-of the `ONBUILD` command as an instruction that the parent Dockerfile gives
-to the child Dockerfile.
+`ONBUILD` 命令会在当前 Dockerfile 构建完成后触发，且会在任何基于当前镜像派生的子镜像中执行。可以将 `ONBUILD` 理解为父 Dockerfile 传递给子 Dockerfile 的“延迟指令”。
 
-A Docker build executes `ONBUILD` commands before any command in a child
-Dockerfile.
+在子 Dockerfile 中，`ONBUILD` 会先于其他指令执行。
 
-`ONBUILD` is useful for images that are going to be built `FROM` a given
-image. For example, you would use `ONBUILD` for a language stack image that
-builds arbitrary user software written in that language within the
-Dockerfile, as you can see in [Ruby’s `ONBUILD` variants](https://github.com/docker-library/ruby/blob/c43fef8a60cea31eb9e7d960a076d633cb62ba8d/2.4/jessie/onbuild/Dockerfile).
+`ONBUILD` 适合作为“父镜像”的场景，例如语言栈镜像：用户在其 Dockerfile 中构建用该语言编写的软件（参考 [Ruby 的 `ONBUILD` 变体](https://github.com/docker-library/ruby/blob/c43fef8a60cea31eb9e7d960a076d633cb62ba8d/2.4/jessie/onbuild/Dockerfile)）。
 
-Images built with `ONBUILD` should get a separate tag. For example,
-`ruby:1.9-onbuild` or `ruby:2.0-onbuild`.
+使用了 `ONBUILD` 的镜像应当使用单独的标签，例如 `ruby:1.9-onbuild` 或 `ruby:2.0-onbuild`。
 
-Be careful when putting `ADD` or `COPY` in `ONBUILD`. The `onbuild image
-fails catastrophically if the new build's context is missing the resource being
-added. Adding a separate tag, as recommended above, helps mitigate this by
-allowing the Dockerfile author to make a choice.
+在 `ONBUILD` 中使用 `ADD` 或 `COPY` 需谨慎：如果后续构建上下文缺少被添加的资源，基于该镜像的构建会严重失败。采用独立标签（如上所述）有助于让 Dockerfile 作者明确选择，降低风险。
 
-For more information about `ONBUILD`, see [Dockerfile reference for the ONBUILD instruction](/reference/dockerfile.md#onbuild).
+关于 `ONBUILD` 指令，参见 [Dockerfile 参考：ONBUILD](/reference/dockerfile.md#onbuild)。

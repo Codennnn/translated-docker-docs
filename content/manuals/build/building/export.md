@@ -1,49 +1,35 @@
 ---
-title: Export binaries
+title: 导出可执行文件
 weight: 50
-description: Using Docker builds to create and export executable binaries
+description: 使用 Docker 构建来生成并导出可执行文件
 keywords: build, buildkit, buildx, guide, tutorial, build arguments, arg
 aliases:
   - /build/guide/export/
 ---
 
-Did you know that you can use Docker to build your application to standalone
-binaries? Sometimes, you don’t want to package and distribute your application
-as a Docker image. Use Docker to build your application, and use exporters to
-save the output to disk.
+你可以使用 Docker 将应用构建为独立的可执行文件。并非所有场景都需要将应用打包并以镜像的形式分发。你可以用 Docker 完成构建，再通过导出器（exporter）将构建产物保存到磁盘。
 
-The default output format for `docker build` is a container image. That image is
-automatically loaded to your local image store, where you can run a container
-from that image, or push it to a registry. Under the hood, this uses the default
-exporter, called the `docker` exporter.
+`docker build` 的默认输出是容器镜像。该镜像会自动加载到本地镜像存储，你可以基于它运行容器，或将其推送到仓库。其底层使用的是默认导出器，即 `docker` 导出器。
 
-To export your build results as files instead, you can use the `--output` flag,
-or `-o` for short. the `--output` flag lets you change the output format of
-your build.
+如果希望将构建结果导出为文件，可使用 `--output`（或简写 `-o`）参数。该参数允许你改变构建的输出格式。
 
-## Export binaries from a build
+## 从构建中导出可执行文件 {#export-binaries-from-a-build}
 
-If you specify a filepath to the `docker build --output` flag, Docker exports
-the contents of the build container at the end of the build to the specified
-location on your host's filesystem. This uses the `local`
-[exporter](/manuals/build/exporters/local-tar.md).
+当你为 `docker build --output` 指定路径时，Docker 会在构建结束时将构建容器的内容导出到宿主机文件系统的该路径。这使用的是 `local`
+[导出器](/manuals/build/exporters/local-tar.md)。
 
-The neat thing about this is that you can use Docker's powerful isolation and
-build features to create standalone binaries. This
-works well for Go, Rust, and other languages that can compile to a single
-binary.
+好处在于你可以利用 Docker 强大的隔离与构建能力来生成独立可执行文件。这对 Go、Rust 等可编译为单个二进制文件的语言尤其适用。
 
-The following example creates a simple Rust program that prints "Hello,
-World!", and exports the binary to the host filesystem.
+下面的示例会创建一个打印 “Hello, World!” 的简易 Rust 程序，并将其二进制导出到宿主机文件系统。
 
-1. Create a new directory for this example, and navigate to it:
+1. 为本示例创建一个新目录，并进入该目录：
 
    ```console
    $ mkdir hello-world-bin
    $ cd hello-world-bin
    ```
 
-2. Create a Dockerfile with the following contents:
+2. 创建一个包含以下内容的 Dockerfile：
 
    ```Dockerfile
    # syntax=docker/dockerfile:1
@@ -62,36 +48,26 @@ World!", and exports the binary to the host filesystem.
    ```
 
    > [!TIP]
-   > The `COPY <<EOT` syntax is a [here-document](/reference/dockerfile.md#here-documents).
-   > It lets you write multi-line strings in a Dockerfile. Here it's used to
-   > create a simple Rust program inline in the Dockerfile.
+   > `COPY <<EOT` 语法是一种[文档内嵌（here-document）](/reference/dockerfile.md#here-documents) 写法，
+   > 允许你在 Dockerfile 中书写多行字符串。这里用于直接在 Dockerfile 内内联一个简单的 Rust 程序。
 
-   This Dockerfile uses a multi-stage build to compile the program in the first
-   stage, and then copies the binary to a scratch image in the second. The
-   final image is a minimal image that only contains the binary. This use case
-   for the `scratch` image is common for creating minimal build artifacts for
-   programs that don't require a full operating system to run.
+   该 Dockerfile 使用多阶段构建：第一阶段完成编译，第二阶段将二进制复制到 `scratch` 镜像中。
+   最终镜像是一个仅包含该二进制的最小化镜像。对于无需完整操作系统即可运行的程序，`scratch` 常被用于生成尽可能小的构建产物。
 
-3. Build the Dockerfile and export the binary to the current working directory:
+3. 构建该 Dockerfile，并将二进制导出到当前工作目录：
 
    ```console
    $ docker build --output=. .
    ```
 
-   This command builds the Dockerfile and exports the binary to the current
-   working directory. The binary is named `hello`, and it's created in the
-   current working directory.
+   该命令会构建 Dockerfile，并将二进制导出到当前工作目录。生成的二进制名为 `hello`，位于当前目录。
 
-## Exporting multi-platform builds
+## 导出多平台构建
 
-You use the `local` exporter to export binaries in combination with
-[multi-platform builds](/manuals/build/building/multi-platform.md). This lets you
-compile multiple binaries at once, that can be run on any machine of any
-architecture, provided that the target platform is supported by the compiler
-you use.
+配合[多平台构建](/manuals/build/building/multi-platform.md) 使用 `local` 导出器，可以一次性编译多个架构的二进制，
+前提是你的编译器支持目标平台，这些二进制即可在对应架构的机器上运行。
 
-Continuing on the example Dockerfile in the
-[Export binaries from a build](#export-binaries-from-a-build) section:
+延续上文[从构建中导出可执行文件](#export-binaries-from-a-build)的小节示例 Dockerfile：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -109,11 +85,10 @@ COPY --from=build /bin/hello /
 ENTRYPOINT ["/hello"]
 ```
 
-You can build this Rust program for multiple platforms using the `--platform`
-flag with the `docker build` command. In combination with the `--output` flag,
-the build exports the binaries for each target to the specified directory.
+你可以在 `docker build` 命令中使用 `--platform` 为多个平台构建该 Rust 程序。结合 `--output` 参数，
+构建会将每个目标平台的二进制导出到指定目录。
 
-For example, to build the program for both `linux/amd64` and `linux/arm64`:
+例如，同时为 `linux/amd64` 与 `linux/arm64` 构建：
 
 ```console
 $ docker build --platform=linux/amd64,linux/arm64 --output=out .
@@ -127,8 +102,7 @@ out/
 3 directories, 2 files
 ```
 
-## Additional information
+## 进一步了解
 
-In addition to the `local` exporter, there are other exporters available. To
-learn more about the available exporters and how to use them, see the
-[exporters](/manuals/build/exporters/_index.md) documentation.
+除了 `local` 导出器外，还有其他可选的导出器。了解可用导出器及其用法，参见
+[导出器](/manuals/build/exporters/_index.md) 文档。

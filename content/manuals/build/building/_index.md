@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Building
+title: 构建
 weight: 20
 ---

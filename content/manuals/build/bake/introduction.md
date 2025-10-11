@@ -1,30 +1,26 @@
 ---
-title: Introduction to Bake
-linkTitle: Introduction
+title: Bake 简介
+linkTitle: 简介
 weight: 10
-description: Get started with using Bake to build your project
-keywords: bake, quickstart, build, project, introduction, getting started
+description: 使用 Bake 构建你的项目入门
+keywords: bake, 快速开始, 构建, 项目, 简介, 入门
 ---
 
-Bake is an abstraction for the `docker build` command that lets you more easily
-manage your build configuration (CLI flags, environment variables, etc.) in a
-consistent way for everyone on your team.
+Bake 是对 `docker build` 命令的一层抽象，能以更简单且一致的方式为整个团队管理构建配置（CLI 参数、环境变量等）。
 
-Bake is a command built into the Buildx CLI, so as long as you have Buildx
-installed, you also have access to bake, via the `docker buildx bake` command.
+Bake 内置于 Buildx CLI。只要安装了 Buildx，就可以通过 `docker buildx bake` 使用 Bake。
 
-## Building a project with Bake
+## 使用 Bake 构建项目
 
-Here's a simple example of a `docker build` command:
+下面是一个简单的 `docker build` 示例：
 
 ```console
 $ docker build -f Dockerfile -t myapp:latest .
 ```
 
-This command builds the Dockerfile in the current directory and tags the
-resulting image as `myapp:latest`.
+该命令会构建当前目录下的 Dockerfile，并将生成的镜像标记为 `myapp:latest`。
 
-To express the same build configuration using Bake:
+用 Bake 表达同样的构建配置：
 
 ```hcl {title=docker-bake.hcl}
 target "myapp" {
@@ -34,30 +30,19 @@ target "myapp" {
 }
 ```
 
-Bake provides a structured way to manage your build configuration, and it saves
-you from having to remember all the CLI flags for `docker build` every time.
-With this file, building the image is as simple as running:
+Bake 以结构化方式管理你的构建配置，省去每次记忆 `docker build` 所有 CLI 参数的麻烦。基于这个文件，构建镜像只需运行：
 
 ```console
 $ docker buildx bake myapp
 ```
 
-For simple builds, the difference between `docker build` and `docker buildx
-bake` is minimal. However, as your build configuration grows more complex, Bake
-provides a more structured way to manage that complexity, that would be
-difficult to manage with CLI flags for the `docker build`. It also provides a
-way to share build configurations across your team, so that everyone is
-building images in a consistent way, with the same configuration.
+对于简单的构建，`docker build` 与 `docker buildx bake` 的差异并不大。但当构建配置变得复杂时，仅依赖 `docker build` 的 CLI 参数会很难维护；此时 Bake 提供了更结构化的方式来管理复杂性。此外，它还便于在团队内共享构建配置，确保所有人都以一致的配置构建镜像。
 
-## The Bake file format
+## Bake 文件格式
 
-You can write Bake files in HCL, YAML (Docker Compose files), or JSON. In
-general, HCL is the most expressive and flexible format, which is why you'll
-see it used in most of the examples in this documentation, and in projects that
-use Bake.
+Bake 文件可以使用 HCL、YAML（Docker Compose 文件）或 JSON 编写。总体而言，HCL 表达力更强、灵活性更高，因此本文档与许多使用 Bake 的项目中大多采用 HCL 示例。
 
-The properties that can be set for a target closely resemble the CLI flags for
-`docker build`. For instance, consider the following `docker build` command:
+目标（target）可设置的属性与 `docker build` 的 CLI 参数高度对应。例如，下面这条 `docker build` 命令：
 
 ```console
 $ docker build \
@@ -69,7 +54,7 @@ $ docker build \
   .
 ```
 
-The Bake equivalent would be:
+其在 Bake 中的等价写法：
 
 ```hcl {title=docker-bake.hcl}
 target "myapp" {
@@ -86,13 +71,13 @@ target "myapp" {
 
 > [!TIP]
 >
-> Want a better editing experience for Bake files in VS Code?
-> Check out the [Docker VS Code Extension (Beta)](https://marketplace.visualstudio.com/items?itemName=docker.docker) for linting, code navigation, and vulnerability scanning.
+> 想在 VS Code 中获得更好的 Bake 文件编辑体验？
+> 试试 [Docker VS Code 扩展（Beta）](https://marketplace.visualstudio.com/items?itemName=docker.docker)，提供语法检查、代码导航与漏洞扫描。
 
-## Next steps
+## 后续步骤
 
-To learn more about using Bake, see the following topics:
+继续了解 Bake 的用法：
 
-- Learn how to define and use [targets](./targets.md) in Bake
-- To see all the properties that can be set for a target, refer to the
-  [Bake file reference](/build/bake/reference/).
+- 了解如何在 Bake 中定义并使用 [目标（target）](./targets.md)
+- 查看目标可配置的全部属性，请参考
+  [Bake 文件参考](/build/bake/reference/)。

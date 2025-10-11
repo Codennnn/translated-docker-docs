@@ -1,78 +1,55 @@
 ---
-title: Docker Build Overview
+title: Docker Build 概览
 weight: 10
-description: Learn about Docker Build and its components.
+description: 了解 Docker Build 及其组成部分。
 keywords: build, buildkit, buildx, architecture
 aliases:
 - /build/install-buildx/
 - /build/architecture/
 ---
 
-Docker Build implements a client-server architecture, where:
+Docker Build 采用客户端-服务器架构，其中：
 
-- Client: Buildx is the client and the user interface for running and managing builds.
-- Server: BuildKit is the server, or builder, that handles the build execution.
+- Client：Buildx 是用于运行与管理构建的客户端和用户界面。
+- Server：BuildKit 是负责执行构建的服务器（构建器）。
 
-When you invoke a build, the Buildx client sends a build request to the
-BuildKit backend. BuildKit resolves the build instructions and executes the
-build steps. The build output is either sent back to the client or uploaded to
-a registry, such as Docker Hub.
+当你发起构建时，Buildx 客户端会向 BuildKit 后端发送构建请求。BuildKit 解析构建指令并执行各个步骤。构建产物要么返回给客户端，要么上传到仓库（例如 Docker Hub）。
 
-Buildx and BuildKit are both installed with Docker Desktop and Docker Engine
-out-of-the-box. When you invoke the `docker build` command, you're using Buildx
-to run a build using the default BuildKit bundled with Docker.
+在 Docker Desktop 与 Docker Engine 中，Buildx 与 BuildKit 开箱即用。执行 `docker build` 命令时，你实际上是通过 Buildx 使用 Docker 捆绑的默认 BuildKit 来运行构建。
 
 ## Buildx
 
-Buildx is the CLI tool that you use to run builds. The `docker build` command
-is a wrapper around Buildx. When you invoke `docker build`, Buildx interprets
-the build options and sends a build request to the BuildKit backend.
+Buildx 是用于运行构建的 CLI 工具。`docker build` 命令是对 Buildx 的封装。当你调用 `docker build` 时，Buildx 会解析构建选项并向 BuildKit 后端发送构建请求。
 
-The Buildx client can do more than just run builds. You can also use Buildx to
-create and manage BuildKit backends, referred to as builders. It also supports
-features for managing images in registries, and for running multiple builds
-concurrently.
+Buildx 的能力不仅限于运行构建。你还可以使用 Buildx 创建和管理 BuildKit 后端（称为 builder）。它也支持管理仓库中的镜像，并发运行多个构建等功能。
 
-Docker Buildx is installed by default with Docker Desktop. You can also build
-the CLI plugin from source, or grab a binary from the GitHub repository and
-install it manually. See [Buildx README](https://github.com/docker/buildx#manual-download)
-on GitHub for more information.
+Docker Buildx 在 Docker Desktop 中默认安装。你也可以从源码构建该 CLI 插件，或从 GitHub 仓库下载二进制并手动安装。更多信息请参见 GitHub 上的 [Buildx README](https://github.com/docker/buildx#manual-download)。
 
 > [!NOTE]
-> While `docker build` invokes Buildx under the hood, there are subtle
-> differences between this command and the canonical `docker buildx build`.
-> For details, see [Difference between `docker build` and `docker buildx build`](../builders/_index.md#difference-between-docker-build-and-docker-buildx-build).
+> 虽然 `docker build` 在底层调用了 Buildx，但该命令与标准的 `docker buildx build` 仍存在一些细微差异。详情参见 [Difference between `docker build` and `docker buildx build`](../builders/_index.md#difference-between-docker-build-and-docker-buildx-build)。
 
 ## BuildKit
 
-BuildKit is the daemon process that executes the build workloads.
+BuildKit 是负责执行构建任务的守护进程。
 
-A build execution starts with the invocation of a `docker build` command.
-Buildx interprets your build command and sends a build request to the BuildKit
-backend. The build request includes:
+一次构建从调用 `docker build` 命令开始。Buildx 解析你的构建命令，并向 BuildKit 后端发送构建请求。构建请求包括：
 
-- The Dockerfile
-- Build arguments
-- Export options
-- Caching options
+- Dockerfile
+- 构建参数
+- 导出选项
+- 缓存选项
 
-BuildKit resolves the build instructions and executes the build steps. While
-BuildKit is executing the build, Buildx monitors the build status and prints
-the progress to the terminal.
+BuildKit 解析构建指令并执行构建步骤。在构建执行期间，Buildx 会监控构建状态并将进度输出到终端。
 
-If the build requires resources from the client, such as local files or build
-secrets, BuildKit requests the resources that it needs from Buildx.
+如果构建需要来自客户端的资源（例如本地文件或构建机密），BuildKit 会向 Buildx 请求所需资源。
 
-This is one way in which BuildKit is more efficient compared to the legacy
-builder used in earlier versions of Docker. BuildKit only requests the
-resources that the build needs when they're needed. The legacy builder, in
-comparison, always takes a copy of the local filesystem.
+这也是 BuildKit 相比早期 Docker 所用旧版构建器更高效的原因之一：BuildKit 仅在需要时请求构建所需的资源；而旧版构建器通常会复制整个本地文件系统。
 
-Examples of resources that BuildKit can request from Buildx include:
+BuildKit 可能向 Buildx 请求的资源示例包括：
 
-- Local filesystem build contexts
-- Build secrets
-- SSH sockets
-- Registry authentication tokens
+- 本地文件系统构建上下文
+- 构建机密
+- SSH 套接字
+- 仓库认证令牌
 
-For more information about BuildKit, see [BuildKit](/manuals/build/buildkit/_index.md).
+更多关于 BuildKit 的信息，参见 [BuildKit](/manuals/build/buildkit/_index.md)。

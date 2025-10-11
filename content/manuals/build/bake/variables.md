@@ -1,19 +1,16 @@
 ---
-title: Variables in Bake
-linkTitle: Variables
+title: Bake 中的变量
+linkTitle: 变量
 weight: 40
 description:
-keywords: build, buildx, bake, buildkit, hcl, variables
+keywords: 构建, buildx, bake, buildkit, hcl, 变量
 ---
 
-You can define and use variables in a Bake file to set attribute values,
-interpolate them into other values, and perform arithmetic operations.
-Variables can be defined with default values, and can be overridden with
-environment variables.
+你可以在 Bake 文件中定义并使用变量，用于设置属性值、将其插值到其他值中，以及执行算术运算。变量可以带有默认值，也可以通过环境变量进行覆盖。
 
-## Using variables as attribute values
+## 将变量用作属性值
 
-Use the `variable` block to define a variable.
+使用 `variable` 块来定义变量。
 
 ```hcl {title=docker-bake.hcl}
 variable "TAG" {
@@ -21,7 +18,7 @@ variable "TAG" {
 }
 ```
 
-The following example shows how to use the `TAG` variable in a target.
+下面的示例展示如何在目标中使用 `TAG` 变量：
 
 ```hcl {title=docker-bake.hcl}
 target "webapp" {
@@ -31,11 +28,9 @@ target "webapp" {
 }
 ```
 
-## Interpolate variables into values
+## 在值中插入变量
 
-Bake supports string interpolation of variables into values. You can use the
-`${}` syntax to interpolate a variable into a value. The following example
-defines a `TAG` variable with a value of `latest`.
+Bake 支持将变量插值到字符串值中。你可以使用 `${}` 语法把变量插入到值里。以下示例定义了一个值为 `latest` 的 `TAG` 变量。
 
 ```hcl {title=docker-bake.hcl}
 variable "TAG" {
@@ -43,8 +38,7 @@ variable "TAG" {
 }
 ```
 
-To interpolate the `TAG` variable into the value of an attribute, use the
-`${TAG}` syntax.
+要把 `TAG` 变量插入到某个属性的值中，使用 `${TAG}` 语法。
 
 ```hcl {title=docker-bake.hcl}
 group "default" {
@@ -62,8 +56,7 @@ target "webapp" {
 }
 ```
 
-Printing the Bake file with the `--print` flag shows the interpolated value in
-the resolved build configuration.
+使用 `--print` 标志打印 Bake 文件时，解析后的构建配置会展示插值后的结果。
 
 ```console
 $ docker buildx bake --print
@@ -86,98 +79,85 @@ $ docker buildx bake --print
 }
 ```
 
-## Validating variables
+## 校验变量
 
-To verify that the value of a variable conforms to an expected type, value
-range, or other condition, you can define custom validation rules using the
-`validation` block.
+为验证变量值是否符合预期的类型、取值范围或其他条件，你可以使用 `validation` 块定义自定义校验规则。
 
-In the following example, validation is used to enforce a numeric constraint on
-a variable value; the `PORT` variable must be 1024 or greater.
+在下面的示例中，校验用于对变量值施加数值约束：`PORT` 必须大于等于 1024。
 
 ```hcl {title=docker-bake.hcl}
-# Define a variable `PORT` with a default value and a validation rule
+# 定义变量 `PORT`，包含默认值与校验规则
 variable "PORT" {
-  default = 3000  # Default value assigned to `PORT`
+  default = 3000  # 为 `PORT` 指定默认值
 
-  # Validation block to ensure `PORT` is a valid number within the acceptable range
+  # 校验块：确保 `PORT` 为可接受范围内的有效数字
   validation {
-    condition = PORT >= 1024  # Ensure `PORT` is at least 1024
-    error_message = "The variable 'PORT' must be 1024 or greater."  # Error message for invalid values
+    condition = PORT >= 1024  # 确保 `PORT` 至少为 1024
+    error_message = "The variable 'PORT' must be 1024 or greater."  # 非法取值时的错误信息
   }
 }
 ```
 
-If the `condition` expression evaluates to `false`, the variable value is
-considered invalid, whereby the build invocation fails and `error_message` is
-emitted. For example, if `PORT=443`, the condition evaluates to `false`, and
-the error is raised.
+如果 `condition` 表达式求值为 `false`，则变量值视为无效，构建会失败并输出 `error_message`。例如，若 `PORT=443`，条件为 `false`，将抛出错误。
 
-Values are coerced into the expected type before the validation is set. This
-ensures that any overrides set with environment variables work as expected.
+在设置校验之前，值会被强制转换为期望的类型，从而确保通过环境变量进行覆盖时能够按预期工作。
 
-### Validate multiple conditions
+### 校验多个条件
 
-To evaluate more than one condition, define multiple `validation` blocks for
-the variable. All conditions must be `true`.
+若需要评估多个条件，可为同一变量定义多个 `validation` 块。所有条件都必须为 `true`。
 
-Here’s an example:
+示例：
 
 ```hcl {title=docker-bake.hcl}
-# Define a variable `VAR` with multiple validation rules
+# 定义变量 `VAR`，包含多条校验规则
 variable "VAR" {
-  # First validation block: Ensure the variable is not empty
+  # 第一条校验：确保变量非空
   validation {
     condition = VAR != ""
     error_message = "The variable 'VAR' must not be empty."
   }
 
-  # Second validation block: Ensure the value contains only alphanumeric characters
+  # 第二条校验：确保值只包含字母和数字
   validation {
-    # VAR and the regex match must be identical:
+    # VAR 与正则匹配结果必须完全一致：
     condition = VAR == regex("[a-zA-Z0-9]+", VAR)
     error_message = "The variable 'VAR' can only contain letters and numbers."
   }
 }
 ```
 
-This example enforces:
+本示例强制如下约束：
 
-- The variable must not be empty.
-- The variable must match a specific character set.
+- 变量不能为空。
+- 变量必须匹配特定字符集。
 
-For invalid inputs like `VAR="hello@world"`, the validation would fail.
+对于 `VAR="hello@world"` 这类无效输入，校验将失败。
 
-### Validating variable dependencies
+### 校验变量依赖
 
-You can reference other Bake variables in your condition expression, enabling
-validations that enforce dependencies between variables. This ensures that
-dependent variables are set correctly before proceeding.
+你可以在条件表达式中引用其他 Bake 变量，从而对变量之间的依赖关系进行校验，确保依赖变量在继续之前已正确设置。
 
-Here’s an example:
+示例：
 
 ```hcl {title=docker-bake.hcl}
-# Define a variable `FOO`
+# 定义变量 `FOO`
 variable "FOO" {}
 
-# Define a variable `BAR` with a validation rule that references `FOO`
+# 定义变量 `BAR`，其校验规则依赖 `FOO`
 variable "BAR" {
-  # Validation block to ensure `FOO` is set if `BAR` is used
+  # 校验块：若使用 `BAR`，必须已设置 `FOO`
   validation {
-    condition = FOO != ""  # Check if `FOO` is not an empty string
+    condition = FOO != ""  # 检查 `FOO` 非空字符串
     error_message = "The variable 'BAR' requires 'FOO' to be set."
   }
 }
 ```
 
-This configuration ensures that the `BAR` variable can only be used if `FOO`
-has been assigned a non-empty value. Attempting to build without setting `FOO`
-will trigger the validation error.
+该配置确保只有当 `FOO` 被赋予非空值时才可使用 `BAR`。如果未设置 `FOO` 就尝试构建，将触发校验错误。
 
-## Escape variable interpolation
+## 取消变量插值
 
-If you want to bypass variable interpolation when parsing the Bake definition,
-use double dollar signs (`$${VARIABLE}`).
+如果希望在解析 Bake 定义时跳过变量插值，请使用双美元符号（`$${VARIABLE}`）。
 
 ```hcl {title=docker-bake.hcl}
 target "webapp" {
@@ -203,11 +183,9 @@ $ docker buildx bake --progress=plain
 ...
 ```
 
-## Using variables in variables across files
+## 在多文件间使用变量
 
-When multiple files are specified, one file can use variables defined in
-another file. In the following example, the `vars.hcl` file defines a
-`BASE_IMAGE` variable with a default value of `docker.io/library/alpine`.
+当指定了多个文件时，一个文件可以使用另一个文件中定义的变量。如下例所示，`vars.hcl` 定义了一个默认值为 `docker.io/library/alpine` 的 `BASE_IMAGE` 变量：
 
 ```hcl {title=vars.hcl}
 variable "BASE_IMAGE" {
@@ -215,8 +193,7 @@ variable "BASE_IMAGE" {
 }
 ```
 
-The following `docker-bake.hcl` file defines a `BASE_LATEST` variable that
-references the `BASE_IMAGE` variable.
+下面的 `docker-bake.hcl` 定义了 `BASE_LATEST` 变量，它引用了 `BASE_IMAGE`：
 
 ```hcl {title=docker-bake.hcl}
 variable "BASE_LATEST" {
@@ -230,9 +207,7 @@ target "webapp" {
 }
 ```
 
-When you print the resolved build configuration, using the `-f` flag to specify
-the `vars.hcl` and `docker-bake.hcl` files, you see that the `BASE_LATEST`
-variable is resolved to `docker.io/library/alpine:latest`.
+当你使用 `-f` 指定 `vars.hcl` 与 `docker-bake.hcl` 并打印解析后的构建配置时，可以看到 `BASE_LATEST` 被解析为 `docker.io/library/alpine:latest`。
 
 ```console
 $ docker buildx bake -f vars.hcl -f docker-bake.hcl --print app
@@ -252,14 +227,10 @@ $ docker buildx bake -f vars.hcl -f docker-bake.hcl --print app
 }
 ```
 
-## Additional resources
+## 更多资源
 
-Here are some additional resources that show how you can use variables in Bake:
+以下资源展示了如何在 Bake 中使用变量：
 
-- You can override `variable` values using environment variables. See
-  [Overriding configurations](./overrides.md#environment-variables) for more
-  information.
-- You can refer to and use global variables in functions. See [HCL
-  functions](./funcs.md#variables-in-functions)
-- You can use variable values when evaluating expressions. See [Expression
-  evaluation](./expressions.md#expressions-with-variables)
+- 可以使用环境变量覆盖 `variable` 的值。参见[覆盖配置](./overrides.md#environment-variables)。
+- 可以在函数中引用和使用全局变量。参见 [HCL 函数](./funcs.md#variables-in-functions)。
+- 在计算表达式时可以使用变量值。参见[表达式求值](./expressions.md#expressions-with-variables)。

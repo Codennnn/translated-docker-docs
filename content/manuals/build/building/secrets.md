@@ -1,44 +1,29 @@
 ---
-title: Build secrets
-linkTitle: Secrets
+title: 构建机密
+linkTitle: 机密
 weight: 30
-description: Manage credentials and other secrets securely
+description: 安全地管理凭据与其他机密信息
 keywords: build, secrets, credentials, passwords, tokens, ssh, git, auth, http
 tags: [Secrets]
 ---
 
-A build secret is any piece of sensitive information, such as a password or API
-token, consumed as part of your application's build process.
+构建机密（build secret）是指在应用构建过程中使用的任何敏感信息，例如密码或 API 令牌。
 
-Build arguments and environment variables are inappropriate for passing secrets
-to your build, because they persist in the final image. Instead, you should use
-secret mounts or SSH mounts, which expose secrets to your builds securely.
+不建议通过构建参数或环境变量向构建传递机密信息，因为这些信息会保留在最终镜像中。应改用机密挂载（secret mounts）或 SSH 挂载，以更安全的方式向构建暴露机密。
 
-## Types of build secrets
+## 构建机密的类型
 
-- [Secret mounts](#secret-mounts) are general-purpose mounts for passing
-  secrets into your build. A secret mount takes a secret from the build client
-  and makes it temporarily available inside the build container, for the
-  duration of the build instruction. This is useful if, for example, your build
-  needs to communicate with a private artifact server or API.
-- [SSH mounts](#ssh-mounts) are special-purpose mounts for making SSH sockets
-  or keys available inside builds. They're commonly used when you need to fetch
-  private Git repositories in your builds.
-- [Git authentication for remote contexts](#git-authentication-for-remote-contexts)
-  is a set of pre-defined secrets for when you build with a remote Git context
-  that's also a private repository. These secrets are "pre-flight" secrets:
-  they are not consumed within your build instruction, but they're used to
-  provide the builder with the necessary credentials to fetch the context.
+- [机密挂载](#secret-mounts)：通用挂载方式，用于向构建传递机密。它从构建客户端获取机密，并在执行某条构建指令期间临时在构建容器中提供该机密。适用于需要与私有制品服务器或 API 通信的场景。
+- [SSH 挂载](#ssh-mounts)：用于在构建中提供 SSH 套接字或密钥的专用挂载。通常在构建过程中拉取私有 Git 仓库时使用。
+- [远程上下文的 Git 认证](#git-authentication-for-remote-contexts)：当你使用远程 Git 上下文且该仓库为私有时的一组预定义机密。这些属于“预检（pre-flight）”机密：它们不会在构建指令中被消费，而是用于为构建器提供获取上下文所需的凭据。
 
-## Using build secrets
+## 使用构建机密
 
-For secret mounts and SSH mounts, using build secrets is a two-step process.
-First you need to pass the secret into the `docker build` command, and then you
-need to consume the secret in your Dockerfile.
+对于机密挂载与 SSH 挂载，使用构建机密通常分两步：
+1. 将机密传入 `docker build` 命令；
+2. 在 Dockerfile 中消费该机密。
 
-To pass a secret to a build, use the [`docker build --secret`
-flag](/reference/cli/docker/buildx/build.md#secret), or the
-equivalent options for [Bake](../bake/reference.md#targetsecret).
+要向构建传递机密，请使用 [`docker build --secret` 选项](/reference/cli/docker/buildx/build.md#secret)，或使用 [Bake](../bake/reference.md#targetsecret) 的等效配置。
 
 {{< tabs >}}
 {{< tab name="CLI" >}}
@@ -65,9 +50,8 @@ target "default" {
 {{< /tab >}}
 {{< /tabs >}}
 
-To consume a secret in a build and make it accessible to the `RUN` instruction,
-use the [`--mount=type=secret`](/reference/dockerfile.md#run---mounttypesecret)
-flag in the Dockerfile.
+若要在构建中使用机密并使其对 `RUN` 指令可见，请在 Dockerfile 中使用
+[`--mount=type=secret`](/reference/dockerfile.md#run---mounttypesecret) 参数。
 
 ```dockerfile
 RUN --mount=type=secret,id=aws \
@@ -75,46 +59,34 @@ RUN --mount=type=secret,id=aws \
     aws s3 cp ...
 ```
 
-## Secret mounts
+## 机密挂载
 
-Secret mounts expose secrets to the build containers, as files or environment
-variables. You can use secret mounts to pass sensitive information to your
-builds, such as API tokens, passwords, or SSH keys.
+机密挂载以文件或环境变量的形式向构建容器暴露机密。你可以使用机密挂载将 API 令牌、密码或 SSH 密钥等敏感信息安全地传给构建。
 
-### Sources
+### 来源
 
-The source of a secret can be either a
-[file](/reference/cli/docker/buildx/build.md#file) or an
-[environment variable](/reference/cli/docker/buildx/build.md#env).
-When you use the CLI or Bake, the type can be detected automatically. You can
-also specify it explicitly with `type=file` or `type=env`.
+机密的来源可以是一个[文件](/reference/cli/docker/buildx/build.md#file)，也可以是一个[环境变量](/reference/cli/docker/buildx/build.md#env)。
+在使用 CLI 或 Bake 时，类型通常会被自动识别；也可以显式指定为 `type=file` 或 `type=env`。
 
-The following example mounts the environment variable `KUBECONFIG` to secret ID `kube`,
-as a file in the build container at `/run/secrets/kube`.
+下面的示例将环境变量 `KUBECONFIG` 挂载为机密 ID `kube`，并以文件的形式暴露在构建容器的 `/run/secrets/kube` 路径。
 
 ```console
 $ docker build --secret id=kube,env=KUBECONFIG .
 ```
 
-When you use secrets from environment variables, you can omit the `env` parameter
-to bind the secret to a file with the same name as the variable.
-In the following example, the value of the `API_TOKEN` variable
-is mounted to `/run/secrets/API_TOKEN` in the build container.
+当机密来源于环境变量时，你可以省略 `env` 参数，以变量名作为文件名进行挂载。
+下面的示例会将 `API_TOKEN` 变量的值挂载到构建容器内的 `/run/secrets/API_TOKEN`。
 
 ```console
 $ docker build --secret id=API_TOKEN .
 ```
 
-### Target
+### 目标位置
 
-When consuming a secret in a Dockerfile, the secret is mounted to a file by
-default. The default file path of the secret, inside the build container, is
-`/run/secrets/<id>`. You can customize how the secrets get mounted in the build
-container using the `target` and `env` options for the `RUN --mount` flag in
-the Dockerfile.
+在 Dockerfile 中消费机密时，默认会以文件的方式挂载，默认路径为 `/run/secrets/<id>`。
+你可以通过 `RUN --mount` 的 `target` 与 `env` 选项自定义机密在构建容器中的挂载方式。
 
-The following example takes secret id `aws` and mounts it to a file at
-`/run/secrets/aws` in the build container.
+如下示例将机密 ID `aws` 挂载为构建容器中的文件 `/run/secrets/aws`：
 
 ```dockerfile
 RUN --mount=type=secret,id=aws \
@@ -122,16 +94,14 @@ RUN --mount=type=secret,id=aws \
     aws s3 cp ...
 ```
 
-To mount a secret as a file with a different name, use the `target` option in
-the `--mount` flag.
+若要以不同文件名挂载机密，请使用 `--mount` 的 `target` 选项：
 
 ```dockerfile
 RUN --mount=type=secret,id=aws,target=/root/.aws/credentials \
     aws s3 cp ...
 ```
 
-To mount a secret as an environment variable instead of a file, use the
-`env` option in the `--mount` flag.
+若要以环境变量而非文件的形式挂载机密，请使用 `--mount` 的 `env` 选项：
 
 ```dockerfile
 RUN --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID \
@@ -140,17 +110,13 @@ RUN --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID \
     aws s3 cp ...
 ```
 
-It's possible to use the `target` and `env` options together to mount a secret
-as both a file and an environment variable.
+你也可以同时使用 `target` 与 `env` 选项，将机密同时挂载为文件与环境变量。
 
-## SSH mounts
+## SSH 挂载
 
-If the credential you want to use in your build is an SSH agent socket or key,
-you can use the SSH mount instead of a secret mount. Cloning private Git
-repositories is a common use case for SSH mounts.
+如果你要在构建中使用的凭据是 SSH 代理套接字或密钥，可以使用 SSH 挂载而非机密挂载。拉取私有 Git 仓库是 SSH 挂载的常见用例。
 
-The following example clones a private GitHub repository using a [Dockerfile
-SSH mount](/reference/dockerfile.md#run---mounttypessh).
+下面的示例演示了如何使用 [Dockerfile SSH 挂载](/reference/dockerfile.md#run---mounttypessh) 克隆私有 GitHub 仓库。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -158,27 +124,21 @@ FROM alpine
 ADD git@github.com:me/myprivaterepo.git /src/
 ```
 
-To pass an SSH socket the build, you use the [`docker build --ssh`
-flag](/reference/cli/docker/buildx/build.md#ssh), or equivalent
-options for [Bake](../bake/reference.md#targetssh).
+要向构建传递 SSH 套接字，请使用 [`docker build --ssh` 选项](/reference/cli/docker/buildx/build.md#ssh)，或使用 [Bake](../bake/reference.md#targetssh) 的等效配置。
 
 ```console
 $ docker buildx build --ssh default .
 ```
 
-## Git authentication for remote contexts
+## 远程上下文的 Git 认证
 
-BuildKit supports two pre-defined build secrets, `GIT_AUTH_TOKEN` and
-`GIT_AUTH_HEADER`. Use them to specify HTTP authentication parameters when
-building with remote, private Git repositories, including:
+BuildKit 支持两个预定义的构建机密：`GIT_AUTH_TOKEN` 与 `GIT_AUTH_HEADER`。
+构建远程的私有 Git 仓库时，可通过它们设置 HTTP 认证参数，适用于：
 
-- Building with a private Git repository as build context
-- Fetching private Git repositories in a build with `ADD`
+- 使用私有 Git 仓库作为构建上下文
+- 在构建中使用 `ADD` 拉取私有 Git 仓库
 
-For example, say you have a private GitLab project at
-`https://gitlab.com/example/todo-app.git`, and you want to run a build using
-that repository as the build context. An unauthenticated `docker build` command
-fails because the builder isn't authorized to pull the repository:
+例如，若你有一个私有 GitLab 项目 `https://gitlab.com/example/todo-app.git`，并希望以该仓库作为构建上下文运行构建；如果未进行认证，`docker build` 将失败，因为构建器无权拉取该仓库：
 
 ```console
 $ docker build https://gitlab.com/example/todo-app.git
@@ -190,9 +150,7 @@ $ docker build https://gitlab.com/example/todo-app.git
 ------
 ```
 
-To authenticate the builder to the Git server, set the `GIT_AUTH_TOKEN`
-environment variable to contain a valid GitLab access token, and pass it as a
-secret to the build:
+要让构建器通过 Git 服务器认证，请将有效的 GitLab 访问令牌设置到环境变量 `GIT_AUTH_TOKEN`，并作为机密传给构建：
 
 ```console
 $ GIT_AUTH_TOKEN=$(cat gitlab-token.txt) docker build \
@@ -200,24 +158,22 @@ $ GIT_AUTH_TOKEN=$(cat gitlab-token.txt) docker build \
   https://gitlab.com/example/todo-app.git
 ```
 
-The `GIT_AUTH_TOKEN` also works with `ADD` to fetch private Git repositories as
-part of your build:
+`GIT_AUTH_TOKEN` 也可结合 `ADD` 使用，用于在构建中拉取私有 Git 仓库：
 
 ```dockerfile
 FROM alpine
 ADD https://gitlab.com/example/todo-app.git /src
 ```
 
-### HTTP authentication scheme
+### HTTP 认证方案
 
-By default, Git authentication over HTTP uses the Bearer authentication scheme:
+默认情况下，经由 HTTP 的 Git 认证使用 Bearer 方案：
 
 ```http
 Authorization: Bearer <GIT_AUTH_TOKEN>
 ```
 
-If you need to use a Basic scheme, with a username and password, you can set
-the `GIT_AUTH_HEADER` build secret:
+如果需要使用 Basic 方案（用户名/密码），可以设置 `GIT_AUTH_HEADER` 构建机密：
 
 ```console
 $ export GIT_AUTH_TOKEN=$(cat gitlab-token.txt)
@@ -228,14 +184,11 @@ $ docker build \
   https://gitlab.com/example/todo-app.git
 ```
 
-BuildKit currently only supports the Bearer and Basic schemes.
+目前 BuildKit 仅支持 Bearer 与 Basic 两种方案。
 
-### Multiple hosts
+### 多主机
 
-You can set the `GIT_AUTH_TOKEN` and `GIT_AUTH_HEADER` secrets on a per-host
-basis, which lets you use different authentication parameters for different
-hostnames. To specify a hostname, append the hostname as a suffix to the secret
-ID:
+你可以按主机维度设置 `GIT_AUTH_TOKEN` 与 `GIT_AUTH_HEADER` 机密，以便针对不同主机名使用不同的认证参数。要指定主机名，可将其作为后缀追加到机密 ID：
 
 ```console
 $ export GITLAB_TOKEN=$(cat gitlab-token.txt)

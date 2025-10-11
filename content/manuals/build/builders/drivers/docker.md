@@ -1,8 +1,8 @@
 ---
-title: Docker driver
+title: Docker 驱动
 description: |
-  The Docker driver is the default driver.
-  It uses the BuildKit bundled with the Docker Engine.
+  Docker 驱动是默认驱动。
+  它使用打包在 Docker Engine 中的 BuildKit。
 keywords: build, buildx, driver, builder, docker
 aliases:
   - /build/buildx/drivers/docker/
@@ -10,31 +10,27 @@ aliases:
   - /build/drivers/docker/
 ---
 
-The Buildx Docker driver is the default driver. It uses the BuildKit server
-components built directly into the Docker Engine. The Docker driver requires no
-configuration.
+Buildx 的 Docker 驱动是默认驱动。它使用直接内置于 Docker Engine 的 BuildKit 服务端组件。
+Docker 驱动无需任何配置。
 
-Unlike the other drivers, builders using the Docker driver can't be manually
-created. They're only created automatically from the Docker context.
+与其他驱动不同，使用 Docker 驱动的构建器无法手动创建；
+它们只会基于 Docker 上下文自动创建。
 
-Images built with the Docker driver are automatically loaded to the local image
-store.
+使用 Docker 驱动构建的镜像会自动加载到本地镜像存储。
 
-## Synopsis
+## 概要
 
 ```console
-# The Docker driver is used by buildx by default
+# buildx 默认使用 Docker 驱动
 docker buildx build .
 ```
 
-It's not possible to configure which BuildKit version to use, or to pass any
-additional BuildKit parameters to a builder using the Docker driver. The
-BuildKit version and parameters are preset by the Docker Engine internally.
+在 Docker 驱动下，无法自定义所使用的 BuildKit 版本，也不能向构建器传递额外的 BuildKit 参数。
+BuildKit 的版本与参数由 Docker Engine 在内部预设。
 
-If you need additional configuration and flexibility, consider using the
-[Docker container driver](./docker-container.md).
+如果你需要更多配置与灵活性，建议使用[Docker 容器驱动](./docker-container.md)。
 
-## Further reading
+## 延伸阅读
 
-For more information on the Docker driver, see the
-[buildx reference](/reference/cli/docker/buildx/create.md#driver).
+关于 Docker 驱动的更多信息，参见
+[buildx 参考](/reference/cli/docker/buildx/create.md#driver)。

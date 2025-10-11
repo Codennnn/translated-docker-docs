@@ -1,53 +1,44 @@
 ---
-title: Builders
+title: 构建器（Builders）
 weight: 40
 keywords: build, buildx, builders, buildkit, drivers, backend
-description: Learn about builders and how to manage them
+description: 了解构建器的概念以及如何进行管理
 ---
 
-A builder is a BuildKit daemon that you can use to run your builds. BuildKit
-is the build engine that solves the build steps in a Dockerfile to produce a
-container image or other artifacts.
+构建器是一个可用于运行构建的 BuildKit 守护进程。BuildKit 是构建引擎，用于解析并执行 Dockerfile 中的构建步骤，以产出容器镜像或其他构建产物。
 
-You can create and manage builders, inspect them, and even connect to builders
-running remotely. You interact with builders using the Docker CLI.
+你可以创建与管理构建器、查看其详情，甚至连接到远程运行的构建器。你可以通过 Docker CLI 与构建器交互。
 
-## Default builder
+## 默认构建器
 
-Docker Engine automatically creates a builder that becomes the default backend
-for your builds. This builder uses the BuildKit library bundled with the
-daemon. This builder requires no configuration.
+Docker Engine 会自动创建一个构建器，作为你进行构建时的默认后端。
+该构建器使用与守护进程一起打包的 BuildKit 库，无需额外配置。
 
-The default builder is directly bound to the Docker daemon and its
-[context](/manuals/engine/manage-resources/contexts.md). If you change the
-Docker context, your `default` builder refers to the new Docker context.
+默认构建器直接绑定到 Docker 守护进程及其[上下文](/manuals/engine/manage-resources/contexts.md)。
+若你切换 Docker 上下文，`default` 构建器也会随之指向新的 Docker 上下文。
 
-## Build drivers
+## 构建驱动
 
-Buildx implements a concept of [build drivers](drivers/_index.md) to refer to
-different builder configurations. The default builder created by the daemon
-uses the [`docker` driver](drivers/docker.md).
+Buildx 提供了[构建驱动](drivers/_index.md)的概念，用于表示不同的构建器配置。
+守护进程创建的默认构建器使用 [`docker` 驱动](drivers/docker.md)。
 
-Buildx supports the following build drivers:
+Buildx 支持以下构建驱动：
 
-- `docker`: uses the BuildKit library bundled into the Docker daemon.
-- `docker-container`: creates a dedicated BuildKit container using Docker.
-- `kubernetes`: creates BuildKit pods in a Kubernetes cluster.
-- `remote`: connects directly to a manually managed BuildKit daemon.
+- `docker`：使用打包在 Docker 守护进程中的 BuildKit 库
+- `docker-container`：通过 Docker 创建独立的 BuildKit 容器
+- `kubernetes`：在 Kubernetes 集群中创建 BuildKit Pod
+- `remote`：直接连接到手动管理的 BuildKit 守护进程
 
-## Selected builder
+## 已选构建器（Selected builder）
 
-Selected builder refers to the builder that's used by default when you run
-build commands.
+“已选构建器”是指当你运行构建命令时默认使用的构建器。
 
-When you run a build, or interact with builders in some way using the CLI,
-you can use the optional `--builder` flag, or the `BUILDX_BUILDER`
-[environment variable](../building/variables.md#buildx_builder),
-to specify a builder by name. If you don't specify a builder,
-the selected builder is used.
+当你运行构建或通过 CLI 与构建器交互时，可以使用可选的 `--builder` 标志，或 `BUILDX_BUILDER`
+[环境变量](../building/variables.md#buildx_builder)来按名称指定构建器。
+如果未显式指定，将使用已选构建器。
 
-Use the `docker buildx ls` command to see the available builder instances.
-The asterisk (`*`) next to a builder name indicates the selected builder.
+使用 `docker buildx ls` 可查看可用的构建器实例。
+构建器名称后的星号（`*`）表示它是已选构建器。
 
 ```console
 $ docker buildx ls
@@ -58,58 +49,49 @@ my_builder      docker-container
   my_builder0   default              running  v0.11.6  linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/386
 ```
 
-### Select a different builder
+### 切换构建器
 
-To switch between builders, use the `docker buildx use <name>` command.
+要在多个构建器之间切换，使用 `docker buildx use <name>`。
 
-After running this command, the builder you specify is automatically
-selected when you invoke builds.
+执行该命令后，你指定的构建器会在后续的构建中被自动选用。
 
-### Difference between `docker build` and `docker buildx build`
+### `docker build` 与 `docker buildx build` 的差异
 
-Even though `docker build` is an alias for `docker buildx build`, there are
-subtle differences between the two commands. With Buildx, the build client and
-the daemon (BuildKit) are decoupled. This means you can use multiple
-builders from a single client, even remote ones.
+尽管 `docker build` 是 `docker buildx build` 的别名，但两者仍存在一些差异。
+在 Buildx 模式下，构建客户端与守护进程（BuildKit）是解耦的，这意味着你可以从同一个客户端使用多个构建器，甚至可以连接远程构建器。
 
-The `docker build` command always defaults to using the default builder that
-comes bundled with the Docker Engine, to ensure backwards compatibility with
-older versions of the Docker CLI. The `docker buildx build` command, on the
-other hand, checks whether you've set a different builder as the default
-builder before it sends your build to BuildKit.
+为确保与旧版本 Docker CLI 的兼容性，`docker build` 始终默认使用 Docker Engine 自带的默认构建器。
+相比之下，`docker buildx build` 会在将构建发送给 BuildKit 之前，检查你是否设置了其他默认构建器。
 
-To use the `docker build` command with a non-default builder, you must either:
+若希望 `docker build` 使用非默认构建器，你需要：
 
-- Specify the builder explicitly, using the `--builder` flag or the `BUILDX_BUILDER` environment variable:
+- 显式指定构建器：通过 `--builder` 标志或 `BUILDX_BUILDER` 环境变量：
 
   ```console
   $ BUILDX_BUILDER=my_builder docker build .
   $ docker build --builder my_builder .
   ```
 
-- Configure Buildx as the default client by running the following command:
+- 将 Buildx 配置为默认客户端，可运行：
 
   ```console
   $ docker buildx install
   ```
 
-  This updates your [Docker CLI configuration file](/reference/cli/docker/_index.md#configuration-files)
-  to ensure all of your build-related commands are routed via Buildx.
+  该命令会更新你的 [Docker CLI 配置文件](/reference/cli/docker/_index.md#configuration-files)，
+  确保所有与构建相关的命令都通过 Buildx 路由。
 
   > [!TIP]
-  > To undo this change, run `docker buildx uninstall`.
+  > 若要撤销该更改，运行 `docker buildx uninstall`。
 
 <!-- vale Docker.We = NO -->
 
-In general, we recommend that you use the `docker buildx build` command when
-you want to use custom builders. This ensures that your [selected
-builder](#selected-builder) configuration is interpreted correctly.
+总体而言，当你需要使用自定义构建器时，建议使用 `docker buildx build`。
+这可以确保你的[已选构建器](#已选构建器selected-builder)配置被正确识别与应用。
 
 <!-- vale Docker.We = YES -->
 
-## Additional information
+## 更多信息
 
-- For information about how to interact with and manage builders,
-  see [Manage builders](./manage.md)
-- To learn about different types of builders,
-  see [Build drivers](drivers/_index.md)
+- 了解如何与构建器交互并进行管理，参见：[管理构建器](./manage.md)
+- 了解不同类型的构建器，参见：[构建驱动](drivers/_index.md)

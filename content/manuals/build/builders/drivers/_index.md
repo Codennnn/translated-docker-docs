@@ -1,6 +1,6 @@
 ---
-title: Build drivers
-description: Build drivers are configurations for how and where the BuildKit backend runs.
+title: 构建驱动
+description: 构建驱动定义了 BuildKit 后端如何以及在何处运行的配置。
 keywords: build, buildx, driver, builder, docker-container, kubernetes, remote
 aliases:
   - /build/buildx/drivers/
@@ -9,41 +9,38 @@ aliases:
   - /build/drivers/
 ---
 
-Build drivers are configurations for how and where the BuildKit backend runs.
-Driver settings are customizable and allow fine-grained control of the builder.
-Buildx supports the following drivers:
+构建驱动用于配置 BuildKit 后端的运行方式与运行位置。
+驱动的设置可自定义，便于对构建器（builder）进行精细化控制。
+Buildx 支持以下驱动：
 
-- `docker`: uses the BuildKit library bundled into the Docker daemon.
-- `docker-container`: creates a dedicated BuildKit container using Docker.
-- `kubernetes`: creates BuildKit pods in a Kubernetes cluster.
-- `remote`: connects directly to a manually managed BuildKit daemon.
+- `docker`：使用打包在 Docker 守护进程中的 BuildKit 库。
+- `docker-container`：通过 Docker 创建专用的 BuildKit 容器。
+- `kubernetes`：在 Kubernetes 集群中创建 BuildKit Pod。
+- `remote`：直接连接到手动管理的 BuildKit 守护进程。
 
-Different drivers support different use cases. The default `docker` driver
-prioritizes simplicity and ease of use. It has limited support for advanced
-features like caching and output formats, and isn't configurable. Other drivers
-provide more flexibility and are better at handling advanced scenarios.
+不同驱动适用于不同的场景。默认的 `docker` 驱动强调简单易用，
+对缓存与输出格式等高级特性的支持较为有限，且不可配置。
+其他驱动提供了更高的灵活性，更擅长处理复杂的高级用例。
 
-The following table outlines some differences between drivers.
+下表概述了各驱动之间的一些差异：
 
-| Feature                      |  `docker`   | `docker-container` | `kubernetes` |      `remote`      |
+| 特性                         |  `docker`   | `docker-container` | `kubernetes` |      `remote`      |
 | :--------------------------- | :---------: | :----------------: | :----------: | :----------------: |
-| **Automatically load image** |     ✅      |                    |              |                    |
-| **Cache export**             |     ✅\*     |         ✅         |      ✅      |         ✅         |
-| **Tarball output**           |             |         ✅         |      ✅      |         ✅         |
-| **Multi-arch images**        |             |         ✅         |      ✅      |         ✅         |
-| **BuildKit configuration**   |             |         ✅         |      ✅      | Managed externally |
+| **自动加载镜像**             |     ✅      |                    |              |                    |
+| **缓存导出**                 |     ✅\*     |         ✅         |      ✅      |         ✅         |
+| **Tar 包输出**               |             |         ✅         |      ✅      |         ✅         |
+| **多架构镜像**               |             |         ✅         |      ✅      |         ✅         |
+| **BuildKit 配置**            |             |         ✅         |      ✅      | 外部管理          |
 
-\* _The `docker` driver doesn't support all cache export options.
-See [Cache storage backends](/manuals/build/cache/backends/_index.md) for more information._
+\* _`docker` 驱动并不支持所有缓存导出选项。
+更多信息参见[缓存存储后端](/manuals/build/cache/backends/_index.md)。_
 
-## Loading to local image store
+## 加载到本地镜像存储
 
-Unlike when using the default `docker` driver, images built using other drivers
-aren't automatically loaded into the local image store. If you don't specify an
-output, the build result is exported to the build cache only.
+与默认的 `docker` 驱动不同，使用其他驱动构建的镜像不会自动加载到本地镜像存储。
+如果未显式指定输出，构建结果只会导出到构建缓存。
 
-To build an image using a non-default driver and load it to the image store,
-   use the `--load` flag with the build command:
+要使用非默认驱动构建并将镜像加载到镜像存储，请在构建命令中添加 `--load` 标志：
 
    ```console
    $ docker buildx build --load -t <image> --builder=container .
@@ -56,7 +53,7 @@ To build an image using a non-default driver and load it to the image store,
    => importing to docker
    ```
 
-   With this option, the image is available in the image store after the build finishes:
+   启用该选项后，构建完成时镜像会出现在本地镜像存储中：
 
    ```console
    $ docker image ls
@@ -64,26 +61,24 @@ To build an image using a non-default driver and load it to the image store,
    <image>                          latest            adf3eec768a1   2 minutes ago       197MB
    ```
 
-### Load by default
+### 默认加载
 
 {{< summary-bar feature_name="Load by default" >}}
 
-You can configure the custom build drivers to behave in a similar way to the
-default `docker` driver, and load images to the local image store by default.
-To do so, set the `default-load` driver option when creating the builder:
+你可以将自定义构建驱动配置成类似默认 `docker` 驱动的行为，默认将镜像加载到本地镜像存储。
+为此，可在创建构建器时设置 `default-load` 驱动选项：
 
 ```console
 $ docker buildx create --driver-opt default-load=true
 ```
 
-Note that, just like with the `docker` driver, if you specify a different
-output format with `--output`, the result will not be loaded to the image store
-unless you also explicitly specify `--output type=docker` or use the `--load`
-flag.
+请注意，与 `docker` 驱动一致，若你通过 `--output` 指定了其他输出格式，
+除非同时显式指定 `--output type=docker` 或使用 `--load` 标志，
+否则结果不会被加载到镜像存储。
 
-## What's next
+## 后续阅读
 
-Read about each driver:
+进一步阅读各驱动：
 
   - [Docker driver](./docker.md)
   - [Docker container driver](./docker-container.md)

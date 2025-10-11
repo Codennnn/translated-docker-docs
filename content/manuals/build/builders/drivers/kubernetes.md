@@ -1,8 +1,8 @@
 ---
-title: Kubernetes driver
+title: Kubernetes 驱动
 description: |
-  The Kubernetes driver lets you run BuildKit in a Kubernetes cluster.
-  You can connect to, and run your builds in, the cluster using Buildx.
+  Kubernetes 驱动允许你在 Kubernetes 集群中运行 BuildKit。
+  你可以通过 Buildx 连接到集群，并在集群中运行构建。
 keywords: build, buildx, driver, builder, kubernetes
 aliases:
   - /build/buildx/drivers/kubernetes/
@@ -10,14 +10,12 @@ aliases:
   - /build/drivers/kubernetes/
 ---
 
-The Kubernetes driver lets you connect your local development or CI
-environments to builders in a Kubernetes cluster to allow access to more
-powerful compute resources, optionally on multiple native architectures.
+Kubernetes 驱动可以把你的本地开发或 CI 环境连接到 Kubernetes 集群中的构建器，
+从而利用更强的计算资源，并可选择使用多种原生架构的节点。
 
-## Synopsis
+## 概要
 
-Run the following command to create a new builder, named `kube`, that uses the
-Kubernetes driver:
+运行以下命令以创建一个名为 `kube` 的新构建器，并使用 Kubernetes 驱动：
 
 ```console
 $ docker buildx create \
@@ -27,58 +25,53 @@ $ docker buildx create \
   --driver-opt=[key=value,...]
 ```
 
-The following table describes the available driver-specific options that you
-can pass to `--driver-opt`:
+下表列出了可通过 `--driver-opt` 传入的驱动特定选项：
 
-| Parameter                    | Type         | Default                                 | Description                                                                                                                          |
-| ---------------------------- | ------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `image`                      | String       |                                         | Sets the image to use for running BuildKit.                                                                                          |
-| `namespace`                  | String       | Namespace in current Kubernetes context | Sets the Kubernetes namespace.                                                                                                       |
-| `default-load`               | Boolean      | `false`                                 | Automatically load images to the Docker Engine image store.                                                                          |
-| `replicas`                   | Integer      | 1                                       | Sets the number of Pod replicas to create. See [scaling BuildKit][1]                                                                 |
-| `requests.cpu`               | CPU units    |                                         | Sets the request CPU value specified in units of Kubernetes CPU. For example `requests.cpu=100m` or `requests.cpu=2`                 |
-| `requests.memory`            | Memory size  |                                         | Sets the request memory value specified in bytes or with a valid suffix. For example `requests.memory=500Mi` or `requests.memory=4G` |
-| `requests.ephemeral-storage` | Storage size |                                         | Sets the request ephemeral-storage value specified in bytes or with a valid suffix. For example `requests.ephemeral-storage=2Gi`     |
-| `limits.cpu`                 | CPU units    |                                         | Sets the limit CPU value specified in units of Kubernetes CPU. For example `requests.cpu=100m` or `requests.cpu=2`                   |
-| `limits.memory`              | Memory size  |                                         | Sets the limit memory value specified in bytes or with a valid suffix. For example `requests.memory=500Mi` or `requests.memory=4G`   |
-| `limits.ephemeral-storage`   | Storage size |                                         | Sets the limit ephemeral-storage value specified in bytes or with a valid suffix. For example `requests.ephemeral-storage=100M`      |
-| `buildkit-root-volume-memory`| Memory size  | Using regular file system               | Mounts `/var/lib/buildkit` on an `emptyDir` memory-backed volume, with `SizeLimit` as the value. For example, `buildkit-root-folder-memory=6G`     |
-| `nodeselector`               | CSV string   |                                         | Sets the pod's `nodeSelector` label(s). See [node assignment][2].                                                                    |
-| `annotations`                | CSV string   |                                         | Sets additional annotations on the deployments and pods.                                                                             |
-| `labels`                     | CSV string   |                                         | Sets additional labels on the deployments and pods.                                                                                  |
-| `tolerations`                | CSV string   |                                         | Configures the pod's taint toleration. See [node assignment][2].                                                                     |
-| `serviceaccount`             | String       |                                         | Sets the pod's `serviceAccountName`.                                                                                                 |
-| `schedulername`              | String       |                                         | Sets the scheduler responsible for scheduling the pod.                                                                               |
-| `timeout`                    | Time         | `120s`                                  | Set the timeout limit that determines how long Buildx will wait for pods to be provisioned before a build.                           |
-| `rootless`                   | Boolean      | `false`                                 | Run the container as a non-root user. See [rootless mode][3].                                                                        |
-| `loadbalance`                | String       | `sticky`                                | Load-balancing strategy (`sticky` or `random`). If set to `sticky`, the pod is chosen using the hash of the context path.            |
-| `qemu.install`               | Boolean      | `false`                                 | Install QEMU emulation for multi platforms support. See [QEMU][4].                                                                   |
-| `qemu.image`                 | String       | `tonistiigi/binfmt:latest`              | Sets the QEMU emulation image. See [QEMU][4].                                                                                        |
+| 参数                          | 类型         | 默认值                                   | 说明                                                                                                                               |
+| ----------------------------- | ------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `image`                       | String       |                                          | 设置运行 BuildKit 所用的镜像。                                                                                                     |
+| `namespace`                   | String       | 当前 K8s 上下文中的命名空间             | 设置 Kubernetes 命名空间。                                                                                                         |
+| `default-load`                | Boolean      | `false`                                  | 自动将镜像加载到 Docker Engine 的镜像存储。                                                                                        |
+| `replicas`                    | Integer      | 1                                        | 设置要创建的 Pod 副本数。参见[扩缩容 BuildKit][1]                                                                                 |
+| `requests.cpu`                | CPU units    |                                          | 以 Kubernetes CPU 单位设置 CPU 请求值。如 `requests.cpu=100m` 或 `requests.cpu=2`                                                  |
+| `requests.memory`             | Memory size  |                                          | 以字节或带合法后缀的形式设置内存请求值。如 `requests.memory=500Mi` 或 `requests.memory=4G`                                         |
+| `requests.ephemeral-storage`  | Storage size |                                          | 以字节或带合法后缀的形式设置临时存储请求值。如 `requests.ephemeral-storage=2Gi`                                                   |
+| `limits.cpu`                  | CPU units    |                                          | 以 Kubernetes CPU 单位设置 CPU 限制值。如 `requests.cpu=100m` 或 `requests.cpu=2`                                                  |
+| `limits.memory`               | Memory size  |                                          | 以字节或带合法后缀的形式设置内存限制值。如 `requests.memory=500Mi` 或 `requests.memory=4G`                                         |
+| `limits.ephemeral-storage`    | Storage size |                                          | 以字节或带合法后缀的形式设置临时存储限制值。如 `requests.ephemeral-storage=100M`                                                  |
+| `buildkit-root-volume-memory` | Memory size  | 使用常规文件系统                         | 将 `/var/lib/buildkit` 挂载到内存支持的 `emptyDir` 卷上，`SizeLimit` 为容量限制。例如：`buildkit-root-folder-memory=6G`            |
+| `nodeselector`                | CSV string   |                                          | 设置 Pod 的 `nodeSelector` 标签。参见[节点分配][2]。                                                                               |
+| `annotations`                 | CSV string   |                                          | 为 Deployment 与 Pod 设置额外注解。                                                                                                |
+| `labels`                      | CSV string   |                                          | 为 Deployment 与 Pod 设置额外标签。                                                                                                |
+| `tolerations`                 | CSV string   |                                          | 配置 Pod 的污点容忍（taint toleration）。参见[节点分配][2]。                                                                      |
+| `serviceaccount`              | String       |                                          | 设置 Pod 的 `serviceAccountName`。                                                                                                 |
+| `schedulername`               | String       |                                          | 设置负责调度该 Pod 的调度器名称。                                                                                                  |
+| `timeout`                     | Time         | `120s`                                   | 设置在构建前等待 Pod 准备完成的超时时间。                                                                                          |
+| `rootless`                    | Boolean      | `false`                                  | 以非 root 用户运行容器。参见[无特权模式][3]。                                                                                      |
+| `loadbalance`                 | String       | `sticky`                                 | 负载均衡策略（`sticky` 或 `random`）。`sticky` 根据上下文路径哈希选择 Pod。                                                        |
+| `qemu.install`                | Boolean      | `false`                                  | 安装 QEMU 模拟以支持多平台。参见 [QEMU][4]。                                                                                        |
+| `qemu.image`                  | String       | `tonistiigi/binfmt:latest`               | 设置 QEMU 模拟所用镜像。参见 [QEMU][4]。                                                                                            |
 
 [1]: #scaling-buildkit
 [2]: #node-assignment
 [3]: #rootless-mode
 [4]: #qemu
 
-## Scaling BuildKit
+## 扩缩容 BuildKit
 
-One of the main advantages of the Kubernetes driver is that you can scale the
-number of builder replicas up and down to handle increased build load. Scaling
-is configurable using the following driver options:
+Kubernetes 驱动的一大优势是可以按需扩缩构建器副本数，以应对增长的构建负载。
+可通过以下驱动选项进行配置：
 
 - `replicas=N`
 
-  This scales the number of BuildKit pods to the desired size. By default, it
-  only creates a single pod. Increasing the number of replicas lets you take
-  advantage of multiple nodes in your cluster.
+  将 BuildKit Pod 的副本数扩容到期望规模。默认仅创建 1 个 Pod。增加副本数可以利用集群中的多台节点。
 
 - `requests.cpu`, `requests.memory`, `requests.ephemeral-storage`, `limits.cpu`, `limits.memory`, `limits.ephemeral-storage`
 
-  These options allow requesting and limiting the resources available to each
-  BuildKit pod according to the official Kubernetes documentation
-  [here](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
+  这些选项允许按 Kubernetes 官方文档为每个 BuildKit Pod 设置资源请求与限制：
+  [链接](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)。
 
-For example, to create 4 replica BuildKit pods:
+例如，创建 4 个副本的 BuildKit Pod：
 
 ```console
 $ docker buildx create \
@@ -88,7 +81,7 @@ $ docker buildx create \
   --driver-opt=namespace=buildkit,replicas=4
 ```
 
-Listing the pods, you get this:
+列出相关对象，输出类似：
 
 ```console
 $ kubectl -n buildkit get deployments
@@ -103,36 +96,27 @@ kube0-6977cdcb75-vb4ks   1/1     Running   0          8s
 kube0-6977cdcb75-z4fzs   1/1     Running   0          8s
 ```
 
-Additionally, you can use the `loadbalance=(sticky|random)` option to control
-the load-balancing behavior when there are multiple replicas. `random` selects
-random nodes from the node pool, providing an even workload distribution across
-replicas. `sticky` (the default) attempts to connect the same build performed
-multiple times to the same node each time, ensuring better use of local cache.
+此外，当存在多个副本时，可通过 `loadbalance=(sticky|random)` 控制负载均衡行为。
+`random` 从节点池中随机选择节点，使负载更均匀；`sticky`（默认）则尽量将同一构建多次连接到同一节点，以更好利用本地缓存。
 
-For more information on scalability, see the options for
-[`docker buildx create`](/reference/cli/docker/buildx/create.md#driver-opt).
+更多可扩展性相关说明，参见 [`docker buildx create`](/reference/cli/docker/buildx/create.md#driver-opt) 的可选项。
 
-## Node assignment
+## 节点分配（Node assignment）
 
-The Kubernetes driver allows you to control the scheduling of BuildKit pods
-using the `nodeSelector` and `tolerations` driver options.
-You can also set the `schedulername` option if you want to use a custom scheduler altogether.
+Kubernetes 驱动支持通过 `nodeSelector` 与 `tolerations` 驱动选项控制 BuildKit Pod 的调度。
+如需使用自定义调度器，可设置 `schedulername` 选项。
 
-You can use the `annotations` and `labels` driver options to apply additional
-metadata to the deployments and pods that's hosting your builders.
+你可以使用 `annotations` 与 `labels` 为承载构建器的 Deployment 与 Pod 附加元数据。
 
-The value of the `nodeSelector` parameter is a comma-separated string of
-key-value pairs, where the key is the node label and the value is the label
-text. For example: `"nodeselector=kubernetes.io/arch=arm64"`
+`nodeSelector` 参数值为以逗号分隔的键值对字符串，键为节点标签名、值为标签内容。
+例如：`"nodeselector=kubernetes.io/arch=arm64"`
 
-The `tolerations` parameter is a semicolon-separated list of taints. It accepts
-the same values as the Kubernetes manifest. Each `tolerations` entry specifies
-a taint key and the value, operator, or effect. For example:
+`tolerations` 参数是以分号分隔的污点（taint）列表，取值与 Kubernetes 清单一致。
+每一项可指定污点键以及对应的值、运算符或效果。例如：
 `"tolerations=key=foo,value=bar;key=foo2,operator=exists;key=foo3,effect=NoSchedule"`
 
-These options accept CSV-delimited strings as values. Due to quoting rules for
-shell commands, you must wrap the values in single quotes. You can even wrap all
-of `--driver-opt` in single quotes, for example:
+这些选项接收以逗号分隔的字符串。受 Shell 引号规则影响，建议使用单引号包裹取值。
+甚至可以将整个 `--driver-opt` 用单引号包裹，例如：
 
 ```console
 $ docker buildx create \
@@ -142,20 +126,18 @@ $ docker buildx create \
   '--driver-opt="nodeselector=label1=value1,label2=value2","tolerations=key=key1,value=value1"'
 ```
 
-## Multi-platform builds
+## 多平台构建
 
-The Kubernetes driver has support for creating
-[multi-platform images](/manuals/build/building/multi-platform.md),
-either using QEMU or by leveraging the native architecture of nodes.
+Kubernetes 驱动支持创建[多平台镜像](/manuals/build/building/multi-platform.md)，
+既可以借助 QEMU，也可以利用节点的原生架构。
 
 ### QEMU
 
-Like the `docker-container` driver, the Kubernetes driver also supports using
-[QEMU](https://www.qemu.org/) (user
-mode) to build images for non-native platforms. Include the `--platform` flag
-and specify which platforms you want to output to.
+与 `docker-container` 驱动类似，Kubernetes 驱动也支持使用
+[QEMU](https://www.qemu.org/)（用户态）为非原生平台构建镜像。
+在命令中添加 `--platform` 指定要输出的平台。
 
-For example, to build a Linux image for `amd64` and `arm64`:
+例如，构建同时支持 `amd64` 与 `arm64` 的 Linux 镜像：
 
 ```console
 $ docker buildx build \
@@ -167,13 +149,10 @@ $ docker buildx build \
 
 > [!WARNING]
 >
-> QEMU performs full-CPU emulation of non-native platforms, which is much
-> slower than native builds. Compute-heavy tasks like compilation and
-> compression/decompression will likely take a large performance hit.
+> QEMU 对非原生平台进行完整 CPU 模拟，速度远慢于原生构建。
+> 编译、压缩/解压等计算密集型任务的性能会明显下降。
 
-Using a custom BuildKit image or invoking non-native binaries in builds may
-require that you explicitly turn on QEMU using the `qemu.install` option when
-creating the builder:
+在构建中使用自定义 BuildKit 镜像或调用非原生二进制时，可能需要在创建构建器时通过 `qemu.install` 显式开启 QEMU：
 
 ```console
 $ docker buildx create \
@@ -183,14 +162,12 @@ $ docker buildx create \
   --driver-opt=namespace=buildkit,qemu.install=true
 ```
 
-### Native
+### 原生（Native）
 
-If you have access to cluster nodes of different architectures, the Kubernetes
-driver can take advantage of these for native builds. To do this, use the
-`--append` flag of `docker buildx create`.
+如果集群中存在不同架构的节点，Kubernetes 驱动可以利用这些节点进行原生构建。
+可通过 `docker buildx create` 的 `--append` 实现。
 
-First, create your builder with explicit support for a single architecture, for
-example `amd64`:
+首先，创建仅支持单一架构（如 `amd64`）的构建器：
 
 ```console
 $ docker buildx create \
@@ -202,16 +179,13 @@ $ docker buildx create \
   --driver-opt=namespace=buildkit,nodeselector="kubernetes.io/arch=amd64"
 ```
 
-This creates a Buildx builder named `kube`, containing a single builder node
-named `builder-amd64`. Assigning a node name using `--node` is optional. Buildx
-generates a random node name if you don't provide one.
+上述命令会创建名为 `kube` 的 Buildx 构建器，并包含名为 `builder-amd64` 的单个节点。
+通过 `--node` 指定节点名是可选的；若不提供，Buildx 会随机生成。
 
-Note that the Buildx concept of a node isn't the same as the Kubernetes concept
-of a node. A Buildx node in this case could connect multiple Kubernetes nodes of
-the same architecture together.
+注意：Buildx 中的“节点”与 Kubernetes 的“节点”概念不同。
+此处的 Buildx 节点可以连接多台相同架构的 Kubernetes 节点。
 
-With the `kube` builder created, you can now introduce another architecture into
-the mix using `--append`. For example, to add `arm64`:
+创建好 `kube` 构建器后，可以使用 `--append` 引入其他架构。例如添加 `arm64`：
 
 ```console
 $ docker buildx create \
@@ -224,7 +198,7 @@ $ docker buildx create \
   --driver-opt=namespace=buildkit,nodeselector="kubernetes.io/arch=arm64"
 ```
 
-Listing your builders shows both nodes for the `kube` builder:
+列出构建器，可见 `kube` 构建器包含两个节点：
 
 ```console
 $ docker buildx ls
@@ -234,23 +208,20 @@ kube            kubernetes
   builder-arm64 kubernetes:///kube?deployment=builder-arm64&kubeconfig= running  linux/arm64*
 ```
 
-You can now build multi-arch `amd64` and `arm64` images, by specifying those
-platforms together in your build command:
+现在即可在构建命令中同时指定上述两个平台，构建多架构镜像：
 
 ```console
 $ docker buildx build --builder=kube --platform=linux/amd64,linux/arm64 -t <user>/<image> --push .
 ```
 
-You can repeat the `buildx create --append` command for as many architectures
-that you want to support.
+你可以针对想要支持的任意多种架构，多次执行 `buildx create --append`。
 
-## Rootless mode
+## 无特权模式（Rootless mode）
 
-The Kubernetes driver supports rootless mode. For more information on how
-rootless mode works, and its requirements, see
-[here](https://github.com/moby/buildkit/blob/master/docs/rootless.md).
+Kubernetes 驱动支持无特权模式。其工作机制与前置条件，参见
+[文档](https://github.com/moby/buildkit/blob/master/docs/rootless.md)。
 
-To turn it on in your cluster, you can use the `rootless=true` driver option:
+在集群中启用它，可使用 `rootless=true` 驱动选项：
 
 ```console
 $ docker buildx create \
@@ -259,40 +230,34 @@ $ docker buildx create \
   --driver-opt=namespace=buildkit,rootless=true
 ```
 
-This will create your pods without `securityContext.privileged`.
+这会在不设置 `securityContext.privileged` 的情况下创建 Pod。
 
-Requires Kubernetes version 1.19 or later. Using Ubuntu as the host kernel is
-recommended.
+需要 Kubernetes 1.19 或更高版本。推荐使用 Ubuntu 作为宿主内核。
 
-## Example: Creating a Buildx builder in Kubernetes
+## 示例：在 Kubernetes 中创建 Buildx 构建器
 
-This guide shows you how to:
+本指南将演示如何：
 
-- Create a namespace for your Buildx resources
-- Create a Kubernetes builder.
-- List the available builders
-- Build an image using your Kubernetes builders
+- 为 Buildx 资源创建命名空间
+- 创建一个 Kubernetes 构建器
+- 列出可用的构建器
+- 使用 Kubernetes 构建器构建镜像
 
-Prerequisites:
+前置条件：
 
-- You have an existing Kubernetes cluster. If you don't already have one, you
-  can follow along by installing
-  [minikube](https://minikube.sigs.k8s.io/docs/).
-- The cluster you want to connect to is accessible via the `kubectl` command,
-  with the `KUBECONFIG` environment variable
-  [set appropriately](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable) if necessary.
+- 你已有一个 Kubernetes 集群；若没有，可先安装 [minikube](https://minikube.sigs.k8s.io/docs/)。
+- 目标集群可通过 `kubectl` 访问，必要时正确[设置 `KUBECONFIG` 环境变量](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable)。
 
-1. Create a `buildkit` namespace.
+1. 创建 `buildkit` 命名空间。
 
-   Creating a separate namespace helps keep your Buildx resources separate from
-   other resources in the cluster.
+   单独的命名空间有助于将 Buildx 资源与集群中的其他资源隔离。
 
    ```console
    $ kubectl create namespace buildkit
    namespace/buildkit created
    ```
 
-2. Create a new builder with the Kubernetes driver:
+2. 使用 Kubernetes 驱动创建新的构建器：
 
    ```console
    $ docker buildx create \
@@ -303,10 +268,9 @@ Prerequisites:
    ```
 
    > [!NOTE]
-   >
-   > Remember to specify the namespace in driver options.
+   > 记得在驱动选项中指定命名空间。
 
-3. List available builders using `docker buildx ls`
+3. 使用 `docker buildx ls` 列出可用构建器。
 
    ```console
    $ docker buildx ls
@@ -317,7 +281,7 @@ Prerequisites:
      default                default         running linux/amd64, linux/386
    ```
 
-4. Inspect the running pods created by the build driver with `kubectl`.
+4. 使用 `kubectl` 检查由构建驱动创建并运行中的 Pod。
 
    ```console
    $ kubectl -n buildkit get deployments
@@ -329,25 +293,22 @@ Prerequisites:
    kube0-6977cdcb75-k9h9m   1/1     Running   0          32s
    ```
 
-   The build driver creates the necessary resources on your cluster in the
-   specified namespace (in this case, `buildkit`), while keeping your driver
-   configuration locally.
+   构建驱动会在集群中指定命名空间（此处为 `buildkit`）创建所需资源，同时将驱动配置保存在本地。
 
-5. Use your new builder by including the `--builder` flag when running buildx
-   commands. For example: :
+5. 在运行 buildx 命令时通过 `--builder` 指定并使用新构建器。例如：
 
    ```console
-   # Replace <registry> with your Docker username
-   # and <image> with the name of the image you want to build
+   # 将 <registry> 替换为你的 Docker 用户名
+   # 将 <image> 替换为你要构建的镜像名称
    docker buildx build \
      --builder=kube \
      -t <registry>/<image> \
      --push .
    ```
 
-That's it: you've now built an image from a Kubernetes pod, using Buildx.
+完成。你已经使用 Buildx 在 Kubernetes Pod 中构建了一个镜像。
 
-## Further reading
+## 延伸阅读
 
-For more information on the Kubernetes driver, see the
-[buildx reference](/reference/cli/docker/buildx/create.md#driver).
+关于 Kubernetes 驱动的更多信息，参见
+[buildx 参考](/reference/cli/docker/buildx/create.md#driver)。
