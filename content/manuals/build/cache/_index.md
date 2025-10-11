@@ -1,23 +1,21 @@
 ---
-title: Docker build cache
-linkTitle: Cache
+title: Docker 构建缓存
+linkTitle: 缓存
 weight: 60
-description: Improve your build speed with effective use of the build cache
+description: 合理利用构建缓存，加速你的构建
 keywords: build, buildx, buildkit, dockerfile, image layers, build instructions, build context
 aliases:
   - /build/building/cache/
   - /build/guide/layers/
 ---
 
-When you build the same Docker image multiple times, knowing how to optimize
-the build cache is a great tool for making sure the builds run fast.
+当你多次构建同一个 Docker 镜像时，掌握如何优化构建缓存，是确保构建高速稳定的关键手段。
 
-## How the build cache works
+## 构建缓存的工作原理
 
-Understanding Docker's build cache helps you write better Dockerfiles that
-result in faster builds.
+理解 Docker 的构建缓存机制，有助于你编写更高效的 Dockerfile，从而获得更快的构建速度。
 
-The following example shows a small Dockerfile for a program written in C.
+下面是一个用于 C 程序的精简 Dockerfile 示例：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -29,31 +27,24 @@ WORKDIR /src/
 RUN make build
 ```
 
-Each instruction in this Dockerfile translates to a layer in your final image.
-You can think of image layers as a stack, with each layer adding more content
-on top of the layers that came before it:
+Dockerfile 中的每条指令，都会对应到最终镜像中的一个层（layer）。
+你可以把镜像层理解为一个堆栈：每一层都在其之前的层之上累加内容：
 
 ![Image layer diagram](../images/cache-stack.png)
 
-Whenever a layer changes, that layer will need to be re-built. For example,
-suppose you make a change to your program in the `main.c` file. After this
-change, the `COPY` command will have to run again in order for those changes to
-appear in the image. In other words, Docker will invalidate the cache for this
-layer.
+只要某一层发生变化，该层就需要重新构建。比如，你改动了 `main.c`，那么 `COPY` 指令需要再次执行，
+这些变更才会体现在镜像中。换言之，这一层的缓存会被判定失效。
 
-If a layer changes, all other layers that come after it are also affected. When
-the layer with the `COPY` command gets invalidated, all layers that follow will
-need to run again, too:
+当某一层被修改，它之后的所有层都会受到影响。当包含 `COPY` 指令的层缓存失效时，后续所有层也都需要重新运行：
 
 ![Image layer diagram, showing cache invalidation](../images/cache-stack-invalidated.png)
 
-And that's the Docker build cache in a nutshell. Once a layer changes, then all
-downstream layers need to be rebuilt as well. Even if they wouldn't build
-anything differently, they still need to re-run.
+这就是 Docker 构建缓存的核心要点：一旦某层发生变化，其后所有层都需要重新构建。
+即使这些层本身没有任何变化，也必须重新执行。
 
-## Other resources
+## 相关资源
 
-For more information on using cache to do efficient builds, see:
+想要进一步了解如何利用缓存进行高效构建，请参阅：
 
 - [Cache invalidation](invalidation.md)
 - [Optimize build cache](optimization.md)
