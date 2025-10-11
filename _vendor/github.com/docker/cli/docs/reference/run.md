@@ -1,96 +1,68 @@
 ---
-description: "Running and configuring containers with the Docker CLI"
+description: "使用 Docker CLI 运行与配置容器"
 keywords: "docker, run, cli"
 aliases:
 - /reference/run/
-title: Running containers
+title: 运行容器
 ---
 
-Docker runs processes in isolated containers. A container is a process
-which runs on a host. The host may be local or remote. When you
-execute `docker run`, the container process that runs is isolated in
-that it has its own file system, its own networking, and its own
-isolated process tree separate from the host.
+Docker 会在隔离的容器中运行进程。容器本质上是运行在宿主上的一个进程，宿主可以是本机或远程主机。执行 `docker run` 时，容器中的进程与宿主隔离：它拥有独立的文件系统、独立的网络命名空间，以及与宿主分离的进程树。
 
-This page details how to use the `docker run` command to run containers.
+本文介绍如何使用 `docker run` 命令来运行容器。
 
-## General form
+## 基本用法
 
-A `docker run` command takes the following form:
+`docker run` 的通用格式如下：
 
 ```console
 $ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
 ```
 
-The `docker run` command must specify an [image reference](#image-references)
-to create the container from.
+使用 `docker run` 时必须指定用于创建容器的[镜像引用](#image-references)。
 
-### Image references
+### 镜像引用
 
-The image reference is the name and version of the image. You can use the image
-reference to create or run a container based on an image.
+镜像引用由镜像名称与版本组成。你可以使用镜像引用基于某个镜像创建或运行容器。
 
 - `docker run IMAGE[:TAG][@DIGEST]`
 - `docker create IMAGE[:TAG][@DIGEST]`
 
-An image tag is the image version, which defaults to `latest` when omitted. Use
-the tag to run a container from specific version of an image. For example, to
-run version `24.04` of the `ubuntu` image: `docker run ubuntu:24.04`.
+镜像标签（tag）表示镜像的版本，若省略则默认为 `latest`。你可以通过标签从指定版本的镜像启动容器。例如，运行 `ubuntu` 镜像的 `24.04` 版本：`docker run ubuntu:24.04`。
 
-#### Image digests
+#### 镜像摘要（digest）
 
-Images using the v2 or later image format have a content-addressable identifier
-called a digest. As long as the input used to generate the image is unchanged,
-the digest value is predictable.
+采用 v2 或更新格式的镜像具有基于内容寻址的标识符，称为摘要（digest）。只要构建镜像的输入不变，摘要值就是可预测的。
 
-The following example runs a container from the `alpine` image with the
-`sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0` digest:
+下面的示例通过摘要 `sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0` 来运行 `alpine` 镜像：
 
 ```console
 $ docker run alpine@sha256:9cacb71397b640eca97488cf08582ae4e4068513101088e9f96c9814bfda95e0 date
 ```
 
-### Options
+### 选项
 
-`[OPTIONS]` let you configure options for the container. For example, you can
-give the container a name (`--name`), or run it as a background process (`-d`).
-You can also set options to control things like resource constraints and
-networking.
+`[OPTIONS]` 用于配置容器的各种行为。例如，可以为容器指定名称（`--name`），或以后台方式运行（`-d`）。你也可以通过选项控制资源约束、网络等。
 
-### Commands and arguments
+### 命令与参数
 
-You can use the `[COMMAND]` and `[ARG...]` positional arguments to specify
-commands and arguments for the container to run when it starts up. For example,
-you can specify `sh` as the `[COMMAND]`, combined with the `-i` and `-t` flags,
-to start an interactive shell in the container (if the image you select has an
-`sh` executable on `PATH`).
+你可以使用位置参数 `[COMMAND]` 与 `[ARG...]` 指定容器启动时要执行的命令及参数。例如，将 `[COMMAND]` 指定为 `sh`，并结合 `-i` 与 `-t` 选项，即可在容器中启动交互式 Shell（前提是所选镜像的 `PATH` 中存在 `sh` 可执行文件）。
 
 ```console
 $ docker run -it IMAGE sh
 ```
 
 > [!NOTE]
-> Depending on your Docker system configuration, you may be
-> required to preface the `docker run` command with `sudo`. To avoid
-> having to use `sudo` with the `docker` command, your system
-> administrator can create a Unix group called `docker` and add users to
-> it. For more information about this configuration, refer to the Docker
-> installation documentation for your operating system.
+> 取决于你的 Docker 系统配置，使用 `docker run` 时可能需要加上 `sudo`。为避免在执行 `docker` 命令时使用 `sudo`，系统管理员可以创建一个名为 `docker` 的 Unix 组并将用户加入其中。具体步骤请参考对应操作系统的 Docker 安装文档。
 
-## Foreground and background
+## 前台与后台
 
-When you start a container, the container runs in the foreground by default.
-If you want to run the container in the background instead, you can use the
-`--detach` (or `-d`) flag. This starts the container without occupying your
-terminal window.
+默认情况下，容器以“前台”方式运行。如果希望在后台运行容器，可以使用 `--detach`（或 `-d`）标志。这样容器会在后台启动，而不会占用当前终端。
 
 ```console
 $ docker run -d <IMAGE>
 ```
 
-While the container runs in the background, you can interact with the container
-using other CLI commands. For example, `docker logs` lets you view the logs for
-the container, and `docker attach` brings it to the foreground.
+当容器在后台运行时，你仍可以使用其他 CLI 命令与容器交互。例如，使用 `docker logs` 查看容器日志，或用 `docker attach` 将其切回前台。
 
 ```console
 $ docker run -d nginx
@@ -110,65 +82,44 @@ $ docker attach 0246aa4d1448
 ...
 ```
 
-For more information about `docker run` flags related to foreground and
-background modes, see:
+关于前台/后台的相关标志，请参见：
 
-- [`docker run --detach`](https://docs.docker.com/reference/cli/docker/container/run/#detach): run container in background
-- [`docker run --attach`](https://docs.docker.com/reference/cli/docker/container/run/#attach): attach to `stdin`, `stdout`, and `stderr`
-- [`docker run --tty`](https://docs.docker.com/reference/cli/docker/container/run/#tty): allocate a pseudo-tty
-- [`docker run --interactive`](https://docs.docker.com/reference/cli/docker/container/run/#interactive): keep `stdin` open even if not attached
+- [`docker run --detach`](https://docs.docker.com/reference/cli/docker/container/run/#detach)：以后台方式运行容器
+- [`docker run --attach`](https://docs.docker.com/reference/cli/docker/container/run/#attach)：附加到 `stdin`、`stdout` 与 `stderr`
+- [`docker run --tty`](https://docs.docker.com/reference/cli/docker/container/run/#tty)：分配伪终端（pseudo-tty）
+- [`docker run --interactive`](https://docs.docker.com/reference/cli/docker/container/run/#interactive)：即使没有附加也保持 `stdin` 打开
 
-For more information about re-attaching to a background container, see
-[`docker attach`](https://docs.docker.com/reference/cli/docker/container/attach/).
+如需了解如何重新附加到后台容器，请参见 [`docker attach`](https://docs.docker.com/reference/cli/docker/container/attach/)。
 
-## Container identification
+## 容器标识
 
-You can identify a container in three ways:
+你可以通过以下三种方式标识一个容器：
 
-| Identifier type       | Example value                                                      |
-|:----------------------|:-------------------------------------------------------------------|
-| UUID long identifier  | `f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778` |
-| UUID short identifier | `f78375b1c487`                                                     |
-| Name                  | `evil_ptolemy`                                                     |
+| 标识类型             | 示例值                                                                 |
+|:---------------------|:------------------------------------------------------------------------|
+| UUID 长 ID           | `f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778`      |
+| UUID 短 ID           | `f78375b1c487`                                                          |
+| 名称                 | `evil_ptolemy`                                                          |
 
-The UUID identifier is a random ID assigned to the container by the daemon.
+UUID 由守护进程随机分配。
 
-The daemon generates a random string name for containers automatically. You can
-also define a custom name using [the `--name` flag](https://docs.docker.com/reference/cli/docker/container/run/#name).
-Defining a `name` can be a handy way to add meaning to a container. If you
-specify a `name`, you can use it when referring to the container in a
-user-defined network. This works for both background and foreground Docker
-containers.
+守护进程也会为容器自动生成随机名称。你也可以通过 [`--name` 标志](https://docs.docker.com/reference/cli/docker/container/run/#name)自定义容器名称。合理的命名有助于理解容器用途。在用户定义的网络中，你可以使用名称来引用容器（前台/后台容器均适用）。
 
-A container identifier is not the same thing as an image reference. The image
-reference specifies which image to use when you run a container. You can't run
-`docker exec nginx:alpine sh` to open a shell in a container based on the
-`nginx:alpine` image, because `docker exec` expects a container identifier
-(name or ID), not an image.
+需要注意的是，容器标识符与镜像引用不是一回事。镜像引用用于指定运行容器所用的镜像。你不能通过 `docker exec nginx:alpine sh` 打开基于 `nginx:alpine` 的容器的 Shell，因为 `docker exec` 需要的是容器标识（名称或 ID），而不是镜像。
 
-While the image used by a container is not an identifier for the container, you
-find out the IDs of containers using an image by using the `--filter` flag. For
-example, the following `docker ps` command gets the IDs of all running
-containers based on the `nginx:alpine` image:
+虽然容器所用镜像本身不构成容器标识，但可以通过 `--filter` 查找使用某镜像的容器 ID。例如，下面的 `docker ps` 会返回所有基于 `nginx:alpine` 的正在运行的容器 ID：
 
 ```console
 $ docker ps -q --filter ancestor=nginx:alpine
 ```
 
-For more information about using filters, see
-[Filtering](https://docs.docker.com/config/filter/).
+关于筛选的更多信息，请参见[筛选](https://docs.docker.com/config/filter/)。
 
-## Container networking
+## 容器网络
 
-Containers have networking enabled by default, and they can make outgoing
-connections. If you're running multiple containers that need to communicate
-with each other, you can create a custom network and attach the containers to
-the network.
+容器默认启用网络功能，并且可以发起出站连接。如果你需要让多个容器之间互联通信，可以创建自定义网络并将容器加入该网络。
 
-When multiple containers are attached to the same custom network, they can
-communicate with each other using the container names as a DNS hostname. The
-following example creates a custom network named `my-net`, and runs two
-containers that attach to the network.
+当多个容器连接到同一个自定义网络时，它们可以使用容器名称作为 DNS 主机名彼此通信。下面的示例创建了名为 `my-net` 的自定义网络，并将两个容器连接到该网络：
 
 ```console
 $ docker network create my-net
@@ -185,46 +136,32 @@ PING web (172.18.0.2): 56 data bytes
 round-trip min/avg/max = 0.257/0.288/0.326 ms
 ```
 
-For more information about container networking, see [Networking
-overview](https://docs.docker.com/network/)
+关于容器网络的更多内容，请参见[网络概览](https://docs.docker.com/network/)。
 
-## Filesystem mounts
+## 文件系统挂载
 
-By default, the data in a container is stored in an ephemeral, writable
-container layer. Removing the container also removes its data. If you want to
-use persistent data with containers, you can use filesystem mounts to store the
-data persistently on the host system. Filesystem mounts can also let you share
-data between containers and the host.
+默认情况下，容器中的数据存储在一个短暂（ephemeral）的可写容器层中，删除容器会一并删除其数据。如果你希望持久化数据，可以使用文件系统挂载，将数据保存在宿主机上。挂载还可以在多个容器与宿主机之间共享数据。
 
-Docker supports two main categories of mounts:
+Docker 支持两大类挂载：
 
-- Volume mounts
-- Bind mounts
+- 卷（volume）挂载
+- 绑定（bind）挂载
 
-Volume mounts are great for persistently storing data for containers, and for
-sharing data between containers. Bind mounts, on the other hand, are for
-sharing data between a container and the host.
+卷非常适合用于容器数据的持久化存储以及容器之间共享数据；而绑定挂载更适合在容器与宿主机之间共享数据。
 
-You can add a filesystem mount to a container using the `--mount` flag for the
-`docker run` command.
+你可以在 `docker run` 中通过 `--mount` 为容器添加文件系统挂载。
 
-The following sections show basic examples of how to create volumes and bind
-mounts. For more in-depth examples and descriptions, refer to the section of
-the [storage section](https://docs.docker.com/storage/) in the documentation.
+下面的章节展示了创建卷与绑定挂载的基础示例。更深入的示例与说明，请参见文档的[存储](https://docs.docker.com/storage/)部分。
 
-### Volume mounts
+### 卷挂载（Volume mounts）
 
-To create a volume mount:
+创建一个卷挂载：
 
 ```console
 $ docker run --mount source=<VOLUME_NAME>,target=[PATH] [IMAGE] [COMMAND...]
 ```
 
-The `--mount` flag takes two parameters in this case: `source` and `target`.
-The value for the `source` parameter is the name of the volume. The value of
-`target` is the mount location of the volume inside the container. Once you've
-created the volume, any data you write to the volume is persisted, even if you
-stop or remove the container:
+在这种用法中，`--mount` 至少包含两个参数：`source` 与 `target`。其中，`source` 为卷的名称，`target` 为该卷在容器内的挂载路径。创建卷后，写入该卷的数据会被持久化，即使停止或删除容器也不会丢失：
 
 ```console
 $ docker run --rm --mount source=my_volume,target=/foo busybox \
@@ -234,27 +171,19 @@ $ docker run --mount source=my_volume,target=/bar busybox
 hello, volume!
 ```
 
-The `target` must always be an absolute path, such as `/src/docs`. An absolute
-path starts with a `/` (forward slash). Volume names must start with an
-alphanumeric character, followed by `a-z0-9`, `_` (underscore), `.` (period) or
-`-` (hyphen).
+`target` 必须是绝对路径，如 `/src/docs`。绝对路径以 `/` 开头。卷名必须以字母或数字开头，后续可以是 `a-z0-9`、下划线 `_`、点号 `.` 或连字符 `-`。
 
-### Bind mounts
+### 绑定挂载（Bind mounts）
 
-To create a bind mount:
+创建一个绑定挂载：
 
 ```console
 $ docker run -it --mount type=bind,source=[PATH],target=[PATH] busybox
 ```
 
-In this case, the `--mount` flag takes three parameters. A type (`bind`), and
-two paths. The `source` path is the location on the host that you want to
-bind mount into the container. The `target` path is the mount destination
-inside the container.
+此时，`--mount` 包含三个参数：类型（`bind`）与两条路径。`source` 是宿主机上要挂载进容器的路径；`target` 是容器内的挂载目标路径。
 
-Bind mounts are read-write by default, meaning that you can both read and write
-files to and from the mounted location from the container. Changes that you
-make, such as adding or editing files, are reflected on the host filesystem:
+绑定挂载默认是读写的，这意味着你可以在容器中读取与修改该挂载位置中的文件；这些修改会同步反映到宿主机的文件系统上：
 
 ```console
 $ docker run -it --mount type=bind,source=.,target=/foo busybox
@@ -264,15 +193,13 @@ $ cat hello.txt
 hello from container
 ```
 
-## Exit status
+## 退出状态码
 
-The exit code from `docker run` gives information about why the container
-failed to run or why it exited. The following sections describe the meanings of
-different container exit codes values.
+`docker run` 的退出码可以反映容器为何运行失败或退出的原因。以下对不同退出码的含义进行说明。
 
 ### 125
 
-Exit code `125` indicates that the error is with Docker daemon itself.
+退出码 `125` 表示 Docker 守护进程自身出现错误。
 
 ```console
 $ docker run --foo busybox; echo $?
@@ -284,8 +211,7 @@ See 'docker run --help'.
 
 ### 126
 
-Exit code `126` indicates that the specified contained command can't be invoked.
-The container command in the following example is: `/etc`.
+退出码 `126` 表示指定的容器内命令无法被调用。下例中容器内的命令为 `/etc`：
 
 ```console
 $ docker run busybox /etc; echo $?
@@ -296,7 +222,7 @@ docker: Error response from daemon: Container command '/etc' could not be invoke
 
 ### 127
 
-Exit code `127` indicates that the contained command can't be found.
+退出码 `127` 表示容器内指定的命令未找到。
 
 ```console
 $ docker run busybox foo; echo $?
@@ -305,10 +231,9 @@ docker: Error response from daemon: Container command 'foo' not found or does no
 127
 ```
 
-### Other exit codes
+### 其他退出码
 
-Any exit code other than `125`, `126`, and `127` represent the exit code of the
-provided container command.
+除 `125`、`126`、`127` 以外的任何退出码，都表示容器中“所执行命令本身”的退出码。
 
 ```console
 $ docker run busybox /bin/sh -c 'exit 3'
@@ -316,71 +241,65 @@ $ echo $?
 3
 ```
 
-## Runtime constraints on resources
+## 运行时资源约束
 
-The operator can also adjust the performance parameters of the
-container:
+运维人员可以通过以下选项调整容器的性能参数：
 
-| Option                     | Description                                                                                                                                                                                                                                                                              |
-|:---------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `-m`, `--memory=""`        | Memory limit (format: `<number>[<unit>]`). Number is a positive integer. Unit can be one of `b`, `k`, `m`, or `g`. Minimum is 6M.                                                                                                                                                        |
-| `--memory-swap=""`         | Total memory limit (memory + swap, format: `<number>[<unit>]`). Number is a positive integer. Unit can be one of `b`, `k`, `m`, or `g`.                                                                                                                                                  |
-| `--memory-reservation=""`  | Memory soft limit (format: `<number>[<unit>]`). Number is a positive integer. Unit can be one of `b`, `k`, `m`, or `g`.                                                                                                                                                                  |
-| `--kernel-memory=""`       | Kernel memory limit (format: `<number>[<unit>]`). Number is a positive integer. Unit can be one of `b`, `k`, `m`, or `g`. Minimum is 4M.                                                                                                                                                 |
-| `-c`, `--cpu-shares=0`     | CPU shares (relative weight)                                                                                                                                                                                                                                                             |
-| `--cpus=0.000`             | Number of CPUs. Number is a fractional number. 0.000 means no limit.                                                                                                                                                                                                                     |
-| `--cpu-period=0`           | Limit the CPU CFS (Completely Fair Scheduler) period                                                                                                                                                                                                                                     |
-| `--cpuset-cpus=""`         | CPUs in which to allow execution (0-3, 0,1)                                                                                                                                                                                                                                              |
-| `--cpuset-mems=""`         | Memory nodes (MEMs) in which to allow execution (0-3, 0,1). Only effective on NUMA systems.                                                                                                                                                                                              |
-| `--cpu-quota=0`            | Limit the CPU CFS (Completely Fair Scheduler) quota                                                                                                                                                                                                                                      |
-| `--cpu-rt-period=0`        | Limit the CPU real-time period. In microseconds. Requires parent cgroups be set and cannot be higher than parent. Also check rtprio ulimits.                                                                                                                                             |
-| `--cpu-rt-runtime=0`       | Limit the CPU real-time runtime. In microseconds. Requires parent cgroups be set and cannot be higher than parent. Also check rtprio ulimits.                                                                                                                                            |
-| `--blkio-weight=0`         | Block IO weight (relative weight) accepts a weight value between 10 and 1000.                                                                                                                                                                                                            |
-| `--blkio-weight-device=""` | Block IO weight (relative device weight, format: `DEVICE_NAME:WEIGHT`)                                                                                                                                                                                                                   |
-| `--device-read-bps=""`     | Limit read rate from a device (format: `<device-path>:<number>[<unit>]`). Number is a positive integer. Unit can be one of `kb`, `mb`, or `gb`.                                                                                                                                          |
-| `--device-write-bps=""`    | Limit write rate to a device (format: `<device-path>:<number>[<unit>]`). Number is a positive integer. Unit can be one of `kb`, `mb`, or `gb`.                                                                                                                                           |
-| `--device-read-iops="" `   | Limit read rate (IO per second) from a device (format: `<device-path>:<number>`). Number is a positive integer.                                                                                                                                                                          |
-| `--device-write-iops="" `  | Limit write rate (IO per second) to a device (format: `<device-path>:<number>`). Number is a positive integer.                                                                                                                                                                           |
-| `--oom-kill-disable=false` | Whether to disable OOM Killer for the container or not.                                                                                                                                                                                                                                  |
-| `--oom-score-adj=0`        | Tune container's OOM preferences (-1000 to 1000)                                                                                                                                                                                                                                         |
-| `--memory-swappiness=""`   | Tune a container's memory swappiness behavior. Accepts an integer between 0 and 100.                                                                                                                                                                                                     |
-| `--shm-size=""`            | Size of `/dev/shm`. The format is `<number><unit>`. `number` must be greater than `0`. Unit is optional and can be `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g` (gigabytes). If you omit the unit, the system uses bytes. If you omit the size entirely, the system uses `64m`. |
+| 选项                      | 描述                                                                                                                                                                                                                                                                                 |
+|:--------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `-m`, `--memory=""`       | 内存上限（格式：`<number>[<unit>]`）。`number` 为正整数，单位可为 `b`、`k`、`m` 或 `g`。最小值为 6M。                                                                                                                                                                              |
+| `--memory-swap=""`        | 内存总上限（内存 + 交换分区，格式：`<number>[<unit>]`）。`number` 为正整数，单位可为 `b`、`k`、`m` 或 `g`。                                                                                                                                                                          |
+| `--memory-reservation=""` | 内存软限制（格式：`<number>[<unit>]`）。`number` 为正整数，单位可为 `b`、`k`、`m` 或 `g`。                                                                                                                                                                                            |
+| `--kernel-memory=""`      | 内核内存上限（格式：`<number>[<unit>]`）。`number` 为正整数，单位可为 `b`、`k`、`m` 或 `g`。最小值为 4M。                                                                                                                                                                             |
+| `-c`, `--cpu-shares=0`    | CPU 份额（相对权重）                                                                                                                                                                                                                                                                |
+| `--cpus=0.000`            | CPU 数量。为小数。`0.000` 表示不限制。                                                                                                                                                                                                                                               |
+| `--cpu-period=0`          | 限制 CPU CFS（完全公平调度器）周期                                                                                                                                                                                                                                                  |
+| `--cpuset-cpus=""`        | 允许容器运行的 CPU 集（如 `0-3`、`0,1`）                                                                                                                                                                                                                                             |
+| `--cpuset-mems=""`        | 允许容器使用的内存节点（仅在 NUMA 系统有效，如 `0-3`、`0,1`）                                                                                                                                                                                                                       |
+| `--cpu-quota=0`           | 限制 CPU CFS（完全公平调度器）配额                                                                                                                                                                                                                                                   |
+| `--cpu-rt-period=0`       | 限制 CPU 实时周期（微秒）。需要已配置父 cgroup，且不能高于父级；同时需关注 `rtprio` ulimit。                                                                                                                                                                                         |
+| `--cpu-rt-runtime=0`      | 限制 CPU 实时运行时长（微秒）。需要已配置父 cgroup，且不能高于父级；同时需关注 `rtprio` ulimit。                                                                                                                                                                                      |
+| `--blkio-weight=0`        | 块 IO 权重（相对权重），取值 10 到 1000。                                                                                                                                                                                                                                            |
+| `--blkio-weight-device=""`| 块 IO 权重（特定设备权重，格式：`DEVICE_NAME:WEIGHT`）                                                                                                                                                                                                                                |
+| `--device-read-bps=""`    | 限制从某设备的读取速率（格式：`<device-path>:<number>[<unit>]`）。`number` 为正整数，单位可为 `kb`、`mb` 或 `gb`。                                                                                                                                                                   |
+| `--device-write-bps=""`   | 限制写入某设备的速率（格式：`<device-path>:<number>[<unit>]`）。`number` 为正整数，单位可为 `kb`、`mb` 或 `gb`。                                                                                                                                                                     |
+| `--device-read-iops=""`   | 限制从某设备读取的 IOPS（格式：`<device-path>:<number>`）。`number` 为正整数。                                                                                                                                                                                                       |
+| `--device-write-iops=""`  | 限制写入某设备的 IOPS（格式：`<device-path>:<number>`）。`number` 为正整数。                                                                                                                                                                                                         |
+| `--oom-kill-disable=false` | 是否为容器禁用 OOM Killer。                                                                                                                                                                                                                                                          |
+| `--oom-score-adj=0`       | 调整容器的 OOM 评分（-1000 到 1000）                                                                                                                                                                                                                                                  |
+| `--memory-swappiness=""`  | 调整容器的内存换出（swappiness）行为，取值 0 到 100。                                                                                                                                                                                                                                 |
+| `--shm-size=""`           | `/dev/shm` 的大小。格式为 `<number><unit>`，`number` 必须大于 0。单位可选：`b`、`k`、`m`、`g`；若省略单位则使用字节；若完全省略大小则默认 `64m`。                                                                                                                                |
 
-### User memory constraints
+### 用户态内存约束
 
-We have four ways to set user memory usage:
+设置用户态内存使用有四种方式：
 
 <table>
   <thead>
     <tr>
-      <th>Option</th>
-      <th>Result</th>
+      <th>选项</th>
+      <th>结果</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td class="no-wrap">
-          <strong>memory=inf, memory-swap=inf</strong> (default)
+          <strong>memory=inf, memory-swap=inf</strong>（默认）
       </td>
       <td>
-        There is no memory limit for the container. The container can use
-        as much memory as needed.
+        不对容器施加内存限制。容器可按需使用内存。
       </td>
     </tr>
     <tr>
       <td class="no-wrap"><strong>memory=L&lt;inf, memory-swap=inf</strong></td>
       <td>
-        (specify memory and set memory-swap as <code>-1</code>) The container is
-        not allowed to use more than L bytes of memory, but can use as much swap
-        as is needed (if the host supports swap memory).
+        （指定 memory 并将 memory-swap 设为 <code>-1</code>）容器最多可使用 L 字节内存，交换分区按需使用（前提是宿主支持 swap）。
       </td>
     </tr>
     <tr>
       <td class="no-wrap"><strong>memory=L&lt;inf, memory-swap=2*L</strong></td>
       <td>
-        (specify memory without memory-swap) The container is not allowed to
-        use more than L bytes of memory, swap <i>plus</i> memory usage is double
-        of that.
+        （仅指定 memory，未指定 memory-swap）容器最多可使用 L 字节内存；内存加交换分区的总和默认为其两倍。
       </td>
     </tr>
     <tr>
@@ -388,338 +307,243 @@ We have four ways to set user memory usage:
           <strong>memory=L&lt;inf, memory-swap=S&lt;inf, L&lt;=S</strong>
       </td>
       <td>
-        (specify both memory and memory-swap) The container is not allowed to
-        use more than L bytes of memory, swap <i>plus</i> memory usage is limited
-        by S.
+        （同时指定 memory 与 memory-swap）容器最多可使用 L 字节内存；内存加交换分区的总量受 S 限制。
       </td>
     </tr>
   </tbody>
 </table>
 
-Examples:
+示例：
 
 ```console
 $ docker run -it ubuntu:24.04 /bin/bash
 ```
 
-We set nothing about memory, this means the processes in the container can use
-as much memory and swap memory as they need.
+未设置任何内存限制，这意味着容器中的进程可按需使用内存与交换分区。
 
 ```console
 $ docker run -it -m 300M --memory-swap -1 ubuntu:24.04 /bin/bash
 ```
 
-We set memory limit and disabled swap memory limit, this means the processes in
-the container can use 300M memory and as much swap memory as they need (if the
-host supports swap memory).
+设定了内存上限，同时不限制交换分区。这表示容器中的进程可以使用 300M 内存，并按需使用交换分区（前提是宿主支持 swap）。
 
 ```console
 $ docker run -it -m 300M ubuntu:24.04 /bin/bash
 ```
 
-We set memory limit only, this means the processes in the container can use
-300M memory and 300M swap memory, by default, the total virtual memory size
-(`--memory-swap`) will be set as double of memory, in this case, memory + swap
-would be 2*300M, so processes can use 300M swap memory as well.
+仅设置了内存上限。这意味着容器中的进程可以使用 300M 内存与 300M 交换分区。默认情况下，总虚拟内存（`--memory-swap`）会被设置为内存的两倍，本例中为 600M，因此可使用 300M 的交换分区。
 
 ```console
 $ docker run -it -m 300M --memory-swap 1G ubuntu:24.04 /bin/bash
 ```
 
-We set both memory and swap memory, so the processes in the container can use
-300M memory and 700M swap memory.
+同时设置了内存与交换分区上限，因此容器中的进程可以使用 300M 内存与 700M 交换分区。
 
-Memory reservation is a kind of memory soft limit that allows for greater
-sharing of memory. Under normal circumstances, containers can use as much of
-the memory as needed and are constrained only by the hard limits set with the
-`-m`/`--memory` option. When memory reservation is set, Docker detects memory
-contention or low memory and forces containers to restrict their consumption to
-a reservation limit.
+内存保留（memory reservation）属于软限制机制，有助于在多容器共享内存时实现更好的资源分配。正常情况下，容器可按需使用内存，并仅受 `-m/--memory` 设置的硬限制约束。当设置了保留值后，Docker 在检测到内存争用或系统内存不足时，会强制容器将内存消耗收敛到保留值附近。
 
-Always set the memory reservation value below the hard limit, otherwise the hard
-limit takes precedence. A reservation of 0 is the same as setting no
-reservation. By default (without reservation set), memory reservation is the
-same as the hard memory limit.
+务必将内存保留值设置在硬限制之下，否则硬限制会优先生效。保留值为 0 等同于不设置保留。默认（未设置保留）时，保留值等同于硬限制。
 
-Memory reservation is a soft-limit feature and does not guarantee the limit
-won't be exceeded. Instead, the feature attempts to ensure that, when memory is
-heavily contended for, memory is allocated based on the reservation hints/setup.
+请注意，内存保留是软限制，并不保证不会被超出；它尝试在发生内存争用时，依据保留配置来分配内存。
 
-The following example limits the memory (`-m`) to 500M and sets the memory
-reservation to 200M.
+下面的示例将内存上限（`-m`）设为 500M，并将内存保留设为 200M：
 
 ```console
 $ docker run -it -m 500M --memory-reservation 200M ubuntu:24.04 /bin/bash
 ```
 
-Under this configuration, when the container consumes memory more than 200M and
-less than 500M, the next system memory reclaim attempts to shrink container
-memory below 200M.
+在此配置下，当容器内存消耗高于 200M 且低于 500M 时，下一次系统内存回收会尝试将容器内存压回到 200M 以下。
 
-The following example set memory reservation to 1G without a hard memory limit.
+下面的示例仅设置 1G 的内存保留，且不设置硬限制：
 
 ```console
 $ docker run -it --memory-reservation 1G ubuntu:24.04 /bin/bash
 ```
 
-The container can use as much memory as it needs. The memory reservation setting
-ensures the container doesn't consume too much memory for long time, because
-every memory reclaim shrinks the container's consumption to the reservation.
+容器可按需使用内存。内存保留确保容器不会长时间占用过多内存，因为每次内存回收都会将其消耗收敛至保留值。
 
-By default, kernel kills processes in a container if an out-of-memory (OOM)
-error occurs. To change this behaviour, use the `--oom-kill-disable` option.
-Only disable the OOM killer on containers where you have also set the
-`-m/--memory` option. If the `-m` flag is not set, this can result in the host
-running out of memory and require killing the host's system processes to free
-memory.
+默认情况下，当发生内存不足（OOM）时，内核会杀死容器内的进程。你可以通过 `--oom-kill-disable` 更改该行为。仅在同时设置了 `-m/--memory` 时才建议禁用 OOM killer；如果未设置 `-m` 就禁用 OOM killer，可能导致宿主机内存耗尽，进而需要杀死宿主上的系统进程来释放内存。
 
-The following example limits the memory to 100M and disables the OOM killer for
-this container:
+下面的示例将内存限制为 100M，并为该容器禁用 OOM killer：
 
 ```console
 $ docker run -it -m 100M --oom-kill-disable ubuntu:24.04 /bin/bash
 ```
 
-The following example, illustrates a dangerous way to use the flag:
+下面的示例展示了一个危险的用法：
 
 ```console
 $ docker run -it --oom-kill-disable ubuntu:24.04 /bin/bash
 ```
 
-The container has unlimited memory which can cause the host to run out memory
-and require killing system processes to free memory. The `--oom-score-adj`
-parameter can be changed to select the priority of which containers will
-be killed when the system is out of memory, with negative scores making them
-less likely to be killed, and positive scores more likely.
+该容器拥有无限内存配额，可能导致宿主机内存耗尽，不得不杀死系统进程以释放内存。你可以通过 `--oom-score-adj` 调整容器在 OOM 时被杀死的优先级；分值为负时越不易被杀死，分值为正时越容易被杀死。
 
-### Kernel memory constraints
+### 内核内存约束
 
-Kernel memory is fundamentally different than user memory as kernel memory can't
-be swapped out. The inability to swap makes it possible for the container to
-block system services by consuming too much kernel memory. Kernel memory includes：
+内核内存与用户态内存有本质区别：内核内存无法被换出（swap）。由于不可换出，若容器占用过多内核内存，可能阻塞系统服务。内核内存包括：
 
- - stack pages
- - slab pages
- - sockets memory pressure
- - tcp memory pressure
+ - 栈页（stack pages）
+ - slab 页
+ - 套接字内存压力（sockets memory pressure）
+ - TCP 内存压力（tcp memory pressure）
 
-You can setup kernel memory limit to constrain these kinds of memory. For example,
-every process consumes some stack pages. By limiting kernel memory, you can
-prevent new processes from being created when the kernel memory usage is too high.
+你可以设置内核内存上限来约束这些内存的使用。例如，每个进程都会消耗一定数量的栈页；限制内核内存可以在使用过高时阻止新进程创建。
 
-Kernel memory is never completely independent of user memory. Instead, you limit
-kernel memory in the context of the user memory limit. Assume "U" is the user memory
-limit and "K" the kernel limit. There are three possible ways to set limits:
+内核内存从不完全独立于用户态内存。实际上，内核内存限制是在用户态内存限制的语境下生效。设“U”为用户态内存上限，“K”为内核内存上限。可以有三种设置方式：
 
 <table>
   <thead>
     <tr>
-      <th>Option</th>
-      <th>Result</th>
+      <th>选项</th>
+      <th>结果</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td class="no-wrap"><strong>U != 0, K = inf</strong> (default)</td>
+      <td class="no-wrap"><strong>U != 0, K = inf</strong>（默认）</td>
       <td>
-        This is the standard memory limitation mechanism already present before using
-        kernel memory. Kernel memory is completely ignored.
+        这是在未使用内核内存限制前就存在的标准内存限制机制。忽略内核内存限制。
       </td>
     </tr>
     <tr>
       <td class="no-wrap"><strong>U != 0, K &lt; U</strong></td>
       <td>
-        Kernel memory is a subset of the user memory. This setup is useful in
-        deployments where the total amount of memory per-cgroup is overcommitted.
-        Overcommitting kernel memory limits is definitely not recommended, since the
-        box can still run out of non-reclaimable memory.
-        In this case, you can configure K so that the sum of all groups is
-        never greater than the total memory. Then, freely set U at the expense of
-        the system's service quality.
+        内核内存是用户态内存的子集。该配置在按 cgroup 过度分配总内存的部署中有用。但不推荐过度分配内核内存，因为主机仍可能耗尽不可回收的内存。
+        在这种情况下，你可以配置 K，使得所有分组的内核内存之和不超过总内存；然后在不影响系统服务质量的前提下自由设置 U。
       </td>
     </tr>
     <tr>
       <td class="no-wrap"><strong>U != 0, K &gt; U</strong></td>
       <td>
-        Since kernel memory charges are also fed to the user counter and reclamation
-        is triggered for the container for both kinds of memory. This configuration
-        gives the admin a unified view of memory. It is also useful for people
-        who just want to track kernel memory usage.
+        由于内核内存的计费同样会计入用户态内存计数，且对两类内存都可能触发回收，因此该配置为管理员提供了统一的内存视图，也适用于只想跟踪内核内存使用的人群。
       </td>
     </tr>
   </tbody>
 </table>
 
-Examples:
+示例：
 
 ```console
 $ docker run -it -m 500M --kernel-memory 50M ubuntu:24.04 /bin/bash
 ```
 
-We set memory and kernel memory, so the processes in the container can use
-500M memory in total, in this 500M memory, it can be 50M kernel memory tops.
+同时设置了总内存与内核内存：容器总内存可达 500M，其中最多 50M 可用于内核内存。
 
 ```console
 $ docker run -it --kernel-memory 50M ubuntu:24.04 /bin/bash
 ```
 
-We set kernel memory without **-m**, so the processes in the container can
-use as much memory as they want, but they can only use 50M kernel memory.
+仅设置内核内存、未设置 `-m` 时：容器可按需使用总内存，但内核内存最多为 50M。
 
-### Swappiness constraint
+### Swappiness（换出）约束
 
-By default, a container's kernel can swap out a percentage of anonymous pages.
-To set this percentage for a container, specify a `--memory-swappiness` value
-between 0 and 100. A value of 0 turns off anonymous page swapping. A value of
-100 sets all anonymous pages as swappable. By default, if you are not using
-`--memory-swappiness`, memory swappiness value will be inherited from the parent.
+默认情况下，内核可以将容器的匿名页按一定比例换出（swap）。你可以通过 `--memory-swappiness` 将该比例设置为 0 到 100 之间的值。设置为 0 则关闭匿名页换出；设置为 100 则允许所有匿名页可被换出。若未指定 `--memory-swappiness`，容器会继承父级的换出策略。
 
-For example, you can set:
+例如：
 
 ```console
 $ docker run -it --memory-swappiness=0 ubuntu:24.04 /bin/bash
 ```
 
-Setting the `--memory-swappiness` option is helpful when you want to retain the
-container's working set and to avoid swapping performance penalties.
+在希望保留工作集、避免换出带来的性能损失时，设置 `--memory-swappiness` 会很有帮助。
 
-### CPU share constraint
+### CPU 份额（share）约束
 
-By default, all containers get the same proportion of CPU cycles. This proportion
-can be modified by changing the container's CPU share weighting relative
-to the weighting of all other running containers.
+默认情况下，所有容器获得相同比例的 CPU 时间份额。你可以通过调整 CPU 份额权重来改变某个容器相对于其他容器的 CPU 份额。
 
-To modify the proportion from the default of 1024, use the `-c` or `--cpu-shares`
-flag to set the weighting to 2 or higher. If 0 is set, the system will ignore the
-value and use the default of 1024.
+使用 `-c` 或 `--cpu-shares` 将默认权重 1024 调整为 2 或更高的值。若设置为 0，系统会忽略该值并沿用默认 1024。
 
-The proportion will only apply when CPU-intensive processes are running.
-When tasks in one container are idle, other containers can use the
-left-over CPU time. The actual amount of CPU time will vary depending on
-the number of containers running on the system.
+该权重仅在存在 CPU 密集型进程时生效；当某个容器任务空闲时，其他容器可以使用剩余的 CPU 时间。实际获得的 CPU 时间与系统上运行的容器数量有关。
 
-For example, consider three containers, one has a cpu-share of 1024 and
-two others have a cpu-share setting of 512. When processes in all three
-containers attempt to use 100% of CPU, the first container would receive
-50% of the total CPU time. If you add a fourth container with a cpu-share
-of 1024, the first container only gets 33% of the CPU. The remaining containers
-receive 16.5%, 16.5% and 33% of the CPU.
+例如，假设有三个容器：一个的份额为 1024，另外两个为 512。当三者都尝试使用 100% CPU 时，第一个容器将获得 50% 的总 CPU 时间。若再增加一个份额为 1024 的容器，则第一个容器仅获得 33% 的 CPU，其他容器分别为 16.5%、16.5% 与 33%。
 
-On a multi-core system, the shares of CPU time are distributed over all CPU
-cores. Even if a container is limited to less than 100% of CPU time, it can
-use 100% of each individual CPU core.
+在多核系统上，CPU 时间份额会在所有 CPU 核心间分布。即使容器被限制为少于 100% 的总 CPU 时间，它仍可能在每个核心上各自使用 100% 的时间片。
 
-For example, consider a system with more than three cores. If you start one
-container `{C0}` with `-c=512` running one process, and another container
-`{C1}` with `-c=1024` running two processes, this can result in the following
-division of CPU shares:
+例如，在一个拥有至少 3 个核心的系统上，如果启动一个容器 `{C0}`（`-c=512`）运行一个进程，另一个容器 `{C1}`（`-c=1024`）运行两个进程，可能出现如下分配：
 
     PID    container	CPU	CPU share
-    100    {C0}		0	100% of CPU0
-    101    {C1}		1	100% of CPU1
-    102    {C1}		2	100% of CPU2
+    100    {C0}		0	CPU0 的 100%
+    101    {C1}		1	CPU1 的 100%
+    102    {C1}		2	CPU2 的 100%
 
-### CPU period constraint
+### CPU 周期（period）约束
 
-The default CPU CFS (Completely Fair Scheduler) period is 100ms. We can use
-`--cpu-period` to set the period of CPUs to limit the container's CPU usage.
-And usually `--cpu-period` should work with `--cpu-quota`.
+默认的 CPU CFS（完全公平调度器）周期为 100ms。你可以使用 `--cpu-period` 设置调度周期，通常配合 `--cpu-quota` 一起使用。
 
-Examples:
+示例：
 
 ```console
 $ docker run -it --cpu-period=50000 --cpu-quota=25000 ubuntu:24.04 /bin/bash
 ```
 
-If there is 1 CPU, this means the container can get 50% CPU worth of run-time every 50ms.
+若系统只有 1 个 CPU，这表示容器每 50ms 获得 50% CPU 的运行时间。
 
-In addition to use `--cpu-period` and `--cpu-quota` for setting CPU period constraints,
-it is possible to specify `--cpus` with a float number to achieve the same purpose.
-For example, if there is 1 CPU, then `--cpus=0.5` will achieve the same result as
-setting `--cpu-period=50000` and `--cpu-quota=25000` (50% CPU).
+除了使用 `--cpu-period` 与 `--cpu-quota` 设置 CPU 周期约束外，也可以通过 `--cpus` 指定浮点数达到同样目的。例如在 1 个 CPU 的情况下，`--cpus=0.5` 等价于 `--cpu-period=50000` 与 `--cpu-quota=25000`（即 50% CPU）。
 
-The default value for `--cpus` is `0.000`, which means there is no limit.
+`--cpus` 的默认值为 `0.000`，表示不限制。
 
-For more information, see the [CFS documentation on bandwidth limiting](https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt).
+更多信息请参考 [CFS 带宽限制文档](https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt)。
 
-### Cpuset constraint
+### CPU 集（cpuset）约束
 
-We can set cpus in which to allow execution for containers.
+你可以为容器指定允许运行的 CPU 集。
 
-Examples:
+示例：
 
 ```console
 $ docker run -it --cpuset-cpus="1,3" ubuntu:24.04 /bin/bash
 ```
 
-This means processes in container can be executed on cpu 1 and cpu 3.
+表示容器内的进程仅可在 CPU 1 与 CPU 3 上运行。
 
 ```console
 $ docker run -it --cpuset-cpus="0-2" ubuntu:24.04 /bin/bash
 ```
 
-This means processes in container can be executed on cpu 0, cpu 1 and cpu 2.
+表示容器内的进程仅可在 CPU 0、CPU 1 与 CPU 2 上运行。
 
-We can set mems in which to allow execution for containers. Only effective
-on NUMA systems.
+你也可以指定允许容器使用的内存节点（仅在 NUMA 系统有效）。
 
-Examples:
+示例：
 
 ```console
 $ docker run -it --cpuset-mems="1,3" ubuntu:24.04 /bin/bash
 ```
 
-This example restricts the processes in the container to only use memory from
-memory nodes 1 and 3.
+该示例限制容器仅使用内存节点 1 与 3。
 
 ```console
 $ docker run -it --cpuset-mems="0-2" ubuntu:24.04 /bin/bash
 ```
 
-This example restricts the processes in the container to only use memory from
-memory nodes 0, 1 and 2.
+该示例限制容器仅使用内存节点 0、1 与 2。
 
-### CPU quota constraint
+### CPU 配额（quota）约束
 
-The `--cpu-quota` flag limits the container's CPU usage. The default 0 value
-allows the container to take 100% of a CPU resource (1 CPU). The CFS (Completely Fair
-Scheduler) handles resource allocation for executing processes and is default
-Linux Scheduler used by the kernel. Set this value to 50000 to limit the container
-to 50% of a CPU resource. For multiple CPUs, adjust the `--cpu-quota` as necessary.
-For more information, see the [CFS documentation on bandwidth limiting](https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt).
+`--cpu-quota` 用于限制容器的 CPU 使用率。默认值 0 表示容器可以占用 100% 的单个 CPU 资源（1 个 CPU）。CFS（完全公平调度器）负责进程的资源分配，也是内核默认的 Linux 调度器。将该值设为 `50000` 可将容器限制在 50% 的单核 CPU 资源。对于多 CPU，请根据需要调整 `--cpu-quota`。更多信息请参考 [CFS 带宽限制文档](https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt)。
 
-### Block IO bandwidth (Blkio) constraint
+### 块 IO 带宽（Blkio）约束
 
-By default, all containers get the same proportion of block IO bandwidth
-(blkio). This proportion is 500. To modify this proportion, change the
-container's blkio weight relative to the weighting of all other running
-containers using the `--blkio-weight` flag.
+默认情况下，所有容器获得相同比例的块 IO 带宽（blkio），默认权重为 500。你可以通过 `--blkio-weight` 修改容器的 blkio 权重，从而相对调整其与其他正在运行容器之间的 blkio 配额。
 
 > [!NOTE]
-> The blkio weight setting is only available for direct IO. Buffered IO is not
-> currently supported.
+> blkio 权重仅对直写（direct IO）生效，当前不支持缓冲 IO。
 
-The `--blkio-weight` flag can set the weighting to a value between 10 to 1000.
-For example, the commands below create two containers with different blkio
-weight:
+`--blkio-weight` 的取值范围为 10 到 1000。如下示例创建两个 blkio 权重不同的容器：
 
 ```console
 $ docker run -it --name c1 --blkio-weight 300 ubuntu:24.04 /bin/bash
 $ docker run -it --name c2 --blkio-weight 600 ubuntu:24.04 /bin/bash
 ```
 
-If you do block IO in the two containers at the same time, by, for example:
+如果同时在两个容器中进行块 IO，例如运行：
 
 ```console
 $ time dd if=/mnt/zerofile of=test.out bs=1M count=1024 oflag=direct
 ```
 
-You'll find that the proportion of time is the same as the proportion of blkio
-weights of the two containers.
+你会发现两者耗时的比例与其 blkio 权重比例一致。
 
-The `--blkio-weight-device="DEVICE_NAME:WEIGHT"` flag sets a specific device weight.
-The `DEVICE_NAME:WEIGHT` is a string containing a colon-separated device name and weight.
-For example, to set `/dev/sda` device weight to `200`:
+`--blkio-weight-device="DEVICE_NAME:WEIGHT"` 用于设置某个设备的特定权重。`DEVICE_NAME:WEIGHT` 为以冒号分隔的设备名与权重值。例如将 `/dev/sda` 的权重设置为 `200`：
 
 ```console
 $ docker run -it \
@@ -727,11 +551,7 @@ $ docker run -it \
     ubuntu
 ```
 
-If you specify both the `--blkio-weight` and `--blkio-weight-device`, Docker
-uses the `--blkio-weight` as the default weight and uses `--blkio-weight-device`
-to override this default with a new value on a specific device.
-The following example uses a default weight of `300` and overrides this default
-on `/dev/sda` setting that weight to `200`:
+当同时指定了 `--blkio-weight` 与 `--blkio-weight-device` 时，Docker 会使用 `--blkio-weight` 作为默认权重，并通过 `--blkio-weight-device` 为特定设备覆盖默认值。如下示例设置默认权重为 `300`，并将 `/dev/sda` 的权重覆盖为 `200`：
 
 ```console
 $ docker run -it \
@@ -740,54 +560,41 @@ $ docker run -it \
     ubuntu
 ```
 
-The `--device-read-bps` flag limits the read rate (bytes per second) from a device.
-For example, this command creates a container and limits the read rate to `1mb`
-per second from `/dev/sda`:
+`--device-read-bps` 用于限制从设备的读取速率（字节/秒）。例如，将从 `/dev/sda` 的读取限制为 `1mb/s`：
 
 ```console
 $ docker run -it --device-read-bps /dev/sda:1mb ubuntu
 ```
 
-The `--device-write-bps` flag limits the write rate (bytes per second) to a device.
-For example, this command creates a container and limits the write rate to `1mb`
-per second for `/dev/sda`:
+`--device-write-bps` 用于限制写入设备的速率（字节/秒）。例如，将写入 `/dev/sda` 的速率限制为 `1mb/s`：
 
 ```console
 $ docker run -it --device-write-bps /dev/sda:1mb ubuntu
 ```
 
-Both flags take limits in the `<device-path>:<limit>[unit]` format. Both read
-and write rates must be a positive integer. You can specify the rate in `kb`
-(kilobytes), `mb` (megabytes), or `gb` (gigabytes).
+上述两个标志的取值格式均为 `<device-path>:<limit>[unit]`，读写速率都必须为正整数，单位可为 `kb`、`mb`、`gb`。
 
-The `--device-read-iops` flag limits read rate (IO per second) from a device.
-For example, this command creates a container and limits the read rate to
-`1000` IO per second from `/dev/sda`:
+`--device-read-iops` 用于限制从设备读取的 IOPS。例如，将从 `/dev/sda` 的读取限制为 `1000 IOPS`：
 
 ```console
 $ docker run -it --device-read-iops /dev/sda:1000 ubuntu
 ```
 
-The `--device-write-iops` flag limits write rate (IO per second) to a device.
-For example, this command creates a container and limits the write rate to
-`1000` IO per second to `/dev/sda`:
+`--device-write-iops` 用于限制写入设备的 IOPS。例如，将对 `/dev/sda` 的写入限制为 `1000 IOPS`：
 
 ```console
 $ docker run -it --device-write-iops /dev/sda:1000 ubuntu
 ```
 
-Both flags take limits in the `<device-path>:<limit>` format. Both read and
-write rates must be a positive integer.
+这两个标志均采用 `<device-path>:<limit>` 格式，读写 IOPS 必须为正整数。
 
-## Additional groups
+## 附加用户组（additional groups）
 
 ```console
 --group-add: Add additional groups to run as
 ```
 
-By default, the docker container process runs with the supplementary groups looked
-up for the specified user. If one wants to add more to that list of groups, then
-one can use this flag:
+默认情况下，容器进程会附带指定用户在系统中查到的补充组（supplementary groups）。如果需要在此基础上再增加更多用户组，可以使用该标志：
 
 ```console
 $ docker run --rm --group-add audio --group-add nogroup --group-add 777 busybox id
@@ -795,39 +602,26 @@ $ docker run --rm --group-add audio --group-add nogroup --group-add 777 busybox 
 uid=0(root) gid=0(root) groups=10(wheel),29(audio),99(nogroup),777
 ```
 
-## Runtime privilege and Linux capabilities
+## 运行时特权与 Linux Capabilities
 
-| Option         | Description                                                                   |
-|:---------------|:------------------------------------------------------------------------------|
-| `--cap-add`    | Add Linux capabilities                                                        |
-| `--cap-drop`   | Drop Linux capabilities                                                       |
-| `--privileged` | Give extended privileges to this container                                    |
-| `--device=[]`  | Allows you to run devices inside the container without the `--privileged` flag. |
+| 选项           | 描述                                                                 |
+|:---------------|:--------------------------------------------------------------------|
+| `--cap-add`    | 增加 Linux capabilities                                             |
+| `--cap-drop`   | 移除 Linux capabilities                                             |
+| `--privileged` | 为容器授予扩展权限                                                  |
+| `--device=[]`  | 在不使用 `--privileged` 的前提下，将设备映射进容器                   |
 
-By default, Docker containers are "unprivileged" and cannot, for
-example, run a Docker daemon inside a Docker container. This is because
-by default a container is not allowed to access any devices, but a
-"privileged" container is given access to all devices (see
-the documentation on [cgroups devices](https://www.kernel.org/doc/Documentation/cgroup-v1/devices.txt)).
+默认情况下，Docker 容器是“非特权（unprivileged）”的。例如，容器内默认不能再运行 Docker 守护进程。这是因为默认情况下容器不可访问任何设备；而“特权（privileged）”容器则被授予访问所有设备的权限（详见 [cgroups devices 文档](https://www.kernel.org/doc/Documentation/cgroup-v1/devices.txt)）。
 
-The `--privileged` flag gives all capabilities to the container. When the operator
-executes `docker run --privileged`, Docker enables access to all devices on
-the host, and reconfigures AppArmor or SELinux to allow the container
-nearly all the same access to the host as processes running outside
-containers on the host. Use this flag with caution.
-For more information about the `--privileged` flag, see the
-[`docker run` reference](https://docs.docker.com/reference/cli/docker/container/run/#privileged).
+`--privileged` 会为容器授予所有 capabilities。当执行 `docker run --privileged` 时，Docker 会开启对宿主设备的完全访问权限，并根据需要重新配置 AppArmor 或 SELinux，使容器几乎拥有与宿主上普通进程相同的权限。请谨慎使用该标志。关于 `--privileged` 的更多信息，请参见 [`docker run` 参考](https://docs.docker.com/reference/cli/docker/container/run/#privileged)。
 
-If you want to limit access to a specific device or devices you can use
-the `--device` flag. It allows you to specify one or more devices that
-will be accessible within the container.
+如果只想限制性地开放对某些设备的访问，可使用 `--device` 标志，指定一个或多个在容器内可见的设备：
 
 ```console
 $ docker run --device=/dev/snd:/dev/snd ...
 ```
 
-By default, the container will be able to `read`, `write`, and `mknod` these devices.
-This can be overridden using a third `:rwm` set of options to each `--device` flag:
+默认情况下，容器对这些设备拥有 `read`、`write`、`mknod` 权限。你可以通过在每个 `--device` 后追加第三段 `:rwm` 来覆盖默认权限：
 
 ```console
 $ docker run --device=/dev/sda:/dev/xvdc --rm -it ubuntu fdisk  /dev/xvdc
@@ -845,80 +639,73 @@ $ docker run --device=/dev/sda:/dev/xvdc:m --rm -it ubuntu fdisk  /dev/xvdc
 fdisk: unable to open /dev/xvdc: Operation not permitted
 ```
 
-In addition to `--privileged`, the operator can have fine grain control over the
-capabilities using `--cap-add` and `--cap-drop`. By default, Docker has a default
-list of capabilities that are kept. The following table lists the Linux capability
-options which are allowed by default and can be dropped.
+除了 `--privileged` 外，你还可以通过 `--cap-add` 与 `--cap-drop` 精细控制容器的 capabilities。Docker 默认保留一组 capabilities，下面的表格列出了默认允许且可被移除的 capabilities：
 
-| Capability Key        | Capability Description                                                                                                         |
-|:----------------------|:-------------------------------------------------------------------------------------------------------------------------------|
-| AUDIT_WRITE           | Write records to kernel auditing log.                                                                                          |
-| CHOWN                 | Make arbitrary changes to file UIDs and GIDs (see chown(2)).                                                                   |
-| DAC_OVERRIDE          | Bypass file read, write, and execute permission checks.                                                                        |
-| FOWNER                | Bypass permission checks on operations that normally require the file system UID of the process to match the UID of the file.  |
-| FSETID                | Don't clear set-user-ID and set-group-ID permission bits when a file is modified.                                              |
-| KILL                  | Bypass permission checks for sending signals.                                                                                  |
-| MKNOD                 | Create special files using mknod(2).                                                                                           |
-| NET_BIND_SERVICE      | Bind a socket to internet domain privileged ports (port numbers less than 1024).                                               |
-| NET_RAW               | Use RAW and PACKET sockets.                                                                                                    |
-| SETFCAP               | Set file capabilities.                                                                                                         |
-| SETGID                | Make arbitrary manipulations of process GIDs and supplementary GID list.                                                       |
-| SETPCAP               | Modify process capabilities.                                                                                                   |
-| SETUID                | Make arbitrary manipulations of process UIDs.                                                                                  |
-| SYS_CHROOT            | Use chroot(2), change root directory.                                                                                          |
+| Capability Key        | 能力说明                                                                                                        |
+|:----------------------|:----------------------------------------------------------------------------------------------------------------|
+| AUDIT_WRITE           | 向内核审计日志写入记录。                                                                                        |
+| CHOWN                 | 任意修改文件 UID 与 GID（参见 chown(2)）。                                                                      |
+| DAC_OVERRIDE          | 绕过文件读、写、执行权限检查。                                                                                  |
+| FOWNER                | 绕过需要进程的文件系统 UID 与文件所有者 UID 匹配的权限检查。                                                    |
+| FSETID                | 当文件被修改时，不清除 setuid 与 setgid 位。                                                                    |
+| KILL                  | 绕过发送信号时的权限检查。                                                                                      |
+| MKNOD                 | 使用 mknod(2) 创建特殊文件。                                                                                    |
+| NET_BIND_SERVICE      | 绑定到 1024 以下的特权端口。                                                                                    |
+| NET_RAW               | 使用 RAW 与 PACKET 套接字。                                                                                      |
+| SETFCAP               | 设置文件 capabilities。                                                                                          |
+| SETGID                | 任意操作进程 GID 及附加 GID 列表。                                                                              |
+| SETPCAP               | 修改进程 capabilities。                                                                                          |
+| SETUID                | 任意操作进程 UID。                                                                                              |
+| SYS_CHROOT            | 使用 chroot(2)，修改根目录。                                                                                     |
 
-The next table shows the capabilities which are not granted by default and may be added.
+下表列出了默认不授予、但可以通过 `--cap-add` 添加的 capabilities：
 
-| Capability Key        | Capability Description                                                                                                         |
-|:----------------------|:-------------------------------------------------------------------------------------------------------------------------------|
-| AUDIT_CONTROL         | Enable and disable kernel auditing; change auditing filter rules; retrieve auditing status and filtering rules.                |
-| AUDIT_READ            | Allow reading the audit log via multicast netlink socket.                                                                      |
-| BLOCK_SUSPEND         | Allow preventing system suspends.                                                                                              |
-| BPF                   | Allow creating BPF maps, loading BPF Type Format (BTF) data, retrieve JITed code of BPF programs, and more.                    |
-| CHECKPOINT_RESTORE    | Allow checkpoint/restore related operations.  Introduced in kernel 5.9.                                                        |
-| DAC_READ_SEARCH       | Bypass file read permission checks and directory read and execute permission checks.                                           |
-| IPC_LOCK              | Lock memory (mlock(2), mlockall(2), mmap(2), shmctl(2)).                                                                       |
-| IPC_OWNER             | Bypass permission checks for operations on System V IPC objects.                                                               |
-| LEASE                 | Establish leases on arbitrary files (see fcntl(2)).                                                                            |
-| LINUX_IMMUTABLE       | Set the FS_APPEND_FL and FS_IMMUTABLE_FL i-node flags.                                                                         |
-| MAC_ADMIN             | Allow MAC configuration or state changes. Implemented for the Smack LSM.                                                       |
-| MAC_OVERRIDE          | Override Mandatory Access Control (MAC). Implemented for the Smack Linux Security Module (LSM).                                |
-| NET_ADMIN             | Perform various network-related operations.                                                                                    |
-| NET_BROADCAST         | Make socket broadcasts, and listen to multicasts.                                                                              |
-| PERFMON               | Allow system performance and observability privileged operations using perf_events, i915_perf and other kernel subsystems      |
-| SYS_ADMIN             | Perform a range of system administration operations.                                                                           |
-| SYS_BOOT              | Use reboot(2) and kexec_load(2), reboot and load a new kernel for later execution.                                             |
-| SYS_MODULE            | Load and unload kernel modules.                                                                                                |
-| SYS_NICE              | Raise process nice value (nice(2), setpriority(2)) and change the nice value for arbitrary processes.                          |
-| SYS_PACCT             | Use acct(2), switch process accounting on or off.                                                                              |
-| SYS_PTRACE            | Trace arbitrary processes using ptrace(2).                                                                                     |
-| SYS_RAWIO             | Perform I/O port operations (iopl(2) and ioperm(2)).                                                                           |
-| SYS_RESOURCE          | Override resource Limits.                                                                                                      |
-| SYS_TIME              | Set system clock (settimeofday(2), stime(2), adjtimex(2)); set real-time (hardware) clock.                                     |
-| SYS_TTY_CONFIG        | Use vhangup(2); employ various privileged ioctl(2) operations on virtual terminals.                                            |
-| SYSLOG                | Perform privileged syslog(2) operations.                                                                                       |
-| WAKE_ALARM            | Trigger something that will wake up the system.                                                                                |
+| Capability Key        | 能力说明                                                                                                        |
+|:----------------------|:----------------------------------------------------------------------------------------------------------------|
+| AUDIT_CONTROL         | 启用/禁用内核审计；修改审计过滤规则；查询审计状态与过滤规则。                                                   |
+| AUDIT_READ            | 允许通过多播 netlink socket 读取审计日志。                                                                      |
+| BLOCK_SUSPEND         | 允许阻止系统挂起。                                                                                              |
+| BPF                   | 允许创建 BPF 映射、加载 BTF、获取 BPF JIT 代码等。                                                               |
+| CHECKPOINT_RESTORE    | 允许执行 checkpoint/restore 相关操作（内核 5.9 引入）。                                                          |
+| DAC_READ_SEARCH       | 绕过文件读权限检查，以及目录读与执行权限检查。                                                                  |
+| IPC_LOCK              | 锁定内存（mlock(2)、mlockall(2)、mmap(2)、shmctl(2)）。                                                          |
+| IPC_OWNER             | 绕过对 System V IPC 对象操作的权限检查。                                                                        |
+| LEASE                 | 对任意文件建立租约（参见 fcntl(2)）。                                                                           |
+| LINUX_IMMUTABLE       | 设置 i-node 标志：FS_APPEND_FL 与 FS_IMMUTABLE_FL。                                                             |
+| MAC_ADMIN             | 允许更改 MAC 配置或状态。实现于 Smack LSM。                                                                     |
+| MAC_OVERRIDE          | 覆盖强制访问控制（MAC）。实现于 Smack LSM。                                                                      |
+| NET_ADMIN             | 执行多种与网络相关的管理操作。                                                                                   |
+| NET_BROADCAST         | 允许进行 socket 广播，或监听多播。                                                                              |
+| PERFMON               | 允许使用 perf_events、i915_perf 等子系统进行高权限性能/可观测性操作。                                           |
+| SYS_ADMIN             | 执行系统管理类操作。                                                                                             |
+| SYS_BOOT              | 使用 reboot(2)、kexec_load(2)，重启并加载新内核供后续执行。                                                      |
+| SYS_MODULE            | 加载与卸载内核模块。                                                                                             |
+| SYS_NICE              | 提升进程 nice 值（nice(2)、setpriority(2)），或修改任意进程的 nice 值。                                         |
+| SYS_PACCT             | 使用 acct(2)，开启/关闭进程会计。                                                                                |
+| SYS_PTRACE            | 使用 ptrace(2) 跟踪任意进程。                                                                                    |
+| SYS_RAWIO             | 执行 I/O 端口操作（iopl(2)、ioperm(2)）。                                                                        |
+| SYS_RESOURCE          | 覆盖资源限制。                                                                                                   |
+| SYS_TIME              | 设置系统时间（settimeofday(2)、stime(2)、adjtimex(2)）；设置硬件时钟。                                         |
+| SYS_TTY_CONFIG        | 使用 vhangup(2)；在虚拟终端上执行特权 ioctl(2) 操作。                                                            |
+| SYSLOG                | 执行特权 syslog(2) 操作。                                                                                        |
+| WAKE_ALARM            | 触发唤醒系统的事件。                                                                                             |
 
-Further reference information is available on the [capabilities(7) - Linux man page](https://man7.org/linux/man-pages/man7/capabilities.7.html),
-and in the [Linux kernel source code](https://github.com/torvalds/linux/blob/124ea650d3072b005457faed69909221c2905a1f/include/uapi/linux/capability.h).
+更多参考请见 [capabilities(7) - Linux man page](https://man7.org/linux/man-pages/man7/capabilities.7.html) 与 [Linux 内核源码](https://github.com/torvalds/linux/blob/124ea650d3072b005457faed69909221c2905a1f/include/uapi/linux/capability.h)。
 
-Both flags support the value `ALL`, so to allow a container to use all capabilities
-except for `MKNOD`:
+`--cap-add` 与 `--cap-drop` 都支持值为 `ALL`。例如，仅排除 `MKNOD`：
 
 ```console
 $ docker run --cap-add=ALL --cap-drop=MKNOD ...
 ```
 
-The `--cap-add` and `--cap-drop` flags accept capabilities to be specified with
-a `CAP_` prefix. The following examples are therefore equivalent:
+`--cap-add` 与 `--cap-drop` 接受带或不带 `CAP_` 前缀的 capability 名称，以下示例等价：
 
 ```console
 $ docker run --cap-add=SYS_ADMIN ...
 $ docker run --cap-add=CAP_SYS_ADMIN ...
 ```
 
-For interacting with the network stack, instead of using `--privileged` they
-should use `--cap-add=NET_ADMIN` to modify the network interfaces.
+若需要操作网络栈，不要直接使用 `--privileged`，而应使用 `--cap-add=NET_ADMIN` 来修改网络接口：
 
 ```console
 $ docker run -it --rm  ubuntu:24.04 ip link add dummy0 type dummy
@@ -928,8 +715,7 @@ RTNETLINK answers: Operation not permitted
 $ docker run -it --rm --cap-add=NET_ADMIN ubuntu:24.04 ip link add dummy0 type dummy
 ```
 
-To mount a FUSE based filesystem, you need to combine both `--cap-add` and
-`--device`:
+若要挂载基于 FUSE 的文件系统，需要同时结合 `--cap-add` 与 `--device`：
 
 ```console
 $ docker run --rm -it --cap-add SYS_ADMIN sshfs sshfs sven@10.10.10.20:/home/sven /mnt
@@ -960,136 +746,92 @@ drwxrwxr-x 1 1000 1000   4096 Dec  4 06:11 .git
 ....
 ```
 
-The default seccomp profile will adjust to the selected capabilities, in order to allow
-use of facilities allowed by the capabilities, so you should not have to adjust this.
+默认的 seccomp 配置会根据所选 capabilities 自动调整，以允许这些能力所需的系统调用，通常无需额外修改。
 
-## Overriding image defaults
+## 覆盖镜像默认行为
 
-When you build an image from a [Dockerfile](https://docs.docker.com/reference/dockerfile/),
-or when committing it, you can set a number of default parameters that take
-effect when the image starts up as a container. When you run an image, you can
-override those defaults using flags for the `docker run` command.
+当你通过 [Dockerfile](https://docs.docker.com/reference/dockerfile/) 构建镜像或 commit 镜像时，可以设置若干默认参数，这些参数会在镜像以容器形式启动时生效。运行镜像时，可以通过 `docker run` 的标志覆盖这些默认设置。
 
-- [Default entrypoint](#default-entrypoint)
-- [Default command and options](#default-command-and-options)
-- [Expose ports](#exposed-ports)
-- [Environment variables](#environment-variables)
-- [Healthcheck](#healthchecks)
-- [User](#user)
-- [Working directory](#working-directory)
+- [默认入口（entrypoint）](#default-entrypoint)
+- [默认命令与参数](#default-command-and-options)
+- [暴露端口](#exposed-ports)
+- [环境变量](#environment-variables)
+- [健康检查](#healthchecks)
+- [用户](#user)
+- [工作目录](#working-directory)
 
-### Default command and options
+### 默认命令与参数
 
-The command syntax for `docker run` supports optionally specifying commands and
-arguments to the container's entrypoint, represented as `[COMMAND]` and
-`[ARG...]` in the following synopsis example:
+`docker run` 的语法支持为入口（entrypoint）传递可选的命令与参数，分别对应 `[COMMAND]` 与 `[ARG...]`：
 
 ```console
 $ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...]
 ```
 
-This command is optional because whoever created the `IMAGE` may have already
-provided a default `COMMAND`, using the Dockerfile `CMD` instruction. When you
-run a container, you can override that `CMD` instruction just by specifying a
-new `COMMAND`.
+该命令部分是可选的，因为镜像的创建者可能已通过 Dockerfile 的 `CMD` 指令提供了默认 `COMMAND`。当运行容器时，只需在命令行中指定新的 `COMMAND` 即可覆盖 Dockerfile 中的 `CMD`。
 
-If the image also specifies an `ENTRYPOINT` then the `CMD` or `COMMAND`
-get appended as arguments to the `ENTRYPOINT`.
+如果镜像同时指定了 `ENTRYPOINT`，那么 `CMD` 或你传入的 `[COMMAND]` 会作为参数追加到 `ENTRYPOINT` 之后。
 
-### Default entrypoint
+### 默认入口（entrypoint）
 
 ```text
---entrypoint="": Overwrite the default entrypoint set by the image
+--entrypoint="": 覆盖镜像设置的默认 entrypoint
 ```
 
-The entrypoint refers to the default executable that's invoked when you run a
-container. A container's entrypoint is defined using the Dockerfile
-`ENTRYPOINT` instruction. It's similar to specifying a default command because
-it specifies, but the difference is that you need to pass an explicit flag to
-override the entrypoint, whereas you can override default commands with
-positional arguments. The defines a container's default behavior, with the idea
-that when you set an entrypoint you can run the container *as if it were that
-binary*, complete with default options, and you can pass in more options as
-commands. But there are cases where you may want to run something else inside
-the container. This is when overriding the default entrypoint at runtime comes
-in handy, using the `--entrypoint` flag for the `docker run` command.
+Entrypoint 是指运行容器时默认被调用的可执行文件。镜像的默认 entrypoint 由 Dockerfile 的 `ENTRYPOINT` 指令定义。它与默认命令类似，但差异在于：覆盖 entrypoint 需要显式传入标志，而覆盖默认命令只需使用位置参数。EntryPoint 用于定义容器的默认行为——理想情况下，你可以“像运行该二进制一样”运行容器；当然也可以通过命令行参数传入更多选项。但有时你可能希望在容器中运行其他程序，这时就可以在运行时通过 `--entrypoint` 覆盖默认 entrypoint。
 
-The `--entrypoint` flag expects a string value, representing the name or path
-of the binary that you want to invoke when the container starts. The following
-example shows you how to run a Bash shell in a container that has been set up
-to automatically run some other binary (like `/usr/bin/redis-server`):
+`--entrypoint` 接受一个字符串参数，表示容器启动时要调用的二进制名称或路径。下面示例展示了在默认会自动运行其它二进制（如 `/usr/bin/redis-server`）的镜像中，如何启动一个 Bash：
 
 ```console
 $ docker run -it --entrypoint /bin/bash example/redis
 ```
 
-The following examples show how to pass additional parameters to the custom
-entrypoint, using the positional command arguments:
+下面的示例展示了如何通过位置参数为自定义 entrypoint 传入额外参数：
 
 ```console
 $ docker run -it --entrypoint /bin/bash example/redis -c ls -l
 $ docker run -it --entrypoint /usr/bin/redis-cli example/redis --help
 ```
 
-You can reset a containers entrypoint by passing an empty string, for example:
+你可以通过传入空字符串来重置容器的 entrypoint，例如：
 
 ```console
 $ docker run -it --entrypoint="" mysql bash
 ```
 
 > [!NOTE]
-> Passing `--entrypoint` clears out any default command set on the image. That
-> is, any `CMD` instruction in the Dockerfile used to build it.
+> 传入 `--entrypoint` 会清空镜像中设置的默认命令，即 Dockerfile 中的 `CMD` 会被忽略。
 
-### Exposed ports
+### 暴露端口
 
-By default, when you run a container, none of the container's ports are exposed
-to the host. This means you won't be able to access any ports that the
-container might be listening on. To make a container's ports accessible from
-the host, you need to publish the ports.
+默认情况下，运行容器时不会将容器内的任何端口暴露到宿主机。因此，你无法直接访问容器内可能监听的端口。若要从宿主访问容器端口，需要将端口“发布（publish）”。
 
-You can start the container with the `-P` or `-p` flags to expose its ports:
+可以使用 `-P` 或 `-p` 来发布端口：
 
-- The `-P` (or `--publish-all`) flag publishes all the exposed ports to the
-  host. Docker binds each exposed port to a random port on the host.
+- `-P`（或 `--publish-all`）会将镜像声明的所有暴露端口映射到宿主机上的随机端口。
 
-  The `-P` flag only publishes port numbers that are explicitly flagged as
-  exposed, either using the Dockerfile `EXPOSE` instruction or the `--expose`
-  flag for the `docker run` command.
+  `-P` 只会发布显式声明为“暴露”的端口，这些端口来自 Dockerfile 的 `EXPOSE` 指令或 `docker run` 的 `--expose` 标志。
 
-- The `-p` (or `--publish`) flag lets you explicitly map a single port or range
-  of ports in the container to the host.
+- `-p`（或 `--publish`）允许你显式地映射容器中的单个端口或端口范围到宿主。
 
-The port number inside the container (where the service listens) doesn't need
-to match the port number published on the outside of the container (where
-clients connect). For example, inside the container an HTTP service might be
-listening on port 80. At runtime, the port might be bound to 42800 on the host.
-To find the mapping between the host ports and the exposed ports, use the
-`docker port` command.
+容器内服务监听的端口与对外发布的端口无需相同。例如，容器内的 HTTP 服务可能监听 80 端口，而在运行时被绑定到宿主的 42800 端口。你可以通过 `docker port` 查看宿主端口与容器端口的映射关系。
 
-### Environment variables
+### 环境变量
 
-Docker automatically sets some environment variables when creating a Linux
-container. Docker doesn't set any environment variables when creating a Windows
-container.
+在创建 Linux 容器时，Docker 会自动设置一些环境变量；创建 Windows 容器时，Docker 不会自动设置任何环境变量。
 
-The following environment variables are set for Linux containers:
+Linux 容器中默认设置的环境变量包括：
 
-| Variable   | Value                                                                                                |
-|:-----------|:-----------------------------------------------------------------------------------------------------|
-| `HOME`     | Set based on the value of `USER`                                                                     |
-| `HOSTNAME` | The hostname associated with the container                                                           |
-| `PATH`     | Includes popular directories, such as `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin` |
-| `TERM`     | `xterm` if the container is allocated a pseudo-TTY                                                   |
+| 变量       | 值                                                                                                     |
+|:-----------|:--------------------------------------------------------------------------------------------------------|
+| `HOME`     | 基于 `USER` 的值进行设置                                                                                |
+| `HOSTNAME` | 容器的主机名                                                                                            |
+| `PATH`     | 包含常见路径，如 `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`                         |
+| `TERM`     | 若为容器分配了伪终端，则为 `xterm`                                                                      |
 
+此外，你可以通过一个或多个 `-e` 标志为容器设置任意环境变量。你甚至可以覆盖上述变量，或覆盖镜像在 Dockerfile 中通过 `ENV` 指令定义的变量。
 
-Additionally, you can set any environment variable in the container by using
-one or more `-e` flags. You can even override the variables mentioned above, or
-variables defined using a Dockerfile `ENV` instruction when building the image.
-
-If you name an environment variable without specifying a value, the current
-value of the named variable on the host is propagated into the container's
-environment:
+当只指定变量名而不指定值时，宿主机当前的环境变量值会被传递进容器：
 
 ```console
 $ export today=Wednesday
@@ -1137,22 +879,21 @@ USERPROFILE=C:\Users\ContainerAdministrator
 windir=C:\Windows
 ```
 
-### Healthchecks
+### 健康检查（Healthchecks）
 
-The following flags for the `docker run` command let you control the parameters
-for container healthchecks:
+`docker run` 提供以下标志用于控制容器健康检查的参数：
 
-| Option                     | Description                                                                            |
-|:---------------------------|:---------------------------------------------------------------------------------------|
-| `--health-cmd`             | Command to run to check health                                                         |
-| `--health-interval`        | Time between running the check                                                         |
-| `--health-retries`         | Consecutive failures needed to report unhealthy                                        |
-| `--health-timeout`         | Maximum time to allow one check to run                                                 |
-| `--health-start-period`    | Start period for the container to initialize before starting health-retries countdown  |
-| `--health-start-interval`  | Time between running the check during the start period                                 |
-| `--no-healthcheck`         | Disable any container-specified `HEALTHCHECK`                                          |
+| 选项                      | 描述                                                                                 |
+|:--------------------------|:--------------------------------------------------------------------------------------|
+| `--health-cmd`            | 用于探测健康状况的命令                                                                 |
+| `--health-interval`       | 每次探测之间的时间间隔                                                                 |
+| `--health-retries`        | 判定为不健康所需的连续失败次数                                                         |
+| `--health-timeout`        | 单次探测允许的最长执行时间                                                             |
+| `--health-start-period`   | 容器启动后进入健康检查前的“冷启动”时间窗口                                             |
+| `--health-start-interval` | 在“冷启动”时间窗口内的探测间隔                                                         |
+| `--no-healthcheck`        | 禁用镜像中设置的 `HEALTHCHECK`                                                          |
 
-Example:
+示例：
 
 ```console
 $ docker run --name=test -d \
@@ -1201,40 +942,32 @@ $ sleep 2; docker inspect --format='{{json .State.Health}}' test
 }
 ```
 
-The health status is also displayed in the `docker ps` output.
+容器的健康状态也会显示在 `docker ps` 的输出中。
 
-### User
+### 用户（User）
 
-The default user within a container is `root` (uid = 0). You can set a default
-user to run the first process with the Dockerfile `USER` instruction. When
-starting a container, you can override the `USER` instruction by passing the
-`-u` option.
+容器内的默认用户是 `root`（uid = 0）。你可以在 Dockerfile 中通过 `USER` 指令设置默认用户。启动容器时，可通过 `-u` 覆盖该设置。
 
 ```text
--u="", --user="": Sets the username or UID used and optionally the groupname or GID for the specified command.
+-u="", --user="": 设置运行指定命令时的用户名或 UID，可选地还可设置组名或 GID。
 ```
 
-The followings examples are all valid:
+以下形式均为有效写法：
 
 ```text
 --user=[ user | user:group | uid | uid:gid | user:gid | uid:group ]
 ```
 
 > [!NOTE]
-> If you pass a numeric user ID, it must be in the range of 0-2147483647. If
-> you pass a username, the user must exist in the container.
+> 若传入的是数字用户 ID，范围必须在 0-2147483647。若传入用户名，则该用户必须存在于容器内。
 
-### Working directory
+### 工作目录（Working directory）
 
-The default working directory for running binaries within a container is the
-root directory (`/`). The default working directory of an image is set using
-the Dockerfile `WORKDIR` command. You can override the default working
-directory for an image using the `-w` (or `--workdir`) flag for the `docker
-run` command:
+在容器内运行可执行文件时，默认工作目录为根目录（`/`）。镜像的默认工作目录由 Dockerfile 的 `WORKDIR` 设置。你可以使用 `-w`（或 `--workdir`）覆盖镜像的默认工作目录：
 
 ```text
 $ docker run --rm -w /my/workdir alpine pwd
 /my/workdir
 ```
 
-If the directory doesn't already exist in the container, it's created.
+如果该目录在容器内不存在，将会被自动创建。

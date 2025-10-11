@@ -1,7 +1,7 @@
 ---
-description: Learn how to measure running containers, and about the different metrics
+description: 了解如何观测运行中容器及其各类指标
 keywords: docker, metrics, CPU, memory, disk, IO, run, runtime, stats
-title: Runtime metrics
+title: 运行时指标
 weight: 50
 aliases:
   - /articles/runmetrics/
@@ -11,13 +11,11 @@ aliases:
   - /config/containers/runmetrics/
 ---
 
-## Docker stats
+## Docker 统计 {#docker-stats}
 
-You can use the `docker stats` command to live stream a container's
-runtime metrics. The command supports CPU, memory usage, memory limit,
-and network IO metrics.
+使用 `docker stats` 可以实时查看容器的运行指标，包括 CPU、内存使用与上限、网络 IO 等。
 
-The following is a sample output from the `docker stats` command
+以下为 `docker stats` 的示例输出：
 
 ```console
 $ docker stats redis1 redis2
@@ -27,137 +25,101 @@ redis1              0.07%               796 KB / 64 MB        1.21%             
 redis2              0.07%               2.746 MB / 64 MB      4.29%               1.266 KB / 648 B    12.4 MB / 0 B
 ```
 
-The [`docker stats`](/reference/cli/docker/container/stats.md) reference
-page has more details about the `docker stats` command.
+更多用法参见 [`docker stats`](/reference/cli/docker/container/stats.md) 参考页。
 
-## Control groups
+## 控制组（cgroups） {#control-groups}
 
-Linux Containers rely on [control groups](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)
-which not only track groups of processes, but also expose metrics about
-CPU, memory, and block I/O usage. You can access those metrics and
-obtain network usage metrics as well. This is relevant for "pure" LXC
-containers, as well as for Docker containers.
+Linux 容器依赖于 [control groups](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)（cgroups）。它不仅用于管理进程组，也会暴露 CPU、内存、块 I/O 等使用指标，还可获取网络使用数据。该机制既适用于“纯” LXC 容器，也适用于 Docker 容器。
 
-Control groups are exposed through a pseudo-filesystem. In modern distributions, you
-should find this filesystem under `/sys/fs/cgroup`. Under that directory, you
-see multiple sub-directories, called `devices`, `freezer`, `blkio`, and so on.
-Each sub-directory actually corresponds to a different cgroup hierarchy.
+cgroups 通过伪文件系统暴露。在现代发行版中，该文件系统位于 `/sys/fs/cgroup`。该目录下会有多个子目录，如 `devices`、`freezer`、`blkio` 等，每个子目录对应一个不同的 cgroup 层级。
 
-On older systems, the control groups might be mounted on `/cgroup`, without
-distinct hierarchies. In that case, instead of seeing the sub-directories,
-you see a bunch of files in that directory, and possibly some directories
-corresponding to existing containers.
+在较旧的系统中，cgroups 可能挂载在 `/cgroup`，且不区分层级。此时你将看到一堆文件，以及可能对应已存在容器的一些目录。
 
-To figure out where your control groups are mounted, you can run:
+要确定 cgroups 的挂载位置，可运行：
 
 ```console
 $ grep cgroup /proc/mounts
 ```
 
-### Enumerate cgroups
+### 枚举 cgroups {#enumerate-cgroups}
 
-The file layout of cgroups is significantly different between v1 and v2.
+v1 与 v2 在文件布局上有显著差异。
 
-If `/sys/fs/cgroup/cgroup.controllers` is present on your system, you are using v2,
-otherwise you are using v1.
-Refer to the subsection that corresponds to your cgroup version.
+若系统存在 `/sys/fs/cgroup/cgroup.controllers` 则为 v2，否则为 v1。请根据所用版本阅读对应小节。
 
-cgroup v2 is used by default on the following distributions:
+以下发行版默认使用 cgroup v2：
 
-- Fedora (since 31)
-- Debian GNU/Linux (since 11)
-- Ubuntu (since 21.10)
+- Fedora（自 31 起）
+- Debian GNU/Linux（自 11 起）
+- Ubuntu（自 21.10 起）
 
 #### cgroup v1
 
-You can look into `/proc/cgroups` to see the different control group subsystems
-known to the system, the hierarchy they belong to, and how many groups they contain.
+可以查看 `/proc/cgroups`，以了解系统已知的控制组子系统、其所属层级以及包含的组数量。
 
-You can also look at `/proc/<pid>/cgroup` to see which control groups a process
-belongs to. The control group is shown as a path relative to the root of
-the hierarchy mountpoint. `/` means the process hasn't been assigned to a
-group, while `/lxc/pumpkin` indicates that the process is a member of a
-container named `pumpkin`.
+也可以查看 `/proc/<pid>/cgroup` 以了解某个进程隶属哪些控制组。控制组以相对于层级挂载点根目录的路径形式显示：`/` 表示该进程尚未被分配到任何组；`/lxc/pumpkin` 表示该进程属于名为 `pumpkin` 的容器。
 
 #### cgroup v2
 
-On cgroup v2 hosts, the content of `/proc/cgroups` isn't meaningful.
-See `/sys/fs/cgroup/cgroup.controllers` to the available controllers.
+在 cgroup v2 主机上，`/proc/cgroups` 的内容没有意义。可通过 `/sys/fs/cgroup/cgroup.controllers` 查看可用的控制器。
 
-### Changing cgroup version
+### 切换 cgroup 版本 {#changing-cgroup-version}
 
-Changing cgroup version requires rebooting the entire system.
+更改 cgroup 版本需要重启整个系统。
 
-On systemd-based systems, cgroup v2 can be enabled by adding `systemd.unified_cgroup_hierarchy=1`
-to the kernel command line.
-To revert the cgroup version to v1, you need to set `systemd.unified_cgroup_hierarchy=0` instead.
+在基于 systemd 的系统上，可在内核命令行添加 `systemd.unified_cgroup_hierarchy=1` 以启用 cgroup v2。
+若要恢复为 v1，设置 `systemd.unified_cgroup_hierarchy=0`。
 
-If `grubby` command is available on your system (e.g. on Fedora), the command line can be modified as follows:
+如果系统提供 `grubby`（如 Fedora），可用以下命令修改内核命令行：
 
 ```console
 $ sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=1"
 ```
 
-If `grubby` command isn't available, edit the `GRUB_CMDLINE_LINUX` line in `/etc/default/grub`
-and run `sudo update-grub`.
+若无 `grubby`，编辑 `/etc/default/grub` 中的 `GRUB_CMDLINE_LINUX` 行并执行 `sudo update-grub`。
 
-### Running Docker on cgroup v2
+### 在 cgroup v2 上运行 Docker {#running-docker-on-cgroup-v2}
 
-Docker supports cgroup v2 since Docker 20.10.
-Running Docker on cgroup v2 also requires the following conditions to be satisfied:
+自 Docker 20.10 起支持 cgroup v2。
+在 cgroup v2 上运行 Docker 还需满足以下条件：
 
-- containerd: v1.4 or later
-- runc: v1.0.0-rc91 or later
-- Kernel: v4.15 or later (v5.2 or later is recommended)
+- containerd：v1.4 或更高
+- runc：v1.0.0-rc91 或更高
+- 内核：v4.15 或更高（建议 v5.2+）
 
-Note that the cgroup v2 mode behaves slightly different from the cgroup v1 mode:
+注意，cgroup v2 模式与 v1 略有不同：
 
-- The default cgroup driver (`dockerd --exec-opt native.cgroupdriver`) is `systemd` on v2, `cgroupfs` on v1.
-- The default cgroup namespace mode (`docker run --cgroupns`) is `private` on v2, `host` on v1.
-- The `docker run` flags `--oom-kill-disable` and `--kernel-memory` are discarded on v2.
+- 默认 cgroup 驱动（`dockerd --exec-opt native.cgroupdriver`）：v2 为 `systemd`，v1 为 `cgroupfs`。
+- 默认 cgroup 命名空间模式（`docker run --cgroupns`）：v2 为 `private`，v1 为 `host`。
+- `docker run` 标志 `--oom-kill-disable` 与 `--kernel-memory` 在 v2 中被忽略。
 
-### Find the cgroup for a given container
+### 查找指定容器的 cgroup {#find-the-cgroup-for-a-given-container}
 
-For each container, one cgroup is created in each hierarchy. On
-older systems with older versions of the LXC userland tools, the name of
-the cgroup is the name of the container. With more recent versions
-of the LXC tools, the cgroup is `lxc/<container_name>.`
+每个容器在每个层级下都会创建一个 cgroup。在较老系统及较旧 LXC 用户态工具上，cgroup 名称即为容器名。较新版本的 LXC 工具中，cgroup 形式为 `lxc/<container_name>`。
 
-For Docker containers using cgroups, the cgroup name is the full
-ID or long ID of the container. If a container shows up as ae836c95b4c3
-in `docker ps`, its long ID might be something like
-`ae836c95b4c3c9e9179e0e91015512da89fdec91612f63cebae57df9a5444c79`. You can
-look it up with `docker inspect` or `docker ps --no-trunc`.
+在 Docker 中，cgroup 名称通常是容器的完整 ID（long ID）。若 `docker ps` 显示为 `ae836c95b4c3`，其 long ID 可能形如 `ae836c95b4c3c9e9179e0e91015512da89fdec91612f63cebae57df9a5444c79`。可通过 `docker inspect` 或 `docker ps --no-trunc` 查询。
 
-Putting everything together to look at the memory metrics for a Docker
-container, take a look at the following paths:
+综合起来，要查看某个 Docker 容器的内存相关指标，可以查看以下路径：
 
 - `/sys/fs/cgroup/memory/docker/<longid>/` on cgroup v1, `cgroupfs` driver
 - `/sys/fs/cgroup/memory/system.slice/docker-<longid>.scope/` on cgroup v1, `systemd` driver
 - `/sys/fs/cgroup/docker/<longid>/` on cgroup v2, `cgroupfs` driver
 - `/sys/fs/cgroup/system.slice/docker-<longid>.scope/` on cgroup v2, `systemd` driver
 
-### Metrics from cgroups: memory, CPU, block I/O
+### 来自 cgroups 的指标：内存、CPU、块 I/O {#metrics-from-cgroups-memory-cpu-block-i-o}
 
 > [!NOTE]
 >
-> This section isn't yet updated for cgroup v2.
-> For further information about cgroup v2, refer to [the kernel documentation](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
+> 本节尚未针对 cgroup v2 更新。有关 v2 的更多信息，请参见[内核文档](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)。
 
-For each subsystem (memory, CPU, and block I/O), one or
-more pseudo-files exist and contain statistics.
+针对每个子系统（内存、CPU、块 I/O），都会有一个或多个伪文件提供统计信息。
 
-#### Memory metrics: `memory.stat`
+#### 内存指标：`memory.stat` {#memory-metrics-memory-stat}
 
-Memory metrics are found in the `memory` cgroup. The memory
-control group adds a little overhead, because it does very fine-grained
-accounting of the memory usage on your host. Therefore, many distributions
-chose to not enable it by default. Generally, to enable it, all you have
-to do is to add some kernel command-line parameters:
-`cgroup_enable=memory swapaccount=1`.
+内存相关指标位于 `memory` cgroup。该控制组会对主机内存使用进行非常细粒度的记账，因此会带来少量开销，许多发行版默认不启用。通常只需在内核命令行添加如下参数即可启用：
+`cgroup_enable=memory swapaccount=1`。
 
-The metrics are in the pseudo-file `memory.stat`.
-Here is what it looks like:
+指标位于伪文件 `memory.stat`，示例如下：
 
     cache 11492564992
     rss 1930993664
@@ -188,264 +150,129 @@ Here is what it looks like:
     total_active_file 4489052160
     total_unevictable 32768
 
-The first half (without the `total_` prefix) contains statistics relevant
-to the processes within the cgroup, excluding sub-cgroups. The second half
-(with the `total_` prefix) includes sub-cgroups as well.
+前半部分（无 `total_` 前缀）仅包含该 cgroup 内进程的统计（不含子 cgroup）；后半部分（带 `total_` 前缀）则包含子 cgroup 的统计。
 
-Some metrics are "gauges", or values that can increase or decrease. For instance,
-`swap` is the amount of swap space used by the members of the cgroup.
-Some others are "counters", or values that can only go up, because
-they represent occurrences of a specific event. For instance, `pgfault`
-indicates the number of page faults since the creation of the cgroup.
+部分指标是“仪表值”（可增可减），例如 `swap` 表示 cgroup 成员当前使用的 swap 空间。另一些是“计数值”（只增不减），表示某类事件发生的次数，例如 `pgfault` 表示自 cgroup 创建以来的缺页次数。
 
 `cache`
-: The amount of memory used by the processes of this control group that can be
-  associated precisely with a block on a block device. When you read from and
-  write to files on disk, this amount increases. This is the case if you use
-  "conventional" I/O (`open`, `read`, `write` syscalls) as well as mapped files
-  (with `mmap`). It also accounts for the memory used by `tmpfs` mounts, though
-  the reasons are unclear.
+: 控制组进程用于页缓存的数据量，可与块设备上的数据块一一对应。当读写磁盘文件时该值会增加，包括常规 I/O（`open`/`read`/`write`）与映射文件（`mmap`）。该值也包含 `tmpfs` 挂载使用的内存。
 
 `rss`
-: The amount of memory that doesn't correspond to anything on disk: stacks,
-  heaps, and anonymous memory maps.
+: 不对应磁盘内容的内存用量，如栈、堆与匿名映射。
 
 `mapped_file`
-: Indicates the amount of memory mapped by the processes in the control group.
-  It doesn't give you information about how much memory is used; it rather
-  tells you how it's used.
+: 控制组进程映射的文件内存量；反映“如何使用”，非“使用了多少”。
 
 `pgfault`, `pgmajfault`
-: Indicate the number of times that a process of the cgroup triggered a "page
-  fault" and a "major fault", respectively. A page fault happens when a process
-  accesses a part of its virtual memory space which is nonexistent or protected.
-  The former can happen if the process is buggy and tries to access an invalid
-  address (it is sent a `SIGSEGV` signal, typically killing it with the famous
-  `Segmentation fault` message). The latter can happen when the process reads
-  from a memory zone which has been swapped out, or which corresponds to a mapped
-  file: in that case, the kernel loads the page from disk, and let the CPU
-  complete the memory access. It can also happen when the process writes to a
-  copy-on-write memory zone: likewise, the kernel preempts the process, duplicate
-  the memory page, and resume the write operation on the process's own copy of
-  the page. "Major" faults happen when the kernel actually needs to read the data
-  from disk. When it just duplicates an existing page, or allocate an empty page,
-  it's a regular (or "minor") fault.
+: 分别表示触发“缺页”和“重大缺页”的次数。缺页是进程访问不存在或受保护的虚拟内存区域时发生的事件：若访问无效地址会收到 `SIGSEGV` 并被终止；若读取被换出或映射文件对应的内存，内核会从磁盘载入该页并完成访问；写入写时复制区域时，内核会复制页面后再继续写入。“重大缺页”指需要从磁盘实际读取数据的情况；若只是复制现有页或分配空页，则属于普通（次要）缺页。
 
 `swap`
-: The amount of swap currently used by the processes in this cgroup.
+: 当前 cgroup 进程使用的 swap 量。
 
 `active_anon`, `inactive_anon`
-: The amount of anonymous memory that has been identified has respectively
-  _active_ and _inactive_ by the kernel. "Anonymous" memory is the memory that is
-  _not_ linked to disk pages. In other words, that's the equivalent of the rss
-  counter described above. In fact, the very definition of the rss counter is
-  `active_anon` + `inactive_anon` - `tmpfs` (where tmpfs is the amount of
-  memory used up by `tmpfs` filesystems mounted by this control group). Now,
-  what's the difference between "active" and "inactive"? Pages are initially
-  "active"; and at regular intervals, the kernel sweeps over the memory, and tags
-  some pages as "inactive". Whenever they're accessed again, they're
-  immediately re-tagged "active". When the kernel is almost out of memory, and
-  time comes to swap out to disk, the kernel swaps "inactive" pages.
+: 被内核分别标记为“活跃”和“非活跃”的匿名内存（不关联磁盘页），与前述 `rss` 概念相当。严格来说，`rss = active_anon + inactive_anon - tmpfs`（其中 `tmpfs` 是该控制组挂载的 tmpfs 占用）。页面初始为“活跃”，内核会周期性扫描并将部分标记为“非活跃”；再次访问会立即恢复为“活跃”。当系统内存吃紧需要换出时，会优先换出“非活跃”页。
 
 `active_file`, `inactive_file`
-: Cache memory, with _active_ and _inactive_ similar to the _anon_ memory
-  above. The exact formula is `cache` = `active_file` + `inactive_file` +
-  `tmpfs`. The exact rules used by the kernel to move memory pages between
-  active and inactive sets are different from the ones used for anonymous memory,
-  but the general principle is the same. When the kernel needs to reclaim memory,
-  it's cheaper to reclaim a clean (=non modified) page from this pool, since it
-  can be reclaimed immediately (while anonymous pages and dirty/modified pages
-  need to be written to disk first).
+: 文件缓存内存，对应“活跃/非活跃”状态。`cache = active_file + inactive_file + tmpfs`。文件页在活跃/非活跃之间移动的规则与匿名内存不同，但原理相似。回收内存时，回收干净页（未修改）成本更低，可立即回收；匿名页或脏页需先写盘。
 
 `unevictable`
-: The amount of memory that cannot be reclaimed; generally, it accounts for
-  memory that has been "locked" with `mlock`. It's often used by crypto
-  frameworks to make sure that secret keys and other sensitive material never
-  gets swapped out to disk.
+: 不可回收的内存，通常由 `mlock` 锁定，用于确保密钥等敏感数据不会被换出到磁盘。
 
 `memory_limit`, `memsw_limit`
-: These aren't really metrics, but a reminder of the limits applied to this
-  cgroup. The first one indicates the maximum amount of physical memory that can
-  be used by the processes of this control group; the second one indicates the
-  maximum amount of RAM+swap.
+: 并非指标，而是该 cgroup 应用的限制：前者为最大物理内存，后者为内存+swap 的上限。
 
-Accounting for memory in the page cache is very complex. If two
-processes in different control groups both read the same file
-(ultimately relying on the same blocks on disk), the corresponding
-memory charge is split between the control groups. It's nice, but
-it also means that when a cgroup is terminated, it could increase the
-memory usage of another cgroup, because they're not splitting the cost
-anymore for those memory pages.
+页缓存的内存记账较为复杂。如果不同 cgroup 的两个进程读取同一文件（底层使用相同磁盘块），其对应的内存开销会在 cgroup 之间分摊。这虽可取，但也意味着当某个 cgroup 终止时，另一个 cgroup 的内存占用可能会上升，因为不再分摊这些页面的成本。
 
-### CPU metrics: `cpuacct.stat`
+### CPU 指标：`cpuacct.stat` {#cpu-metrics-cpuacct-stat}
 
-Now that we've covered memory metrics, everything else is
-simple in comparison. CPU metrics are in the
-`cpuacct` controller.
+相较于内存指标，其余内容更为简单。CPU 指标位于 `cpuacct` 控制器。
 
-For each container, a pseudo-file `cpuacct.stat` contains the CPU usage
-accumulated by the processes of the container, broken down into `user` and
-`system` time. The distinction is:
+每个容器都有伪文件 `cpuacct.stat`，记录容器进程累计的 CPU 使用，分为 `user` 与 `system` 时间：
 
-- `user` time is the amount of time a process has direct control of the CPU,
-  executing process code.
-- `system` time is the time the kernel is executing system calls on behalf of
-  the process.
+- `user`：进程直接占用 CPU 执行自身代码的时间。
+- `system`：内核代表进程执行系统调用所花费的时间。
 
-Those times are expressed in ticks of 1/100th of a second, also called "user
-jiffies". There are `USER_HZ` _"jiffies"_ per second, and on x86 systems,
-`USER_HZ` is 100. Historically, this mapped exactly to the number of scheduler
-"ticks" per second, but higher frequency scheduling and
-[tickless kernels](https://lwn.net/Articles/549580/) have made the number of
-ticks irrelevant.
+这些时间以“ticks”（每秒 100 份，俗称 jiffies）表示；在 x86 上 `USER_HZ=100`。历史上与调度器“tick”一致，但更高频的调度与[tickless 内核](https://lwn.net/Articles/549580/)已使该数值不再关键。
 
-#### Block I/O metrics
+#### 块 I/O 指标 {#block-i-o-metrics}
 
-Block I/O is accounted in the `blkio` controller.
-Different metrics are scattered across different files. While you can
-find in-depth details in the [blkio-controller](https://www.kernel.org/doc/Documentation/cgroup-v1/blkio-controller.txt)
-file in the kernel documentation, here is a short list of the most
-relevant ones:
+块 I/O 由 `blkio` 控制器负责记账。不同指标分散在不同文件中。详见内核文档中的 [blkio-controller](https://www.kernel.org/doc/Documentation/cgroup-v1/blkio-controller.txt)，这里列出最常用的条目：
 
 `blkio.sectors`
-: Contains the number of 512-bytes sectors read and written by the processes
-  member of the cgroup, device by device. Reads and writes are merged in a single
-  counter.
+: 以 512 字节扇区为单位，按设备统计读写的总扇区数（读写合并计数）。
 
 `blkio.io_service_bytes`
-: Indicates the number of bytes read and written by the cgroup. It has 4
-  counters per device, because for each device, it differentiates between
-  synchronous vs. asynchronous I/O, and reads vs. writes.
+: 记录该 cgroup 的读写字节数。每个设备有 4 个计数器（同步/异步 × 读/写）。
 
 `blkio.io_serviced`
-: The number of I/O operations performed, regardless of their size. It also has
-  4 counters per device.
+: 执行的 I/O 操作次数（与大小无关）。同样每设备 4 个计数器。
 
 `blkio.io_queued`
-: Indicates the number of I/O operations currently queued for this cgroup. In
-  other words, if the cgroup isn't doing any I/O, this is zero. The opposite is
-  not true. In other words, if there is no I/O queued, it doesn't mean that the
-  cgroup is idle (I/O-wise). It could be doing purely synchronous reads on an
-  otherwise quiescent device, which can therefore handle them immediately,
-  without queuing. Also, while it's helpful to figure out which cgroup is
-  putting stress on the I/O subsystem, keep in mind that it's a relative
-  quantity. Even if a process group doesn't perform more I/O, its queue size can
-  increase just because the device load increases because of other devices.
+: 当前排队的 I/O 操作数量。若该 cgroup 没有 I/O，该值为 0；反之不成立：无排队不代表空闲，可能在使用同步读且设备空闲无需排队。队列大小是相对量，也会受其他设备负载影响。
 
-### Network metrics
+### 网络指标 {#network-metrics}
 
-Network metrics aren't exposed directly by control groups. There is a
-good explanation for that: network interfaces exist within the context
-of _network namespaces_. The kernel could probably accumulate metrics
-about packets and bytes sent and received by a group of processes, but
-those metrics wouldn't be very useful. You want per-interface metrics
-(because traffic happening on the local `lo`
-interface doesn't really count). But since processes in a single cgroup
-can belong to multiple network namespaces, those metrics would be harder
-to interpret: multiple network namespaces means multiple `lo`
-interfaces, potentially multiple `eth0`
-interfaces, etc.; so this is why there is no easy way to gather network
-metrics with control groups.
+网络指标不会由 cgroup 直接提供，原因在于网络接口存在于“网络命名空间”的上下文中。内核可以统计某进程组的收发包与字节数，但这并不实用：通常需要按接口维度查看（本地 `lo` 的流量常不计），而同一 cgroup 的进程可能属于多个网络命名空间，导致出现多个 `lo`、多个 `eth0` 等，进而难以解释。因此无法通过 cgroup 简单获取网络指标。
 
-Instead you can gather network metrics from other sources.
+因此需要从其他来源获取网络指标。
 
-#### iptables
+#### iptables {#iptables}
 
-iptables (or rather, the netfilter framework for which iptables is just
-an interface) can do some serious accounting.
+iptables（准确地说是其背后的 netfilter 框架）可以进行较为精细的统计。
 
-For instance, you can setup a rule to account for the outbound HTTP
-traffic on a web server:
+例如，可设置规则统计 Web 服务器的出站 HTTP 流量：
 
 ```console
 $ iptables -I OUTPUT -p tcp --sport 80
 ```
 
-There is no `-j` or `-g` flag,
-so the rule just counts matched packets and goes to the following
-rule.
+未使用 `-j` 或 `-g`，该规则仅对匹配的数据包计数并继续后续规则。
 
-Later, you can check the values of the counters, with:
+之后可通过以下命令查看计数器的值：
 
 ```console
 $ iptables -nxvL OUTPUT
 ```
 
-Technically, `-n` isn't required, but it
-prevents iptables from doing DNS reverse lookups, which are probably
-useless in this scenario.
+严格来说 `-n` 不是必须，但可避免 iptables 进行反向 DNS 查询，在此场景中通常没有意义。
 
-Counters include packets and bytes. If you want to setup metrics for
-container traffic like this, you could execute a `for`
-loop to add two `iptables` rules per
-container IP address (one in each direction), in the `FORWARD`
-chain. This only meters traffic going through the NAT
-layer; you also need to add traffic going through the userland
-proxy.
+计数器包括数据包数与字节数。若要按容器流量统计，可在 `FORWARD` 链中通过 `for` 循环为每个容器 IP 添加两条 `iptables` 规则（入站与出站各一条）。需要注意，这只能统计经过 NAT 层的流量；还需额外统计经由用户态代理转发的流量。
 
-Then, you need to check those counters on a regular basis. If you
-happen to use `collectd`, there is a [nice plugin](https://collectd.org/wiki/index.php/Table_of_Plugins)
-to automate iptables counters collection.
+随后需要定期检查这些计数器。如果你使用 `collectd`，可以借助其[插件](https://collectd.org/wiki/index.php/Table_of_Plugins)自动采集 iptables 计数。
 
-#### Interface-level counters
+#### 接口级计数器 {#interface-level-counters}
 
-Since each container has a virtual Ethernet interface, you might want to check
-directly the TX and RX counters of this interface. Each container is associated
-to a virtual Ethernet interface in your host, with a name like `vethKk8Zqi`.
-Figuring out which interface corresponds to which container is, unfortunately,
-difficult.
+每个容器都有一个虚拟以太网接口，你可以直接查看该接口的发送（TX）与接收（RX）计数。宿主机中容器对应的虚拟接口名称类似 `vethKk8Zqi`。遗憾的是，很难直接判断接口与容器的对应关系。
 
-But for now, the best way is to check the metrics _from within the
-containers_. To accomplish this, you can run an executable from the host
-environment within the network namespace of a container using **ip-netns
-magic**.
+更现实的做法是从“容器内部”查看指标。可以通过所谓的 “ip-netns 魔法” 在容器的网络命名空间内，从宿主运行任意可执行程序。
 
-The `ip-netns exec` command allows you to execute any
-program (present in the host system) within any network namespace
-visible to the current process. This means that your host can
-enter the network namespace of your containers, but your containers
-can't access the host or other peer containers.
-Containers can interact with their sub-containers, though.
+`ip-netns exec` 能在当前可见的任意网络命名空间内执行宿主上的任意程序。宿主可以进入容器的网络命名空间，但容器无法访问宿主或其他并列容器（容器与其子容器间可互通）。
 
-The exact format of the command is:
+命令格式：
 
 ```console
 $ ip netns exec <nsname> <command...>
 ```
 
-For example:
+示例：
 
 ```console
 $ ip netns exec mycontainer netstat -i
 ```
 
-`ip netns` finds the `mycontainer` container by
-using namespaces pseudo-files. Each process belongs to one network
-namespace, one PID namespace, one `mnt` namespace,
-etc., and those namespaces are materialized under
-`/proc/<pid>/ns/`. For example, the network
-namespace of PID 42 is materialized by the pseudo-file
-`/proc/42/ns/net`.
+`ip netns` 通过命名空间伪文件定位名为 `mycontainer` 的容器。每个进程属于一个网络命名空间、一个 PID 命名空间、一个 `mnt` 命名空间等，这些命名空间在 `/proc/<pid>/ns/` 下以伪文件形式呈现。例如 PID 42 的网络命名空间为 `/proc/42/ns/net`。
 
-When you run `ip netns exec mycontainer ...`, it
-expects `/var/run/netns/mycontainer` to be one of
-those pseudo-files. (Symlinks are accepted.)
+执行 `ip netns exec mycontainer ...` 时，要求 `/var/run/netns/mycontainer` 为上述伪文件之一（可用符号链接）。
 
-In other words, to execute a command within the network namespace of a
-container, we need to:
+换言之，要在容器的网络命名空间中执行命令，我们需要：
 
 - Find out the PID of any process within the container that we want to investigate;
 - Create a symlink from `/var/run/netns/<somename>` to `/proc/<thepid>/ns/net`
 - Execute `ip netns exec <somename> ....`
 
-Review [Enumerate Cgroups](#enumerate-cgroups) for how to find
-the cgroup of an in-container process whose network usage you want to measure.
-From there, you can examine the pseudo-file named
-`tasks`, which contains all the PIDs in the
-cgroup (and thus, in the container). Pick any one of the PIDs.
+结合[枚举 cgroups](#enumerate-cgroups) 的方法，找到容器内目标进程所属的 cgroup。随后查看该 cgroup 下名为 `tasks` 的伪文件（包含所有 PID），任选其一。
 
-Putting everything together, if the "short ID" of a container is held in
-the environment variable `$CID`, then you can do this:
+综合以上步骤，若容器的短 ID 存在环境变量 `$CID` 中，可执行：
 
 ```console
 $ TASKS=/sys/fs/cgroup/devices/docker/$CID*/tasks
@@ -455,61 +282,26 @@ $ ln -sf /proc/$PID/ns/net /var/run/netns/$CID
 $ ip netns exec $CID netstat -i
 ```
 
-## Tips for high-performance metric collection
+## 高性能指标采集提示 {#tips-for-high-performance-metric-collection}
 
-Running a new process each time you want to update metrics is
-(relatively) expensive. If you want to collect metrics at high
-resolutions, and/or over a large number of containers (think 1000
-containers on a single host), you don't want to fork a new process each
-time.
+每次采集指标都启动一个新进程的成本相对较高。若需要高频采集，或要在大量容器（单机上千）上收集指标，尽量避免每次都 fork 新进程。
 
-Here is how to collect metrics from a single process. You need to
-write your metric collector in C (or any language that lets you do
-low-level system calls). You need to use a special system call,
-`setns()`, which lets the current process enter any
-arbitrary namespace. It requires, however, an open file descriptor to
-the namespace pseudo-file (remember: that's the pseudo-file in
-`/proc/<pid>/ns/net`).
+可使用“单进程”采集方案。用 C（或可执行底层系统调用的语言）编写采集器，借助 `setns()` 让当前进程进入任意命名空间。该调用需要打开命名空间伪文件（位于 `/proc/<pid>/ns/net`）。
 
-However, there is a catch: you must not keep this file descriptor open.
-If you do, when the last process of the control group exits, the
-namespace isn't destroyed, and its network resources (like the
-virtual interface of the container) stays around forever (or until
-you close that file descriptor).
+注意不要长时间保持该文件描述符处于打开状态。否则当控制组内最后一个进程退出时，该命名空间不会被销毁，其网络资源（如容器虚拟接口）会一直存在，直到关闭该描述符。
 
-The right approach would be to keep track of the first PID of each
-container, and re-open the namespace pseudo-file each time.
+正确做法是记录每个容器的首个 PID，并在每次需要时重新打开对应的命名空间伪文件。
 
-## Collect metrics when a container exits
+## 在容器退出时采集指标 {#collect-metrics-when-a-container-exits}
 
-Sometimes, you don't care about real time metric collection, but when a
-container exits, you want to know how much CPU, memory, etc. it has
-used.
+有时你不关注实时采集，而是希望在容器退出时了解其累计的 CPU、内存等使用情况。
 
-Docker makes this difficult because it relies on `lxc-start`, which carefully
-cleans up after itself. It is usually easier to collect metrics at regular
-intervals, and this is the way the `collectd` LXC plugin works.
+这在 Docker 中较难，因为它依赖 `lxc-start` 并会在退出时清理现场。通常以固定间隔采集更简单，`collectd` 的 LXC 插件即采用这种方式。
 
-But, if you'd still like to gather the stats when a container stops,
-here is how:
+如果仍希望在容器停止时抓取一次统计，可以按以下方式操作：
 
-For each container, start a collection process, and move it to the
-control groups that you want to monitor by writing its PID to the tasks
-file of the cgroup. The collection process should periodically re-read
-the tasks file to check if it's the last process of the control group.
-(If you also want to collect network statistics as explained in the
-previous section, you should also move the process to the appropriate
-network namespace.)
+为每个容器启动一个采集进程，并将其 PID 写入需监控的 cgroup 的 `tasks` 文件，使其归属于该 cgroup。采集进程应定期重新读取 `tasks` 文件，检查自己是否是该控制组内最后一个进程。（若还需采集前文所述的网络指标，应将其移动到对应的网络命名空间。）
 
-When the container exits, `lxc-start` attempts to
-delete the control groups. It fails, since the control group is
-still in use; but that's fine. Your process should now detect that it is
-the only one remaining in the group. Now is the right time to collect
-all the metrics you need!
+当容器退出时，`lxc-start` 会尝试删除控制组，但由于仍在使用会失败，这没关系。此时你的采集进程应检测到自己是组内唯一进程，此刻正是收集全部指标的时机。
 
-Finally, your process should move itself back to the root control group,
-and remove the container control group. To remove a control group, just
-`rmdir` its directory. It's counter-intuitive to
-`rmdir` a directory as it still contains files; but
-remember that this is a pseudo-filesystem, so usual rules don't apply.
-After the cleanup is done, the collection process can exit safely.
+最后，采集进程应将自己移回根控制组，并删除容器的控制组目录。删除控制组只需对其目录执行 `rmdir`。尽管目录仍包含文件，这在伪文件系统中是允许的。清理完成后，采集进程即可安全退出。

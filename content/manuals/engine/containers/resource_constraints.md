@@ -1,203 +1,125 @@
 ---
-title: Resource constraints
+title: 资源限制
 weight: 30
-description: Specify the runtime options for a container
+description: 为容器指定运行时选项
 keywords: docker, daemon, configuration, runtime
 aliases:
   - /engine/admin/resource_constraints/
   - /config/containers/resource_constraints/
 ---
 
-By default, a container has no resource constraints and can use as much of a
-given resource as the host's kernel scheduler allows. Docker provides ways
-to control how much memory, or CPU a container can use, setting runtime
-configuration flags of the `docker run` command. This section provides details
-on when you should set such limits and the possible implications of setting them.
+默认情况下，容器没有资源限制，可以在宿主机内核调度器允许的范围内尽可能多地使用给定资源。Docker 通过 `docker run` 的运行时标志提供了控制容器可用内存与 CPU 的方式。本节说明何时应该设置这些限制以及设置后的影响。
 
-Many of these features require your kernel to support Linux capabilities. To
-check for support, you can use the
-[`docker info`](/reference/cli/docker/system/info.md) command. If a capability
-is disabled in your kernel, you may see a warning at the end of the output like
-the following:
+其中许多功能需要内核支持相应的 Linux 能力。你可以使用 [`docker info`](/reference/cli/docker/system/info.md) 命令检查是否受支持。如果内核禁用了某些能力，你可能会在输出末尾看到类似的警告：
 
 ```console
 WARNING: No swap limit support
 ```
 
-Consult your operating system's documentation for enabling them. See also the
-[Docker Engine troubleshooting guide](../daemon/troubleshoot.md#kernel-cgroup-swap-limit-capabilities)
-for more information.
+请参考所用操作系统文档以启用这些能力。更多信息见 [Docker Engine 故障排查指南](../daemon/troubleshoot.md#kernel-cgroup-swap-limit-capabilities)。
 
-## Memory
+## 内存
 
-## Understand the risks of running out of memory
+## 了解内存耗尽的风险
 
-It's important not to allow a running container to consume too much of the
-host machine's memory. On Linux hosts, if the kernel detects that there isn't
-enough memory to perform important system functions, it throws an `OOME`, or
-`Out Of Memory Exception`, and starts killing processes to free up
-memory. Any process is subject to killing, including Docker and other important
-applications. This can effectively bring the entire system down if the wrong
-process is killed.
+务必避免运行中的容器占用过多宿主机内存。在 Linux 主机上，如果内核检测到内存不足以执行关键系统功能，会抛出 `OOME`（Out Of Memory Exception）并开始杀死进程以释放内存。任何进程都有可能被杀，包括 Docker 以及其他关键应用。如果被杀的是关键进程，整个系统可能因此宕机。
 
-Docker attempts to mitigate these risks by adjusting the OOM priority on the
-Docker daemon so that it's less likely to be killed than other processes
-on the system. The OOM priority on containers isn't adjusted. This makes it more
-likely for an individual container to be killed than for the Docker daemon
-or other system processes to be killed. You shouldn't try to circumvent
-these safeguards by manually setting `--oom-score-adj` to an extreme negative
-number on the daemon or a container, or by setting `--oom-kill-disable` on a
-container.
+为降低风险，Docker 会下调 Docker 守护进程的 OOM 被杀优先级，使其比系统上其他进程更不容易被杀；容器自身的 OOM 优先级不会调整。这意味着更可能被杀的是单个容器，而不是 Docker 守护进程或其他系统进程。请不要通过为守护进程或容器设置极端负值的 `--oom-score-adj`，或在容器上设置 `--oom-kill-disable` 来规避这些保护措施。
 
-For more information about the Linux kernel's OOM management, see
-[Out of Memory Management](https://www.kernel.org/doc/gorman/html/understand/understand016.html).
+关于 Linux 内核 OOM 管理的更多信息，参见 [Out of Memory Management](https://www.kernel.org/doc/gorman/html/understand/understand016.html)。
 
-You can mitigate the risk of system instability due to OOME by:
+你可以通过以下方式降低 OOME 导致系统不稳定的风险：
 
-- Perform tests to understand the memory requirements of your application
-  before placing it into production.
-- Ensure that your application runs only on hosts with adequate resources.
-- Limit the amount of memory your container can use, as described below.
-- Be mindful when configuring swap on your Docker hosts. Swap is slower than
-  memory but can provide a buffer against running out of system memory.
-- Consider converting your container to a
-  [service](/manuals/engine/swarm/services.md), and using service-level constraints
-  and node labels to ensure that the application runs only on hosts with enough
-  memory
+- 在上线之前通过测试了解应用的内存需求。
+- 确保应用仅在资源充足的主机上运行。
+- 按下文所述限制容器可使用的内存量。
+- 为 Docker 主机配置交换分区（swap）时要谨慎。Swap 比内存慢，但能在系统内存不足时提供缓冲。
+- 考虑将容器改为 [服务](/manuals/engine/swarm/services.md)，并使用服务级约束与节点标签，确保仅在内存充足的主机上运行。
 
-### Limit a container's access to memory
+### 限制容器的内存使用
 
-Docker can enforce hard or soft memory limits.
+Docker 支持设置硬限制与软限制：
 
-- Hard limits let the container use no more than a fixed amount of memory.
-- Soft limits let the container use as much memory as it needs unless certain
-  conditions are met, such as when the kernel detects low memory or contention on
-  the host machine.
+- 硬限制：容器使用的内存不会超过固定上限。
+- 软限制：在满足特定条件前（如内核检测到宿主机内存紧张或争用）容器可按需使用更多内存。
 
-Some of these options have different effects when used alone or when more than
-one option is set.
+部分选项单独使用或组合使用时的效果不同。
 
-Most of these options take a positive integer, followed by a suffix of `b`, `k`,
-`m`, `g`, to indicate bytes, kilobytes, megabytes, or gigabytes.
+多数选项接受一个正整数，并可使用 `b`、`k`、`m`、`g` 后缀表示字节、KB、MB、GB。
 
-| Option                 | Description                                                                                                                                                                                                                                                                                                                                                                                     |
+| 选项                   | 说明                                                                                                                                                                                                                                                                                                                                                                                           |
 | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-m` or `--memory=`    | The maximum amount of memory the container can use. If you set this option, the minimum allowed value is `6m` (6 megabytes). That is, you must set the value to at least 6 megabytes.                                                                                                                                                                                                           |
-| `--memory-swap`\*      | The amount of memory this container is allowed to swap to disk. See [`--memory-swap` details](#--memory-swap-details).                                                                                                                                                                                                                                                                          |
-| `--memory-swappiness`  | By default, the host kernel can swap out a percentage of anonymous pages used by a container. You can set `--memory-swappiness` to a value between 0 and 100, to tune this percentage. See [`--memory-swappiness` details](#--memory-swappiness-details).                                                                                                                                       |
-| `--memory-reservation` | Allows you to specify a soft limit smaller than `--memory` which is activated when Docker detects contention or low memory on the host machine. If you use `--memory-reservation`, it must be set lower than `--memory` for it to take precedence. Because it is a soft limit, it doesn't guarantee that the container doesn't exceed the limit.                                                |
-| `--kernel-memory`      | The maximum amount of kernel memory the container can use. The minimum allowed value is `6m`. Because kernel memory can't be swapped out, a container which is starved of kernel memory may block host machine resources, which can have side effects on the host machine and on other containers. See [`--kernel-memory` details](#--kernel-memory-details).                                   |
-| `--oom-kill-disable`   | By default, if an out-of-memory (OOM) error occurs, the kernel kills processes in a container. To change this behavior, use the `--oom-kill-disable` option. Only disable the OOM killer on containers where you have also set the `-m/--memory` option. If the `-m` flag isn't set, the host can run out of memory and the kernel may need to kill the host system's processes to free memory. |
+| `-m` 或 `--memory=`     | 容器可使用的最大内存。若设置该选项，最小允许值为 `6m`（6 MB），即至少需设置为 6 MB。                                                                                                                                                                                                                                                                                                         |
+| `--memory-swap`\*      | 容器允许写入磁盘的 swap 数量。详见 [`--memory-swap` details](#--memory-swap-details)。                                                                                                                                                                                                                                                                                                         |
+| `--memory-swappiness`  | 默认情况下，宿主机内核可以将容器使用的部分匿名页换出（swap）。可将 `--memory-swappiness` 设为 0 到 100 之间的值以调节该比例。详见 [`--memory-swappiness` details](#--memory-swappiness-details)。                                                                                                                                                               |
+| `--memory-reservation` | 指定一个小于 `--memory` 的软限制；当 Docker 检测到宿主机内存紧张或争用时生效。若使用 `--memory-reservation`，其值必须低于 `--memory` 才会优先生效。由于是软限制，不能保证容器不会超过该值。                                                                                                                                                                                      |
+| `--kernel-memory`      | 容器可使用的最大内核内存。最小允许值为 `6m`。由于内核内存不可被换出，当容器的内核内存被限制时，可能阻塞宿主资源，从而影响宿主机及其他容器。详见 [`--kernel-memory` details](#--kernel-memory-details)。                                                                                                                                                                          |
+| `--oom-kill-disable`   | 默认情况下发生 OOM 时，内核会在容器内杀死进程。若要改变此行为，使用 `--oom-kill-disable`。仅当同时设置了 `-m/--memory` 时才建议禁用 OOM killer。若未设置 `-m`，宿主机可能耗尽内存，内核可能需要杀死宿主系统进程以释放内存。                                                                                                                                                             |
 
-For more information about cgroups and memory in general, see the documentation
-for [Memory Resource Controller](https://www.kernel.org/doc/Documentation/cgroup-v1/memory.txt).
+关于 cgroups 与内存的更多信息，参见 [Memory Resource Controller](https://www.kernel.org/doc/Documentation/cgroup-v1/memory.txt)。
 
 ### `--memory-swap` details
 
-`--memory-swap` is a modifier flag that only has meaning if `--memory` is also
-set. Using swap allows the container to write excess memory requirements to disk
-when the container has exhausted all the RAM that's available to it. There is a
-performance penalty for applications that swap memory to disk often.
+`--memory-swap` 是一个修饰标志，仅在同时设置了 `--memory` 时才有意义。启用 swap 允许容器在用尽可用内存后，将超额内存需求写入磁盘。频繁发生内存换出会带来性能损失。
 
-Its setting can have complicated effects:
+不同取值会带来不同效果：
 
-- If `--memory-swap` is set to a positive integer, then both `--memory` and
-  `--memory-swap` must be set. `--memory-swap` represents the total amount of
-  memory and swap that can be used, and `--memory` controls the amount used by
-  non-swap memory. So if `--memory="300m"` and `--memory-swap="1g"`, the
-  container can use 300m of memory and 700m (`1g - 300m`) swap.
+- 若 `--memory-swap` 为正整数，则必须同时设置 `--memory` 与 `--memory-swap`。`--memory-swap` 表示内存+swap 的总量，而 `--memory` 表示物理内存的上限。例如 `--memory="300m"` 且 `--memory-swap="1g"`，则容器可用 300m 内存与 700m（`1g - 300m`）的 swap。
 
-- If `--memory-swap` is set to `0`, the setting is ignored, and the value is
-  treated as unset.
+- 若 `--memory-swap` 设为 `0`，该设置会被忽略，等同未设置。
 
-- If `--memory-swap` is set to the same value as `--memory`, and `--memory` is
-  set to a positive integer, **the container doesn't have access to swap**.
-  See
-  [Prevent a container from using swap](#prevent-a-container-from-using-swap).
+- 若 `--memory-swap` 与 `--memory` 相同，且 `--memory` 为正整数，则**容器无法使用 swap**。见 [Prevent a container from using swap](#prevent-a-container-from-using-swap)。
 
-- If `--memory-swap` is unset, and `--memory` is set, the container can use
-  as much swap as the `--memory` setting, if the host container has swap
-  memory configured. For instance, if `--memory="300m"` and `--memory-swap` is
-  not set, the container can use 600m in total of memory and swap.
+- 若未设置 `--memory-swap`，且设置了 `--memory`，并且宿主机配置了 swap，则容器可使用与 `--memory` 相同数量的 swap。例如 `--memory="300m"` 且未设置 `--memory-swap`，则容器总计可使用 600m（内存+swap）。
 
-- If `--memory-swap` is explicitly set to `-1`, the container is allowed to use
-  unlimited swap, up to the amount available on the host system.
+- 若显式设置 `--memory-swap=-1`，容器可使用无限制的 swap（受宿主机可用量上限约束）。
 
-- Inside the container, tools like `free` report the host's available swap, not what's available inside the container. Don't rely on the output of `free` or similar tools to determine whether swap is present.
+- 在容器内，`free` 等工具显示的是宿主机可用的 swap，而非容器内可用的 swap。不要依赖 `free` 这类工具的输出判断是否存在 swap。
 
 #### Prevent a container from using swap
 
-If `--memory` and `--memory-swap` are set to the same value, this prevents
-containers from using any swap. This is because `--memory-swap` is the amount of
-combined memory and swap that can be used, while `--memory` is only the amount
-of physical memory that can be used.
+当 `--memory` 与 `--memory-swap` 设置为相同的值时，容器将无法使用任何 swap。原因在于 `--memory-swap` 指定的是内存与 swap 的合计上限，而 `--memory` 指定的是仅物理内存的上限。
 
 ### `--memory-swappiness` details
 
-- A value of 0 turns off anonymous page swapping.
-- A value of 100 sets all anonymous pages as swappable.
-- By default, if you don't set `--memory-swappiness`, the value is
-  inherited from the host machine.
+- 值为 0：关闭匿名页换出。
+- 值为 100：将所有匿名页标记为可换出。
+- 默认不设置时，继承宿主机的配置。
 
 ### `--kernel-memory` details
 
-Kernel memory limits are expressed in terms of the overall memory allocated to
-a container. Consider the following scenarios:
+内核内存限制是相对于容器整体内存配额来表达的。考虑以下场景：
 
-- **Unlimited memory, unlimited kernel memory**: This is the default
-  behavior.
-- **Unlimited memory, limited kernel memory**: This is appropriate when the
-  amount of memory needed by all cgroups is greater than the amount of
-  memory that actually exists on the host machine. You can configure the
-  kernel memory to never go over what's available on the host machine,
-  and containers which need more memory need to wait for it.
-- **Limited memory, unlimited kernel memory**: The overall memory is
-  limited, but the kernel memory isn't.
-- **Limited memory, limited kernel memory**: Limiting both user and kernel
-  memory can be useful for debugging memory-related problems. If a container
-  is using an unexpected amount of either type of memory, it runs out
-  of memory without affecting other containers or the host machine. Within
-  this setting, if the kernel memory limit is lower than the user memory
-  limit, running out of kernel memory causes the container to experience
-  an OOM error. If the kernel memory limit is higher than the user memory
-  limit, the kernel limit doesn't cause the container to experience an OOM.
+- 不限制总内存，不限制内核内存：默认行为。
+- 不限制总内存，限制内核内存：适用于所有 cgroup 需要的内存总量大于宿主机实际内存的情况。可将内核内存限制在宿主机可用范围内，需求更多内核内存的容器需要等待。
+- 限制总内存，不限制内核内存：总体内存受限，但内核内存不受限。
+- 限制总内存，限制内核内存：同时限制用户态与内核内存有助于定位与内存相关的问题。如果某容器在任一类型的内存上使用异常，将在不影响其他容器或宿主机的情况下触发 OOM。在此设置下，若内核内存上限低于用户态内存上限，则耗尽内核内存会导致 OOM；反之则不会因内核内存限制触发 OOM。
 
-When you enable kernel memory limits, the host machine tracks the "high water mark"
-statistics on a per-process basis, so you can track which processes (in this
-case, containers) are using excess memory. This can be seen per process by
-viewing `/proc/<PID>/status` on the host machine.
+启用内核内存限制后，宿主机会按进程维度跟踪“最高水位线”等统计信息，从而定位是哪些进程（此处即容器）消耗了过多内存。可在宿主机查看 `/proc/<PID>/status` 获取每个进程的数据。
 
 ## CPU
 
-By default, each container's access to the host machine's CPU cycles is unlimited.
-You can set various constraints to limit a given container's access to the host
-machine's CPU cycles. Most users use and configure the
-[default CFS scheduler](#configure-the-default-cfs-scheduler). You can also
-configure the [real-time scheduler](#configure-the-real-time-scheduler).
+默认情况下，每个容器对宿主机 CPU 周期的使用不受限。你可以通过多种约束限制某个容器对 CPU 周期的使用。多数用户会使用并配置[默认 CFS 调度器](#configure-the-default-cfs-scheduler)，也可以配置[实时调度器](#configure-the-real-time-scheduler)。
 
 ### Configure the default CFS scheduler
 
-The CFS is the Linux kernel CPU scheduler for normal Linux processes. Several
-runtime flags let you configure the amount of access to CPU resources your
-container has. When you use these settings, Docker modifies the settings for
-the container's cgroup on the host machine.
+Linux 的 CFS（Completely Fair Scheduler）是常规进程的 CPU 调度器。可以通过若干运行时标志配置容器可用的 CPU 资源额度。设置后，Docker 会相应调整宿主机上该容器 cgroup 的配置。
 
-| Option                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 选项                   | 说明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--cpus=<value>`       | Specify how much of the available CPU resources a container can use. For instance, if the host machine has two CPUs and you set `--cpus="1.5"`, the container is guaranteed at most one and a half of the CPUs. This is the equivalent of setting `--cpu-period="100000"` and `--cpu-quota="150000"`.                                                                                                                                                                                                                                                                                              |
-| `--cpu-period=<value>` | Specify the CPU CFS scheduler period, which is used alongside `--cpu-quota`. Defaults to 100000 microseconds (100 milliseconds). Most users don't change this from the default. For most use-cases, `--cpus` is a more convenient alternative.                                                                                                                                                                                                                                                                                                                                                     |
-| `--cpu-quota=<value>`  | Impose a CPU CFS quota on the container. The number of microseconds per `--cpu-period` that the container is limited to before being throttled. As such acting as the effective ceiling. For most use-cases, `--cpus` is a more convenient alternative.                                                                                                                                                                                                                                                                                                                                                  |
-| `--cpuset-cpus`        | Limit the specific CPUs or cores a container can use. A comma-separated list or hyphen-separated range of CPUs a container can use, if you have more than one CPU. The first CPU is numbered 0. A valid value might be `0-3` (to use the first, second, third, and fourth CPU) or `1,3` (to use the second and fourth CPU).                                                                                                                                                                                                                                                                        |
-| `--cpu-shares`         | Set this flag to a value greater or less than the default of 1024 to increase or reduce the container's weight, and give it access to a greater or lesser proportion of the host machine's CPU cycles. This is only enforced when CPU cycles are constrained. When plenty of CPU cycles are available, all containers use as much CPU as they need. In that way, this is a soft limit. `--cpu-shares` doesn't prevent containers from being scheduled in Swarm mode. It prioritizes container CPU resources for the available CPU cycles. It doesn't guarantee or reserve any specific CPU access. |
+| `--cpus=<value>`       | 指定容器可使用的 CPU 资源份额。例如宿主机有 2 个 CPU，设置 `--cpus="1.5"` 则最多保证 1.5 个 CPU 的算力。这等同于设置 `--cpu-period="100000"` 与 `--cpu-quota="150000"`。                                                                                                                                                                                                                                                                                                                                                                                              |
+| `--cpu-period=<value>` | 指定 CFS 调度周期，与 `--cpu-quota` 搭配使用。默认 100000 微秒（100 毫秒）。大多数情况下无需修改；对多数用例而言，使用 `--cpus` 更为便利。                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `--cpu-quota=<value>`  | 为容器设置 CFS 配额。表示每个 `--cpu-period` 周期内，在被限流前容器可用的微秒数，因此相当于一个上限。多数用例优先使用更方便的 `--cpus`。                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `--cpuset-cpus`        | 限制容器可使用的 CPU 或核心编号。当有多个 CPU 时，使用逗号分隔列表或连字符范围指定。首个 CPU 编号为 0。例如 `0-3`（使用第 1-4 个 CPU）或 `1,3`（使用第 2 与第 4 个 CPU）。                                                                                                                                                                                                                                                                                                                                                                                             |
+| `--cpu-shares`         | 通过设置大于或小于默认值 1024 的权重，提升或降低容器可分得的 CPU 周期比例。仅在 CPU 周期受限时生效；当资源充足时，所有容器按需使用 CPU，因此这是软限制。`--cpu-shares` 不会阻止 Swarm 模式下的调度；它只是为可用的 CPU 周期分配优先级，不保证或预留特定的 CPU 额度。                                                                                                                                                                                                                                                        |
 
-If you have 1 CPU, each of the following commands guarantees the container at
-most 50% of the CPU every second.
+若宿主机仅有 1 个 CPU，以下命令都能保证容器每秒最多使用 50% 的 CPU：
 
 ```console
 $ docker run -it --cpus=".5" ubuntu /bin/bash
 ```
 
-Which is the equivalent to manually specifying `--cpu-period` and `--cpu-quota`;
+这等同于手动指定 `--cpu-period` 与 `--cpu-quota`：
 
 ```console
 $ docker run -it --cpu-period=100000 --cpu-quota=50000 ubuntu /bin/bash
@@ -205,53 +127,31 @@ $ docker run -it --cpu-period=100000 --cpu-quota=50000 ubuntu /bin/bash
 
 ### Configure the real-time scheduler
 
-You can configure your container to use the real-time scheduler, for tasks which
-can't use the CFS scheduler. You need to
-[make sure the host machine's kernel is configured correctly](#configure-the-host-machines-kernel)
-before you can [configure the Docker daemon](#configure-the-docker-daemon) or
-[configure individual containers](#configure-individual-containers).
+对于无法使用 CFS 的任务，可以将容器配置为使用实时调度器。在[配置 Docker 守护进程](#configure-the-docker-daemon)或[配置单个容器](#configure-individual-containers)之前，需要先[确保宿主机内核已正确配置](#configure-the-host-machines-kernel)。
 
 > [!WARNING]
 >
-> CPU scheduling and prioritization are advanced kernel-level features. Most
-> users don't need to change these values from their defaults. Setting these
-> values incorrectly can cause your host system to become unstable or unusable.
+> CPU 调度与优先级是高级的内核级特性。多数用户无需修改默认值。错误的配置可能导致宿主系统不稳定甚至不可用。
 
 #### Configure the host machine's kernel
 
-Verify that `CONFIG_RT_GROUP_SCHED` is enabled in the Linux kernel by running
-`zcat /proc/config.gz | grep CONFIG_RT_GROUP_SCHED` or by checking for the
-existence of the file `/sys/fs/cgroup/cpu.rt_runtime_us`. For guidance on
-configuring the kernel real-time scheduler, consult the documentation for your
-operating system.
+通过运行 `zcat /proc/config.gz | grep CONFIG_RT_GROUP_SCHED` 或检查 `/sys/fs/cgroup/cpu.rt_runtime_us` 是否存在，确认 Linux 内核启用了 `CONFIG_RT_GROUP_SCHED`。关于实时调度器的配置方法，请参考所用操作系统的文档。
 
 #### Configure the Docker daemon
 
-To run containers using the real-time scheduler, run the Docker daemon with
-the `--cpu-rt-runtime` flag set to the maximum number of microseconds reserved
-for real-time tasks per runtime period. For instance, with the default period of
-1000000 microseconds (1 second), setting `--cpu-rt-runtime=950000` ensures that
-containers using the real-time scheduler can run for 950000 microseconds for every
-1000000-microsecond period, leaving at least 50000 microseconds available for
-non-real-time tasks. To make this configuration permanent on systems which use
-`systemd`, create a systemd unit file for the `docker` service. For example,
-see the instruction on how to configure the daemon to use a proxy with a
-[systemd unit file](../daemon/proxy.md#systemd-unit-file).
+若要让容器使用实时调度器，需以 `--cpu-rt-runtime` 参数启动 Docker 守护进程，用于指定每个调度周期为实时任务保留的微秒数。例如在默认 1,000,000 微秒（1 秒）周期下，设置 `--cpu-rt-runtime=950000` 表示实时任务每周期最多运行 950,000 微秒，至少保留 50,000 微秒给非实时任务。若系统使用 `systemd`，可通过创建 `docker` 服务的 unit 文件来持久化该配置。例如，参考如何通过 [systemd unit 文件](../daemon/proxy.md#systemd-unit-file) 为守护进程配置代理的说明。
 
 #### Configure individual containers
 
-You can pass several flags to control a container's CPU priority when you
-start the container using `docker run`. Consult your operating system's
-documentation or the `ulimit` command for information on appropriate values.
+在使用 `docker run` 启动容器时，可以通过多个标志控制容器的 CPU 优先级。具体取值请参考操作系统文档或 `ulimit` 命令。
 
-| Option                     | Description                                                                                                                                                                               |
+| 选项                       | 说明                                                                                                                                                                                      |
 | :------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--cap-add=sys_nice`       | Grants the container the `CAP_SYS_NICE` capability, which allows the container to raise process `nice` values, set real-time scheduling policies, set CPU affinity, and other operations. |
-| `--cpu-rt-runtime=<value>` | The maximum number of microseconds the container can run at real-time priority within the Docker daemon's real-time scheduler period. You also need the `--cap-add=sys_nice` flag.        |
-| `--ulimit rtprio=<value>`  | The maximum real-time priority allowed for the container. You also need the `--cap-add=sys_nice` flag.                                                                                    |
+| `--cap-add=sys_nice`       | 赋予容器 `CAP_SYS_NICE` 能力，使其可提升进程 nice 值、设置实时调度策略、设置 CPU 亲和性等。                                                                                                     |
+| `--cpu-rt-runtime=<value>` | 在守护进程实时调度周期内，容器以实时优先级运行的最大微秒数。需要同时配合 `--cap-add=sys_nice`。                                                                                                  |
+| `--ulimit rtprio=<value>`  | 容器允许的最大实时优先级，同样需要 `--cap-add=sys_nice`。                                                                                                                                     |
 
-The following example command sets each of these three flags on a `debian:jessie`
-container.
+下面的示例命令在 `debian:jessie` 容器上同时设置上述三个标志：
 
 ```console
 $ docker run -it \
@@ -261,34 +161,31 @@ $ docker run -it \
     debian:jessie
 ```
 
-If the kernel or Docker daemon isn't configured correctly, an error occurs.
+如果内核或 Docker 守护进程配置不当，将会报错。
 
 ## GPU
 
-### Access an NVIDIA GPU
+### 访问 NVIDIA GPU
 
-#### Prerequisites
+#### 前置条件
 
-Visit the official [NVIDIA drivers page](https://www.nvidia.com/Download/index.aspx)
-to download and install the proper drivers. Reboot your system once you have
-done so.
+访问 [NVIDIA 驱动下载页面](https://www.nvidia.com/Download/index.aspx) 获取并安装合适的驱动。安装完成后请重启系统。
 
-Verify that your GPU is running and accessible.
+确认 GPU 正常运行且可访问。
 
-#### Install nvidia-container-toolkit
+#### 安装 nvidia-container-toolkit
 
-Follow the official NVIDIA Container Toolkit [installation instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+按照 NVIDIA Container Toolkit 的[安装指南](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)进行安装。
 
-#### Expose GPUs for use
+#### 暴露可用的 GPU
 
-Include the `--gpus` flag when you start a container to access GPU resources.
-Specify how many GPUs to use. For example:
+启动容器时添加 `--gpus` 标志以启用 GPU 资源，并指定使用的 GPU 数量。例如：
 
 ```console
 $ docker run -it --rm --gpus all ubuntu nvidia-smi
 ```
 
-Exposes all available GPUs and returns a result akin to the following:
+上述命令会暴露所有可用 GPU，并输出类似结果：
 
 ```bash
 +-------------------------------------------------------------------------------+
@@ -308,41 +205,34 @@ Exposes all available GPUs and returns a result akin to the following:
 +-------------------------------------------------------------------------------+
 ```
 
-Use the `device` option to specify GPUs. For example:
+也可以使用 `device` 选项按设备指定 GPU，例如：
 
 ```console
 $ docker run -it --rm --gpus device=GPU-3a23c669-1f69-c64e-cf85-44e9b07e7a2a ubuntu nvidia-smi
 ```
 
-Exposes that specific GPU.
+上例仅暴露该特定 GPU。
 
 ```console
 $ docker run -it --rm --gpus '"device=0,2"' ubuntu nvidia-smi
 ```
 
-Exposes the first and third GPUs.
+上例暴露第 1 与第 3 个 GPU。
 
 > [!NOTE]
 >
-> NVIDIA GPUs can only be accessed by systems running a single engine.
+> 仅在运行单个引擎的系统上才能访问 NVIDIA GPU。
 
-#### Set NVIDIA capabilities
+#### 设置 NVIDIA 能力
 
-You can set capabilities manually. For example, on Ubuntu you can run the
-following:
+你也可以手动设置能力。例如在 Ubuntu 上可以运行：
 
 ```console
 $ docker run --gpus 'all,capabilities=utility' --rm ubuntu nvidia-smi
 ```
 
-This enables the `utility` driver capability which adds the `nvidia-smi` tool to
-the container.
+这会启用 `utility` 驱动能力，将 `nvidia-smi` 工具加入容器。
 
-Capabilities as well as other configurations can be set in images via
-environment variables. More information on valid variables can be found in the
-[nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/docker-specialized.html)
-documentation. These variables can be set in a Dockerfile.
+包括能力在内的其他配置也可以通过镜像中的环境变量进行设置。可在 [nvidia-container-toolkit 文档](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/docker-specialized.html)中查看支持的变量，并在 Dockerfile 中进行设置。
 
-You can also use CUDA images, which set these variables automatically. See the
-official [CUDA images](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda)
-NGC catalog page.
+也可以直接使用 CUDA 镜像，这些变量会自动设置。参见官方 NGC 目录的 [CUDA 镜像](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda)。
