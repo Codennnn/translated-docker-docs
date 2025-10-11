@@ -1,75 +1,50 @@
 ---
-title: Select a storage driver
+title: 选择存储驱动
 weight: 10
-description: Learn how to select the proper storage driver for your container.
-keywords: container, storage, driver, btrfs, zfs, overlay, overlay2
+description: 了解如何为你的容器选择合适的存储驱动。
+keywords: 容器, 存储, 驱动, btrfs, zfs, overlay, overlay2
 aliases:
   - /storage/storagedriver/selectadriver/
   - /storage/storagedriver/select-storage-driver/
 ---
 
-Ideally, very little data is written to a container's writable layer, and you
-use Docker volumes to write data. However, some workloads require you to be able
-to write to the container's writable layer. This is where storage drivers come
-in.
+理想情况下，容器的可写层只包含极少量数据，数据应尽量写入 Docker 卷。然而，某些工作负载确实需要写入容器的可写层，这正是存储驱动发挥作用的场景。
 
-Docker supports several storage drivers, using a pluggable architecture. The
-storage driver controls how images and containers are stored and managed on your
-Docker host. After you have read the [storage driver overview](./_index.md), the
-next step is to choose the best storage driver for your workloads. Use the storage
-driver with the best overall performance and stability in the most usual scenarios.
+Docker 采用可插拔架构，支持多种存储驱动。存储驱动决定镜像与容器在宿主机上的存储与管理方式。阅读完[存储驱动概览](./_index.md)后，下一步是为你的工作负载选择一个更合适的驱动。一般情况下，应优先选择在常见场景下兼顾性能与稳定性的驱动。
 
 > [!NOTE]
-> This page discusses storage drivers for Docker Engine on Linux. If you're
-> running the Docker daemon with Windows as the host OS, the only supported
-> storage driver is windowsfilter. For more information, see
-> [windowsfilter](windowsfilter-driver.md).
+> 本页讨论的是 Linux 上 Docker Engine 的存储驱动。如果你的宿主机操作系统是 Windows，Docker 守护进程只支持 `windowsfilter` 存储驱动。参见
+> [windowsfilter](windowsfilter-driver.md) 了解详情。
 
-The Docker Engine provides the following storage drivers on Linux:
+Docker Engine 在 Linux 上提供以下存储驱动：
 
 | Driver            | Description                                                                                                                                                                                                                                                                                                                                          |
 | :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `overlay2`        | `overlay2` is the preferred storage driver for all currently supported Linux distributions, and requires no extra configuration.                                                                                                                                                                                                                     |
-| `fuse-overlayfs`  | `fuse-overlayfs`is preferred only for running Rootless Docker on an old host that does not provide support for rootless `overlay2`. The `fuse-overlayfs` driver does not need to be used since Linux kernel 5.11, and `overlay2` works even in rootless mode. Refer to the [rootless mode documentation](/manuals/engine/security/rootless.md) for details. |
-| `btrfs` and `zfs` | The `btrfs` and `zfs` storage drivers allow for advanced options, such as creating "snapshots", but require more maintenance and setup. Each of these relies on the backing filesystem being configured correctly.                                                                                                                                   |
-| `vfs`             | The `vfs` storage driver is intended for testing purposes, and for situations where no copy-on-write filesystem can be used. Performance of this storage driver is poor, and is not generally recommended for production use.                                                                                                                        |
+| `overlay2`        | `overlay2` 是所有当前受支持的 Linux 发行版的首选存储驱动，无需额外配置即可使用。                                                                                                                                                                                                                     |
+| `fuse-overlayfs`  | 仅在旧主机不支持无根（rootless）`overlay2` 时，用于运行 Rootless Docker 的优选项。自 Linux 5.11 起不再需要 `fuse-overlayfs`，因为 `overlay2` 在无根模式下也可工作。详见[无根模式文档](/manuals/engine/security/rootless.md)。 |
+| `btrfs` and `zfs` | `btrfs` 与 `zfs` 存储驱动支持创建“快照”等高级能力，但需要更多配置与维护；它们依赖于后端文件系统被正确配置。                                                                                                                                                                                             |
+| `vfs`             | `vfs` 存储驱动主要用于测试，或在无法使用写时复制文件系统的场景。该驱动性能较差，不建议用于生产环境。                                                                                                                                                                                                    |
 
 <!-- markdownlint-disable reference-links-images -->
 
-The Docker Engine has a prioritized list of which storage driver to use if no
-storage driver is explicitly configured, assuming that the storage driver meets
-the prerequisites, and automatically selects a compatible storage driver. You
-can see the order in the [source code for Docker Engine {{% param "docker_ce_version" %}}](https://github.com/moby/moby/blob/v{{% param "docker_ce_version" %}}/daemon/graphdriver/driver_linux.go#L52-L53).
+在未显式配置存储驱动且满足前置条件时，Docker Engine 会按优先级自动选择一个兼容的存储驱动。可在[对应版本的 Docker Engine 源码 {{% param "docker_ce_version" %}}](https://github.com/moby/moby/blob/v{{% param "docker_ce_version" %}}/daemon/graphdriver/driver_linux.go#L52-L53)中查看这一顺序。
 { #storage-driver-order }
 
 <!-- markdownlint-enable reference-links-images -->
 
-Some storage drivers require you to use a specific format for the backing filesystem.
-If you have external requirements to use a specific backing filesystem, this may
-limit your choices. See [Supported backing filesystems](#supported-backing-filesystems).
+部分存储驱动要求使用特定格式的后端文件系统。如果你必须使用某种后端文件系统，这可能会限制可选驱动。参见[支持的后端文件系统](#supported-backing-filesystems)。
 
-After you have narrowed down which storage drivers you can choose from, your choice
-is determined by the characteristics of your workload and the level of stability
-you need. See [Other considerations](#other-considerations) for help in making
-the final decision.
+在缩小可选范围后，应根据工作负载特性与稳定性诉求做最终选择。参见[其他考虑因素](#other-considerations)获得决策参考。
 
-## Supported storage drivers per Linux distribution
+## 各发行版支持的存储驱动
 
 > [!NOTE]
 >
-> Modifying the storage driver by editing the daemon configuration file isn't
-> supported on Docker Desktop. Only the default `overlay2` driver or the
-> [containerd storage](/manuals/desktop/features/containerd.md) are supported. The
-> following table is also not applicable for the Docker Engine in rootless
-> mode. For the drivers available in rootless mode, see the [Rootless mode
-> documentation](/manuals/engine/security/rootless.md).
+> 在 Docker Desktop 上，不支持通过编辑守护进程配置文件来修改存储驱动。仅支持默认的 `overlay2` 或[containerd 存储](/manuals/desktop/features/containerd.md)。下表同样不适用于无根模式；关于无根模式下可用的驱动，请参见[无根模式文档](/manuals/engine/security/rootless.md)。
 
-Your operating system and kernel may not support every storage driver. For
-example, `btrfs` is only supported if your system uses `btrfs` as storage. In
-general, the following configurations work on recent versions of the Linux
-distribution:
+你的操作系统与内核未必支持所有存储驱动。例如，只有当系统以 `btrfs` 作为存储时才支持 `btrfs` 驱动。一般来说，下述配置在较新的 Linux 发行版中可正常工作：
 
-| Linux distribution   | Recommended storage drivers  | Alternative drivers  |
+| Linux 发行版         | 推荐存储驱动                   | 可选替代驱动          |
 | :------------------- | :--------------------------- | :------------------- |
 | Ubuntu               | `overlay2`                   | `zfs`, `vfs`         |
 | Debian               | `overlay2`                   | `vfs`                |
@@ -78,105 +53,63 @@ distribution:
 | SLES 15              | `overlay2`                   | `vfs`                |
 | RHEL                 | `overlay2`                   | `vfs`                |
 
-When in doubt, the best all-around configuration is to use a modern Linux
-distribution with a kernel that supports the `overlay2` storage driver, and to
-use Docker volumes for write-heavy workloads instead of relying on writing data
-to the container's writable layer.
+如果拿不定主意，最佳的通用做法是：选择支持 `overlay2` 的现代 Linux 发行版与内核，并将写入密集型工作负载的数据放到 Docker 卷中，而不是依赖容器可写层。
 
-The `vfs` storage driver is usually not the best choice, and primarily intended
-for debugging purposes in situations where no other storage-driver is supported.
-Before using the `vfs` storage driver, be sure to read about
-[its performance and storage characteristics and limitations](vfs-driver.md).
+`vfs` 存储驱动通常不是最佳选择，主要用于其他驱动不可用场景下的排错调试。使用前请务必阅读其[性能与存储特性及局限](vfs-driver.md)。
 
-The recommendations in the table above are known to work for a large number of
-users. If you use a recommended configuration and find a reproducible issue,
-it's likely to be fixed very quickly. If the driver that you want to use is
-not recommended according to this table, you can run it at your own risk. You
-can and should still report any issues you run into. However, such issues
-have a lower priority than issues encountered when using a recommended
-configuration.
+上表中的推荐组合已在大量用户场景中验证可行。如果你在推荐配置下遇到可复现的问题，通常会很快得到修复。若你选择表中未推荐的驱动，请自行承担风险；你仍应报告遇到的问题，但其优先级可能低于使用推荐配置所遇问题。
 
-Depending on your Linux distribution, other storage-drivers, such as `btrfs` may
-be available. These storage drivers can have advantages for specific use-cases,
-but may require additional set-up or maintenance, which make them not recommended
-for common scenarios. Refer to the documentation for those storage drivers for
-details.
+不同发行版可能还提供其他驱动（如 `btrfs`）。这些驱动在特定场景可能有优势，但通常需要额外的配置与维护，因此不推荐在常见场景中使用。更多详情请参见对应驱动文档。
 
-## Supported backing filesystems
+## 支持的后端文件系统
 
-With regard to Docker, the backing filesystem is the filesystem where
-`/var/lib/docker/` is located. Some storage drivers only work with specific
-backing filesystems.
+在 Docker 语境中，后端文件系统指 `/var/lib/docker/` 所在的文件系统。部分存储驱动只支持特定的后端文件系统。
 
-| Storage driver   | Supported backing filesystems                         |
+| 存储驱动         | 支持的后端文件系统                                     |
 | :--------------- | :-----------------------------------------------------|
-| `overlay2`       | `xfs` with ftype=1, `ext4`, `btrfs`, (and more)     |
-| `fuse-overlayfs` | any filesystem                                        |
+| `overlay2`       | `xfs`（ftype=1）、`ext4`、`btrfs`（以及更多）            |
+| `fuse-overlayfs` | 任意文件系统                                          |
 | `btrfs`          | `btrfs`                                               |
 | `zfs`            | `zfs`                                                 |
-| `vfs`            | any filesystem                                        |
+| `vfs`            | 任意文件系统                                          |
 
 > [!NOTE]
 >
-> Most filesystems should work if they have the required features.
-> Consult [OverlayFS](https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html)
-> for more information.
+> 只要具备必要特性，大多数文件系统都能正常工作。更多信息可参考 [OverlayFS](https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html)。
 
 
-## Other considerations
+## 其他考虑因素
 
-### Suitability for your workload
+### 与工作负载的适配性
 
-Among other things, each storage driver has its own performance characteristics
-that make it more or less suitable for different workloads. Consider the
-following generalizations:
+每种存储驱动都有各自的性能特征，使其更适合或不太适合某些工作负载。可以参考以下经验：
 
-- `overlay2` operates at the file level rather than
-  the block level. This uses memory more efficiently, but the container's
-  writable layer may grow quite large in write-heavy workloads.
-- Block-level storage drivers such as `btrfs`, and `zfs` perform
-  better for write-heavy workloads (though not as well as Docker volumes).
-- `btrfs` and `zfs` require a lot of memory.
-- `zfs` is a good choice for high-density workloads such as PaaS.
+- `overlay2` 在文件级（非块级）工作，内存使用更高效，但在写入密集型场景下容器可写层可能增长较快。
+- `btrfs`、`zfs` 等块级驱动在写入密集型工作负载上的表现更好（但仍不如 Docker 卷）。
+- `btrfs` 与 `zfs` 对内存消耗较高。
+- 在 PaaS 等高密度场景中，`zfs` 是不错的选择。
 
-More information about performance, suitability, and best practices is available
-in the documentation for each storage driver.
+关于性能、适配性与最佳实践的更多信息，请查阅各存储驱动的文档。
 
-### Shared storage systems and the storage driver
+### 共享存储系统与存储驱动
 
-If you use SAN, NAS, hardware RAID, or other shared storage systems, those
-systems may provide high availability, increased performance, thin
-provisioning, deduplication, and compression. In many cases, Docker can work on
-top of these storage systems, but Docker doesn't closely integrate with them.
+如果你使用 SAN、NAS、硬件 RAID 或其他共享存储系统，这些系统可能提供高可用、性能增强、精简配置、去重与压缩。在许多场景中，Docker 可以运行在这些系统之上，但并不会与它们做深度集成。
 
-Each Docker storage driver is based on a Linux filesystem or volume manager. Be
-sure to follow existing best practices for operating your storage driver
-(filesystem or volume manager) on top of your shared storage system. For
-example, if using the ZFS storage driver on top of a shared storage system, be
-sure to follow best practices for operating ZFS filesystems on top of that
-specific shared storage system.
+每种 Docker 存储驱动都基于某种 Linux 文件系统或卷管理器。请遵循这些文件系统或卷管理器在共享存储之上的既有最佳实践。例如，如果在共享存储系统之上使用 ZFS 存储驱动，请遵循该系统上部署与运维 ZFS 的最佳实践。
 
-### Stability
+### 稳定性
 
-For some users, stability is more important than performance. Though Docker
-considers all of the storage drivers mentioned here to be stable, some are newer
-and are still under active development. In general, `overlay2` provides the
-highest stability.
+对部分用户而言，稳定性比性能更重要。虽然本文提到的各存储驱动均被视为稳定，但有些相对较新，仍在积极演进中。通常来说，`overlay2` 具备更高的稳定性。
 
-### Test with your own workloads
+### 使用你的实际负载进行测试
 
-You can test Docker's performance when running your own workloads on different
-storage drivers. Make sure to use equivalent hardware and workloads to match
-production conditions, so you can see which storage driver offers the best
-overall performance.
+你可以在不同存储驱动上运行自身工作负载，测试 Docker 的实际表现。请尽量在等效的硬件与负载条件下测试，以贴近生产环境，从而评估哪种驱动的综合性能更优。
 
-## Check your current storage driver
+## 查看当前存储驱动
 
-The detailed documentation for each individual storage driver details all of the
-set-up steps to use a given storage driver.
+各存储驱动的详细文档会完整说明其使用所需的配置步骤。
 
-To see what storage driver Docker is currently using, use `docker info` and look
-for the `Storage Driver` line:
+要查看 Docker 当前使用的存储驱动，运行 `docker info` 并关注 `Storage Driver` 行：
 
 ```console
 $ docker info
@@ -188,22 +121,16 @@ Storage Driver: overlay2
 <...>
 ```
 
-To change the storage driver, see the specific instructions for the new storage
-driver. Some drivers require additional configuration, including configuration
-to physical or logical disks on the Docker host.
+如需更换存储驱动，请参见目标驱动的专门说明。部分驱动需要额外配置，包括在宿主机上配置物理或逻辑磁盘。
 
 > [!IMPORTANT]
 >
-> When you change the storage driver, any existing images and containers become
-> inaccessible. This is because their layers can't be used by the new storage
-> driver. If you revert your changes, you can access the old images and containers
-> again, but any that you pulled or created using the new driver are then
-> inaccessible.
+> 当你切换存储驱动时，现有的镜像与容器将变得不可访问，因为它们的层无法被新驱动使用。如果你回滚更改，旧的镜像与容器会恢复可用，但在新驱动下拉取或创建的镜像与容器则会变得不可访问。
 
-## Related information
+## 相关信息
 
-- [Storage drivers](./_index.md)
-- [`overlay2` storage driver](overlayfs-driver.md)
-- [`btrfs` storage driver](btrfs-driver.md)
-- [`zfs` storage driver](zfs-driver.md)
-- [`windowsfilter` storage driver](windowsfilter-driver.md)
+- [存储驱动](./_index.md)
+- [`overlay2` 存储驱动](overlayfs-driver.md)
+- [`btrfs` 存储驱动](btrfs-driver.md)
+- [`zfs` 存储驱动](zfs-driver.md)
+- [`windowsfilter` 存储驱动](windowsfilter-driver.md)

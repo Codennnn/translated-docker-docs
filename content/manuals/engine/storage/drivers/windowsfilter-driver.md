@@ -1,26 +1,18 @@
 ---
-description: Learn about the windowsfilter storage driver
-keywords: container, storage, driver, windows, windowsfilter
-title: windowsfilter storage driver
+description: 了解 windowsfilter 存储驱动
+keywords: 容器, 存储, 驱动, Windows, windowsfilter
+title: windowsfilter 存储驱动
 ---
 
-The windowsfilter storage driver is the default storage driver for Docker
-Engine on Windows. The windowsfilter driver uses Windows-native file system
-layers to for storing Docker layers and volume data on disk. The windowsfilter
-storage driver only works on file systems formatted with NTFS.
+windowsfilter 存储驱动是 Windows 上 Docker Engine 的默认存储驱动。windowsfilter 使用 Windows 原生的文件系统层机制在磁盘上保存 Docker 的层与卷数据。该驱动仅适用于使用 NTFS 格式化的文件系统。
 
-## Configure the windowsfilter storage driver
+## 配置 windowsfilter 存储驱动
 
-For most use case, no configuring the windowsfilter storage driver is not
-necessary.
+在大多数场景下，无需对 windowsfilter 存储驱动进行额外配置。
 
-The default storage limit for Docker Engine on Windows is 127GB. To use a
-different storage size, set the `size` option for the windowsfilter storage
-driver. See [windowsfilter options](/reference/cli/dockerd.md#windowsfilter-options).
+Windows 上的 Docker Engine 默认存储上限为 127GB。若需使用不同的存储大小，请为 windowsfilter 存储驱动设置 `size` 选项。参见[windowsfilter 选项](/reference/cli/dockerd.md#windowsfilter-options)。
 
-Data is stored on the Docker host in `image` and `windowsfilter` subdirectories
-within `C:\ProgramData\docker` by default. You can change the storage location
-by configuring the `data-root` option in the [Daemon configuration file](/reference/cli/dockerd.md#on-windows):
+默认情况下，数据存放在 Docker 宿主机 `C:\ProgramData\docker` 目录下的 `image` 与 `windowsfilter` 子目录中。你可以通过在[守护进程配置文件](/reference/cli/dockerd.md#on-windows)中设置 `data-root` 来更改存储位置：
 
 ```json
 {
@@ -28,9 +20,8 @@ by configuring the `data-root` option in the [Daemon configuration file](/refere
 }
 ```
 
-You must restart the daemon for the configuration change to take effect.
+你需要重启守护进程，配置变更方可生效。
 
-## Additional information
+## 更多信息
 
-For more information about how container storage works on Windows, refer to
-Microsoft's [Containers on Windows documentation](https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/container-storage).
+关于 Windows 上容器存储工作方式的更多信息，请参阅 Microsoft 的[Windows 容器文档](https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/container-storage)。

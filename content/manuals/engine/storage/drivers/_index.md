@@ -1,7 +1,7 @@
 ---
-description: Learn the technologies that support storage drivers.
-keywords: container, storage, driver, btrfs, overlayfs, vfs, zfs
-title: Storage drivers
+description: 了解支撑存储驱动的相关技术。
+keywords: 容器, 存储, 驱动, btrfs, overlayfs, vfs, zfs
+title: 存储驱动
 weight: 40
 aliases:
   - /storage/storagedriver/imagesandcontainers/
@@ -9,33 +9,17 @@ aliases:
   - /engine/userguide/storagedriver/imagesandcontainers/
 ---
 
-To use storage drivers effectively, it's important to know how Docker builds and
-stores images, and how these images are used by containers. You can use this
-information to make informed choices about the best way to persist data from
-your applications and avoid performance problems along the way.
+要想高效使用存储驱动，你需要理解 Docker 如何构建并存储镜像，以及容器如何使用这些镜像。有了这些背景，你就能在数据持久化方案上做出更合适的选择，并尽量避免性能问题。
 
-## Storage drivers versus Docker volumes
+## 存储驱动 vs Docker 卷
 
-Docker uses storage drivers to store image layers, and to store data in the
-writable layer of a container. The container's writable layer doesn't persist
-after the container is deleted, but is suitable for storing ephemeral data that
-is generated at runtime. Storage drivers are optimized for space efficiency, but
-(depending on the storage driver) write speeds are lower than native file system
-performance, especially for storage drivers that use a copy-on-write filesystem.
-Write-intensive applications, such as database storage, are impacted by a
-performance overhead, particularly if pre-existing data exists in the read-only
-layer.
+Docker 使用存储驱动来保存镜像层，以及容器可写层中的数据。容器删除后，其可写层不会保留，适合存放运行期产生的临时数据。存储驱动在空间占用方面做了优化，但（取决于具体驱动）写入速度通常低于原生文件系统，尤其是使用写时复制（copy-on-write, CoW）文件系统的驱动。写入密集型的应用（如数据库）会受到额外的性能开销影响，特别是当只读层中存在大量既有数据时。
 
-Use Docker volumes for write-intensive data, data that must persist beyond the
-container's lifespan, and data that must be shared between containers. Refer to
-the [volumes section](../volumes.md) to learn how to use volumes to persist data
-and improve performance.
+对于写入密集型数据、需要跨越容器生命周期持久化的数据，或需要在多个容器之间共享的数据，请使用 Docker 卷。参见[卷](../volumes.md)一节，了解如何利用卷来实现持久化并提升性能。
 
-## Images and layers
+## 镜像与层
 
-A Docker image is built up from a series of layers. Each layer represents an
-instruction in the image's Dockerfile. Each layer except the very last one is
-read-only. Consider the following Dockerfile:
+Docker 镜像由一组层构成。每一层对应 Dockerfile 中的一条指令。除最后一层外，其余各层都是只读的。看下面这个 Dockerfile：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -48,113 +32,54 @@ RUN rm -r $HOME/.cache
 CMD python /app/app.py
 ```
 
-This Dockerfile contains four commands. Commands that modify the filesystem create
-a new layer. The `FROM` statement starts out by creating a layer from the `ubuntu:22.04`
-image. The `LABEL` command only modifies the image's metadata, and doesn't produce
-a new layer. The `COPY` command adds some files from your Docker client's current
-directory. The first `RUN` command builds your application using the `make` command,
-and writes the result to a new layer. The second `RUN` command removes a cache
-directory, and writes the result to a new layer. Finally, the `CMD` instruction
-specifies what command to run within the container, which only modifies the
-image's metadata, which doesn't produce an image layer.
+这个 Dockerfile 共包含 4 条命令。任何修改文件系统的命令都会创建新的一层。`FROM` 语句首先基于 `ubuntu:22.04` 镜像创建一层。`LABEL` 仅修改镜像的元数据，不产生新层。`COPY` 从当前目录拷贝文件到镜像中。第一个 `RUN` 使用 `make` 构建应用，并将结果写入新层。第二个 `RUN` 删除缓存目录，同样写入新层。最后，`CMD` 指定容器启动时运行的命令，它只修改镜像元数据，也不会产生新层。
 
-Each layer is only a set of differences from the layer before it. Note that both
-_adding_, and _removing_ files will result in a new layer. In the example above,
-the `$HOME/.cache` directory is removed, but will still be available in the
-previous layer and add up to the image's total size. Refer to the
-[Best practices for writing Dockerfiles](/manuals/build/building/best-practices.md)
-and [use multi-stage builds](/manuals/build/building/multi-stage.md)
-sections to learn how to optimize your Dockerfiles for efficient images.
+每一层只记录相对于前一层的差异。请注意，新增与删除文件都会生成新层。以上例子中，`$HOME/.cache` 目录被删除，但它仍存在于更早的层中，并计入镜像总体体积。参见[编写 Dockerfile 的最佳实践](/manuals/build/building/best-practices.md)和[多阶段构建](/manuals/build/building/multi-stage.md)，了解如何优化 Dockerfile 以生成更高效的镜像。
 
-The layers are stacked on top of each other. When you create a new container,
-you add a new writable layer on top of the underlying layers. This layer is often
-called the "container layer". All changes made to the running container, such as
-writing new files, modifying existing files, and deleting files, are written to
-this thin writable container layer. The diagram below shows a container based
-on an `ubuntu:15.04` image.
+这些层自下而上叠加在一起。创建新容器时，会在最上方添加一个可写层，通常称为“容器层”。运行中的容器对文件系统的所有修改（新增、修改、删除）都会写入这个很薄的可写层。下图展示了一个基于 `ubuntu:15.04` 镜像的容器层次结构。
 
 ![Layers of a container based on the Ubuntu image](images/container-layers.webp?w=450&h=300)
 
-A storage driver handles the details about the way these layers interact with
-each other. Different storage drivers are available, which have advantages
-and disadvantages in different situations.
+存储驱动负责这些层之间如何协作的具体实现。Docker 提供了多种存储驱动，它们在不同场景各有优缺点。
 
-## Container and layers
+## 容器与层
 
-The major difference between a container and an image is the top writable layer.
-All writes to the container that add new or modify existing data are stored in
-this writable layer. When the container is deleted, the writable layer is also
-deleted. The underlying image remains unchanged.
+容器与镜像的关键区别在于顶部的可写层。容器中新增或修改的数据都会写入该可写层。删除容器时，这一可写层也会被删除，底层镜像不会被改变。
 
-Because each container has its own writable container layer, and all changes are
-stored in this container layer, multiple containers can share access to the same
-underlying image and yet have their own data state. The diagram below shows
-multiple containers sharing the same Ubuntu 15.04 image.
+由于每个容器都有自己的可写层，所有更改都存放在容器层中，因此多个容器可以共享同一个底层镜像，同时各自维护独立的数据状态。下图展示了多个容器共享同一 Ubuntu 15.04 镜像的情形。
 
 ![Containers sharing the same image](images/sharing-layers.webp?w=600&h=300)
 
-Docker uses storage drivers to manage the contents of the image layers and the
-writable container layer. Each storage driver handles the implementation
-differently, but all drivers use stackable image layers and the copy-on-write
-(CoW) strategy.
+Docker 使用存储驱动来管理镜像层与容器可写层的内容。不同的驱动实现方式不同，但都基于可堆叠的镜像层与写时复制（CoW）策略。
 
 > [!NOTE]
 >
-> Use Docker volumes if you need multiple containers to have shared access to
-> the exact same data. Refer to the [volumes section](../volumes.md) to learn
-> about volumes.
+> 如果需要多个容器访问完全相同的数据，请使用 Docker 卷。参见[卷](../volumes.md)一节了解更多。
 
-## Container size on disk
+## 磁盘上的容器大小
 
-To view the approximate size of a running container, you can use the `docker ps -s`
-command. Two different columns relate to size.
+要查看正在运行容器的大致体积，可使用 `docker ps -s` 命令。输出中有两列与大小相关：
 
-- `size`: the amount of data (on disk) that's used for the writable layer of
-  each container.
-- `virtual size`: the amount of data used for the read-only image data
-  used by the container plus the container's writable layer `size`.
-  Multiple containers may share some or all read-only
-  image data. Two containers started from the same image share 100% of the
-  read-only data, while two containers with different images which have layers
-  in common share those common layers. Therefore, you can't just total the
-  virtual sizes. This over-estimates the total disk usage by a potentially
-  non-trivial amount.
+- `size`：该容器可写层在磁盘上占用的数据量。
+- `virtual size`：该容器使用的只读镜像数据与其可写层 `size` 之和。多个容器可能共享部分或全部只读镜像数据。两个基于同一镜像创建的容器共享 100% 的只读数据；而不同镜像但存在公共层的容器共享这些公共层。因此，不能简单将所有 `virtual size` 相加，否则会显著高估总磁盘占用。
 
-The total disk space used by all of the running containers on disk is some
-combination of each container's `size` and the `virtual size` values. If
-multiple containers started from the same exact image, the total size on disk for
-these containers would be SUM (`size` of containers) plus one image size
-(`virtual size` - `size`).
+所有正在运行容器在磁盘上的总体占用，由各容器的 `size` 与 `virtual size` 综合决定。如果多个容器基于同一个镜像启动，那么这些容器的总占用大致为：所有容器 `size` 之和，再加上一个镜像大小（即 `virtual size - size`）。
 
-This also doesn't count the following additional ways a container can take up
-disk space:
+此外，容器还会通过以下方式占用磁盘空间，这些并未计入上面的数值：
 
-- Disk space used for log files stored by the [logging-driver](/manuals/engine/logging/_index.md).
-  This can be non-trivial if your container generates a large amount of logging
-  data and log rotation isn't configured.
-- Volumes and bind mounts used by the container.
-- Disk space used for the container's configuration files, which are typically
-  small.
-- Memory written to disk (if swapping is enabled).
-- Checkpoints, if you're using the experimental checkpoint/restore feature.
+- 由[日志驱动](/manuals/engine/logging/_index.md)保存的日志文件。如果容器产生日志量很大且未配置日志轮转，这部分可能相当可观。
+- 容器使用的卷与绑定挂载。
+- 容器配置文件占用的磁盘空间（通常很小）。
+- 写入磁盘的内存页（如果启用了交换）。
+- 检查点文件（如果你使用实验性的检查点/恢复功能）。
 
-## The copy-on-write (CoW) strategy
+## 写时复制（CoW）策略
 
-Copy-on-write is a strategy of sharing and copying files for maximum efficiency.
-If a file or directory exists in a lower layer within the image, and another
-layer (including the writable layer) needs read access to it, it just uses the
-existing file. The first time another layer needs to modify the file (when
-building the image or running the container), the file is copied into that layer
-and modified. This minimizes I/O and the size of each of the subsequent layers.
-These advantages are explained in more depth below.
+写时复制是一种通过共享与按需拷贝文件来提升效率的策略。如果某个文件或目录已经存在于镜像的较低层，其他层（包括可写层）在读取时会直接复用该文件。首次需要修改该文件时（无论在镜像构建阶段还是容器运行时），存储驱动会将其拷贝到当前层并在此基础上修改。这样可以最小化 I/O 并控制后续各层的体积。下面将更详细地解释这些优势。
 
-### Sharing promotes smaller images
+### 共享让镜像更小
 
-When you use `docker pull` to pull down an image from a repository, or when you
-create a container from an image that doesn't yet exist locally, each layer is
-pulled down separately, and stored in Docker's local storage area, which is
-usually `/var/lib/docker/` on Linux hosts. You can see these layers being pulled
-in this example:
+当你使用 `docker pull` 从仓库拉取镜像，或从本地尚不存在的镜像创建容器时，各层会被分别拉取并存储到 Docker 的本地存储目录（Linux 主机上通常为 `/var/lib/docker/`）。如下所示：
 
 ```console
 $ docker pull ubuntu:22.04
@@ -168,10 +93,7 @@ Status: Downloaded newer image for ubuntu:22.04
 docker.io/library/ubuntu:22.04
 ```
 
-Each of these layers is stored in its own directory inside the Docker host's
-local storage area. To examine the layers on the filesystem, list the contents
-of `/var/lib/docker/<storage-driver>`. This example uses the `overlay2` 
-storage driver:
+每一层都会存放在宿主机本地存储区域的独立目录中。要查看这些层在文件系统中的表现，可以列出 `/var/lib/docker/<storage-driver>` 的内容。下例使用的是 `overlay2` 存储驱动：
 
 ```console
 $ ls /var/lib/docker/overlay2
@@ -182,10 +104,9 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
 l
 ```
 
-The directory names don't correspond to the layer IDs.
+这些目录名与层 ID 并不一一对应。
 
-Now imagine that you have two different Dockerfiles. You use the first one to
-create an image called `acme/my-base-image:1.0`.
+假设你有两份不同的 Dockerfile。第一份用于构建名为 `acme/my-base-image:1.0` 的镜像。
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -193,8 +114,7 @@ FROM alpine
 RUN apk add --no-cache bash
 ```
 
-The second one is based on `acme/my-base-image:1.0`, but has some additional
-layers:
+第二份基于 `acme/my-base-image:1.0`，并新增了一些层：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -204,33 +124,24 @@ RUN chmod +x /app/hello.sh
 CMD /app/hello.sh
 ```
 
-The second image contains all the layers from the first image, plus new layers
-created by the `COPY` and `RUN` instructions, and a read-write container layer.
-Docker already has all the layers from the first image, so it doesn't need to
-pull them again. The two images share any layers they have in common.
+第二个镜像包含第一个镜像的所有层，并在此基础上新增了由 `COPY` 与 `RUN` 指令产生的层，以及一个读写的容器层。由于第一镜像的各层本地已存在，Docker 无需再次拉取；两个镜像会共享它们的公共层。
 
-If you build images from the two Dockerfiles, you can use `docker image ls` and
-`docker image history` commands to verify that the cryptographic IDs of the shared
-layers are the same.
+基于这两份 Dockerfile 构建镜像后，你可以通过 `docker image ls` 与 `docker image history` 验证共享层的加密 ID 是否一致。
 
-1. Make a new directory `cow-test/` and change into it.
+1. 新建目录 `cow-test/` 并进入。
 
-2. Within `cow-test/`, create a new file called `hello.sh` with the following contents.
+2. 在 `cow-test/` 下创建文件 `hello.sh`，内容如下：
 
    ```bash
    #!/usr/bin/env bash
    echo "Hello world"
    ```
 
-3. Copy the contents of the first Dockerfile above into a new file called
-   `Dockerfile.base`.
+3. 将前面第一份 Dockerfile 的内容保存为 `Dockerfile.base`。
 
-4. Copy the contents of the second Dockerfile above into a new file called
-   `Dockerfile`.
+4. 将第二份 Dockerfile 的内容保存为 `Dockerfile`。
 
-5. Within the `cow-test/` directory, build the first image. Don't forget to
-   include the final `.` in the command. That sets the `PATH`, which tells
-   Docker where to look for any files that need to be added to the image.
+5. 在 `cow-test/` 目录中构建第一个镜像。注意命令末尾的 `.`，它用于设置构建上下文，告知 Docker 在何处查找需要添加到镜像中的文件。
 
    ```console
    $ docker build -t acme/my-base-image:1.0 -f Dockerfile.base .
@@ -253,7 +164,7 @@ layers are the same.
    => => naming to docker.io/acme/my-base-image:1.0                                              0.0s
    ```
 
-6. Build the second image.
+6. 构建第二个镜像。
 
    ```console
    $ docker build -t acme/my-final-image:1.0 -f Dockerfile .
@@ -279,7 +190,7 @@ layers are the same.
    => => naming to docker.io/acme/my-final-image:1.0                                              0.0s
    ```
 
-7. Check out the sizes of the images.
+7. 查看镜像大小。
 
    ```console
    $ docker image ls
@@ -289,7 +200,7 @@ layers are the same.
    acme/my-base-image     1.0     da3cf8df55ee     2 minutes ago         7.75MB
    ```
 
-8. Check out the history of each image.
+8. 查看各镜像的历史记录。
 
    ```console
    $ docker image history acme/my-base-image:1.0
@@ -300,9 +211,7 @@ layers are the same.
    <missing>      7 weeks ago     /bin/sh -c #(nop) ADD file:f278386b0cef68136…   5.6MB
    ```
 
-   Some steps don't have a size (`0B`), and are metadata-only changes, which do
-   not produce an image layer and don't take up any size, other than the metadata
-   itself. The output above shows that this image consists of 2 image layers.
+   其中部分步骤大小为 `0B`，这表示仅修改了元数据，不会生成镜像层，也不占用除元数据外的体积。以上输出表明该镜像包含 2 个镜像层。
 
    ```console
    $ docker image history  acme/my-final-image:1.0
@@ -316,25 +225,15 @@ layers are the same.
    <missing>      7 weeks ago     /bin/sh -c #(nop) ADD file:f278386b0cef68136…   5.6MB
    ```
 
-   Notice that all steps of the first image are also included in the final
-   image. The final image includes the two layers from the first image, and
-   two layers that were added in the second image.
+   可以看到，第一个镜像的所有步骤也包含在最终镜像中。最终镜像由第一个镜像的两层加上第二个镜像新增的两层组成。
 
-   The `<missing>` lines in the `docker history` output indicate that those
-   steps were either built on another system and part of the `alpine` image
-   that was pulled from Docker Hub, or were built with BuildKit as builder.
-   Before BuildKit, the "classic" builder would produce a new "intermediate"
-   image for each step for caching purposes, and the `IMAGE` column would show
-   the ID of that image.
+   在 `docker history` 的输出中，`<missing>` 表示这些步骤要么是在其他系统上构建并属于从 Docker Hub 拉取的 `alpine` 镜像的一部分，要么是使用 BuildKit 构建的。早期的“经典”构建器会为每一步生成一个“中间镜像”用于缓存，`IMAGE` 列会显示该镜像的 ID。
    
-   BuildKit uses its own caching mechanism, and no longer requires intermediate
-   images for caching. Refer to [BuildKit](/manuals/build/buildkit/_index.md)
-   to learn more about other enhancements made in BuildKit.
+   BuildKit 使用自有的缓存机制，不再需要中间镜像来做缓存。参见 [BuildKit](/manuals/build/buildkit/_index.md) 了解更多增强点。
 
-9. Check out the layers for each image
+9. 查看各镜像包含的层
 
-   Use the `docker image inspect` command to view the cryptographic IDs of the
-   layers in each image:
+   使用 `docker image inspect` 查看各镜像中层的加密 ID：
 
    ```console
    $ docker image inspect --format "{{json .RootFS.Layers}}" acme/my-base-image:1.0
@@ -354,83 +253,41 @@ layers are the same.
    ]
    ```
 
-   Notice that the first two layers are identical in both images. The second
-   image adds two additional layers. Shared image layers are only stored once
-   in `/var/lib/docker/` and are also shared when pushing and pulling an image
-   to an image registry. Shared image layers can therefore reduce network
-   bandwidth and storage.
+   可以看到，两者的前两层完全一致，第二个镜像额外增加了两层。共享的镜像层在 `/var/lib/docker/` 中只会存储一次，并且在向镜像仓库推送或拉取时也会被共享，从而减少网络带宽与存储占用。
 
    > [!TIP]
    >
-   > Format output of Docker commands with the `--format` option.
+   > 使用 `--format` 可以自定义 Docker 命令输出。
    > 
-   > The examples above use the `docker image inspect` command with the `--format`
-   > option to view the layer IDs, formatted as a JSON array. The `--format`
-   > option on Docker commands can be a powerful feature that allows you to
-   > extract and format specific information from the output, without requiring
-   > additional tools such as `awk` or `sed`. To learn more about formatting
-   > the output of docker commands using the `--format` flag, refer to the
-   > [format command and log output section](/manuals/engine/cli/formatting.md).
-   > We also pretty-printed the JSON output using the [`jq` utility](https://stedolan.github.io/jq/)
-   > for readability.
+   > 上述示例使用 `docker image inspect` 搭配 `--format` 查看各层 ID，并将其格式化为 JSON 数组。`--format` 能帮助你在不借助 `awk` 或 `sed` 的情况下，直接提取并格式化关键信息。更多格式化用法参见[格式化命令与日志输出](/manuals/engine/cli/formatting.md)。我们还使用了 [`jq` 工具](https://stedolan.github.io/jq/) 对 JSON 做了更友好的展示。
 
-### Copying makes containers efficient
+### 拷贝让容器更高效
 
-When you start a container, a thin writable container layer is added on top of
-the other layers. Any changes the container makes to the filesystem are stored
-here. Any files the container doesn't change don't get copied to this writable
-layer. This means that the writable layer is as small as possible.
+启动容器时，系统会在其他层之上添加一个很薄的可写容器层。容器对文件系统的任何更改都会写入该层；未被修改的文件不会被拷贝到可写层，从而使可写层尽可能小。
 
-When an existing file in a container is modified, the storage driver performs a
-copy-on-write operation. The specific steps involved depend on the specific
-storage driver. For the `overlay2` driver, the  copy-on-write operation follows
-this rough sequence:
+当容器中的现有文件被修改时，存储驱动会执行一次写时复制操作。不同驱动的具体步骤有所差异。以 `overlay2` 为例，大致流程如下：
 
-*  Search through the image layers for the file to update. The process starts
-   at the newest layer and works down to the base layer one layer at a time.
-   When results are found, they're added to a cache to speed future operations.
-*  Perform a `copy_up` operation on the first copy of the file that's found, to
-   copy the file to the container's writable layer.
-*  Any modifications are made to this copy of the file, and the container can't
-   see the read-only copy of the file that exists in the lower layer.
+*  在镜像各层中查找需要更新的文件。从最新一层开始，逐层向下追溯到基础层。命中结果会加入缓存，以加速后续操作。
+*  对首次找到的文件副本执行 `copy_up`，将其拷贝到容器的可写层。
+*  随后的修改都发生在这个副本上；容器将看不到位于更低层的只读副本。
 
-Btrfs, ZFS, and other drivers handle the copy-on-write differently. You can
-read more about the methods of these drivers later in their detailed
-descriptions.
+Btrfs、ZFS 等驱动在写时复制上的行为不同。稍后在各驱动的详细说明中你可以看到更多实现差异。
 
-Containers that write a lot of data consume more space than containers
-that don't. This is because most write operations consume new space in the
-container's thin writable top layer. Note that changing the metadata of files,
-for example, changing file permissions or ownership of a file, can also result
-in a `copy_up` operation, therefore duplicating the file to the writable layer.
+写入数据较多的容器会比其他容器消耗更多空间，因为大多数写操作都会占用可写顶层中的新空间。注意，即使只是修改文件的元数据（如权限或所有者），也可能触发 `copy_up`，从而将该文件复制到可写层。
 
 > [!TIP]
 >
-> Use volumes for write-heavy applications.
+> 写入密集型应用请使用卷。
 >
-> Don't store the data in the container for write-heavy applications. Such
-> applications, for example write-intensive databases, are known to be
-> problematic particularly when pre-existing data exists in the read-only
-> layer.
+> 不要在容器内部直接存放写入密集型应用的数据。例如数据库类应用在只读层有既有数据时尤其容易出现性能问题。
 > 
-> Instead, use Docker volumes, which are independent of the running container,
-> and designed to be efficient for I/O. In addition, volumes can be shared
-> among containers and don't increase the size of your container's writable
-> layer. Refer to the [use volumes](../volumes.md) section to learn about
-> volumes.
+> 推荐使用独立于运行中容器的 Docker 卷，它为 I/O 效率而设计；卷也可在容器间共享，并且不会增加容器可写层的体积。参见[使用卷](../volumes.md)了解更多。
 
-A `copy_up` operation can incur a noticeable performance overhead. This overhead
-is different depending on which storage driver is in use. Large files,
-lots of layers, and deep directory trees can make the impact more noticeable.
-This is mitigated by the fact that each `copy_up` operation only occurs the first
-time a given file is modified.
+`copy_up` 操作会带来可感知的性能开销，开销大小与所用存储驱动有关。当文件很大、层数较多或目录层级很深时，这种影响会更明显。好在每个文件在第一次被修改时才会触发 `copy_up`。
 
-To verify the way that copy-on-write works, the following procedure spins up 5
-containers based on the `acme/my-final-image:1.0` image we built earlier and
-examines how much room they take up.
+下面的步骤基于我们之前构建的 `acme/my-final-image:1.0` 启动 5 个容器，并观察它们的空间占用，以验证写时复制的行为。
 
-1. From a terminal on your Docker host, run the following `docker run` commands.
-   The strings at the end are the IDs of each container.
+1. 在 Docker 宿主机的终端中运行以下 `docker run` 命令。末尾输出的是各容器的 ID：
 
    ```console
    $ docker run -dit --name my_container_1 acme/my-final-image:1.0 bash \
@@ -446,8 +303,7 @@ examines how much room they take up.
    cddae31c314fbab3f7eabeb9b26733838187abc9a2ed53f97bd5b04cd7984a5a
    ```
 
-2. Run the `docker ps` command with the `--size` option to verify the 5 containers
-   are running, and to see each container's size.
+2. 使用带 `--size` 选项的 `docker ps` 验证 5 个容器正在运行，并查看各自大小：
 
    
    ```console
@@ -461,23 +317,17 @@ examines how much room they take up.
    40ebdd763416   acme/my-final-image:1.0   my_container_1   0B (virtual 7.75MB)
    ```
    
-   The output above shows that all containers share the image's read-only layers
-   (7.75MB), but no data was written to the container's filesystem, so no additional
-   storage is used for the containers.
+   可见所有容器共享镜像的只读层（7.75MB），由于未向容器文件系统写入数据，因此没有额外的存储占用。
 
-   {{< accordion title="Advanced: metadata and logs storage used for containers" >}}
+   {{< accordion title="进阶：容器的元数据与日志占用" >}}
    
    > [!NOTE]
    >
-   > This step requires a Linux machine, and doesn't work on Docker Desktop, as
-   > it requires access to the Docker Daemon's file storage.
+   > 该步骤需要在 Linux 机器上进行，Docker Desktop 无法完成，因为它需要访问 Docker 守护进程的文件存储。
    
-   While the output of `docker ps` provides you information about disk space
-   consumed by a container's writable layer, it doesn't include information
-   about metadata and log-files stored for each container.
+   `docker ps` 的输出仅反映容器可写层的磁盘占用，不包含各容器的元数据与日志文件信息。
    
-   More details can be obtained by exploring the Docker Daemon's storage
-   location (`/var/lib/docker` by default).
+   你可以查看 Docker 守护进程的存储目录（默认 `/var/lib/docker`）以获取更多细节：
    
    ```console
    $ sudo du -sh /var/lib/docker/containers/*
@@ -489,24 +339,19 @@ examines how much room they take up.
    36K  /var/lib/docker/containers/cddae31c314fbab3f7eabeb9b26733838187abc9a2ed53f97bd5b04cd7984a5a
    ```
    
-   Each of these containers only takes up 36k of space on the filesystem.
+   可以看到，每个容器仅占用约 36K 的空间。
 
    {{< /accordion >}}
 
-3. Per-container storage
+3. 按容器维度的存储变化
 
-   To demonstrate this, run the following command to write the word 'hello' to
-   a file on the container's writable layer in containers `my_container_1`,
-   `my_container_2`, and `my_container_3`:
+   为了演示这一点，向 `my_container_1`、`my_container_2`、`my_container_3` 的可写层写入一个单词 `hello`：
 
    ```console
    $ for i in {1..3}; do docker exec my_container_$i sh -c 'printf hello > /out.txt'; done
    ```
    
-   Running the `docker ps` command again afterward shows that those containers
-   now consume 5 bytes each. This data is unique to each container, and not
-   shared. The read-only layers of the containers aren't affected, and are still
-   shared by all containers.
+   随后再次执行 `docker ps` 可以看到，这些容器各自多了 5 字节的占用。这些数据属于各容器私有，不会被共享；容器的只读层不受影响，依然被所有容器共享。
 
    
    ```console
@@ -520,20 +365,11 @@ examines how much room they take up.
    40ebdd763416   acme/my-final-image:1.0   my_container_1   5B (virtual 7.75MB)
    ```
 
-The previous examples illustrate how copy-on-write filesystems help make
-containers efficient. Not only does copy-on-write save space, but it also
-reduces container start-up time. When you create a container (or multiple
-containers from the same image), Docker only needs to create the thin writable
-container layer.
+上述示例展示了写时复制如何帮助容器更高效。它不仅节省空间，还能缩短容器启动时间。创建容器（或从同一镜像创建多个容器）时，Docker 只需创建一个薄薄的可写容器层即可。
 
-If Docker had to make an entire copy of the underlying image stack each time it
-created a new container, container creation times and disk space used would be
-significantly increased. This would be similar to the way that virtual machines
-work, with one or more virtual disks per virtual machine. The [`vfs` storage](vfs-driver.md)
-doesn't provide a CoW filesystem or other optimizations. When using this storage
-driver, a full copy of the image's data is created for each container.
+如果每次创建容器都要复制整套底层镜像栈，容器创建时间和磁盘占用都会显著增加。这类似虚拟机的做法——每台虚拟机都有一个或多个虚拟磁盘。[`vfs` 存储](vfs-driver.md)不提供 CoW 文件系统或其他优化，使用它时，每个容器都会得到镜像数据的完整拷贝。
 
-## Related information
+## 相关信息
 
-* [Volumes](../volumes.md)
-* [Select a storage driver](select-storage-driver.md)
+* [卷](../volumes.md)
+* [选择存储驱动](select-storage-driver.md)

@@ -1,57 +1,38 @@
 ---
-description: Learn how to optimize your use of Btrfs driver.
-keywords: container, storage, driver, Btrfs
-title: BTRFS storage driver
+description: 了解如何更高效地使用 Btrfs 存储驱动。
+keywords: 容器, 存储, 驱动, Btrfs
+title: Btrfs 存储驱动
 aliases:
   - /storage/storagedriver/btrfs-driver/
 ---
 
 > [!IMPORTANT]
 >
-> In most cases you should use the `overlay2` storage driver - it's not
-> required to use the `btrfs` storage driver simply because your system uses
-> Btrfs as its root filesystem.
+> 大多数情况下，你都应使用 `overlay2` 存储驱动。仅仅因为系统的根文件系统是 Btrfs，并不意味着必须使用 `btrfs` 存储驱动。
 >
-> Btrfs driver has known issues. See [Moby issue #27653](https://github.com/moby/moby/issues/27653)
-> for more information.
+> `btrfs` 驱动已知存在一些问题。更多信息参见 [Moby issue #27653](https://github.com/moby/moby/issues/27653)。
 
-Btrfs is a copy-on-write filesystem that supports many advanced storage
-technologies, making it a good fit for Docker. Btrfs is included in the
-mainline Linux kernel.
+Btrfs 是一种写时复制（CoW）文件系统，支持多种高级存储技术，因而非常适合 Docker 使用。Btrfs 已被合入 Linux 主线内核。
 
-Docker's `btrfs` storage driver leverages many Btrfs features for image and
-container management. Among these features are block-level operations, thin
-provisioning, copy-on-write snapshots, and ease of administration. You can
-combine multiple physical block devices into a single Btrfs filesystem.
+Docker 的 `btrfs` 存储驱动在镜像与容器管理中充分利用了 Btrfs 的能力，包括块级操作、精简配置、写时复制快照以及更易维护等。你可以将多个物理块设备聚合为一个 Btrfs 文件系统。
 
-This page refers to Docker's Btrfs storage driver as `btrfs` and the overall
-Btrfs Filesystem as Btrfs.
+本文将 Docker 的 Btrfs 存储驱动称为 `btrfs`，将该文件系统本身称为 Btrfs。
 
 > [!NOTE]
 >
-> The `btrfs` storage driver is only supported with Docker Engine CE on SLES,
-> Ubuntu, and Debian systems.
+> `btrfs` 存储驱动仅在 SLES、Ubuntu 与 Debian 上的 Docker Engine CE 受到支持。
 
-## Prerequisites
+## 先决条件
 
-`btrfs` is supported if you meet the following prerequisites:
+满足以下条件即可使用 `btrfs`：
 
-- `btrfs` is only recommended with Docker CE on Ubuntu or Debian systems.
+- 仅推荐在 Ubuntu 或 Debian 的 Docker CE 上使用 `btrfs`。
 
-- Changing the storage driver makes any containers you have already
-  created inaccessible on the local system. Use `docker save` to save containers,
-  and push existing images to Docker Hub or a private repository, so that you
-  do not need to re-create them later.
+- 更换存储驱动会导致本机上已创建的容器不可访问。请使用 `docker save` 备份容器，并将现有镜像推送到 Docker Hub 或私有仓库，以免之后需要重新创建。
 
-- `btrfs` requires a dedicated block storage device such as a physical disk. This
-  block device must be formatted for Btrfs and mounted into `/var/lib/docker/`.
-  The configuration instructions below walk you through this procedure. By
-  default, the SLES `/` filesystem is formatted with Btrfs, so for SLES, you do
-  not need to use a separate block device, but you can choose to do so for
-  performance reasons.
+- `btrfs` 需要专用的块设备（如物理磁盘）。该块设备必须被格式化为 Btrfs，并挂载到 `/var/lib/docker/`。下面的配置步骤会引导你完成这一过程。SLES 的根分区 `/` 默认使用 Btrfs，因此在 SLES 上不强制要求单独的块设备，但你可以出于性能考虑选择独立设备。
 
-- `btrfs` support must exist in your kernel. To check this, run the following
-  command:
+- 内核需支持 `btrfs`。运行以下命令检查：
 
   ```console
   $ grep btrfs /proc/filesystems
@@ -59,13 +40,11 @@ Btrfs Filesystem as Btrfs.
   btrfs
   ```
 
-- To manage Btrfs filesystems at the level of the operating system, you need the
-  `btrfs` command. If you don't have this command, install the `btrfsprogs`
-  package (SLES) or `btrfs-tools` package (Ubuntu).
+- 在操作系统层面管理 Btrfs 文件系统需要 `btrfs` 命令。如未安装，请在 SLES 上安装 `btrfsprogs`，在 Ubuntu 上安装 `btrfs-tools`。
 
-## Configure Docker to use the btrfs storage driver
+## 配置 Docker 使用 btrfs 存储驱动
 
-This procedure is essentially identical on SLES and Ubuntu.
+以下步骤在 SLES 与 Ubuntu 上基本一致。
 
 1. Stop Docker.
 
@@ -77,20 +56,15 @@ This procedure is essentially identical on SLES and Ubuntu.
    $ sudo rm -rf /var/lib/docker/*
    ```
 
-3. Format your dedicated block device or devices as a Btrfs filesystem. This
-   example assumes that you are using two block devices called `/dev/xvdf` and
-   `/dev/xvdg`. Double-check the block device names because this is a
-   destructive operation.
+3. 将专用块设备格式化为 Btrfs 文件系统。以下示例假设使用两块设备 `/dev/xvdf` 与 `/dev/xvdg`。务必确认设备名，因为该操作具有破坏性。
 
    ```console
    $ sudo mkfs.btrfs -f /dev/xvdf /dev/xvdg
    ```
 
-   There are many more options for Btrfs, including striping and RAID. See the
-   [Btrfs documentation](https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices).
+   Btrfs 还有更多可选项（如条带化与 RAID）。参见 [Btrfs 文档](https://btrfs.wiki.kernel.org/index.php/Using_Btrfs_with_Multiple_Devices)。
 
-4. Mount the new Btrfs filesystem on the `/var/lib/docker/` mount point. You
-   can specify any of the block devices used to create the Btrfs filesystem.
+4. 将新建的 Btrfs 文件系统挂载到 `/var/lib/docker/`。可以指定创建该 Btrfs 文件系统时使用的任意块设备。
 
    ```console
    $ sudo mount -t btrfs /dev/xvdf /var/lib/docker
@@ -98,21 +72,15 @@ This procedure is essentially identical on SLES and Ubuntu.
 
    > [!NOTE]
    >
-   > Make the change permanent across reboots by adding an entry to
-   > `/etc/fstab`.
+   > 为了在重启后保持挂载生效，请在 `/etc/fstab` 中添加相应条目。
 
-5. Copy the contents of `/var/lib/docker.bk` to `/var/lib/docker/`.
+5. 将 `/var/lib/docker.bk` 的内容拷贝回 `/var/lib/docker/`。
 
    ```console
    $ sudo cp -au /var/lib/docker.bk/* /var/lib/docker/
    ```
 
-6. Configure Docker to use the `btrfs` storage driver. This is required even
-   though `/var/lib/docker/` is now using a Btrfs filesystem.
-   Edit or create the file `/etc/docker/daemon.json`. If it is a new file, add
-   the following contents. If it is an existing file, add the key and value
-   only, being careful to end the line with a comma if it isn't the final
-   line before an ending curly bracket (`}`).
+6. 配置 Docker 使用 `btrfs` 存储驱动。即使 `/var/lib/docker/` 已是 Btrfs 文件系统，仍需显式设置。编辑或创建 `/etc/docker/daemon.json`；若为新文件，添加以下内容；若已存在，仅需添加相应键值，注意在非最后一行结尾处添加逗号：
 
    ```json
    {
@@ -120,11 +88,9 @@ This procedure is essentially identical on SLES and Ubuntu.
    }
    ```
 
-   See all storage options for each storage driver in the
-   [daemon reference documentation](/reference/cli/dockerd/#options-per-storage-driver)
+   各存储驱动支持的所有存储选项，参见[守护进程参考文档](/reference/cli/dockerd/#options-per-storage-driver)
 
-7. Start Docker. When it's running, verify that `btrfs` is being used as the
-   storage driver.
+7. 启动 Docker。运行后，验证当前存储驱动为 `btrfs`：
 
    ```console
    $ docker info
@@ -141,18 +107,15 @@ This procedure is essentially identical on SLES and Ubuntu.
    <...>
    ```
 
-8. When you are ready, remove the `/var/lib/docker.bk` directory.
+8. 确认无误后，可以删除 `/var/lib/docker.bk` 目录。
 
-## Manage a Btrfs volume
+## 管理 Btrfs 卷
 
-One of the benefits of Btrfs is the ease of managing Btrfs filesystems without
-the need to unmount the filesystem or restart Docker.
+Btrfs 的优势之一在于无需卸载文件系统或重启 Docker，即可轻松管理 Btrfs 文件系统。
 
-When space gets low, Btrfs automatically expands the volume in chunks of
-roughly 1 GB.
+当空间不足时，Btrfs 会以约 1 GB 的块大小自动扩展卷。
 
-To add a block device to a Btrfs volume, use the `btrfs device add` and
-`btrfs filesystem balance` commands.
+要向 Btrfs 卷新增块设备，可使用 `btrfs device add` 与 `btrfs filesystem balance`：
 
 ```console
 $ sudo btrfs device add /dev/svdh /var/lib/docker
@@ -162,184 +125,110 @@ $ sudo btrfs filesystem balance /var/lib/docker
 
 > [!NOTE]
 >
-> While you can do these operations with Docker running, performance suffers.
-> It might be best to plan an outage window to balance the Btrfs filesystem.
+   > 这些操作可以在 Docker 运行时执行，但会影响性能。建议在维护窗口内进行卷平衡。
 
-## How the `btrfs` storage driver works
+## `btrfs` 存储驱动的工作原理
 
-The `btrfs` storage driver works differently from other
-storage drivers in that your entire `/var/lib/docker/` directory is stored on a
-Btrfs volume.
+与其他存储驱动不同，`btrfs` 会将整个 `/var/lib/docker/` 存放在一个 Btrfs 卷上。
 
-### Image and container layers on-disk
+### 镜像与容器层的磁盘布局
 
-Information about image layers and writable container layers is stored in
-`/var/lib/docker/btrfs/subvolumes/`. This subdirectory contains one directory
-per image or container layer, with the unified filesystem built from a layer
-plus all its parent layers. Subvolumes are natively copy-on-write and have space
-allocated to them on-demand from an underlying storage pool. They can also be
-nested and snapshotted. The diagram below shows 4 subvolumes. 'Subvolume 2' and
-'Subvolume 3' are nested, whereas 'Subvolume 4' shows its own internal directory
-tree.
+镜像层与容器可写层的相关信息位于 `/var/lib/docker/btrfs/subvolumes/`。该目录下每个镜像层或容器层对应一个子目录；统一文件系统由该层及其所有父层组合而成。子卷（subvolume）原生支持写时复制，按需从底层存储池分配空间，且可以嵌套与快照。下图展示了 4 个子卷，其中“子卷 2”和“子卷 3”为嵌套关系，“子卷 4”展示了自身的目录树。
 
 ![Subvolume example](images/btfs_subvolume.webp?w=350&h=100)
 
-Only the base layer of an image is stored as a true subvolume. All the other
-layers are stored as snapshots, which only contain the differences introduced
-in that layer. You can create snapshots of snapshots as shown in the diagram
-below.
+只有镜像的基底层会作为真正的子卷存储，其余各层都以快照形式保存，仅包含该层引入的差异。你也可以基于快照再创建快照，如下图所示。
 
 ![Snapshots diagram](images/btfs_snapshots.webp?w=350&h=100)
 
-On disk, snapshots look and feel just like subvolumes, but in reality they are
-much smaller and more space-efficient. Copy-on-write is used to maximize storage
-efficiency and minimize layer size, and writes in the container's writable layer
-are managed at the block level. The following image shows a subvolume and its
-snapshot sharing data.
+在磁盘上，快照看起来与子卷很相似，但实际上更小且更节省空间。系统通过写时复制最大化存储效率、最小化各层体积；容器可写层中的写入在块级被管理。下图展示了子卷与其快照共享数据的关系。
 
 ![Snapshot and subvolume sharing data](images/btfs_pool.webp?w=450&h=200)
 
-For maximum efficiency, when a container needs more space, it is allocated in
-chunks of roughly 1 GB in size.
+为获得更高效率，容器在需要更多空间时会以约 1 GB 的块大小进行分配。
 
-Docker's `btrfs` storage driver stores every image layer and container in its
-own Btrfs subvolume or snapshot. The base layer of an image is stored as a
-subvolume whereas child image layers and containers are stored as snapshots.
-This is shown in the diagram below.
+`btrfs` 存储驱动会将每个镜像层与容器分别存放在独立的 Btrfs 子卷或快照中：镜像基底层为子卷，子层镜像与容器为快照，如下图所示。
 
 ![Btrfs container layers](images/btfs_container_layer.webp?w=600)
 
-The high level process for creating images and containers on Docker hosts
-running the `btrfs` driver is as follows:
+在使用 `btrfs` 驱动的宿主机上，创建镜像与容器的大致流程如下：
 
-1. The image's base layer is stored in a Btrfs _subvolume_ under
-   `/var/lib/docker/btrfs/subvolumes`.
+1. 镜像的基底层存放在 `/var/lib/docker/btrfs/subvolumes` 下的 Btrfs 子卷中。
 
-2. Subsequent image layers are stored as a Btrfs _snapshot_ of the parent
-   layer's subvolume or snapshot, but with the changes introduced by this
-   layer. These differences are stored at the block level.
+2. 后续镜像层以父层子卷或快照的 Btrfs 快照形式保存，并包含该层引入的更改。这些差异在块级进行存储。
 
-3. The container's writable layer is a Btrfs snapshot of the final image layer,
-   with the differences introduced by the running container. These differences
-   are stored at the block level.
+3. 容器的可写层是最终镜像层的 Btrfs 快照，包含容器运行期间产生的差异，亦在块级存储。
 
-## How container reads and writes work with `btrfs`
+## 使用 `btrfs` 时容器的读写机制
 
-### Reading files
+### 读取文件
 
-A container is a space-efficient snapshot of an image. Metadata in the snapshot
-points to the actual data blocks in the storage pool. This is the same as with
-a subvolume. Therefore, reads performed against a snapshot are essentially the
-same as reads performed against a subvolume.
+容器本质上是镜像的一个高效快照。快照中的元数据会指向存储池中的实际数据块，这与子卷的行为一致。因此，从快照读取与从子卷读取在本质上相同。
 
-### Writing files
+### 写入文件
 
-As a general caution, writing and updating a large number of small files with
-Btrfs can result in slow performance.
+需注意，在 Btrfs 上大量写入或更新小文件可能导致性能下降。
 
-Consider three scenarios where a container opens a file for write access with
-Btrfs.
+以下示例说明容器在 Btrfs 上以写方式打开文件的三种情形：
 
-#### Writing new files
+#### 写入新文件
 
-Writing a new file to a container invokes an allocate-on-demand operation to
-allocate new data block to the container's snapshot. The file is then written
-to this new space. The allocate-on-demand operation is native to all writes
-with Btrfs and is the same as writing new data to a subvolume. As a result,
-writing new files to a container's snapshot operates at native Btrfs speeds.
+向容器写入新文件会触发按需分配，为容器快照分配新的数据块，随后将文件写入该空间。按需分配是 Btrfs 的默认写入机制，与向子卷写入新数据的方式一致。因此，向容器快照写入新文件可达到 Btrfs 的原生速度。
 
-#### Modifying existing files
+#### 修改已有文件
 
-Updating an existing file in a container is a copy-on-write operation
-(redirect-on-write is the Btrfs terminology). The original data is read from
-the layer where the file currently exists, and only the modified blocks are
-written into the container's writable layer. Next, the Btrfs driver updates the
-filesystem metadata in the snapshot to point to this new data. This behavior
-incurs minor overhead.
+在容器中更新已有文件会触发写时复制（Btrfs 称为重定向写入 redirect-on-write）。系统会从当前存放该文件的层读取原始数据，仅将修改后的块写入容器可写层，然后更新快照中的文件系统元数据指向新数据。该过程会产生少量开销。
 
-#### Deleting files or directories
+#### 删除文件或目录
 
-If a container deletes a file or directory that exists in a lower layer, Btrfs
-masks the existence of the file or directory in the lower layer. If a container
-creates a file and then deletes it, this operation is performed in the Btrfs
-filesystem itself and the space is reclaimed.
+当容器删除位于更低层的文件或目录时，Btrfs 会对其进行“遮蔽”，使之不可见。如果容器创建了文件后又删除，则该操作发生在 Btrfs 文件系统本身，空间将被回收。
 
-## Btrfs and Docker performance
+## Btrfs 与 Docker 性能
 
-There are several factors that influence Docker's performance under the `btrfs`
-storage driver.
+在 `btrfs` 存储驱动下，有多种因素会影响 Docker 的性能。
 
 > [!NOTE]
 >
-> Many of these factors are mitigated by using Docker volumes for write-heavy
-> workloads, rather than relying on storing data in the container's writable
-> layer. However, in the case of Btrfs, Docker volumes still suffer from these
-> draw-backs unless `/var/lib/docker/volumes/` isn't backed by Btrfs.
+> 对于写入密集型工作负载，将数据放入 Docker 卷而非容器可写层，能在很大程度上缓解这些问题。但在 Btrfs 场景下，只有当 `/var/lib/docker/volumes/` 不由 Btrfs 承载时，卷才不会受到这些影响。
 
-### Page caching
+### 页面缓存（Page cache）
 
-Btrfs doesn't support page cache sharing. This means that each process
-accessing the same file copies the file into the Docker host's memory. As a
-result, the `btrfs` driver may not be the best choice for high-density use cases
-such as PaaS.
+Btrfs 不支持页面缓存共享。这意味着每个访问同一文件的进程都会在宿主机内存中各自缓存一份拷贝。因此，在 PaaS 等高密度场景中，`btrfs` 可能不是最佳选择。
 
-### Small writes
+### 小块写入
 
-Containers performing lots of small writes (this usage pattern matches what
-happens when you start and stop many containers in a short period of time, as
-well) can lead to poor use of Btrfs chunks. This can prematurely fill the Btrfs
-filesystem and lead to out-of-space conditions on your Docker host. Use `btrfs
-filesys show` to closely monitor the amount of free space on your Btrfs device.
+容器执行大量小写入（例如在短时间内频繁启动、停止大量容器时也会出现类似模式）会导致 Btrfs 块使用效率不佳，可能让 Btrfs 文件系统过早耗尽空间，造成宿主机磁盘不足。请使用 `btrfs filesys show` 密切监控 Btrfs 设备的可用空间。
 
-### Sequential writes
+### 顺序写入
 
-Btrfs uses a journaling technique when writing to disk. This can impact the
-performance of sequential writes, reducing performance by up to 50%.
+Btrfs 在落盘时使用日志技术，这会影响顺序写入的性能，最高可能下降约 50%。
 
-### Fragmentation
+### 碎片化
 
-Fragmentation is a natural byproduct of copy-on-write filesystems like Btrfs.
-Many small random writes can compound this issue. Fragmentation can manifest as
-CPU spikes when using SSDs or head thrashing when using spinning disks. Either
-of these issues can harm performance.
+碎片化是 Btrfs 等写时复制文件系统的副产物。大量小的随机写会加剧这一问题：在 SSD 上表现为 CPU 峰值，在机械硬盘上表现为磁头频繁寻道；二者都会损害性能。
 
-If your Linux kernel version is 3.9 or higher, you can enable the `autodefrag`
-feature when mounting a Btrfs volume. Test this feature on your own workloads
-before deploying it into production, as some tests have shown a negative impact
-on performance.
+如果你的 Linux 内核版本不低于 3.9，可以在挂载 Btrfs 卷时启用 `autodefrag`。在投入生产前，请在你的实际负载上验证，因为部分测试显示其可能对性能产生负面影响。
 
-### SSD performance
+### SSD 性能
 
-Btrfs includes native optimizations for SSD media. To enable these features,
-mount the Btrfs filesystem with the `-o ssd` mount option. These optimizations
-include enhanced SSD write performance by avoiding optimization such as seek
-optimizations that don't apply to solid-state media.
+Btrfs 针对 SSD 提供了原生优化。可在挂载时添加 `-o ssd` 选项启用。这些优化会绕过不适用于固态介质的“寻道优化”等策略，以提升写入性能。
 
-### Balance Btrfs filesystems often
+### 定期平衡（balance）Btrfs 文件系统
 
-Use operating system utilities such as a `cron` job to balance the Btrfs
-filesystem regularly, during non-peak hours. This reclaims unallocated blocks
-and helps to prevent the filesystem from filling up unnecessarily. You can't
-rebalance a totally full Btrfs filesystem unless you add additional physical
-block devices to the filesystem.
+建议使用操作系统计划任务（如 `cron`）在业务低峰期定期执行 Btrfs 文件系统的平衡操作，以回收未分配块并防止无谓地占满文件系统。注意：当 Btrfs 文件系统已被完全写满时，若不增加新的物理块设备，将无法进行再平衡。
 
-See the [Btrfs
-Wiki](https://btrfs.wiki.kernel.org/index.php/Balance_Filters#Balancing_to_fix_filesystem_full_errors).
+可参考 [Btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Balance_Filters#Balancing_to_fix_filesystem_full_errors)。
 
-### Use fast storage
+### 使用更快的存储介质
 
-Solid-state drives (SSDs) provide faster reads and writes than spinning disks.
+固态硬盘（SSD）通常比机械硬盘提供更快的读写性能。
 
-### Use volumes for write-heavy workloads
+### 写入密集型工作负载优先使用卷
 
-Volumes provide the best and most predictable performance for write-heavy
-workloads. This is because they bypass the storage driver and don't incur any
-of the potential overheads introduced by thin provisioning and copy-on-write.
-Volumes have other benefits, such as allowing you to share data among
-containers and persisting even when no running container is using them.
+对于写入密集型工作负载，卷提供了最佳且更可预测的性能。这是因为卷绕过了存储驱动，避免了精简配置与写时复制带来的潜在开销。卷还具备其他优势，例如：支持在容器间共享数据，并在没有容器使用时依然持久存在。
 
-## Related Information
+## 相关信息
 
-- [Volumes](../volumes.md)
-- [Understand images, containers, and storage drivers](index.md)
-- [Select a storage driver](select-storage-driver.md)
+- [卷](../volumes.md)
+- [理解镜像、容器与存储驱动](index.md)
+- [选择存储驱动](select-storage-driver.md)
