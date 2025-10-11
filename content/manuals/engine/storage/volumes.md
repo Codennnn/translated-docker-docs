@@ -1,6 +1,6 @@
 ---
 description: 了解如何创建、管理和使用卷，用于替代绑定挂载，以持久化 Docker 生成和使用的数据。
-title: 卷
+title: 卷（Volumes）
 weight: 10
 keywords:
   docker compose volumes, docker volumes, docker compose volume, docker volume

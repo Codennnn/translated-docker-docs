@@ -1,0 +1,34 @@
+{
+  "name": "docker/docs",
+  "version": "0.0.1",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docker/docs.git"
+  },
+  "keywords": [],
+  "author": "dvdksn",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/docker/docs/issues"
+  },
+  "homepage": "https://docs.docker.com/",
+  "dependencies": {
+    "@alpinejs/collapse": "^3.14.3",
+    "@alpinejs/focus": "^3.14.3",
+    "@alpinejs/persist": "^3.14.3",
+    "@floating-ui/dom": "^1.6.12",
+    "@material-symbols/svg-400": "^0.23.0",
+    "@tailwindcss/cli": "^4.1.6",
+    "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
+    "@tailwindcss/typography": "^0.5.15",
+    "alpinejs": "^3.14.3",
+    "tailwindcss": "^4.1.6"
+  },
+  "devDependencies": {
+    "markdownlint": "^0.35.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-go-template": "^0.0.15",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  }
+}

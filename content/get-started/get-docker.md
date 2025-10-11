@@ -1,56 +1,48 @@
 ---
-description: Download and install Docker on the platform of your choice, including
-  Mac, Linux, or Windows.
-keywords: install docker, docker download, download docker, docker installation, how
-  to install docker, get docker, docker locally
-title: Get Docker
+description: 在你选择的平台上下载并安装 Docker，支持 Mac、Linux 与 Windows。
+keywords: 安装 docker, 下载 docker, docker 安装, 如何安装 docker, 获取 docker, 本地安装 docker
+title: 获取 Docker
 weight: 10
 aliases:
- - /install/
- - /install/overview/
- - /installation/
- - /get-docker/
+  - /install/
+  - /install/overview/
+  - /installation/
+  - /get-docker/
 ---
 
-Docker is an open platform for developing, shipping, and running applications.
+Docker 是一个用于开发、交付和运行应用的开放平台。
 
-Docker allows you to separate your applications from your infrastructure so you
-can deliver software quickly. With Docker, you can manage your infrastructure in
-the same ways you manage your applications. 
+Docker 使你能够将应用与基础设施解耦，从而更快地交付软件。借助 Docker，你可以像管理应用一样管理你的基础设施。
 
-By taking advantage of Docker’s
-methodologies for shipping, testing, and deploying code quickly, you can
-significantly reduce the delay between writing code and running it in production.
+得益于 Docker 在打包、测试与快速部署方面的方法论，你可以显著缩短从编写代码到在生产环境运行之间的时间。
 
-You can download and install Docker on multiple platforms. Refer to the following
-section and choose the best installation path for you.
+你可以在多种平台上下载并安装 Docker。请参考下列内容，选择最适合你的安装方式。
 
-> **Docker Desktop terms**
+> **Docker Desktop 条款**
 >
-> Commercial use of Docker Desktop in larger enterprises (more than 250
-> employees OR more than $10 million USD in annual revenue) requires a [paid
-> subscription](https://www.docker.com/pricing/).
+> 在大型企业（超过 250 名员工，或年营收超过 1000 万美元）中将 Docker Desktop 用于商业用途，需要购买[付费订阅](https://www.docker.com/pricing/)。
 
 <div class="not-prose">
 {{< card
-  title="Docker Desktop for Mac"
-  description="A native application using the macOS sandbox security model that delivers all Docker tools to your Mac."
+  title="适用于 Mac 的 Docker Desktop"
+  description="遵循 macOS 沙盒安全模型的原生应用，为你的 Mac 提供完整的 Docker 工具集。"
   link="/desktop/setup/install/mac-install/"
   icon="/icons/AppleMac.svg" >}}
 
 {{< card
-  title="Docker Desktop for Windows"
-  description="A native Windows application that delivers all Docker tools to your Windows computer."
+  title="适用于 Windows 的 Docker Desktop"
+  description="原生 Windows 应用，为你的 Windows 电脑提供完整的 Docker 工具集。"
   link="/desktop/setup/install/windows-install/"
   icon="/icons/Windows.svg" >}}
 
 {{< card
-  title="Docker Desktop for Linux"
-  description="A native Linux application that delivers all Docker tools to your Linux computer."
+  title="适用于 Linux 的 Docker Desktop"
+  description="原生 Linux 应用，为你的 Linux 电脑提供完整的 Docker 工具集。"
   link="/desktop/setup/install/linux/"
   icon="/icons/Linux.svg" >}}
+
 </div>
 
 > [!NOTE]
 >
-> If you're looking for information on how to install Docker Engine, see [Docker Engine installation overview](/engine/install/).
+> 如果你在查找如何安装 Docker Engine 的信息，请参阅 [Docker Engine 安装概览](/engine/install/)。
