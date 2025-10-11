@@ -1,67 +1,48 @@
 ---
-title: IPvlan network driver
-description: All about using IPvlan to make your containers appear like physical machines
-  on the network
+title: IPvlan 网络驱动
+description: 使用 IPvlan 让你的容器在网络中表现得如同物理主机
 keywords: network, ipvlan, l2, l3, standalone
 aliases:
 - /network/ipvlan/
 - /network/drivers/ipvlan/
 ---
 
-The IPvlan driver gives users total control over both IPv4 and IPv6 addressing.
-The VLAN driver builds on top of that in giving operators complete control of
-layer 2 VLAN tagging and even IPvlan L3 routing for users interested in underlay
-network integration. For overlay deployments that abstract away physical constraints
-see the [multi-host overlay](/manuals/engine/network/tutorials/overlay.md) driver.
+IPvlan 驱动为用户提供对 IPv4 与 IPv6 地址分配的完全控制。基于此，VLAN 驱动进一步为运维人员提供对二层 VLAN 打标以及 IPvlan 三层路由的完整控制，适用于需要与底层（underlay）网络集成的场景。若需要抽象物理约束的跨主机部署，请参见[多主机 overlay](/manuals/engine/network/tutorials/overlay.md) 驱动。
 
-IPvlan is a new twist on the tried and true network virtualization technique.
-The Linux implementations are extremely lightweight because rather than using
-the traditional Linux bridge for isolation, they are associated to a Linux
-Ethernet interface or sub-interface to enforce separation between networks and
-connectivity to the physical network.
+IPvlan 是对成熟网络虚拟化技术的一种新演绎。其 Linux 实现非常轻量：并非借助传统 Linux bridge 进行隔离，而是直接关联到某个 Linux 以太网接口或子接口，以此在不同网络之间实现隔离，并与物理网络连通。
 
-IPvlan offers a number of unique features and plenty of room for further
-innovations with the various modes. Two high level advantages of these approaches
-are, the positive performance implications of bypassing the Linux bridge and the
-simplicity of having fewer moving parts. Removing the bridge that traditionally
-resides in between the Docker host NIC and container interface leaves a simple
-setup consisting of container interfaces, attached directly to the Docker host
-interface. This result is easy to access for external facing services as there
-is no need for port mappings in these scenarios.
+IPvlan 通过多种模式提供了一系列独特特性与扩展空间。其高层优势主要体现在两点：
+1) 绕过 Linux bridge 带来的性能收益；
+2) 组件更少，架构更简洁。
+移除传统位于主机网卡与容器接口之间的 bridge 后，容器接口可直接连接到 Docker 主机接口。对于对外服务而言，这种方式更易访问，因为在这类场景下通常无需端口映射。
 
-## Options
+## 选项
 
-The following table describes the driver-specific options that you can pass to
-`--opt` when creating a network using the `ipvlan` driver.
+下表列出了使用 `ipvlan` 驱动创建网络时，可通过 `--opt` 传入的驱动特定选项：
 
-| Option        | Default  | Description                                                           |
-| ------------- | -------- | --------------------------------------------------------------------- |
-| `ipvlan_mode` | `l2`     | Sets the IPvlan operating mode. Can be one of: `l2`, `l3`, `l3s`      |
-| `ipvlan_flag` | `bridge` | Sets the IPvlan mode flag. Can be one of: `bridge`, `private`, `vepa` |
-| `parent`      |          | Specifies the parent interface to use.                                |
+| 选项           | 默认值   | 说明                                                                 |
+| -------------- | -------- | -------------------------------------------------------------------- |
+| `ipvlan_mode`  | `l2`     | 设置 IPvlan 的工作模式，可选：`l2`、`l3`、`l3s`                      |
+| `ipvlan_flag`  | `bridge` | 设置 IPvlan 的模式标志，可选：`bridge`、`private`、`vepa`            |
+| `parent`       |          | 指定要使用的父接口。                                                 |
 
-## Examples
+## 示例
 
-### Prerequisites
+### 先决条件
 
-- The examples on this page are all single host.
-- All examples can be performed on a single host running Docker. Any
-  example using a sub-interface like `eth0.10` can be replaced with `eth0` or
-  any other valid parent interface on the Docker host. Sub-interfaces with a `.`
-  are created on the fly. `-o parent` interfaces can also be left out of the
-  `docker network create` all together and the driver will create a `dummy`
-  interface that will enable local host connectivity to perform the examples.
-- Kernel requirements:
-    - IPvlan Linux kernel v4.2+ (support for earlier kernels exists but is buggy). To check your current kernel version, use `uname -r`
+- 本页示例均为单主机场景。
+- 所有示例都可以在一台运行 Docker 的主机上完成。示例中使用的子接口（如 `eth0.10`）可替换为 `eth0` 或主机上任意合法的父接口。带有 `.` 的子接口会按需动态创建。也可以在 `docker network create` 中省略 `-o parent`，驱动会自动创建一个 `dummy` 接口以便在本机完成示例。
+- 内核要求：
+    - IPvlan 需要 Linux 内核 v4.2+（更早版本虽有支持但存在缺陷）。使用 `uname -r` 可查看当前内核版本。
 
-### IPvlan L2 mode example usage
+### IPvlan L2 模式示例用法
 
-An example of the IPvlan `L2` mode topology is shown in the following image.
-The driver is specified with `-d driver_name` option. In this case `-d ipvlan`.
+下图展示了 IPvlan `L2` 模式的拓扑示例。
+创建网络时通过 `-d driver_name` 指定驱动，本示例为 `-d ipvlan`。
 
 ![Simple IPvlan L2 Mode Example](images/ipvlan_l2_simple.png)
 
-The parent interface in the next example `-o parent=eth0` is configured as follows:
+下例中的父接口（`-o parent=eth0`）配置如下：
 
 ```console
 $ ip addr show eth0
@@ -69,11 +50,10 @@ $ ip addr show eth0
     inet 192.168.1.250/24 brd 192.168.1.255 scope global eth0
 ```
 
-Use the network from the host's interface as the `--subnet` in the
-`docker network create`. The container will be attached to the same network as
-the host interface as set via the `-o parent=` option.
+在执行 `docker network create` 时，将主机接口所在的网络用作 `--subnet`。
+通过 `-o parent=` 指定的父接口，容器将连接到与该主机接口相同的网络。
 
-Create the IPvlan network and run a container attaching to it:
+创建 IPvlan 网络并启动容器连接到该网络：
 
 ```console
 # IPvlan  (-o ipvlan_mode= Defaults to L2 mode if not specified)
@@ -90,20 +70,15 @@ $ docker run --net=db_net -it --rm alpine /bin/sh
 # they are intentionally filtered by Linux for additional isolation.
 ```
 
-The default mode for IPvlan is `l2`. If `-o ipvlan_mode=` is left unspecified,
-the default mode will be used. Similarly, if the `--gateway` is left empty, the
-first usable address on the network will be set as the gateway. For example, if
-the subnet provided in the network create is `--subnet=192.168.1.0/24` then the
-gateway the container receives is `192.168.1.1`.
+IPvlan 的默认模式是 `l2`。如果未指定 `-o ipvlan_mode=`，将使用默认模式。
+同样地，如果未指定 `--gateway`，网段中的第一个可用地址会作为网关。
+例如，当指定的子网为 `--subnet=192.168.1.0/24` 时，容器获得的网关为 `192.168.1.1`。
 
-To help understand how this mode interacts with other hosts, the following
-figure shows the same layer 2 segment between two Docker hosts that applies to
-and IPvlan L2 mode.
+为了帮助理解该模式与其他主机的交互，下图展示了两个 Docker 主机处于同一二层网络段、并使用 IPvlan L2 模式的情形。
 
 ![Multiple IPvlan hosts](images/macvlan-bridge-ipvlan-l2.webp?w=700)
 
-The following will create the exact same network as the network `db_net` created
-earlier, with the driver defaults for `--gateway=192.168.1.1` and `-o ipvlan_mode=l2`.
+以下命令将创建与前面 `db_net` 相同的网络，驱动将默认设置 `--gateway=192.168.1.1` 与 `-o ipvlan_mode=l2`。
 
 ```console
 # IPvlan  (-o ipvlan_mode= Defaults to L2 mode if not specified)
@@ -123,17 +98,11 @@ $ ping -c 4 ipv1
 # they are intentionally filtered by Linux for additional isolation.
 ```
 
-The drivers also support the `--internal` flag that will completely isolate
-containers on a network from any communications external to that network. Since
-network isolation is tightly coupled to the network's parent interface the result
-of leaving the `-o parent=` option off of a `docker network create` is the exact
-same as the `--internal` option. If the parent interface is not specified or the
-`--internal` flag is used, a netlink type `dummy` parent interface is created
-for the user and used as the parent interface effectively isolating the network
-completely.
+这些驱动同样支持 `--internal` 标志，可将某个网络中的容器与外部通信完全隔离。
+由于网络隔离与父接口紧密相关，因此在执行 `docker network create` 时省略 `-o parent=`，效果与使用 `--internal` 相同。
+未指定父接口或使用 `--internal` 时，驱动会为你创建一个 netlink 类型的 `dummy` 父接口，作为该网络的父接口，从而实现完全隔离。
 
-The following two `docker network create` examples result in identical networks
-that you can attach container to:
+下面两条 `docker network create` 命令将创建等效的网络，容器连接效果相同：
 
 ```console
 # Empty '-o parent=' creates an isolated network
@@ -158,59 +127,27 @@ $ docker exec -it cid2 /bin/sh
 $ docker exec -it cid3 /bin/sh
 ```
 
-### IPvlan 802.1Q trunk L2 mode example usage
+### IPvlan 802.1Q trunk L2 模式示例
 
-Architecturally, IPvlan L2 mode trunking is the same as Macvlan with regard to
-gateways and L2 path isolation. There are nuances that can be advantageous for
-CAM table pressure in ToR switches, one MAC per port and MAC exhaustion on a
-host's parent NIC to name a few. The 802.1Q trunk scenario looks the same. Both
-modes adhere to tagging standards and have seamless integration with the physical
-network for underlay integration and hardware vendor plugin integrations.
+从架构上看，IPvlan 的 L2 模式在中继（trunk）场景下与 Macvlan 在网关与二层路径隔离方面一致。也存在一些差异点，例如在 ToR 交换机的 CAM 表压力、每端口单 MAC、父网卡可能出现 MAC 枯竭等方面的权衡。802.1Q trunk 场景的外观相同。两种模式都遵循标准的打标方式，并能与物理网络无缝集成，便于与底层网络及硬件厂商插件集成。
 
-Hosts on the same VLAN are typically on the same subnet and almost always are
-grouped together based on their security policy. In most scenarios, a multi-tier
-application is tiered into different subnets because the security profile of each
-process requires some form of isolation. For example, hosting your credit card
-processing on the same virtual network as the frontend webserver would be a
-regulatory compliance issue, along with circumventing the long standing best
-practice of layered defense in depth architectures. VLANs or the equivocal VNI
-(Virtual Network Identifier) when using the Overlay driver, are the first step
-in isolating tenant traffic.
+同一 VLAN 内的主机通常处于同一子网，且几乎总是根据安全策略被分组。在多数场景下，多层应用会被划分到不同子网，因为各个进程的安全属性需要隔离。例如，将信用卡处理与前端 Web 服务器放在同一虚拟网络上会引发合规性问题，也违背了长期以来分层纵深防御的最佳实践。VLAN（或在 Overlay 驱动下的等价概念 VNI，虚拟网络标识）是隔离租户流量的第一步。
 
 ![Docker VLANs in-depth](images/vlans-deeper-look.webp)
 
-The Linux sub-interface tagged with a VLAN can either already exist or will be
-created when you call a `docker network create`. `docker network rm` will delete
-the sub-interface. Parent interfaces such as `eth0` are not deleted, only
-sub-interfaces with a netlink parent index > 0.
+带 VLAN 标签的 Linux 子接口既可以事先存在，也可以在执行 `docker network create` 时由驱动创建。执行 `docker network rm` 时会删除该子接口。注意父接口（如 `eth0`）不会被删除，只会删除 netlink 父索引 > 0 的子接口。
 
-For the driver to add/delete the VLAN sub-interfaces the format needs to be
-`interface_name.vlan_tag`. Other sub-interface naming can be used as the
-specified parent, but the link will not be deleted automatically when
-`docker network rm` is invoked.
+为了让驱动自动添加/删除 VLAN 子接口，接口命名需要采用 `接口名. VLAN 标签` 的格式（例如 `eth0.10`）。也可以使用其他命名作为父接口，但当调用 `docker network rm` 时，这类链路不会被自动删除。
 
-The option to use either existing parent VLAN sub-interfaces or let Docker manage
-them enables the user to either completely manage the Linux interfaces and
-networking or let Docker create and delete the VLAN parent sub-interfaces
-(netlink `ip link`) with no effort from the user.
+你既可以使用已有的父 VLAN 子接口，也可以交由 Docker 管理。这样一来，既支持完全由你管理 Linux 接口与网络，也支持让 Docker 通过 netlink `ip link` 创建/删除 VLAN 父子接口，减轻运维负担。
 
-For example: use `eth0.10` to denote a sub-interface of `eth0` tagged with the
-VLAN id of `10`. The equivalent `ip link` command would be
-`ip link add link eth0 name eth0.10 type vlan id 10`.
+例如：`eth0.10` 表示 `eth0` 的一个子接口，并打上 VLAN ID `10`。等价的 `ip link` 命令为：`ip link add link eth0 name eth0.10 type vlan id 10`。
 
-The example creates the VLAN tagged networks and then starts two containers to
-test connectivity between containers. Different VLANs cannot ping one another
-without a router routing between the two networks. The default namespace is not
-reachable per IPvlan design in order to isolate container namespaces from the
-underlying host.
+下面的示例会创建带 VLAN 标签的网络，并启动两个容器以测试容器间连通性。在没有路由器进行跨网段转发的情况下，不同 VLAN 之间无法互相 ping 通。按照 IPvlan 的设计，默认命名空间不可达，以便将容器命名空间与底层主机隔离。
 
 #### VLAN ID 20
 
-In the first network tagged and isolated by the Docker host, `eth0.20` is the
-parent interface tagged with VLAN id `20` specified with `-o parent=eth0.20`.
-Other naming formats can be used, but the links need to be added and deleted
-manually using `ip link` or Linux configuration files. As long as the `-o parent`
-exists, anything can be used if it is compliant with Linux netlink.
+在第一个由 Docker 主机打标并隔离的网络中，通过 `-o parent=eth0.20` 指定父接口 `eth0.20`，其 VLAN ID 为 `20`。也可以使用其他命名格式，但需要手动通过 `ip link` 或 Linux 配置文件添加/删除链路。只要 `-o parent` 指定的接口存在且符合 Linux netlink，即可使用。
 
 ```console
 # now add networks and hosts as you would normally by attaching to the master (sub)interface that is tagged
@@ -226,10 +163,7 @@ $ docker run --net=ipvlan20 -it --name ivlan_test2 --rm alpine /bin/sh
 
 #### VLAN ID 30
 
-In the second network, tagged and isolated by the Docker host, `eth0.30` is the
-parent interface tagged with VLAN id `30` specified with `-o parent=eth0.30`. The
-`ipvlan_mode=` defaults to l2 mode `ipvlan_mode=l2`. It can also be explicitly
-set with the same result as shown in the next example.
+在第二个由 Docker 主机打标并隔离的网络中，通过 `-o parent=eth0.30` 指定父接口 `eth0.30`，其 VLAN ID 为 `30`。`ipvlan_mode=` 默认为 L2（`ipvlan_mode=l2`），也可以显式指定，效果相同。
 
 ```console
 # now add networks and hosts as you would normally by attaching to the master (sub)interface that is tagged.
@@ -244,8 +178,7 @@ $ docker run --net=ipvlan30 -it --name ivlan_test3 --rm alpine /bin/sh
 $ docker run --net=ipvlan30 -it --name ivlan_test4 --rm alpine /bin/sh
 ```
 
-The gateway is set inside of the container as the default gateway. That gateway
-would typically be an external router on the network.
+容器内的默认网关会被设置为该网络的网关地址。该网关通常是网络中的外部路由器。
 
 ```console
 $$ ip route
@@ -253,14 +186,9 @@ $$ ip route
   192.168.30.0/24 dev eth0  src 192.168.30.2
 ```
 
-Example: Multi-Subnet IPvlan L2 Mode starting two containers on the same subnet
-and pinging one another. In order for the `192.168.114.0/24` to reach
-`192.168.116.0/24` it requires an external router in L2 mode. L3 mode can route
-between subnets that share a common `-o parent=`.
+示例：IPvlan L2 模式下的多子网用法，在同一子网上启动两个容器并相互 ping 通。若要从 `192.168.114.0/24` 访问 `192.168.116.0/24`，需要在 L2 模式下由外部路由器转发。而在 L3 模式下，只要共享相同的 `-o parent=`，即可在不同子网间路由单播流量。
 
-Secondary addresses on network routers are common as an address space becomes
-exhausted to add another secondary to an L3 VLAN interface or commonly referred
-to as a "switched virtual interface" (SVI).
+当地址空间耗尽时，在网络路由器上为某个 L3 VLAN 接口（常称为 “交换虚接口”，SVI）添加次级地址是很常见的做法。
 
 ```console
 $ docker network create -d ipvlan \
@@ -273,23 +201,9 @@ $ docker run --net=ipvlan114 --ip=192.168.114.10 -it --rm alpine /bin/sh
 $ docker run --net=ipvlan114 --ip=192.168.114.11 -it --rm alpine /bin/sh
 ```
 
-A key takeaway is, operators have the ability to map their physical network into
-their virtual network for integrating containers into their environment with no
-operational overhauls required. NetOps drops an 802.1Q trunk into the
-Docker host. That virtual link would be the `-o parent=` passed in the network
-creation. For untagged (non-VLAN) links, it is as simple as `-o parent=eth0` or
-for 802.1Q trunks with VLAN IDs each network gets mapped to the corresponding
-VLAN/Subnet from the network.
+要点在于：运维人员可以把物理网络映射到虚拟网络，将容器无缝纳入现有环境，无需大的运维改造。网络运维（NetOps）向 Docker 主机下发一个 802.1Q trunk，该虚拟链路即是在创建网络时通过 `-o parent=` 指定的接口。对于无标记（非 VLAN）的链路，只需 `-o parent=eth0`；对于带 VLAN ID 的 802.1Q trunk，则将各网络映射到相应的 VLAN/子网。
 
-An example being, NetOps provides VLAN ID and the associated subnets for VLANs
-being passed on the Ethernet link to the Docker host server. Those values are
-plugged into the `docker network create` commands when provisioning the
-Docker networks. These are persistent configurations that are applied every time
-the Docker engine starts which alleviates having to manage often complex
-configuration files. The network interfaces can also be managed manually by
-being pre-created and Docker networking will never modify them, and use them
-as parent interfaces. Example mappings from NetOps to Docker network commands
-are as follows:
+例如：NetOps 提供通过以太网链路传入 Docker 主机的 VLAN ID 及其对应子网。预配 Docker 网络时，将这些值填入 `docker network create` 命令。这些配置是持久的，每次 Docker 引擎启动都会生效，从而避免维护复杂的配置文件。也可以手动管理网络接口（预先创建），Docker 网络不会修改这些接口，而是将其作为父接口使用。如下是 NetOps 配置到 Docker 命令的示例映射：
 
 - VLAN: 10, Subnet: 172.16.80.0/24, Gateway: 172.16.80.1
     - `--subnet=172.16.80.0/24 --gateway=172.16.80.1 -o parent=eth0.10`
@@ -298,41 +212,17 @@ are as follows:
 - VLAN: 30, Subnet: 10.1.100.0/16, Gateway: 10.1.100.1
     - `--subnet=10.1.100.0/16 --gateway=10.1.100.1 -o parent=eth0.30`
 
-### IPvlan L3 mode example
+### IPvlan L3 模式示例
 
-IPvlan will require routes to be distributed to each endpoint. The driver only
-builds the IPvlan L3 mode port and attaches the container to the interface. Route
-distribution throughout a cluster is beyond the initial implementation of this
-single host scoped driver. In L3 mode, the Docker host is very similar to a
-router starting new networks in the container. They are on networks that the
-upstream network will not know about without route distribution. For those
-curious how IPvlan L3 will fit into container networking, see the following
-examples.
+IPvlan 要求将路由分发到各个端点。该驱动仅创建 IPvlan L3 模式的端口，并将容器附着到该接口；在集群范围内分发路由超出了这个单主机范围驱动的初始实现。在 L3 模式中，Docker 主机的角色类似于在容器中“开辟新网络”的路由器；如果不进行路由分发，上游网络并不了解这些网络。以下示例有助于理解 IPvlan L3 在容器网络中的定位。
 
 ![Docker IPvlan L2 mode](images/ipvlan-l3.webp?w=500)
 
-IPvlan L3 mode drops all broadcast and multicast traffic. This reason alone
-makes IPvlan L3 mode a prime candidate for those looking for massive scale and
-predictable network integrations. It is predictable and in turn will lead to
-greater uptimes because there is no bridging involved. Bridging loops have been
-responsible for high profile outages that can be hard to pinpoint depending on
-the size of the failure domain. This is due to the cascading nature of BPDUs
-(Bridge Port Data Units) that are flooded throughout a broadcast domain (VLAN)
-to find and block topology loops. Eliminating bridging domains, or at the least,
-keeping them isolated to a pair of ToRs (top of rack switches) will reduce hard
-to troubleshoot bridging instabilities. IPvlan L2 modes is well suited for
-isolated VLANs only trunked into a pair of ToRs that can provide a loop-free
-non-blocking fabric. The next step further is to route at the edge via IPvlan L3
-mode that reduces a failure domain to a local host only.
+IPvlan L3 模式会丢弃所有广播与组播流量。仅此一点就使其非常适合追求海量规模与可预期网络集成的场景。由于不涉及桥接，网络行为更可预测，也更有助于稳定运行。桥接环路常导致难以定位的重大故障（取决于故障域大小），这源于 BPDU（桥端口数据单元）在广播域（VLAN）内的泛洪以探测并阻断拓扑环路。消除桥接域，或至少将其隔离在一对 ToR（机架顶交换机）范围内，有助于降低桥接不稳定带来的排障难度。IPvlan L2 模式适合仅中继至一对 ToR 的隔离 VLAN，从而提供无环、非阻塞的网络结构；进一步的做法是在边缘通过 IPvlan L3 进行路由，将故障域限定在本地主机。
 
-- L3 mode needs to be on a separate subnet as the default namespace since it
-  requires a netlink route in the default namespace pointing to the IPvlan parent
-  interface.
-- The parent interface used in this example is `eth0` and it is on the subnet
-  `192.168.1.0/24`. Notice the `docker network` is not on the same subnet
-  as `eth0`.
-- Unlike IPvlan l2 modes, different subnets/networks can ping one another as
-  long as they share the same parent interface `-o parent=`.
+- L3 模式需要与默认命名空间使用不同的子网，因为它需要在默认命名空间下存在一条指向 IPvlan 父接口的 netlink 路由。
+- 本示例中父接口为 `eth0`，其所在子网为 `192.168.1.0/24`。注意 `docker network` 与 `eth0` 不在同一子网。
+- 与 IPvlan L2 模式不同，只要共享相同的父接口 `-o parent=`，不同子网/网络之间可以互相 ping 通。
 
 ```console
 $$ ip a show eth0
@@ -341,17 +231,11 @@ $$ ip a show eth0
     inet 192.168.1.250/24 brd 192.168.1.255 scope global eth0
 ```
 
-- A traditional gateway doesn't mean much to an L3 mode IPvlan interface since
-  there is no broadcast traffic allowed. Because of that, the container default
-  gateway points to the containers `eth0` device. See below for CLI output
-  of `ip route` or `ip -6 route` from inside an L3 container for details.
+- 对于 L3 模式的 IPvlan 接口，传统意义上的网关并不重要，因为不允许广播流量。因此，容器的默认网关会指向容器自身的 `eth0` 设备。详见下文 L3 容器内执行 `ip route` 或 `ip -6 route` 的输出。
 
-The mode `-o ipvlan_mode=l3` must be explicitly specified since the default
-IPvlan mode is `l2`.
+由于 IPvlan 的默认模式为 `l2`，因此必须显式指定 `-o ipvlan_mode=l3`。
 
-The following example does not specify a parent interface. The network drivers
-will create a dummy type link for the user rather than rejecting the network
-creation and isolating containers from only communicating with one another.
+下面的示例未指定父接口。驱动不会拒绝创建该网络，而是为你创建一个 dummy 类型的链路；这样容器会彼此可达，但与外界隔离。
 
 ```console
 # Create the IPvlan L3 network
@@ -374,9 +258,7 @@ $ docker run --net=ipnet210 --ip=10.1.214.9 -it --rm alpine ping -c 2 192.168.21
 
 > [!NOTE]
 >
-> Notice that there is no `--gateway=` option in the network create. The field
-> is ignored if one is specified `l3` mode. Take a look at the container routing
-> table from inside of the container:
+> 注意网络创建命令中没有 `--gateway=`。在 `l3` 模式下，即使指定该字段也会被忽略。可以在容器内查看路由表：
 >
 > ```console
 > # Inside an L3 mode container
@@ -385,21 +267,13 @@ $ docker run --net=ipnet210 --ip=10.1.214.9 -it --rm alpine ping -c 2 192.168.21
 >   192.168.214.0/24 dev eth0  src 192.168.214.10
 > ```
 
-In order to ping the containers from a remote Docker host or the container be
-able to ping a remote host, the remote host or the physical network in between
-need to have a route pointing to the host IP address of the container's Docker
-host eth interface.
+若希望从远端 Docker 主机 ping 到容器，或让容器 ping 远端主机，则需要在远端主机或中间物理网络上，添加一条指向容器所在 Docker 主机网卡 IP 的路由。
 
-### Dual stack IPv4 IPv6 IPvlan L2 mode
+### 双栈 IPv4/IPv6 的 IPvlan L2 模式
 
-- Not only does Libnetwork give you complete control over IPv4 addressing, but
-  it also gives you total control over IPv6 addressing as well as feature parity
-  between the two address families.
+– Libnetwork 不仅让你完全掌控 IPv4 地址分配，也同样支持对 IPv6 的完全控制，并在两类地址族之间保持功能一致。
 
-- The next example will start with IPv6 only. Start two containers on the same
-  VLAN `139` and ping one another. Since the IPv4 subnet is not specified, the
-  default IPAM will provision a default IPv4 subnet. That subnet is isolated
-  unless the upstream network is explicitly routing it on VLAN `139`.
+– 下一个示例从仅 IPv6 开始：在同一 VLAN `139` 上启动两个容器并互相 ping。由于未指定 IPv4 子网，默认 IPAM 会分配一个默认 IPv4 子网；除非上游网络对 VLAN `139` 显式路由，否则该子网将保持隔离。
 
 ```console
 # Create a v6 network
@@ -411,7 +285,7 @@ $ docker network create -d ipvlan \
 $ docker run --net=v6ipvlan139 -it --rm alpine /bin/sh
 ```
 
-View the container eth0 interface and v6 routing table:
+查看容器内 eth0 接口与 IPv6 路由表：
 
 ```console
 # Inside the IPv6 container
@@ -431,7 +305,7 @@ $$ ip -6 route
 default via 2001:db8:abc2::22 dev eth0  metric 1024
 ```
 
-Start a second container and ping the first container's v6 address.
+再启动第二个容器并 ping 第一个容器的 v6 地址：
 
 ```console
 # Test L2 connectivity over IPv6
@@ -457,11 +331,9 @@ PING 2001:db8:abc2::1 (2001:db8:abc2::1): 56 data bytes
 round-trip min/avg/max/stddev = 0.044/0.051/0.058/0.000 ms
 ```
 
-The next example with setup a dual stack IPv4/IPv6 network with an example
-VLAN ID of `140`.
+接下来使用 VLAN ID `140` 演示搭建双栈 IPv4/IPv6 网络：
 
-Next create a network with two IPv4 subnets and one IPv6 subnets, all of which
-have explicit gateways:
+创建一个包含两个 IPv4 子网和一个 IPv6 子网的网络，并为三者显式指定网关：
 
 ```console
 $ docker network create -d ipvlan \
@@ -472,7 +344,7 @@ $ docker network create -d ipvlan \
     -o ipvlan_mode=l2 ipvlan140
 ```
 
-Start a container and view eth0 and both v4 & v6 routing tables:
+启动容器并查看 eth0、IPv4 与 IPv6 路由表：
 
 ```console
 $ docker run --net=ipvlan140 --ip6=2001:db8:abc2::51 -it --rm alpine /bin/sh
@@ -497,8 +369,7 @@ $$ ip -6 route
 default via 2001:db8:abc9::22 dev eth0  metric 1024
 ```
 
-Start a second container with a specific `--ip4` address and ping the first host
-using IPv4 packets:
+启动第二个容器并指定 `--ip`，使用 IPv4 数据包 ping 第一个主机：
 
 ```console
 $ docker run --net=ipvlan140 --ip=192.168.140.10 -it --rm alpine /bin/sh
@@ -506,26 +377,16 @@ $ docker run --net=ipvlan140 --ip=192.168.140.10 -it --rm alpine /bin/sh
 
 > [!NOTE]
 >
-> Different subnets on the same parent interface in IPvlan `L2` mode cannot ping
-> one another. That requires a router to proxy-arp the requests with a secondary
-> subnet. However, IPvlan `L3` will route the unicast traffic between disparate
-> subnets as long as they share the same `-o parent` parent link.
+> 在 IPvlan `L2` 模式中，同一父接口上的不同子网无法互相 ping 通。需要由路由器使用次级子网进行 Proxy ARP 才能转发请求。
+> 但在 IPvlan `L3` 模式中，只要共享相同的 `-o parent` 父链路，就能在不同子网间路由单播流量。
 
-### Dual stack IPv4 IPv6 IPvlan L3 mode
+### 双栈 IPv4/IPv6 的 IPvlan L3 模式
 
-Example: IPvlan L3 Mode Dual Stack IPv4/IPv6, Multi-Subnet w/ 802.1Q VLAN Tag:118
+示例：IPvlan L3 模式（双栈 IPv4/IPv6，多子网，802.1Q VLAN 标签：118）
 
-As in all of the examples, a tagged VLAN interface does not have to be used. The
-sub-interfaces can be swapped with `eth0`, `eth1`, `bond0` or any other valid
-interface on the host other then the `lo` loopback.
+与其他示例一样，不必须使用打过标签的 VLAN 接口。子接口可以替换为主机上的 `eth0`、`eth1`、`bond0` 或任何合法接口（不包括回环 `lo`）。
 
-The primary difference you will see is that L3 mode does not create a default
-route with a next-hop but rather sets a default route pointing to `dev eth` only
-since ARP/Broadcasts/Multicast are all filtered by Linux as per the design. Since
-the parent interface is essentially acting as a router, the parent interface IP
-and subnet needs to be different from the container networks. That is the opposite
-of bridge and L2 modes, which need to be on the same subnet (broadcast domain)
-in order to forward broadcast and multicast packets.
+主要区别在于：L3 模式不会创建带下一跳的默认路由，而是仅设置一个指向 `dev eth` 的默认路由，因为根据设计，ARP/广播/组播都被 Linux 过滤。由于父接口本质上充当路由器，父接口的 IP 与子网需要与容器网络不同。这与 bridge 与 L2 模式相反，后两者需要位于同一子网（广播域）才能转发广播与组播数据包。
 
 ```console
 # Create an IPv6+IPv4 Dual Stack IPvlan L3 network
@@ -549,7 +410,7 @@ $ docker run --net=ipnet110 --ip=192.168.112.30 -it --rm alpine /bin/sh
 $ docker run --net=ipnet110 --ip6=2001:db8:abc6::50 --ip=192.168.112.50 -it --rm alpine /bin/sh
 ```
 
-Interface and routing table outputs are as follows:
+接口与路由表输出如下：
 
 ```console
 $$ ip a show eth0
@@ -575,27 +436,19 @@ default dev eth0  metric 1024
 
 > [!NOTE]
 >
-> There may be a bug when specifying `--ip6=` addresses when you delete a
-> container with a specified v6 address and then start a new container with the
-> same v6 address it throws the following like the address isn't properly being
-> released to the v6 pool. It will fail to unmount the container and be left dead.
+> 当指定 `--ip6=` 地址时，可能存在一个缺陷：删除具有该 v6 地址的容器后，若立即使用相同 v6 地址启动新容器，可能会报错，似乎地址未正确释放回 v6 地址池，从而导致容器卸载失败并处于异常状态。
 
 ```console
 docker: Error response from daemon: Address already in use.
 ```
 
-### Manually create 802.1Q links
+### 手动创建 802.1Q 链路
 
 #### VLAN ID 40
 
-If a user does not want the driver to create the VLAN sub-interface, it needs to
-exist before running `docker network create`. If you have sub-interface
-naming that is not `interface.vlan_id` it is honored in the `-o parent=` option
-again as long as the interface exists and is up.
+如果不希望由驱动创建 VLAN 子接口，则需要在运行 `docker network create` 之前自行创建。即便子接口命名不是 `接口名.VLAN_ID`，只要接口存在且已启用，也可以在 `-o parent=` 选项中使用。
 
-Links, when manually created, can be named anything as long as they exist when
-the network is created. Manually created links do not get deleted regardless of
-the name when the network is deleted with `docker network rm`.
+手动创建的链路可按任意名称命名，只要在创建网络时它们存在即可。无论名称如何，当使用 `docker network rm` 删除网络时，这些手动创建的链路不会被删除。
 
 ```console
 # create a new sub-interface tied to dot1q vlan 40
@@ -615,7 +468,7 @@ $ docker run --net=ipvlan40 -it --name ivlan_test5 --rm alpine /bin/sh
 $ docker run --net=ipvlan40 -it --name ivlan_test6 --rm alpine /bin/sh
 ```
 
-Example: VLAN sub-interface manually created with any name:
+示例：使用任意名称手动创建 VLAN 子接口：
 
 ```console
 # create a new sub interface tied to dot1q vlan 40
@@ -634,12 +487,10 @@ $ docker run --net=ipvlan40 -it --name ivlan_test5 --rm alpine /bin/sh
 $ docker run --net=ipvlan40 -it --name ivlan_test6 --rm alpine /bin/sh
 ```
 
-Manually created links can be cleaned up with:
+可用以下命令清理手动创建的链路：
 
 ```console
 $ ip link del foo
 ```
 
-As with all of the Libnetwork drivers, they can be mixed and matched, even as
-far as running 3rd party ecosystem drivers in parallel for maximum flexibility
-to the Docker user.
+与其他 Libnetwork 驱动一样，你可以自由混用，甚至与第三方生态驱动并行运行，为 Docker 用户提供最大的灵活性。

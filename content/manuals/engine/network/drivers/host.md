@@ -1,112 +1,85 @@
 ---
-title: Host network driver
-description: All about exposing containers on the Docker host's network
+title: Host 网络驱动
+description: 在 Docker 主机网络上暴露容器的相关说明
 keywords: network, host, standalone, host mode networking
 aliases:
 - /network/host/
 - /network/drivers/host/
 ---
 
-If you use the `host` network mode for a container, that container's network
-stack isn't isolated from the Docker host (the container shares the host's
-networking namespace), and the container doesn't get its own IP-address allocated.
-For instance, if you run a container which binds to port 80 and you use `host`
-networking, the container's application is available on port 80 on the host's IP
-address.
+如果你为容器使用 `host` 网络模式，该容器的网络栈将不再与 Docker 主机隔离（容器与主机共享网络命名空间），并且容器不会分配到独立的 IP 地址。
+例如，当你运行一个绑定到端口 80 的容器并启用 `host` 网络时，该容器内的应用将通过主机 IP 的 80 端口对外提供服务。
 
 > [!NOTE]
 >
-> Given that the container does not have its own IP-address when using
-> `host` mode networking, [port-mapping](overlay.md#publish-ports) doesn't
-> take effect, and the `-p`, `--publish`, `-P`, and `--publish-all` option are
-> ignored, producing a warning instead:
+> 由于在 `host` 网络模式下容器没有独立的 IP 地址，[端口映射](overlay.md#publish-ports)不会生效；`-p`、`--publish`、`-P` 与 `--publish-all` 选项将被忽略，并给出警告：
 >
 > ```console
 > WARNING: Published ports are discarded when using host network mode
 > ```
 
-Host mode networking can be useful for the following use cases:
+Host 模式在以下场景中非常有用：
 
-- To optimize performance
-- In situations where a container needs to handle a large range of ports
+- 需要优化网络性能
+- 容器需要处理大量端口范围的场景
 
-This is because it doesn't require network address translation (NAT), and no "userland-proxy" is created for each port.
+原因是该模式不需要进行网络地址转换（NAT），且无需为每个端口创建“用户态代理”（userland-proxy）。
 
-The host networking driver is supported on Docker Engine (Linux only) and Docker Desktop version 4.34 and later.
+Host 网络驱动在 Docker Engine（仅限 Linux）以及 Docker Desktop 4.34 及以上版本中受支持。
 
-You can also use a `host` network for a swarm service, by passing `--network host`
-to the `docker service create` command. In this case, control traffic (traffic
-related to managing the swarm and the service) is still sent across an overlay
-network, but the individual swarm service containers send data using the Docker
-daemon's host network and ports. This creates some extra limitations. For instance,
-if a service container binds to port 80, only one service container can run on a
-given swarm node.
+你也可以在 Swarm 服务中使用 `host` 网络方式：在 `docker service create` 命令中传入 `--network host`。此时，与 Swarm 及服务管理相关的控制流量仍通过 overlay 网络传输，但各个服务容器将使用守护进程主机的网络与端口发送数据。这样会带来额外限制，例如：如果某个服务容器绑定了 80 端口，那么在同一 Swarm 节点上只能运行一个该服务容器。
 
 ## Docker Desktop
 
-Host networking is supported on Docker Desktop version 4.34 and later.
-To enable this feature:
+Docker Desktop 自 4.34 起支持 Host 网络。启用方法：
 
-1. Sign in to your Docker account in Docker Desktop.
-2. Navigate to **Settings**.
-3. Under the **Resources** tab, select **Network**.
-4. Check the **Enable host networking** option.
-5. Select **Apply and restart**.
+1. 在 Docker Desktop 中登录你的 Docker 账户。
+2. 打开 **Settings**。
+3. 在 **Resources** 标签页选择 **Network**。
+4. 勾选 **Enable host networking** 选项。
+5. 点击 **Apply and restart**。
 
-This feature works in both directions. This means you can
-access a server that is running in a container from your host and you can access
-servers running on your host from any container that is started with host
-networking enabled. TCP as well as UDP are supported as communication protocols.
+该功能支持双向访问：你既可以从主机访问容器中的服务器，也可以从启用了 host 网络的任意容器访问主机上的服务。通信协议同时支持 TCP 与 UDP。
 
-### Examples
+### 示例
 
-The following command starts netcat in a container that listens on port `8000`:
+下面的命令在容器中启动 netcat，使其监听 `8000` 端口：
 
 ```console
 $ docker run --rm -it --net=host nicolaka/netshoot nc -lkv 0.0.0.0 8000
 ```
 
-Port `8000` will then be available on the host and you can connect to it with the following
-command from another terminal:
+此时主机上的 `8000` 端口可用，你可以在另一个终端通过如下命令连接：
 
 ```console
 $ nc localhost 8000
 ```
 
-What you type in here will then appear on the terminal where the container is
-running.
+你在此处输入的内容将会出现在运行该容器的终端上。
 
-To access a service running on the host from the container, you can start a container with
-host networking enabled with this command:
+要从容器访问主机上的服务，可以使用下述命令启动一个启用了 host 网络的容器：
 
 ```console
 $ docker run --rm -it --net=host nicolaka/netshoot
 ```
 
-If you then want to access a service on your host from the container (in this
-example a web server running on port `80`), you can do it like this:
+随后，若要在容器中访问主机上的服务（例如运行在 `80` 端口的 Web 服务器），可以这样：
 
 ```console
 $ nc localhost 80
 ```
 
-### Limitations
+### 限制
 
-- Processes inside the container cannot bind to the IP addresses of the host
- because the container has no direct access to the interfaces of the host.
-- The host network feature of Docker Desktop works on layer 4. This means that
-unlike with Docker on Linux, network protocols that operate below TCP or UDP are
-not supported.
-- This feature doesn't work with Enhanced Container Isolation enabled, since
-isolating your containers from the host and allowing them access to the host
-network contradict each other.
-- Only Linux containers are supported. Host networking does not work with
-  Windows containers.
+- 容器内的进程无法绑定主机的 IP 地址，因为容器无法直接访问主机网卡接口。
+- Docker Desktop 的 host 网络特性工作在第 4 层。这意味着与 Linux 上的 Docker 不同，不支持 TCP/UDP 以下的网络协议。
+- 当启用“增强容器隔离”（Enhanced Container Isolation）时，该功能无法使用；因为将容器与主机隔离与允许容器访问主机网络是相互矛盾的。
+- 仅支持 Linux 容器；Windows 容器不支持 host 网络。
 
-## Next steps
+## 进一步阅读
 
-- Go through the [host networking tutorial](/manuals/engine/network/tutorials/host.md)
-- Learn about [networking from the container's point of view](../_index.md)
-- Learn about [bridge networks](./bridge.md)
-- Learn about [overlay networks](./overlay.md)
-- Learn about [Macvlan networks](./macvlan.md)
+- 学习[Host 网络教程](/manuals/engine/network/tutorials/host.md)
+- 了解[从容器视角的网络](../_index.md)
+- 了解[bridge 网络](./bridge.md)
+- 了解[overlay 网络](./overlay.md)
+- 了解[Macvlan 网络](./macvlan.md)

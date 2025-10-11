@@ -1,6 +1,6 @@
 ---
-title: Bridge network driver
-description: All about using user-defined bridge networks and the default bridge
+title: Bridge 网络驱动
+description: 关于使用用户自定义 bridge 网络与默认 bridge 的全部内容
 keywords: network, bridge, user-defined, standalone
 aliases:
 - /config/containers/bridges/
@@ -11,117 +11,70 @@ aliases:
 - /network/drivers/bridge/
 ---
 
-In terms of networking, a bridge network is a Link Layer device
-which forwards traffic between network segments. A bridge can be a hardware
-device or a software device running within a host machine's kernel.
+从网络角度看，bridge 网络是一种链路层设备，用于在不同网络段之间转发流量。bridge 可以是硬件设备，也可以是运行在主机内核中的软件设备。
 
-In terms of Docker, a bridge network uses a software bridge which lets
-containers connected to the same bridge network communicate, while providing
-isolation from containers that aren't connected to that bridge network. The
-Docker bridge driver automatically installs rules in the host machine so that
-containers on different bridge networks can't communicate directly with each
-other.
+在 Docker 中，bridge 网络基于软件网桥实现：连接到同一 bridge 网络的容器可以相互通信，同时与未连接到该网络的容器保持隔离。Docker 的 bridge 驱动会在主机上自动安装相关规则，使处于不同 bridge 网络的容器无法直接互通。
 
-Bridge networks apply to containers running on the same Docker daemon host.
-For communication among containers running on different Docker daemon hosts, you
-can either manage routing at the OS level, or you can use an
-[overlay network](overlay.md).
+bridge 网络适用于运行在同一 Docker 守护进程主机上的容器。如果需要不同主机上的容器相互通信，可以在操作系统层面配置路由，或使用[overlay 网络](overlay.md)。
 
-When you start Docker, a [default bridge network](#use-the-default-bridge-network) (also
-called `bridge`) is created automatically, and newly-started containers connect
-to it unless otherwise specified. You can also create user-defined custom bridge
-networks. **User-defined bridge networks are superior to the default `bridge`
-network.**
+当 Docker 启动时，会自动创建一个[默认 bridge 网络](#use-the-default-bridge-network)（名称为 `bridge`）。除非另行指定，新启动的容器会连接到该网络。你也可以创建用户自定义的 bridge 网络。**用户自定义 bridge 网络优于默认 `bridge` 网络。**
 
-## Differences between user-defined bridges and the default bridge
+## 用户自定义 bridge 与默认 bridge 的差异
 
-- **User-defined bridges provide automatic DNS resolution between containers**.
+- **用户自定义 bridge 提供容器间的自动 DNS 解析**。
 
-  Containers on the default bridge network can only access each other by IP
-  addresses, unless you use the [`--link` option](../links.md), which is
-  considered legacy. On a user-defined bridge network, containers can resolve
-  each other by name or alias.
+  处于默认 bridge 网络的容器只能通过 IP 地址互相访问，除非使用已被视为遗留的 [`--link` 选项](../links.md)。在用户自定义 bridge 网络上，容器可以通过名称或别名相互解析。
 
-  Imagine an application with a web front-end and a database back-end. If you call
-  your containers `web` and `db`, the web container can connect to the db container
-  at `db`, no matter which Docker host the application stack is running on.
+  假设有一个包含 Web 前端与数据库后端的应用。如果将容器命名为 `web` 与 `db`，则无论应用栈运行在哪台 Docker 主机上，`web` 容器都可以通过主机名 `db` 连接到数据库容器。
 
-  If you run the same application stack on the default bridge network, you need
-  to manually create links between the containers (using the legacy `--link`
-  flag). These links need to be created in both directions, so you can see this
-  gets complex with more than two containers which need to communicate.
-  Alternatively, you can manipulate the `/etc/hosts` files within the containers,
-  but this creates problems that are difficult to debug.
+  如果在默认 bridge 网络上运行同样的应用栈，你需要手动在容器之间创建链接（使用遗留的 `--link` 标志）。这些链接需要双向创建；当需要通信的容器超过两个时，复杂度会迅速上升。你也可以在容器内修改 `/etc/hosts` 文件，但这会引入难以调试的问题。
 
-- **User-defined bridges provide better isolation**.
+- **用户自定义 bridge 提供更好的隔离性**。
 
-  All containers without a `--network` specified, are attached to the default bridge network. This can be a risk, as unrelated stacks/services/containers are then able to communicate.
+  未显式指定 `--network` 的所有容器都会被连接到默认 bridge 网络。这可能带来风险：彼此无关的栈/服务/容器因此能够通信。
 
-  Using a user-defined network provides a scoped network in which only containers attached to that network are able to communicate.
+  使用用户自定义网络可以提供一个作用域明确的网络，只有连接到该网络的容器才可通信。
 
-- **Containers can be attached and detached from user-defined networks on the fly**.
+- **可以在容器运行期间动态加入/移除用户自定义网络**。
 
-  During a container's lifetime, you can connect or disconnect it from
-  user-defined networks on the fly. To remove a container from the default
-  bridge network, you need to stop the container and recreate it with different
-  network options.
+  在容器生命周期内，你可以随时将其连接到或断开自定义网络。相对地，要将容器从默认 bridge 网络移除，则需要先停止容器并以不同的网络选项重新创建。
 
-- **Each user-defined network creates a configurable bridge**.
+- **每个用户自定义网络都会创建一个可配置的 bridge**。
 
-  If your containers use the default bridge network, you can configure it, but
-  all the containers use the same settings, such as MTU and `iptables` rules.
-  In addition, configuring the default bridge network happens outside of Docker
-  itself, and requires a restart of Docker.
+  如果容器使用默认 bridge 网络，你可以对其配置，但所有容器将共享相同设置（例如 MTU 与 `iptables` 规则）。此外，默认 bridge 的配置需要在 Docker 之外进行，并且需要重启 Docker。
 
-  User-defined bridge networks are created and configured using
-  `docker network create`. If different groups of applications have different
-  network requirements, you can configure each user-defined bridge separately,
-  as you create it.
+  用户自定义 bridge 网络通过 `docker network create` 创建并配置。若不同的应用组有不同的网络需求，你可以在创建时分别进行配置。
 
-- **Linked containers on the default bridge network share environment variables**.
+- **默认 bridge 网络上通过 link 的容器会共享环境变量**。
 
-  Originally, the only way to share environment variables between two containers
-  was to link them using the [`--link` flag](../links.md). This type of
-  variable sharing isn't possible with user-defined networks. However, there
-  are superior ways to share environment variables. A few ideas:
+  早期在两个容器间共享环境变量的唯一方式是使用 [`--link` 标志](../links.md) 将它们链接起来。用户自定义网络不支持这种变量共享，但有更好的替代方案，例如：
 
-  - Multiple containers can mount a file or directory containing the shared
-    information, using a Docker volume.
+  - 多个容器通过 Docker 卷挂载包含共享信息的文件或目录。
 
-  - Multiple containers can be started together using `docker-compose` and the
-    compose file can define the shared variables.
+  - 使用 `docker-compose` 同时启动多个容器，并在 Compose 文件中定义共享变量。
 
-  - You can use swarm services instead of standalone containers, and take
-    advantage of shared [secrets](/manuals/engine/swarm/secrets.md) and
-    [configs](/manuals/engine/swarm/configs.md).
+  - 使用 Swarm 服务替代独立容器，利用共享的[密钥](/manuals/engine/swarm/secrets.md)与[配置](/manuals/engine/swarm/configs.md)。
 
-Containers connected to the same user-defined bridge network effectively expose all ports
-to each other. For a port to be accessible to containers or non-Docker hosts on
-different networks, that port must be _published_ using the `-p` or `--publish`
-flag.
+连接到同一用户自定义 bridge 网络的容器，彼此之间等同于所有端口可见。若希望不同网络中的容器或非 Docker 主机访问某个端口，必须使用 `-p` 或 `--publish` 将该端口“发布”。
 
-## Options
+## 选项
 
-The following table describes the driver-specific options that you can pass to
-`--opt` when creating a custom network using the `bridge` driver.
+下表列出了使用 `bridge` 驱动创建自定义网络时，可通过 `--opt` 传入的驱动特定选项：
 
-| Option                                                                                          | Default                     | Description                                                                                         |
-|-------------------------------------------------------------------------------------------------|-----------------------------|-----------------------------------------------------------------------------------------------------|
-| `com.docker.network.bridge.name`                                                                |                             | Interface name to use when creating the Linux bridge.                                               |
-| `com.docker.network.bridge.enable_ip_masquerade`                                                | `true`                      | Enable IP masquerading.                                                                             |
-| `com.docker.network.bridge.gateway_mode_ipv4`<br/>`com.docker.network.bridge.gateway_mode_ipv6` | `nat`                       | Control external connectivity. See [Packet filtering and firewalls](packet-filtering-firewalls.md). |
-| `com.docker.network.bridge.enable_icc`                                                          | `true`                      | Enable or Disable inter-container connectivity.                                                     |
-| `com.docker.network.bridge.host_binding_ipv4`                                                   | all IPv4 and IPv6 addresses | Default IP when binding container ports.                                                            |
-| `com.docker.network.driver.mtu`                                                                 | `0` (no limit)              | Set the containers network Maximum Transmission Unit (MTU).                                         |
-| `com.docker.network.container_iface_prefix`                                                     | `eth`                       | Set a custom prefix for container interfaces.                                                       |
-| `com.docker.network.bridge.inhibit_ipv4`                                                        | `false`                     | Prevent Docker from [assigning an IP address](#skip-bridge-ip-address-configuration) to the bridge. |
+| 选项                                                                                             | 默认值                      | 说明                                                                                                 |
+|-------------------------------------------------------------------------------------------------|-----------------------------|------------------------------------------------------------------------------------------------------|
+| `com.docker.network.bridge.name`                                                                |                             | 创建 Linux bridge 时使用的接口名称。                                                                  |
+| `com.docker.network.bridge.enable_ip_masquerade`                                                | `true`                      | 启用 IP 伪装（masquerading）。                                                                       |
+| `com.docker.network.bridge.gateway_mode_ipv4`<br/>`com.docker.network.bridge.gateway_mode_ipv6` | `nat`                       | 控制外部连通性。见[数据包过滤与防火墙](packet-filtering-firewalls.md)。                               |
+| `com.docker.network.bridge.enable_icc`                                                          | `true`                      | 启用或禁用容器间互联（Inter-Container Connectivity）。                                               |
+| `com.docker.network.bridge.host_binding_ipv4`                                                   | 所有 IPv4 与 IPv6 地址      | 绑定容器端口时使用的默认 IP。                                                                         |
+| `com.docker.network.driver.mtu`                                                                 | `0`（不限制）               | 设置容器网络的最大传输单元（MTU）。                                                                    |
+| `com.docker.network.container_iface_prefix`                                                     | `eth`                       | 为容器网络接口设置自定义前缀。                                                                       |
+| `com.docker.network.bridge.inhibit_ipv4`                                                        | `false`                     | 阻止 Docker 为该 bridge [分配 IPv4 地址](#skip-bridge-ip-address-configuration)。                    |
 
-Some of these options are also available as flags to the `dockerd` CLI, and you
-can use them to configure the default `docker0` bridge when starting the Docker
-daemon. The following table shows which options have equivalent flags in the
-`dockerd` CLI.
+上述部分选项也可作为 `dockerd` CLI 的标志使用，你可以在启动 Docker 守护进程时用来配置默认的 `docker0` bridge。下表列出了与 `dockerd` CLI 标志的对应关系：
 
-| Option                                           | Flag        |
+| 选项                                             | 标志        |
 | ------------------------------------------------ | ----------- |
 | `com.docker.network.bridge.name`                 | -           |
 | `com.docker.network.bridge.enable_ip_masquerade` | `--ip-masq` |
@@ -130,71 +83,47 @@ daemon. The following table shows which options have equivalent flags in the
 | `com.docker.network.driver.mtu`                  | `--mtu`     |
 | `com.docker.network.container_iface_prefix`      | -           |
 
-The Docker daemon supports a `--bridge` flag, which you can use to define
-your own `docker0` bridge. Use this option if you want to run multiple daemon
-instances on the same host. For details, see
-[Run multiple daemons](/reference/cli/dockerd.md#run-multiple-daemons).
+Docker 守护进程支持 `--bridge` 标志，你可以用它自定义 `docker0` bridge。若需要在同一主机上运行多个守护进程实例，可使用此选项。详情参见[运行多个守护进程](/reference/cli/dockerd.md#run-multiple-daemons)。
 
-### Default host binding address
+### 默认主机绑定地址
 
-When no host address is given in port publishing options like `-p 80`
-or `-p 8080:80`, the default is to make the container's port 80 available on all
-host addresses, IPv4 and IPv6.
+当在端口发布选项（如 `-p 80` 或 `-p 8080:80`）中未指定主机地址时，默认会在主机的所有地址（IPv4 与 IPv6）上开放容器的 80 端口。
 
-The bridge network driver option `com.docker.network.bridge.host_binding_ipv4`
-can be used to modify the default address for published ports.
+可以使用 bridge 网络驱动选项 `com.docker.network.bridge.host_binding_ipv4` 修改已发布端口的默认绑定地址。
 
-Despite the option's name, it is possible to specify an IPv6 address.
+尽管该选项名称包含 IPv4，你仍可以指定 IPv6 地址。
 
-When the default binding address is an address assigned to a specific interface,
-the container's port will only be accessible via that address.
+当默认绑定地址是某个特定接口上的地址时，容器端口将只能通过该地址访问。
 
-Setting the default binding address to `::` means published ports will only be
-available on the host's IPv6 addresses. However, setting it to `0.0.0.0` means it
-will be available on the host's IPv4 and IPv6 addresses.
+将默认绑定地址设置为 `::` 表示仅在主机的 IPv6 地址上开放已发布端口；设置为 `0.0.0.0` 则表示在主机的 IPv4 与 IPv6 地址上均可用。
 
-To restrict a published port to IPv4 only, the address must be included in the
-container's publishing options. For example, `-p 0.0.0.0:8080:80`.
+若希望仅限 IPv4，可在容器的发布选项中显式指定地址，例如：`-p 0.0.0.0:8080:80`。
 
-## Manage a user-defined bridge
+## 管理用户自定义 bridge
 
-Use the `docker network create` command to create a user-defined bridge
-network.
+使用 `docker network create` 命令创建用户自定义 bridge 网络。
 
 ```console
 $ docker network create my-net
 ```
 
-You can specify the subnet, the IP address range, the gateway, and other
-options. See the
+你可以指定子网、IP 地址范围、网关及其他选项。详情参阅
 [docker network create](/reference/cli/docker/network/create.md#specify-advanced-options)
-reference or the output of `docker network create --help` for details.
+参考文档，或查看 `docker network create --help` 的输出。
 
-Use the `docker network rm` command to remove a user-defined bridge
-network. If containers are currently connected to the network,
-[disconnect them](#disconnect-a-container-from-a-user-defined-bridge)
-first.
+使用 `docker network rm` 命令删除用户自定义 bridge 网络。若有容器仍连接于该网络，请先[断开连接](#disconnect-a-container-from-a-user-defined-bridge)。
 
 ```console
 $ docker network rm my-net
 ```
 
-> **What's really happening?**
+> **背后发生了什么？**
 >
-> When you create or remove a user-defined bridge or connect or disconnect a
-> container from a user-defined bridge, Docker uses tools specific to the
-> operating system to manage the underlying network infrastructure (such as adding
-> or removing bridge devices or configuring `iptables` rules on Linux). These
-> details should be considered implementation details. Let Docker manage your
-> user-defined networks for you.
+> 当你创建/删除用户自定义 bridge，或将容器连接/断开该网络时，Docker 会调用与操作系统相关的工具管理底层网络设施（如添加/删除 bridge 设备，或在 Linux 上配置 `iptables` 规则）。这些都属于实现细节，交由 Docker 处理即可。
 
-## Connect a container to a user-defined bridge
+## 将容器连接到用户自定义 bridge
 
-When you create a new container, you can specify one or more `--network` flags.
-This example connects an Nginx container to the `my-net` network. It also
-publishes port 80 in the container to port 8080 on the Docker host, so external
-clients can access that port. Any other container connected to the `my-net`
-network has access to all ports on the `my-nginx` container, and vice versa.
+创建新容器时，你可以指定一个或多个 `--network` 标志。下面的示例将一个 Nginx 容器连接到 `my-net` 网络，并把容器的 80 端口发布到主机的 8080 端口，方便外部客户端访问。任何连接到 `my-net` 的其他容器都可以访问 `my-nginx` 容器上的所有端口，反之亦然。
 
 ```console
 $ docker create --name my-nginx \
@@ -203,65 +132,51 @@ $ docker create --name my-nginx \
   nginx:latest
 ```
 
-To connect a **running** container to an existing user-defined bridge, use the
-`docker network connect` command. The following command connects an already-running
-`my-nginx` container to an already-existing `my-net` network:
+要将一个“正在运行”的容器连接到现有的用户自定义 bridge，请使用 `docker network connect`。如下命令把已在运行的 `my-nginx` 容器连接到已存在的 `my-net` 网络：
 
 ```console
 $ docker network connect my-net my-nginx
 ```
 
-## Disconnect a container from a user-defined bridge
+## 将容器从用户自定义 bridge 断开
 
-To disconnect a running container from a user-defined bridge, use the
-`docker network disconnect` command. The following command disconnects
-the `my-nginx` container from the `my-net` network.
+要将运行中的容器从用户自定义 bridge 断开，请使用 `docker network disconnect` 命令。如下命令将 `my-nginx` 从 `my-net` 网络断开：
 
 ```console
 $ docker network disconnect my-net my-nginx
 ```
 
-## Use IPv6 in a user-defined bridge network
+## 在用户自定义 bridge 网络中使用 IPv6
 
-When you create your network, you can specify the `--ipv6` flag to enable IPv6.
+创建网络时，可以通过 `--ipv6` 标志启用 IPv6：
 
 ```console
 $ docker network create --ipv6 --subnet 2001:db8:1234::/64 my-net
 ```
 
-If you do not provide a `--subnet` option, a Unique Local Address (ULA) prefix
-will be chosen automatically.
+如果未提供 `--subnet` 选项，将自动选择一个唯一本地地址（ULA）前缀。
 
-## IPv6-only bridge networks
+## 仅 IPv6 的 bridge 网络
 
-To skip IPv4 address configuration on the bridge and in its containers, create
-the network with option `--ipv4=false`, and enable IPv6 using `--ipv6`.
+若要跳过在 bridge 及其容器上的 IPv4 地址配置，可在创建网络时使用 `--ipv4=false`，并通过 `--ipv6` 启用 IPv6。
 
 ```console
 $ docker network create --ipv6 --ipv4=false v6net
 ```
 
-IPv4 address configuration cannot be disabled in the default bridge network.
+在默认 bridge 网络中，无法禁用 IPv4 地址配置。
 
-## Use the default bridge network
+## 使用默认 bridge 网络
 
-The default `bridge` network is considered a legacy detail of Docker and is not
-recommended for production use. Configuring it is a manual operation, and it has
-[technical shortcomings](#differences-between-user-defined-bridges-and-the-default-bridge).
+默认的 `bridge` 网络属于 Docker 的遗留细节，不建议在生产中使用。它的配置需要手动进行，并且存在一些[技术局限](#用户自定义-bridge-与默认-bridge-的差异)。
 
-### Connect a container to the default bridge network
+### 将容器连接到默认 bridge 网络
 
-If you do not specify a network using the `--network` flag, and you do specify a
-network driver, your container is connected to the default `bridge` network by
-default. Containers connected to the default `bridge` network can communicate,
-but only by IP address, unless they're linked using the
-[legacy `--link` flag](../links.md).
+如果未通过 `--network` 指定网络，而是仅指定了网络驱动，容器将默认连接到 `bridge` 网络。连接到默认 `bridge` 网络的容器可以通信，但只能通过 IP 地址，除非使用[遗留的 `--link` 标志](../links.md)。
 
-### Configure the default bridge network
+### 配置默认 bridge 网络
 
-To configure the default `bridge` network, you specify options in `daemon.json`.
-Here is an example `daemon.json` with several options specified. Only specify
-the settings you need to customize.
+要配置默认 `bridge` 网络，请在 `daemon.json` 中指定选项。下面是一个包含若干选项的示例；仅配置你确实需要自定义的设置。
 
 ```json
 {
@@ -273,34 +188,25 @@ the settings you need to customize.
 }
 ```
 
-In this example:
+在该示例中：
 
-- The bridge's address is "192.168.1.1/24" (from `bip`).
-- The bridge network's subnet is "192.168.1.0/24" (from `bip`).
-- Container addresses will be allocated from "192.168.1.0/25" (from `fixed-cidr`).
+- Bridge 的地址为 "192.168.1.1/24"（来自 `bip`）。
+- Bridge 网络的子网为 "192.168.1.0/24"（来自 `bip`）。
+- 容器地址将从 "192.168.1.0/25" 分配（来自 `fixed-cidr`）。
 
 
-### Use IPv6 with the default bridge network
+### 在默认 bridge 网络中使用 IPv6
 
-IPv6 can be enabled for the default bridge using the following options in
-`daemon.json`, or their command line equivalents.
+可以在 `daemon.json` 中通过以下选项（或等效命令行）为默认 bridge 启用 IPv6：
 
-These three options only affect the default bridge, they are not used by
-user-defined networks. The addresses in below are examples from the
-IPv6 documentation range.
+以下三个选项仅影响默认 bridge，不用于用户自定义网络。下面的地址示例来自 IPv6 文档保留段。
 
-- Option `ipv6` is required.
-- Option `bip6` is optional, it specifies the address of the default bridge, which
-  will be used as the default gateway by containers. It also specifies the subnet
-  for the bridge network.
-- Option `fixed-cidr-v6` is optional, it specifies the address range Docker may
-  automatically allocate to containers.
-  - The prefix should normally be `/64` or shorter.
-  - For experimentation on a local network, it is better to use a Unique Local
-    Address (ULA) prefix (matching `fd00::/8`) than a Link Local prefix (matching
-    `fe80::/10`).
-- Option `default-gateway-v6` is optional. If unspecified, the default is the first
-  address in the `fixed-cidr-v6` subnet.
+- 选项 `ipv6` 必填。
+- 选项 `bip6` 可选，指定默认 bridge 的地址，该地址将作为容器的默认网关，同时也指定了 bridge 网络的子网。
+- 选项 `fixed-cidr-v6` 可选，指定 Docker 自动为容器分配的地址范围。
+  - 前缀通常应为 `/64` 或更短。
+  - 在本地网络实验时，优先使用唯一本地地址（ULA，匹配 `fd00::/8`），而非链路本地（Link Local，匹配 `fe80::/10`）。
+- 选项 `default-gateway-v6` 可选；若未指定，默认使用 `fixed-cidr-v6` 子网中的第一个地址。
 
 ```json
 {
@@ -311,41 +217,29 @@ IPv6 documentation range.
 }
 ```
 
-If no `bip6` is specified, `fixed-cidr-v6` defines the subnet for the bridge
-network. If no `bip6` or `fixed-cidr-v6` is specified, a ULA prefix will be
-chosen.
+如果未指定 `bip6`，则由 `fixed-cidr-v6` 来定义 bridge 网络的子网。若两者均未指定，将自动选择一个 ULA 前缀。
 
-Restart Docker for changes to take effect.
+重启 Docker 以使更改生效。
 
-## Connection limit for bridge networks
+## bridge 网络的连接数限制
 
-Due to limitations set by the Linux kernel, bridge networks become unstable and
-inter-container communications may break when 1000 containers or more connect
-to a single network.
+受 Linux 内核限制，当单个网络连接的容器达到 1000 个或更多时，bridge 网络会变得不稳定，容器间通信可能中断。
 
-For more information about this limitation, see
-[moby/moby#44973](https://github.com/moby/moby/issues/44973#issuecomment-1543747718).
+更多信息参见 [moby/moby#44973](https://github.com/moby/moby/issues/44973#issuecomment-1543747718)。
 
-## Skip Bridge IP address configuration
+## 跳过 bridge IP 地址配置
 
-The bridge is normally assigned the network's `--gateway` address, which is
-used as the default route from the bridge network to other networks.
+bridge 通常会被分配网络的 `--gateway` 地址，作为从该 bridge 网络到其他网络的默认路由。
 
-The `com.docker.network.bridge.inhibit_ipv4` option lets you create a network
-without the IPv4 gateway address being assigned to the bridge. This is useful
-if you want to configure the gateway IP address for the bridge manually. For
-instance if you add a physical interface to your bridge, and need it to have
-the gateway address.
+通过 `com.docker.network.bridge.inhibit_ipv4` 选项，你可以创建一个不会为 bridge 分配 IPv4 网关地址的网络。这在你希望手动为 bridge 配置网关 IP（例如向 bridge 添加物理接口，并需要它拥有网关地址）时非常有用。
 
-With this configuration, north-south traffic (to and from the bridge network)
-won't work unless you've manually configured the gateway address on the bridge,
-or a device attached to it.
+采用该配置后，南北向流量（进出该 bridge 网络的流量）将无法工作，除非你已经在 bridge 或其连接的设备上手动配置了网关地址。
 
-This option can only be used with user-defined bridge networks.
+该选项仅适用于用户自定义 bridge 网络。
 
-## Next steps
+## 进一步阅读
 
-- Go through the [standalone networking tutorial](/manuals/engine/network/tutorials/standalone.md)
-- Learn about [networking from the container's point of view](../_index.md)
-- Learn about [overlay networks](./overlay.md)
-- Learn about [Macvlan networks](./macvlan.md)
+- 学习[独立网络教程](/manuals/engine/network/tutorials/standalone.md)
+- 了解[从容器视角的网络](../_index.md)
+- 了解 [overlay 网络](./overlay.md)
+- 了解 [Macvlan 网络](./macvlan.md)

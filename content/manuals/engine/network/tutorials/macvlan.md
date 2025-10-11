@@ -1,48 +1,33 @@
----
-title: Networking using a macvlan network
-description: Tutorials for networking using a macvlan bridge network and 802.1Q trunk
-  bridge network
+title: 使用 macvlan 网络进行联网
+description: 使用 macvlan 桥接网络与 802.1Q trunk 桥接网络的联网教程
 keywords: networking, macvlan, 802.1Q, standalone
 aliases:
   - /network/network-tutorial-macvlan/
 ---
 
-This series of tutorials deals with networking standalone containers which
-connect to `macvlan` networks. In this type of network, the Docker host accepts
-requests for multiple MAC addresses at its IP address, and routes those requests
-to the appropriate container. For other networking topics, see the
-[overview](/manuals/engine/network/_index.md).
+本系列教程介绍如何将独立容器连接到 `macvlan` 网络进行联网。在此类网络中，Docker 主机会在自身 IP 下接受多个 MAC 地址的请求，并将这些请求路由到相应的容器。更多网络主题请参见[概览](/manuals/engine/network/_index.md)。
 
-## Goal
+## 目标
 
-The goal of these tutorials is to set up a bridged `macvlan` network and attach
-a container to it, then set up an 802.1Q trunked `macvlan` network and attach a
-container to it.
+本教程目标是：先创建一个桥接模式的 `macvlan` 网络并将容器连接其上；随后创建一个 802.1Q trunk 的 `macvlan` 网络并将容器连接其上。
 
-## Prerequisites
+## 前提条件
 
-- Most cloud providers block `macvlan` networking. You may need physical access
-  to your networking equipment.
+- 大多数云服务商会屏蔽 `macvlan` 网络。你可能需要对网络设备具备物理访问能力。
 
-- The `macvlan` networking driver only works on Linux hosts, and is not supported
-  on Docker Desktop or Docker Engine on Windows.
+- `macvlan` 网络驱动仅适用于 Linux 主机；Windows 上的 Docker Desktop 与 Docker Engine 不支持。
 
-- You need at least version 3.9 of the Linux kernel, and version 4.0 or higher
-  is recommended.
+- 至少需要 Linux 内核 3.9，推荐 4.0 及以上版本。
 
-- The examples assume your ethernet interface is `eth0`. If your device has a
-  different name, use that instead.
+- 示例默认你的以太网接口为 `eth0`；若设备名称不同，请相应替换。
 
-- The `macvlan` driver is not supported in rootless mode.
+- rootless 模式不支持 `macvlan` 驱动。
 
-## Bridge example
+## Bridge 示例
 
-In the simple bridge example, your traffic flows through `eth0` and Docker
-routes traffic to your container using its MAC address. To network devices
-on your network, your container appears to be physically attached to the network.
+在简单的 bridge 示例中，流量通过 `eth0`，Docker 根据容器的 MAC 地址将流量路由到容器。在你的网络设备看来，容器就像物理接入了网络。
 
-1.  Create a `macvlan` network called `my-macvlan-net`. Modify the `subnet`, `gateway`,
-    and `parent` values to values that make sense in your environment.
+1.  创建名为 `my-macvlan-net` 的 `macvlan` 网络。根据你的环境修改 `subnet`、`gateway` 与 `parent` 的取值。
 
     ```console
     $ docker network create -d macvlan \
@@ -52,12 +37,9 @@ on your network, your container appears to be physically attached to the network
       my-macvlan-net
     ```
 
-    You can use `docker network ls` and `docker network inspect my-macvlan-net`
-    commands to verify that the network exists and is a `macvlan` network.
+    你可以使用 `docker network ls` 与 `docker network inspect my-macvlan-net` 验证该网络已创建且类型为 `macvlan`。
 
-2.  Start an `alpine` container and attach it to the `my-macvlan-net` network. The
-    `-dit` flags start the container in the background but allow you to attach
-    to it. The `--rm` flag means the container is removed when it is stopped.
+2.  启动一个 `alpine` 容器并将其连接到 `my-macvlan-net` 网络。`-dit` 标志表示在后台启动容器但仍可附着；`--rm` 表示容器停止后自动删除。
 
     ```console
     $ docker run --rm -dit \
@@ -67,8 +49,7 @@ on your network, your container appears to be physically attached to the network
       ash
     ```
 
-3.  Inspect the `my-macvlan-alpine` container and notice the `MacAddress` key
-    within the `Networks` key:
+3.  检查 `my-macvlan-alpine` 容器，留意 `Networks` 下的 `MacAddress` 字段：
 
     ```console
     $ docker container inspect my-macvlan-alpine
@@ -96,8 +77,7 @@ on your network, your container appears to be physically attached to the network
     ...truncated
     ```
 
-4.  Check out how the container sees its own network interfaces by running a
-    couple of `docker exec` commands.
+4.  通过执行几条 `docker exec` 命令，查看容器自身的网络接口与路由：
 
     ```console
     $ docker exec my-macvlan-alpine ip addr show eth0
@@ -115,8 +95,7 @@ on your network, your container appears to be physically attached to the network
     172.16.86.0/24 dev eth0 scope link  src 172.16.86.2
     ```
 
-5.  Stop the container (Docker removes it because of the `--rm` flag), and remove
-    the network.
+5.  停止容器（由于 `--rm` 标志容器会被自动移除），并删除该网络。
 
     ```console
     $ docker container stop my-macvlan-alpine
@@ -124,16 +103,11 @@ on your network, your container appears to be physically attached to the network
     $ docker network rm my-macvlan-net
     ```
 
-## 802.1Q trunked bridge example
+## 802.1Q trunk bridge 示例
 
-In the 802.1Q trunked bridge example, your traffic flows through a sub-interface
-of `eth0` (called `eth0.10`) and Docker routes traffic to your container using
-its MAC address. To network devices on your network, your container appears to
-be physically attached to the network.
+在 802.1Q trunk bridge 示例中，流量通过 `eth0` 的一个子接口（如 `eth0.10`），Docker 依然基于容器的 MAC 地址进行路由。在你的网络设备看来，容器同样像物理接入在网络中。
 
-1.  Create a `macvlan` network called `my-8021q-macvlan-net`. Modify the
-    `subnet`, `gateway`, and `parent` values to values that make sense in your
-    environment.
+1.  创建名为 `my-8021q-macvlan-net` 的 `macvlan` 网络。根据你的环境修改 `subnet`、`gateway` 与 `parent` 的取值。
 
     ```console
     $ docker network create -d macvlan \
@@ -143,15 +117,9 @@ be physically attached to the network.
       my-8021q-macvlan-net
     ```
 
-    You can use `docker network ls` and `docker network inspect my-8021q-macvlan-net`
-    commands to verify that the network exists, is a `macvlan` network, and
-    has parent `eth0.10`. You can use `ip addr show` on the Docker host to
-    verify that the interface `eth0.10` exists and has a separate IP address
+    你可以使用 `docker network ls` 与 `docker network inspect my-8021q-macvlan-net` 验证该网络存在、类型为 `macvlan` 且父接口为 `eth0.10`。在 Docker 主机上使用 `ip addr show` 可进一步确认 `eth0.10` 已存在且拥有独立 IP 地址。
 
-2.  Start an `alpine` container and attach it to the `my-8021q-macvlan-net`
-    network. The `-dit` flags start the container in the background but allow
-    you to attach to it. The `--rm` flag means the container is removed when it
-    is stopped.
+2.  启动一个 `alpine` 容器并将其连接到 `my-8021q-macvlan-net` 网络。`-dit` 表示在后台启动但可以附着，`--rm` 表示容器停止后即被移除。
 
     ```console
     $ docker run --rm -itd \
@@ -161,8 +129,7 @@ be physically attached to the network.
       ash
     ```
 
-3.  Inspect the `my-second-macvlan-alpine` container and notice the `MacAddress`
-    key within the `Networks` key:
+3.  检查 `my-second-macvlan-alpine` 容器，留意 `Networks` 下的 `MacAddress` 字段：
 
     ```console
     $ docker container inspect my-second-macvlan-alpine
@@ -190,8 +157,7 @@ be physically attached to the network.
     ...truncated
     ```
 
-4.  Check out how the container sees its own network interfaces by running a
-    couple of `docker exec` commands.
+4.  通过执行几条 `docker exec` 命令，查看容器的网卡与路由：
 
     ```console
     $ docker exec my-second-macvlan-alpine ip addr show eth0
@@ -209,8 +175,7 @@ be physically attached to the network.
     172.16.86.0/24 dev eth0 scope link  src 172.16.86.2
     ```
 
-5.  Stop the container (Docker removes it because of the `--rm` flag), and remove
-    the network.
+5.  停止容器（由于 `--rm` 标志容器会被自动移除），并删除该网络。
 
     ```console
     $ docker container stop my-second-macvlan-alpine
@@ -218,8 +183,8 @@ be physically attached to the network.
     $ docker network rm my-8021q-macvlan-net
     ```
 
-## Other networking tutorials
+## 其他网络教程
 
-- [Standalone networking tutorial](/manuals/engine/network/tutorials/standalone.md)
-- [Overlay networking tutorial](/manuals/engine/network/tutorials/overlay.md)
-- [Host networking tutorial](/manuals/engine/network/tutorials/host.md)
+- [独立网络教程](/manuals/engine/network/tutorials/standalone.md)
+- [Overlay 网络教程](/manuals/engine/network/tutorials/overlay.md)
+- [Host 网络教程](/manuals/engine/network/tutorials/host.md)

@@ -1,6 +1,6 @@
 ---
-title: Overlay network driver
-description: All about using overlay networks
+title: Overlay 网络驱动
+description: 使用 overlay 网络的完整指南
 keywords: network, overlay, user-defined, swarm, service
 aliases:
 - /config/containers/overlay/
@@ -9,55 +9,37 @@ aliases:
 - /network/drivers/overlay/
 ---
 
-The `overlay` network driver creates a distributed network among multiple
-Docker daemon hosts. This network sits on top of (overlays) the host-specific
-networks, allowing containers connected to it to communicate securely when
-encryption is enabled. Docker transparently handles routing of each packet to
-and from the correct Docker daemon host and the correct destination container.
+`overlay` 网络驱动可在多台 Docker 守护进程主机之间创建一个分布式网络。该网络“覆盖”在各主机的本地网络之上；当启用加密时，连接其上的容器可以安全通信。Docker 会透明地将每个数据包路由到正确的主机与目标容器。
 
-You can create user-defined `overlay` networks using `docker network create`,
-in the same way that you can create user-defined `bridge` networks. Services
-or containers can be connected to more than one network at a time. Services or
-containers can only communicate across networks they're each connected to.
+你可以像创建用户自定义 `bridge` 网络那样，使用 `docker network create` 创建用户自定义的 `overlay` 网络。服务或容器可以同时连接到多个网络；它们只能在各自连接到的网络之间通信。
 
-Overlay networks are often used to create a connection between Swarm services,
-but you can also use it to connect standalone containers running on different
-hosts. When using standalone containers, it's still required that you use
-Swarm mode to establish a connection between the hosts.
+Overlay 网络常用于连接 Swarm 服务；也可用于连接运行在不同主机上的独立容器。对于独立容器场景，仍需启用 Swarm 模式以在主机间建立连接。
 
-This page describes overlay networks in general, and when used with standalone
-containers. For information about overlay for Swarm services, see
-[Manage Swarm service networks](/manuals/engine/swarm/networking.md).
+本文介绍 overlay 网络的通用概念及其在独立容器中的用法。关于 Swarm 服务中的 overlay 网络，请参见[管理 Swarm 服务网络](/manuals/engine/swarm/networking.md)。
 
-## Create an overlay network
+## 创建 overlay 网络
 
-Before you start, you must ensure that participating nodes can communicate over the network.
-The following table lists ports that need to be open to each host participating in an overlay network:
+开始之前，请确保参与的各主机之间可以互相通信。下表列出了参与 overlay 网络的每台主机需要放通的端口：
 
-| Ports                  | Description                                                                                                                                                          |
-| :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `2377/tcp`             | The default Swarm control plane port, is configurable with [`docker swarm join --listen-addr`](/reference/cli/docker/swarm/join.md#--listen-addr-value) |
-| `4789/udp`             | The default overlay traffic port, configurable with [`docker swarm init --data-path-addr`](/reference/cli/docker/swarm/init.md#data-path-port)          |
-| `7946/tcp`, `7946/udp` | Used for communication among nodes, not configurable                                                                                                                 |
+| 端口                   | 说明                                                                                                                                                                   |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `2377/tcp`             | 默认 Swarm 控制面端口，可通过 [`docker swarm join --listen-addr`](/reference/cli/docker/swarm/join.md#--listen-addr-value) 配置                        |
+| `4789/udp`             | 默认 overlay 流量端口，可通过 [`docker swarm init --data-path-addr`](/reference/cli/docker/swarm/init.md#data-path-port) 配置                         |
+| `7946/tcp`, `7946/udp` | 节点间通信端口，固定不可配置                                                                                                                                           |
 
-To create an overlay network that containers on other Docker hosts can connect to,
-run the following command:
+要创建一个可供其他 Docker 主机上的容器连接的 overlay 网络，运行以下命令：
 
 ```console
 $ docker network create -d overlay --attachable my-attachable-overlay
 ```
 
-The `--attachable` option enables both standalone containers
-and Swarm services to connect to the overlay network.
-Without `--attachable`, only Swarm services can connect to the network.
+`--attachable` 选项允许独立容器与 Swarm 服务同时连接到该 overlay 网络；若不加该选项，则只有 Swarm 服务可以连接。
 
-You can specify the IP address range, subnet, gateway, and other options. See
-`docker network create --help` for details.
+你可以指定 IP 地址范围、子网、网关等选项。详见 `docker network create --help`。
 
-## Encrypt traffic on an overlay network
+## 在 overlay 网络上加密传输
 
-Use the `--opt encrypted` flag to encrypt the application data
-transmitted over the overlay network:
+使用 `--opt encrypted` 标志，可以对 overlay 网络上的应用数据进行加密传输：
 
 ```console
 $ docker network create \
@@ -67,29 +49,22 @@ $ docker network create \
   my-attachable-multi-host-network
 ```
 
-This enables IPsec encryption at the level of the Virtual Extensible LAN (VXLAN).
-This encryption imposes a non-negligible performance penalty,
-so you should test this option before using it in production.
+这会在 VXLAN 层启用 IPsec 加密。加密会带来一定的性能开销，建议在生产使用前进行充分测试。
 
 > [!WARNING]
 >
-> Don't attach Windows containers to encrypted overlay networks.
+> 请不要将 Windows 容器连接到启用了加密的 overlay 网络。
 >
-> Overlay network encryption isn't supported on Windows.
-> Swarm doesn't report an error when a Windows host
-> attempts to connect to an encrypted overlay network,
-> but networking for the Windows containers is affected as follows:
+> Windows 不支持 overlay 网络加密。Swarm 在 Windows 主机尝试连接加密的 overlay 网络时不会报错，但会产生以下影响：
 >
-> - Windows containers can't communicate with Linux containers on the network
-> - Data traffic between Windows containers on the network isn't encrypted
+> - Windows 容器无法与网络中的 Linux 容器通信
+> - Windows 容器之间的数据流量不会被加密
 
-## Attach a container to an overlay network
+## 将容器连接到 overlay 网络
 
-Adding containers to an overlay network gives them the ability to communicate
-with other containers without having to set up routing on the individual Docker
-daemon hosts. A prerequisite for doing this is that the hosts have joined the same Swarm.
+将容器加入 overlay 网络后，它们无需在各自 Docker 主机上额外配置路由，即可相互通信。前提是这些主机必须加入同一个 Swarm。
 
-To join an overlay network named `multi-host-network` with a `busybox` container:
+让 `busybox` 容器加入名为 `multi-host-network` 的 overlay 网络：
 
 ```console
 $ docker run --network multi-host-network busybox sh
@@ -97,34 +72,28 @@ $ docker run --network multi-host-network busybox sh
 
 > [!NOTE]
 >
-> This only works if the overlay network is attachable
-> (created with the `--attachable` flag).
+> 仅当 overlay 网络创建时带有 `--attachable` 标志，才支持独立容器加入。
 
-## Container discovery
+## 容器发现
 
-Publishing ports of a container on an overlay network opens the ports to other
-containers on the same network. Containers are discoverable by doing a DNS lookup
-using the container name.
+在 overlay 网络上发布容器端口，会将该端口对同一网络中的其他容器开放。容器可通过其名称进行 DNS 查询与发现。
 
-| Flag value                      | Description                                                                                                                                                 |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-p 8080:80`                    | Map TCP port 80 in the container to port `8080` on the overlay network.                                                                                     |
-| `-p 8080:80/udp`                | Map UDP port 80 in the container to port `8080` on the overlay network.                                                                                     |
-| `-p 8080:80/sctp`               | Map SCTP port 80 in the container to port `8080` on the overlay network.                                                                                    |
-| `-p 8080:80/tcp -p 8080:80/udp` | Map TCP port 80 in the container to TCP port `8080` on the overlay network, and map UDP port 80 in the container to UDP port `8080` on the overlay network. |
+| 参数值                          | 说明                                                                                                                                       |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `-p 8080:80`                    | 将容器内 TCP 80 端口映射为 overlay 网络上的 `8080` 端口。                                                                                 |
+| `-p 8080:80/udp`                | 将容器内 UDP 80 端口映射为 overlay 网络上的 `8080` 端口。                                                                                 |
+| `-p 8080:80/sctp`               | 将容器内 SCTP 80 端口映射为 overlay 网络上的 `8080` 端口。                                                                                |
+| `-p 8080:80/tcp -p 8080:80/udp` | 将容器内 TCP 80 端口映射为 overlay 网络上的 TCP `8080`，并将容器内 UDP 80 端口映射为 overlay 网络上的 UDP `8080`。 |
 
-## Connection limit for overlay networks
+## overlay 网络的连接数限制
 
-Due to limitations set by the Linux kernel, overlay networks become unstable and
-inter-container communications may break when 1000 containers are co-located on
-the same host.
+受 Linux 内核限制，当同一主机上并置的容器数量达到 1000 个时，overlay 网络可能变得不稳定，容器间通信可能中断。
 
-For more information about this limitation, see
-[moby/moby#44973](https://github.com/moby/moby/issues/44973#issuecomment-1543747718).
+更多信息参见 [moby/moby#44973](https://github.com/moby/moby/issues/44973#issuecomment-1543747718)。
 
-## Next steps
+## 进一步阅读
 
-- Go through the [overlay networking tutorial](/manuals/engine/network/tutorials/overlay.md)
-- Learn about [networking from the container's point of view](../_index.md)
-- Learn about [standalone bridge networks](bridge.md)
-- Learn about [Macvlan networks](macvlan.md)
+- 学习[overlay 网络教程](/manuals/engine/network/tutorials/overlay.md)
+- 了解[从容器视角的网络](../_index.md)
+- 了解[独立 bridge 网络](bridge.md)
+- 了解[Macvlan 网络](macvlan.md)

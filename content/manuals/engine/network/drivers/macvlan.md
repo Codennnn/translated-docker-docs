@@ -1,7 +1,6 @@
 ---
-title: Macvlan network driver
-description: All about using Macvlan to make your containers appear like physical
-  machines on the network
+title: Macvlan 网络驱动
+description: 使用 Macvlan 让你的容器在网络中表现得像物理主机
 keywords: network, macvlan, standalone
 aliases:
 - /config/containers/macvlan/
@@ -10,55 +9,37 @@ aliases:
 - /network/drivers/macvlan/
 ---
 
-Some applications, especially legacy applications or applications which monitor
-network traffic, expect to be directly connected to the physical network. In
-this type of situation, you can use the `macvlan` network driver to assign a MAC
-address to each container's virtual network interface, making it appear to be
-a physical network interface directly connected to the physical network. In this
-case, you need to designate a physical interface on your Docker host to use for
-the Macvlan, as well as the subnet and gateway of the network. You can even
-isolate your Macvlan networks using different physical network interfaces.
+某些应用（尤其是遗留应用或需要监控网络流量的应用）期望直接连接到物理网络。在这种情况下，你可以使用 `macvlan` 网络驱动，为每个容器的虚拟网卡分配一个 MAC 地址，使其看起来像是直接连接到物理网络的物理网卡。
+在此模式下，你需要在 Docker 主机上指定用于 Macvlan 的物理接口，以及该网络的子网与网关。你甚至可以通过不同的物理网络接口来隔离多个 Macvlan 网络。
 
-Keep the following things in mind:
+请注意以下事项：
 
-- You may unintentionally degrade your network due to IP address
-  exhaustion or to "VLAN spread", a situation that occurs when you have an
-  inappropriately large number of unique MAC addresses in your network.
+- 由于 IP 地址耗尽，或因“VLAN 扩散”（网络中唯一 MAC 地址数量过多）等原因，你可能会无意中降低网络性能。
 
-- Your networking equipment needs to be able to handle "promiscuous mode",
-  where one physical interface can be assigned multiple MAC addresses.
+- 你的网络设备需要支持“混杂模式”（promiscuous mode），即一个物理接口可被分配多个 MAC 地址。
 
-- If your application can work using a bridge (on a single Docker host) or
-  overlay (to communicate across multiple Docker hosts), these solutions may be
-  better in the long term.
+- 如果你的应用可以使用 bridge（单主机）或 overlay（跨多主机通信），从长期看这些方案可能更合适。
 
-## Options
+## 选项
 
-The following table describes the driver-specific options that you can pass to
-`--opt` when creating a network using the `macvlan` driver.
+下表列出了使用 `macvlan` 驱动创建网络时，可通过 `--opt` 传入的驱动特定选项：
 
-| Option         | Default  | Description                                                                   |
-| -------------- | -------- | ----------------------------------------------------------------------------- |
-| `macvlan_mode` | `bridge` | Sets the Macvlan mode. Can be one of: `bridge`, `vepa`, `passthru`, `private` |
-| `parent`       |          | Specifies the parent interface to use.                                        |
+| 选项           | 默认值   | 说明                                                                                 |
+| -------------- | -------- | ------------------------------------------------------------------------------------ |
+| `macvlan_mode` | `bridge` | 设置 Macvlan 的模式，可选：`bridge`、`vepa`、`passthru`、`private`                 |
+| `parent`       |          | 指定要使用的父接口。                                                                 |
 
-## Create a Macvlan network
+## 创建 Macvlan 网络
 
-When you create a Macvlan network, it can either be in bridge mode or 802.1Q
-trunk bridge mode.
+创建 Macvlan 网络时，可以使用 bridge 模式或 802.1Q trunk bridge 模式。
 
-- In bridge mode, Macvlan traffic goes through a physical device on the host.
+- 在 bridge 模式下，Macvlan 流量通过主机上的物理设备转发。
 
-- In 802.1Q trunk bridge mode, traffic goes through an 802.1Q sub-interface
-  which Docker creates on the fly. This allows you to control routing and
-  filtering at a more granular level.
+- 在 802.1Q trunk bridge 模式下，流量通过 Docker 动态创建的 802.1Q 子接口转发。这样可以更细粒度地控制路由与过滤。
 
-### Bridge mode
+### Bridge 模式
 
-To create a `macvlan` network which bridges with a given physical network
-interface, use `--driver macvlan` with the `docker network create` command. You
-also need to specify the `parent`, which is the interface the traffic will
-physically go through on the Docker host.
+要创建与指定物理网卡桥接的 `macvlan` 网络，请在 `docker network create` 中使用 `--driver macvlan`，并指定 `parent`（即在 Docker 主机上实际承载流量的接口）。
 
 ```console
 $ docker network create -d macvlan \
@@ -67,8 +48,7 @@ $ docker network create -d macvlan \
   -o parent=eth0 pub_net
 ```
 
-If you need to exclude IP addresses from being used in the `macvlan` network, such
-as when a given IP address is already in use, use `--aux-addresses`:
+如果需要在 `macvlan` 网络中排除某些 IP 地址（例如该地址已被占用），可以使用 `--aux-addresses`：
 
 ```console
 $ docker network create -d macvlan \
@@ -79,11 +59,9 @@ $ docker network create -d macvlan \
   -o parent=eth0 macnet32
 ```
 
-### 802.1Q trunk bridge mode
+### 802.1Q trunk bridge 模式
 
-If you specify a `parent` interface name with a dot included, such as `eth0.50`,
-Docker interprets that as a sub-interface of `eth0` and creates the sub-interface
-automatically.
+如果在 `parent` 中指定带点的接口名（如 `eth0.50`），Docker 会将其视为 `eth0` 的子接口并自动创建。
 
 ```console
 $ docker network create -d macvlan \
@@ -92,10 +70,9 @@ $ docker network create -d macvlan \
     -o parent=eth0.50 macvlan50
 ```
 
-### Use an IPvlan instead of Macvlan
+### 使用 IPvlan 替代 Macvlan
 
-In the above example, you are still using a L3 bridge. You can use `ipvlan`
-instead, and get an L2 bridge. Specify `-o ipvlan_mode=l2`.
+在上述示例中，你仍在使用三层 bridge。也可以改用 `ipvlan` 实现二层 bridge：指定 `-o ipvlan_mode=l2`。
 
 ```console
 $ docker network create -d ipvlan \
@@ -106,10 +83,9 @@ $ docker network create -d ipvlan \
      -o ipvlan_mode=l2 -o parent=eth0 ipvlan210
 ```
 
-## Use IPv6
+## 使用 IPv6
 
-If you have [configured the Docker daemon to allow IPv6](/manuals/engine/daemon/ipv6.md),
-you can use dual-stack IPv4/IPv6 `macvlan` networks.
+如果你已[将 Docker 守护进程配置为允许 IPv6](/manuals/engine/daemon/ipv6.md)，即可使用双栈 IPv4/IPv6 的 `macvlan` 网络。
 
 ```console
 $ docker network create -d macvlan \
@@ -120,7 +96,6 @@ $ docker network create -d macvlan \
      -o macvlan_mode=bridge macvlan216
 ```
 
-## Next steps
+## 进一步阅读
 
-Learn how to use the Macvlan driver in the
-[Macvlan networking tutorial](/manuals/engine/network/tutorials/macvlan.md).
+在[Macvlan 网络教程](/manuals/engine/network/tutorials/macvlan.md)中学习如何使用 Macvlan 驱动。

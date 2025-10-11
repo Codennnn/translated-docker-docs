@@ -1,64 +1,51 @@
 ---
-title: Use CA certificates with Docker
-linkTitle: CA certificates
-description: Learn how to install and use CA certificates on the Docker host and in Linux containers
+title: 在 Docker 中使用 CA 证书
+linkTitle: CA 证书
+description: 了解如何在 Docker 主机与 Linux 容器中安装与使用 CA 证书
 keywords: docker, networking, ca, certs, host, container, proxy
 ---
 
 > [!CAUTION]
-> Best practices should be followed when using Man-in-the-Middle (MITM) CA
-> certificates in production containers. If compromised, attackers could
-> intercept sensitive data, spoof a trusted service, or perform
-> man-in-the-middle attacks. Consult your security team before you proceed.
+> 在生产环境容器中使用中间人（MITM）CA 证书时务必遵循最佳实践。一旦证书被攻破，攻击者可能拦截敏感数据、伪造受信任服务或发动中间人攻击。在继续之前，请咨询你的安全团队。
 
-If your company uses a proxy that inspects HTTPS traffic, you might need to add
-the required root certificates to your host machine and your Docker containers
-or images. This is because Docker and its containers, when pulling images or
-making network requests, need to trust the proxy’s certificates.
+如果你的公司使用会拦截/检查 HTTPS 流量的代理，你可能需要将相应的根证书添加到主机与 Docker 容器/镜像中。因为 Docker 及其容器在拉取镜像或发起网络请求时，需要信任该代理的证书。
 
-On the host, adding the root certificate ensures that any Docker commands (like
-`docker pull`) work without issues. For containers, you'll need to add the root
-certificate to the container's trust store either during the build process or
-at runtime. This ensures that applications running inside the containers can
-communicate through the proxy without encountering security warnings or
-connection failures.
+在主机上添加根证书，可确保 Docker 命令（如 `docker pull`）正常运行。对于容器，你需要在构建阶段或运行时将根证书加入容器的信任存储，从而保证容器内的应用可以通过代理通信，而不会出现安全告警或连接失败。
 
-## Add CA certificate to the host
+## 向主机添加 CA 证书
 
-The following sections describe how to install CA certificates on your macOS or
-Windows host. For Linux, refer to the documentation for your distribution.
+以下内容描述如何在 macOS 或 Windows 主机上安装 CA 证书。Linux 环境请参考各发行版文档。
 
 ### macOS
 
-1. Download the CA certificate for your MITM proxy software.
-2. Open the **Keychain Access** app.
-3. In Keychain Access, select **System**, then switch to the **Certificates** tab.
-4. Drag-and-drop the downloaded certificate into the list of certificates. Enter your password if prompted.
-5. Find the newly added certificate, double-click it, and expand the **Trust** section.
-6. Set **Always Trust** for the certificate. Enter your password if prompted.
-7. Start Docker Desktop and verify that `docker pull` works, assuming Docker Desktop is configured to use the MITM proxy.
+1. 下载 MITM 代理软件的 CA 证书。
+2. 打开“钥匙串访问”（Keychain Access）。
+3. 选择 **System**，切换到 **Certificates** 选项卡。
+4. 将下载的证书拖拽到证书列表中（若提示请输入密码）。
+5. 找到新添加的证书，双击并展开 **Trust** 区域。
+6. 将其设置为 **Always Trust**（总是信任），如有提示输入密码。
+7. 启动 Docker Desktop，验证 `docker pull` 可用（前提是 Docker Desktop 已配置使用该 MITM 代理）。
 
 ### Windows
 
-Choose whether you want to install the certificate using the Microsoft
-Management Console (MMC) or your web browser.
+你可以选择使用 Microsoft 管理控制台（MMC）或 Web 浏览器安装证书。
 
 {{< tabs >}}
 {{< tab name="MMC" >}}
 
-1. Download CA certificate for the MITM proxy software.
-2. Open the Microsoft Management Console (`mmc.exe`).
-3. Add the **Certificates Snap-In** in the MMC.
-   1. Select **File** → **Add/Remove Snap-in**, and then select **Certificates** → **Add >**.
-   2. Select **Computer Account** and then **Next**.
-   3. Select **Local computer** and then select **Finish**.
-4. Import the CA certificate:
-   1. From the MMC, expand **Certificates (Local Computer)**.
-   2. Expand the **Trusted Root Certification Authorities** section.
-   3. Right-click **Certificates** and select **All Tasks** and **Import…**.
-   4. Follow the prompts to import your CA certificate.
-5. Select **Finish** and then **Close**.
-6. Start Docker Desktop and verify that `docker pull` succeeds (assuming Docker Desktop is already configured to use the MITM proxy server).
+1. 下载 MITM 代理的 CA 证书。
+2. 打开 Microsoft 管理控制台（`mmc.exe`）。
+3. 在 MMC 中添加“证书”管理单元（Certificates Snap-In）。
+   1. 选择 **File** → **Add/Remove Snap-in**，选择 **Certificates** → **Add >**。
+   2. 选择 **Computer Account** → **Next**。
+   3. 选择 **Local computer** → **Finish**。
+4. 导入 CA 证书：
+   1. 在 MMC 中展开 **Certificates (Local Computer)**。
+   2. 展开 **Trusted Root Certification Authorities**。
+   3. 右键 **Certificates**，选择 **All Tasks** → **Import…**。
+   4. 按向导导入 CA 证书。
+5. 选择 **Finish**，然后 **Close**。
+6. 启动 Docker Desktop，验证 `docker pull` 成功（前提是 Docker Desktop 已配置为使用 MITM 代理）。
 
 > [!NOTE]
 > Depending on the SDK and/or runtime/framework in use, further steps may be
@@ -68,99 +55,85 @@ Management Console (MMC) or your web browser.
 {{< /tab >}}
 {{< tab name="Web browser" >}}
 
-1. Download the CA certificate for your MITM proxy software.
-2. Open your web browser, go to **Settings** and open **Manage certificates**
-3. Select the **Trusted Root Certification Authorities** tab.
-4. Select **Import**, then browse for the downloaded CA certificate.
-5. Select **Open**, then choose **Place all certificates in the following store**.
-6. Ensure **Trusted Root Certification Authorities** is selected and select **Next**.
-7. Select **Finish** and then **Close**.
-8. Start Docker Desktop and verify that `docker pull` succeeds (assuming Docker Desktop is already configured to use the MITM proxy server).
+1. 下载 MITM 代理的 CA 证书。
+2. 打开浏览器进入 **Settings**，打开 **Manage certificates**。
+3. 选择 **Trusted Root Certification Authorities** 选项卡。
+4. 选择 **Import**，并选择已下载的 CA 证书。
+5. 选择 **Open**，然后勾选 **Place all certificates in the following store**。
+6. 确认选择 **Trusted Root Certification Authorities**，点击 **Next**。
+7. 选择 **Finish**，然后 **Close**。
+8. 启动 Docker Desktop，验证 `docker pull` 成功（前提是 Docker Desktop 已配置使用 MITM 代理）。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Add CA certificates to Linux images and containers
+## 向 Linux 镜像与容器添加 CA 证书
 
-If you need to run containerized workloads that rely on internal or custom
-certificates, such as in environments with corporate proxies or secure
-services, you must ensure that the containers trust these certificates. Without
-adding the necessary CA certificates, applications inside your containers may
-encounter failed requests or security warnings when attempting to connect to
-HTTPS endpoints.
+如果你在需要内部或自定义证书的环境（如公司代理或安全服务）中运行容器化工作负载，必须确保容器信任这些证书。否则，容器内应用在访问 HTTPS 端点时可能出现请求失败或安全告警。
 
-By [adding CA certificates to images](#add-certificates-to-images) at build
-time, you ensure that any containers started from the image will trust the
-specified certificates. This is particularly important for applications that
-require seamless access to internal APIs, databases, or other services during
-production.
+在构建阶段[将 CA 证书加入镜像](#add-certificates-to-images)，可确保从该镜像启动的任意容器都信任这些证书。这对需要无缝访问内部 API、数据库或其他服务的生产应用尤为重要。
 
-In cases where rebuilding the image isn't feasible, you can instead [add
-certificates to containers](#add-certificates-to-containers) directly. However,
-certificates added at runtime won’t persist if the container is destroyed or
-recreated, so this method is typically used for temporary fixes or testing
-scenarios.
+若无法重建镜像，也可以直接[向运行中的容器添加证书](#add-certificates-to-containers)。但运行时添加的证书在容器销毁或重建后不会保留，因此更适用于临时修复或测试场景。
 
-## Add certificates to images
+## 向镜像添加证书
 
 > [!NOTE]
 > The following commands are for an Ubuntu base image. If your build uses a
 > different Linux distribution, use equivalent commands for package management
 > (`apt-get`, `update-ca-certificates`, and so on).
 
-To add ca certificate to a container image when you're building it, add the
-following instructions to your Dockerfile.
+要在构建镜像时加入 CA 证书，可在 Dockerfile 中添加如下指令：
 
 ```dockerfile
-# Install the ca-certificate package
+# 安装 CA 证书软件包
 RUN apt-get update && apt-get install -y ca-certificates
-# Copy the CA certificate from the context to the build container
+# 将上下文中的 CA 证书拷贝到构建容器
 COPY your_certificate.crt /usr/local/share/ca-certificates/
-# Update the CA certificates in the container
+# 更新容器内的 CA 证书
 RUN update-ca-certificates
 ```
 
-### Add certificates to containers
+### 向容器添加证书
 
 > [!NOTE]
 > The following commands are for an Ubuntu-based container. If your container
 > uses a different Linux distribution, use equivalent commands for package
 > management (`apt-get`, `update-ca-certificates`, and so on).
 
-To add a CA certificate to a running Linux container:
+向一个正在运行的 Linux 容器添加 CA 证书：
 
-1. Download the CA certificate for your MITM proxy software.
-2. If the certificate is in a format other than `.crt`, convert it to `.crt` format:
+1. 下载 MITM 代理的 CA 证书。
+2. 如果证书不是 `.crt` 格式，将其转换为 `.crt`：
 
    ```console {title="Example command"}
    $ openssl x509 -in cacert.der -inform DER -out myca.crt
    ```
 
-3. Copy the certificate into the running container:
+3. 将证书拷贝到正在运行的容器：
 
     ```console
     $ docker cp myca.crt <containerid>:/tmp
     ```
 
-4. Attach to the container:
+4. 进入容器：
 
     ```console
     $ docker exec -it <containerid> sh
     ```
 
-5. Ensure the `ca-certificates` package is installed (required for updating certificates):
+5. 确认证书更新所需的软件包 `ca-certificates` 已安装：
 
     ```console
     # apt-get update && apt-get install -y ca-certificates
     ```
 
-6. Copy the certificate to the correct location for CA certificates:
+6. 将证书拷贝到 CA 证书目录：
 
     ```console
     # cp /tmp/myca.crt /usr/local/share/ca-certificates/root_cert.crt
     ```
 
-7. Update the CA certificates:
+7. 更新 CA 证书：
 
     ```console
     # update-ca-certificates
@@ -172,7 +145,7 @@ To add a CA certificate to a running Linux container:
     1 added, 0 removed; done.
     ```
 
-8. Verify that the container can communicate via the MITM proxy:
+8. 验证容器可以通过 MITM 代理进行通信：
 
     ```console
     # curl https://example.com

@@ -1,18 +1,15 @@
 ---
-title: None network driver
-description: How to isolate the networking stack of a container using the none driver
+title: None 网络驱动
+description: 使用 none 驱动完全隔离容器的网络栈
 keywords: network, none, standalone
 aliases:
 - /network/none/
 - /network/drivers/none/
 ---
 
-If you want to completely isolate the networking stack of a container, you can
-use the `--network none` flag when starting the container. Within the container,
-only the loopback device is created.
+如果你想完全隔离某个容器的网络栈，可以在启动容器时使用 `--network none` 标志。此时容器内部只会创建回环设备（loopback）。
 
-The following example shows the output of `ip link show` in an `alpine`
-container using the `none` network driver.
+下面的示例展示了在使用 `none` 网络驱动的 `alpine` 容器中执行 `ip link show` 的输出：
 
 ```console
 $ docker run --rm --network none alpine:latest ip link show
@@ -20,7 +17,7 @@ $ docker run --rm --network none alpine:latest ip link show
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 ```
 
-No IPv6 loopback address is configured for containers using the `none` driver.
+使用 `none` 驱动的容器不会配置 IPv6 回环地址。
 
 ```console
 $ docker run --rm --network none --name no-net-alpine alpine:latest ip addr show
@@ -30,10 +27,10 @@ $ docker run --rm --network none --name no-net-alpine alpine:latest ip addr show
        valid_lft forever preferred_lft forever
 ```
 
-## Next steps
+## 进一步阅读
 
-- Go through the [host networking tutorial](/manuals/engine/network/tutorials/host.md)
-- Learn about [networking from the container's point of view](../_index.md)
-- Learn about [bridge networks](bridge.md)
-- Learn about [overlay networks](overlay.md)
-- Learn about [Macvlan networks](macvlan.md)
+- 学习[Host 网络教程](/manuals/engine/network/tutorials/host.md)
+- 了解[从容器视角的网络](../_index.md)
+- 了解[bridge 网络](bridge.md)
+- 了解[overlay 网络](overlay.md)
+- 了解[Macvlan 网络](macvlan.md)
