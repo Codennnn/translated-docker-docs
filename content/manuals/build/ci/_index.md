@@ -1,42 +1,28 @@
 ---
-title: Continuous integration with Docker
+title: 使用 Docker 实现持续集成
 linkTitle: CI
 weight: 70
-description: Using Docker for continuous integration
+description: 使用 Docker 进行持续集成
 keywords: ci, build
 aliases:
   - /ci-cd/best-practices/
 ---
 
-Continuous Integration (CI) is the part of the development process where you're
-looking to get your code changes merged with the main branch of the project. At
-this point, development teams run tests and builds to vet that the code changes
-don't cause any unwanted or unexpected behaviors.
+Continuous Integration（CI，持续集成）是开发流程中将代码变更持续合并到项目主分支的阶段。在此阶段，团队会运行测试与构建，以验证改动不会引入不期望或意外的行为。
 
-![Git branches about to get merged](./images/continuous-integration.svg)
+![Git 分支即将合并的示意图](./images/continuous-integration.svg)
 
-There are several uses for Docker at this stage of development, even if you
-don't end up packaging your application as a container image.
+即便最终不把应用打包为容器镜像，在这个阶段也有多种场景可以使用 Docker。
 
-## Docker as a build environment
+## 将 Docker 用作构建环境
 
-Containers are reproducible, isolated environments that yield predictable
-results. Building and testing your application in a Docker container makes it
-easier to prevent unexpected behaviors from occurring. Using a Dockerfile, you
-define the exact requirements for the build environment, including programming
-runtimes, operating system, binaries, and more.
+容器提供可复现、相互隔离的环境，能够带来可预测的结果。在 Docker 容器中构建和测试应用，有助于预防意外行为的发生。通过 Dockerfile，你可以精确声明构建环境所需的内容，包括编程运行时、操作系统、二进制依赖等。
 
-Using Docker to manage your build environment also eases maintenance. For
-example, updating to a new version of a programming runtime can be as simple as
-changing a tag or digest in a Dockerfile. No need to SSH into a pet VM to
-manually reinstall a newer version and update the related configuration files.
+用 Docker 管理构建环境还能简化维护。例如，升级到新的编程运行时版本，通常只需在 Dockerfile 中更换一个标签或摘要（digest）。无需再 SSH 登录到一台手工维护的专用 VM，去手动重装并更新相关配置文件。
 
-Additionally, just as you expect third-party open source packages to be secure,
-the same should go for your build environment. You can scan and index a builder
-image, just like you would for any other containerized application.
+此外，就像你期望第三方开源包是安全的一样，构建环境也应如此。你可以像对待任何容器化应用一样，对构建器镜像进行扫描与索引。
 
-The following links provide instructions for how you can get started using
-Docker for building your applications in CI:
+以下链接展示了如何在 CI 中使用 Docker 构建你的应用：
 
 - [GitHub Actions](https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action)
 - [GitLab](https://docs.gitlab.com/runner/executors/docker.html)
@@ -45,16 +31,10 @@ Docker for building your applications in CI:
 
 ### Docker in Docker
 
-You can also use a Dockerized build environment to build container images using
-Docker. That is, your build environment runs inside a container which itself is
-equipped to run Docker builds. This method is referred to as "Docker in Docker".
+你也可以在容器化的构建环境中使用 Docker 来构建容器镜像。也就是说，构建环境本身运行在一个容器里，并具备执行 Docker 构建所需的能力。这种方式被称为“Docker in Docker”。
 
-Docker provides an official [Docker image](https://hub.docker.com/_/docker)
-that you can use for this purpose.
+Docker 提供了一个官方的 [Docker 镜像](https://hub.docker.com/_/docker)，可直接用于该场景。
 
-## What's next
+## 下一步
 
-Docker maintains a set of official GitHub Actions that you can use to build,
-annotate, and push container images on the GitHub Actions platform. See
-[Introduction to GitHub Actions](github-actions/_index.md) to learn more and
-get started.
+Docker 维护了一组官方的 GitHub Actions，可用于在 GitHub Actions 平台上构建、注解并推送容器镜像。参阅[GitHub Actions 简介](github-actions/_index.md)以了解更多并开始上手。

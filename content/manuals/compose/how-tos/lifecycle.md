@@ -1,38 +1,29 @@
 ---
-title: Using lifecycle hooks with Compose
-linkTitle: Use lifecycle hooks
+title: 在 Compose 中使用生命周期钩子
+linkTitle: 使用生命周期钩子
 weight: 20
-description: Learn how to use Docker Compose lifecycle hooks like post_start and pre_stop to customize container behavior.
+description: 了解如何使用 Docker Compose 的生命周期钩子（post_start、pre_stop）定制容器行为。
 keywords: docker compose lifecycle hooks, post_start, pre_stop, docker compose entrypoint, docker container stop hooks, compose hook commands
 ---
 
-{{< summary-bar feature_name="Compose lifecycle hooks" >}}
+{{< summary-bar feature_name="Compose 生命周期钩子" >}}
 
-## Services lifecycle hooks
+## 服务的生命周期钩子
 
-When Docker Compose runs a container, it uses two elements, 
-[ENTRYPOINT and COMMAND](/manuals/engine/containers/run.md#default-command-and-options), 
-to manage what happens when the container starts and stops.
+在 Docker Compose 运行容器时，会通过两个要素——[ENTRYPOINT 与 COMMAND](/manuals/engine/containers/run.md#default-command-and-options)——来控制容器启动与停止时的行为。
 
-However, it can sometimes be easier to handle these tasks separately with lifecycle hooks - 
-commands that run right after the container starts or just before it stops.
+不过，在一些场景下，更适合将这些任务拆分给生命周期钩子处理——也就是在容器启动后立即执行，或在容器停止前执行的命令。
 
-Lifecycle hooks are particularly useful because they can have special privileges 
-(like running as the root user), even when the container itself runs with lower privileges 
-for security. This means that certain tasks requiring higher permissions can be done without 
-compromising the overall security of the container.
+生命周期钩子尤其有用的一点是，即使容器出于安全原因以较低权限运行，这些钩子也可以拥有特殊权限（例如以 root 身份运行）。这意味着需要更高权限的任务可以在不降低容器整体安全性的前提下完成。
 
-### Post-start hooks
+### Post-start 钩子
 
-Post-start hooks are commands that run after the container has started, but there's no 
-set time for when exactly they will execute. The hook execution timing is not assured during 
-the execution of the container's `entrypoint`.
+Post-start 钩子是在容器启动之后运行的命令，但其确切执行时机没有固定保证，尤其是在容器 `entrypoint` 执行期间无法保证钩子的触发时序。
 
-In the example provided:
+例如：
 
-- The hook is used to change the ownership of a volume to a non-root user (because volumes 
-are created with root ownership by default).
-- After the container starts, the `chown` command changes the ownership of the `/data` directory to user `1001`.
+- 使用该钩子将卷的属主改为非 root 用户（因为卷默认以 root 身份创建）。
+- 在容器启动之后，使用 `chown` 将 `/data` 目录的所有权更改为用户 `1001`。
 
 ```yaml
 services:
@@ -46,17 +37,14 @@ services:
         user: root
 
 volumes:
-  data: {} # a Docker volume is created with root ownership
+  data: {} # Docker 卷默认以 root 所有权创建
 ```
 
-### Pre-stop hooks
+### Pre-stop 钩子
 
-Pre-stop hooks are commands that run before the container is stopped by a specific 
-command (like `docker compose down` or stopping it manually with `Ctrl+C`). 
-These hooks won't run if the container stops by itself or gets killed suddenly.
+Pre-stop 钩子是在容器被特定命令停止之前执行的命令（例如 `docker compose down` 或通过 `Ctrl+C` 手动停止）。如果容器自身退出或被强制终止，这些钩子不会被触发。
 
-In the following example, before the container stops, the `./data_flush.sh` script is 
-run to perform any necessary cleanup.
+在下面的示例中，容器停止之前会运行 `./data_flush.sh` 脚本以执行必要的清理。
 
 ```yaml
 services:
@@ -66,7 +54,7 @@ services:
       - command: ./data_flush.sh
 ```
 
-## Reference information
+## 参考信息
 
 - [`post_start`](/reference/compose-file/services.md#post_start)
 - [`pre_stop`](/reference/compose-file/services.md#pre_stop)

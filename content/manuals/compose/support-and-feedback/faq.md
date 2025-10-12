@@ -1,68 +1,47 @@
 ---
-description: Answers to common questions about Docker Compose, including v1 vs v2, commands, shutdown behavior, and development setup.
+description: 回答关于 Docker Compose 的常见问题，包括 v1 与 v2、常用命令、关闭行为与开发环境等。
 keywords: docker compose faq, docker compose questions, docker-compose vs docker compose, docker compose json, docker compose stop delay, run multiple docker compose
-title: Frequently asked questions about Docker Compose
-linkTitle: FAQs
+title: Docker Compose 常见问题
+linkTitle: 常见问题
 weight: 10
 tags: [FAQ]
 aliases:
 - /compose/faq/
 ---
 
-### What is the difference between `docker compose` and `docker-compose`
+### `docker compose` 与 `docker-compose` 有何区别？
 
-Version one of the Docker Compose command-line binary was first released in 2014. It was written in Python, and is invoked with `docker-compose`. Typically, Compose v1 projects include a top-level version element in the `compose.yaml` file, with values ranging from 2.0 to 3.8, which refer to the specific file formats.
+Docker Compose 命令行二进制的第一个版本发布于 2014 年，使用 Python 编写，通过 `docker-compose` 调用。通常，Compose v1 的项目会在 `compose.yaml` 中包含顶级的 `version` 字段，取值范围 2.0 到 3.8，表示特定的文件格式版本。
 
-Version two of the Docker Compose command-line binary was announced in 2020, is written in Go, and is invoked with `docker compose`. Compose v2 ignores the version top-level element in the compose.yaml file.
+Docker Compose 的第二个版本于 2020 年发布，使用 Go 编写，通过 `docker compose` 调用。Compose v2 会忽略 `compose.yaml` 中顶级的 `version` 字段。
 
-For further information, see [History and development of Compose](/manuals/compose/intro/history.md).
+更多信息参见《[Compose 的发展历程](/manuals/compose/intro/history.md)》。
 
-### What's the difference between `up`, `run`, and `start`?
+### `up`、`run` 与 `start` 有何区别？
 
-Typically, you want `docker compose up`. Use `up` to start or restart all the
-services defined in a `compose.yaml`. In the default "attached"
-mode, you see all the logs from all the containers. In "detached" mode (`-d`),
-Compose exits after starting the containers, but the containers continue to run
-in the background.
+通常你会使用 `docker compose up`。`up` 用于启动或重启 `compose.yaml` 中定义的所有服务。在默认的“附加”（attached）模式下，你可以看到所有容器的日志；在“分离”（detached）模式（`-d`）下，Compose 在启动容器后退出，但容器会在后台继续运行。
 
-The `docker compose run` command is for running "one-off" or "adhoc" tasks. It
-requires the service name you want to run and only starts containers for services
-that the running service depends on. Use `run` to run tests or perform
-an administrative task such as removing or adding data to a data volume
-container. The `run` command acts like `docker run -ti` in that it opens an
-interactive terminal to the container and returns an exit status matching the
-exit status of the process in the container.
+`docker compose run` 用于运行一次性（one-off）或临时（adhoc）任务。该命令需要指定要运行的服务名，并只会启动该服务及其依赖的服务容器。可用 `run` 来运行测试，或执行管理任务，例如向数据卷容器添加或移除数据。`run` 的行为类似 `docker run -ti`，会打开一个交互式终端并返回容器内进程的退出状态码。
 
-The `docker compose start` command is useful only to restart containers
-that were previously created but were stopped. It never creates new
-containers.
+`docker compose start` 只用于重新启动已创建但停止的容器，不会创建新容器。
 
-### Why do my services take 10 seconds to recreate or stop?
+### 为什么服务需要 10 秒才会重新创建或停止？
 
-The `docker compose stop` command attempts to stop a container by sending a `SIGTERM`. It then waits
-for a [default timeout of 10 seconds](/reference/cli/docker/compose/stop.md). After the timeout,
-a `SIGKILL` is sent to the container to forcefully kill it. If you
-are waiting for this timeout, it means that your containers aren't shutting down
-when they receive the `SIGTERM` signal.
+`docker compose stop` 会先向容器发送 `SIGTERM` 以尝试停止容器，然后等待[默认 10 秒超时](/reference/cli/docker/compose/stop.md)。超时后会发送 `SIGKILL` 强制终止容器。如果你总在等待这个超时时间，说明容器在收到 `SIGTERM` 时没有正常退出。
 
-There has already been a lot written about this problem of
-[processes handling signals](https://medium.com/@gchudnov/trapping-signals-in-docker-containers-7a57fdda7d86)
-in containers.
+关于容器内[进程处理信号](https://medium.com/@gchudnov/trapping-signals-in-docker-containers-7a57fdda7d86)的问题已有大量讨论。
 
-To fix this problem, try the following:
+要解决这个问题，可以尝试：
 
-- Make sure you're using the exec form of `CMD` and `ENTRYPOINT`
-in your Dockerfile.
+- 确保在 Dockerfile 中使用 `CMD` 与 `ENTRYPOINT` 的 exec 形式。
 
-  For example use `["program", "arg1", "arg2"]` not `"program arg1 arg2"`.
-  Using the string form causes Docker to run your process using `bash` which
-  doesn't handle signals properly. Compose always uses the JSON form, so don't
-  worry if you override the command or entrypoint in your Compose file.
+  例如，使用 `["program", "arg1", "arg2"]`，而不是 `"program arg1 arg2"`。
+  字符串形式会导致 Docker 通过 `bash` 运行你的进程，而 `bash` 无法正确处理信号。
+  Compose 始终使用 JSON 形式，因此即便你在 Compose 文件中覆盖了命令或入口点，也无需担心。
 
-- If you are able, modify the application that you're running to
-add an explicit signal handler for `SIGTERM`.
+- 如果可行，请修改你的应用，为 `SIGTERM` 增加显式的信号处理。
 
-- Set the `stop_signal` to a signal which the application knows how to handle:
+- 将 `stop_signal` 设置为应用能够正确处理的信号：
 
   ```yaml
   services:
@@ -71,41 +50,24 @@ add an explicit signal handler for `SIGTERM`.
       stop_signal: SIGINT
   ```
 
-- If you can't modify the application, wrap the application in a lightweight init
-system (like [s6](https://skarnet.org/software/s6/)) or a signal proxy (like
-[dumb-init](https://github.com/Yelp/dumb-init) or
-[tini](https://github.com/krallin/tini)).  Either of these wrappers takes care of
-handling `SIGTERM` properly.
+- 如果无法修改应用，可将其封装在轻量级 init 系统（如 [s6](https://skarnet.org/software/s6/)）或信号代理（如 [dumb-init](https://github.com/Yelp/dumb-init) 或 [tini](https://github.com/krallin/tini)）中，它们能正确处理 `SIGTERM`。
 
-### How do I run multiple copies of a Compose file on the same host?
+### 如何在同一主机上运行一个 Compose 项目的多个副本？
 
-Compose uses the project name to create unique identifiers for all of a
-project's containers and other resources. To run multiple copies of a project,
-set a custom project name using the `-p` command line option
-or the [`COMPOSE_PROJECT_NAME` environment variable](/manuals/compose/how-tos/environment-variables/envvars.md#compose_project_name).
+Compose 使用项目名为项目的容器及其他资源创建唯一标识。若要运行同一项目的多个副本，可通过命令行选项 `-p` 或设置 [`COMPOSE_PROJECT_NAME` 环境变量](/manuals/compose/how-tos/environment-variables/envvars.md#compose_project_name) 指定自定义项目名。
 
-### Can I use JSON instead of YAML for my Compose file?
+### Compose 文件可以用 JSON 替代 YAML 吗？
 
-Yes. [YAML is a superset of JSON](https://stackoverflow.com/a/1729545/444646) so
-any JSON file should be valid YAML. To use a JSON file with Compose,
-specify the filename to use, for example:
+可以。[YAML 是 JSON 的超集](https://stackoverflow.com/a/1729545/444646)，因此任何 JSON 文件都应是有效的 YAML。要在 Compose 中使用 JSON 文件，请显式指定文件名，例如：
 
 ```console
 $ docker compose -f compose.json up
 ```
 
-### Should I include my code with `COPY`/`ADD` or a volume?
+### 该用 `COPY`/`ADD` 打包代码，还是使用卷挂载？
 
-You can add your code to the image using `COPY` or `ADD` directive in a
-`Dockerfile`.  This is useful if you need to relocate your code along with the
-Docker image, for example when you're sending code to another environment
-(production, CI, etc).
+你可以在 `Dockerfile` 中使用 `COPY` 或 `ADD` 指令将代码添加到镜像中。如果需要随镜像迁移代码（例如发送到其他环境：生产、CI 等），这种方式很有用。
 
-Use a `volume` if you want to make changes to your code and see them
-reflected immediately, for example when you're developing code and your server
-supports hot code reloading or live-reload.
+如果希望修改代码后立即生效（例如开发阶段你的服务支持热重载或实时刷新），可以使用 `volume` 挂载代码。
 
-There may be cases where you want to use both. You can have the image
-include the code using a `COPY`, and use a `volume` in your Compose file to
-include the code from the host during development. The volume overrides
-the directory contents of the image.
+在某些场景下，你也可以两者结合：镜像中通过 `COPY` 包含代码；开发阶段再通过 Compose 文件中的 `volume` 挂载宿主机上的代码。卷会覆盖镜像中对应目录的内容。

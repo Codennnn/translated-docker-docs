@@ -1,7 +1,7 @@
 ---
-title: How Compose works
+title: Compose 的工作原理
 weight: 10
-description: Learn how Docker Compose works, from the application model to Compose files and CLI, whilst following a detailed example.
+description: 了解 Docker Compose 的工作原理：从应用模型到 Compose 文件与 CLI，并结合一个详细示例。
 keywords: docker compose, compose.yaml, docker compose model, compose cli, multi-container application, compose example 
 aliases:
 - /compose/compose-file/02-model/
@@ -9,105 +9,100 @@ aliases:
 - /compose/compose-application-model/
 ---
 
-With Docker Compose you use a YAML configuration file, known as the [Compose file](#the-compose-file), to configure your application’s services, and then you create and start all the services from your configuration with the [Compose CLI](#cli). 
+使用 Docker Compose 时，你会借助一个 YAML 配置文件（即[Compose 文件](#the-compose-file)）来定义应用的各个服务，然后通过 [Compose CLI](#cli) 根据配置创建并启动所有服务。
 
-The Compose file, or `compose.yaml` file, follows the rules provided by the [Compose Specification](/reference/compose-file/_index.md) in how to define multi-container applications. This is the Docker Compose implementation of the formal [Compose Specification](https://github.com/compose-spec/compose-spec). 
+Compose 文件（`compose.yaml`）遵循[Compose 规范](/reference/compose-file/_index.md)来定义多容器应用。本文所述是 Docker Compose 对正式[Compose 规范](https://github.com/compose-spec/compose-spec)的实现。
 
-{{< accordion title="The Compose application model" >}}
+{{< accordion title="Compose 应用模型" >}}
 
-Computing components of an application are defined as [services](/reference/compose-file/services.md). A service is an abstract concept implemented on platforms by running the same container image, and configuration, one or more times.
+应用的计算组件以[服务](/reference/compose-file/services.md)的形式定义。服务是一个抽象概念，平台通过运行同一容器镜像及其配置（一次或多次）来实现。
 
-Services communicate with each other through [networks](/reference/compose-file/networks.md). In the Compose Specification, a network is a platform capability abstraction to establish an IP route between containers within services connected together.
+服务之间通过[网络](/reference/compose-file/networks.md)进行通信。在 Compose 规范中，网络是平台能力的抽象，用于在同一项目中的服务容器之间建立 IP 路由。
 
-Services store and share persistent data into [volumes](/reference/compose-file/volumes.md). The Specification describes such a persistent data as a high-level filesystem mount with global options.
+服务使用[卷](/reference/compose-file/volumes.md)存储与共享持久化数据。规范将此类数据描述为具备全局选项的高层级文件系统挂载。
 
-Some services require configuration data that is dependent on the runtime or platform. For this, the Specification defines a dedicated [configs](/reference/compose-file/configs.md) concept. From inside the container, configs behave like volumes—they’re mounted as files. However, configs are defined differently at the platform level.
+部分服务需要与运行时或平台相关的配置数据。为此，规范定义了专门的 [configs](/reference/compose-file/configs.md) 概念。在容器内部，配置的表现类似卷——以文件形式挂载。但在平台层面，配置的定义方式有所不同。
 
-A [secret](/reference/compose-file/secrets.md) is a specific flavor of configuration data for sensitive data that should not be exposed without security considerations. Secrets are made available to services as files mounted into their containers, but the platform-specific resources to provide sensitive data are specific enough to deserve a distinct concept and definition within the Compose Specification.
+[秘密](/reference/compose-file/secrets.md) 用于存放不应未经安全控制而暴露的敏感数据。Secrets 以文件的形式挂载到容器中供服务使用；鉴于其安全与平台特性，Compose 规范将其作为独立概念进行定义。
 
 > [!NOTE]
 >
-> With volumes, configs and secrets you can have a simple declaration at the top-level and then add more platform-specific information at the service level.
+> 对于卷、配置与秘密，你可以在顶层进行简要声明，再在服务级别补充平台特定的信息。
 
-A project is an individual deployment of an application specification on a platform. A project's name, set with the top-level [`name`](/reference/compose-file/version-and-name.md) attribute, is used to group
-resources together and isolate them from other applications or other installation of the same Compose-specified application with distinct parameters. If you are creating resources on a platform, you must prefix resource names by project and
-set the label `com.docker.compose.project`.
+项目是在某个平台上对应用规范的一次独立部署。项目名称通过顶层属性 [`name`](/reference/compose-file/version-and-name.md) 指定，用于对资源进行分组，并将其与其他应用或同一应用的不同安装实例（参数不同）隔离开来。如果你在某个平台上创建资源，应当为资源名称添加项目名前缀，并设置标签 `com.docker.compose.project`。
 
-Compose offers a way for you to set a custom project name and override this name, so that the same `compose.yaml` file can be deployed twice on the same infrastructure, without changes, by just passing a distinct name.
+Compose 允许设置自定义项目名并在运行时覆盖它，这样在同一基础设施上，只需传入不同的名称，就能在不修改 `compose.yaml` 的情况下部署两份实例。
 
 {{< /accordion >}} 
 
-## The Compose file
+## Compose 文件 {#the-compose-file}
 
-The default path for a Compose file is `compose.yaml` (preferred) or `compose.yml` that is placed in the working directory.
-Compose also supports `docker-compose.yaml` and `docker-compose.yml` for backwards compatibility of earlier versions.
-If both files exist, Compose prefers the canonical `compose.yaml`.
+Compose 文件的默认路径为工作目录下的 `compose.yaml`（推荐）或 `compose.yml`。
+为向后兼容早期版本，还支持 `docker-compose.yaml` 与 `docker-compose.yml`。
+如果两类文件同时存在，Compose 会优先使用规范的 `compose.yaml`。
 
-You can use [fragments](/reference/compose-file/fragments.md) and [extensions](/reference/compose-file/extension.md) to keep your Compose file efficient and easy to maintain.
+你可以使用[片段](/reference/compose-file/fragments.md)与[扩展](/reference/compose-file/extension.md)来保持 Compose 文件的高效与易维护。
 
-Multiple Compose files can be [merged](/reference/compose-file/merge.md) together to define the application model. The combination of YAML files is implemented by appending or overriding YAML elements based on the Compose file order you set. 
-Simple attributes and maps get overridden by the highest order Compose file, lists get merged by appending. Relative
-paths are resolved based on the first Compose file's parent folder, whenever complimentary files being
-merged are hosted in other folders. As some Compose file elements can both be expressed as single strings or complex objects, merges apply to
-the expanded form. For more information, see [Working with multiple Compose files](/manuals/compose/how-tos/multiple-compose-files/_index.md).
+你可以将多个 Compose 文件[合并](/reference/compose-file/merge.md)来定义应用模型。YAML 的合并依据你设定的 Compose 文件顺序进行追加或覆盖：
+简单属性与映射会被优先级更高的文件覆盖，列表通过追加进行合并。若被合并的补充文件位于其他目录，相关相对路径以第一个 Compose 文件的父目录为基准进行解析。由于某些 Compose 元素既可写作简单字符串也可写作复杂对象，合并时以展开后的形式为准。更多信息参见《[使用多个 Compose 文件](/manuals/compose/how-tos/multiple-compose-files/_index.md)》。
 
-If you want to reuse other Compose files, or factor out parts of your application model into separate Compose files, you can also use [`include`](/reference/compose-file/include.md). This is useful if your Compose application is dependent on another application which is managed by a different team, or needs to be shared with others.
+若希望复用其他 Compose 文件，或将应用模型的部分拆分到独立文件中，你也可以使用 [`include`](/reference/compose-file/include.md)。当你的 Compose 应用依赖于由其他团队维护的另一个应用，或需要共享某些模块时，这会非常有用。
 
-## CLI
+## CLI {#cli}
 
-The Docker CLI lets you interact with your Docker Compose applications through the `docker compose` command and its subcommands. If you're using Docker Desktop, the Docker Compose CLI is included by default.
+通过 Docker CLI 的 `docker compose` 及其子命令，你可以与 Docker Compose 应用进行交互。若你使用 Docker Desktop，则默认已包含 Compose CLI。
 
-Using the CLI, you can manage the lifecycle of your multi-container applications defined in the `compose.yaml` file. The CLI commands enable you to start, stop, and configure your applications effortlessly.
+借助 CLI，你可以管理 `compose.yaml` 中定义的多容器应用生命周期，轻松完成启动、停止与配置等操作。
 
-### Key commands 
+### 常用命令 
 
-To start all the services defined in your `compose.yaml` file:
+启动 `compose.yaml` 中定义的所有服务：
 
 ```console
 $ docker compose up
 ```
 
-To stop and remove the running services:
+停止并移除正在运行的服务：
 
 ```console
 $ docker compose down 
 ```
 
-If you want to monitor the output of your running containers and debug issues, you can view the logs with: 
+如需监控正在运行容器的输出并进行调试，可查看日志： 
 
 ```console
 $ docker compose logs
 ```
 
-To list all the services along with their current status:
+列出所有服务及其当前状态：
 
 ```console
 $ docker compose ps
 ```
 
-For a full list of all the Compose CLI commands, see the [reference documentation](/reference/cli/docker/compose/_index.md).
+完整命令列表参见《[命令参考](/reference/cli/docker/compose/_index.md)》。
 
-## Illustrative example
+## 示例说明
 
-The following example illustrates the Compose concepts outlined above. The example is non-normative.
+以下示例展示了上文提到的 Compose 概念。该示例仅用于说明，并非规范性内容。
 
-Consider an application split into a frontend web application and a backend service.
+假设一个应用由前端 Web 应用与后端服务构成。
 
-The frontend is configured at runtime with an HTTP configuration file managed by infrastructure, providing an external domain name, and an HTTPS server certificate injected by the platform's secured secret store.
+前端在运行时通过由基础设施管理的 HTTP 配置文件进行配置，提供外部域名；同时平台会通过安全的秘密存储注入 HTTPS 服务器证书。
 
-The backend stores data in a persistent volume.
+后端将数据存储在持久卷中。
 
-Both services communicate with each other on an isolated back-tier network, while the frontend is also connected to a front-tier network and exposes port 443 for external usage.
+两个服务通过隔离的后端网络互通；前端同时连接到前端网络，并对外暴露 443 端口。
 
-![Compose application example](../images/compose-application.webp)
+![Compose 应用示例](../images/compose-application.webp)
 
-The example application is composed of the following parts:
+该示例应用由以下部分组成：
 
-- Two services, backed by Docker images: `webapp` and `database`
-- One secret (HTTPS certificate), injected into the frontend
-- One configuration (HTTP), injected into the frontend
-- One persistent volume, attached to the backend
-- Two networks
+- 两个使用 Docker 镜像的服务：`webapp` 与 `database`
+- 一个秘密（HTTPS 证书），注入到前端
+- 一个配置（HTTP），注入到前端
+- 一个持久卷，挂载到后端
+- 两个网络
 
 ```yml
 services:
@@ -145,14 +140,14 @@ secrets:
     external: true
 
 networks:
-  # The presence of these objects is sufficient to define them
+  # 仅需声明这些对象即可完成定义
   front-tier: {}
   back-tier: {}
 ```
 
-The `docker compose up` command starts the `frontend` and `backend` services, creates the necessary networks and volumes, and injects the configuration and secret into the frontend service.
+`docker compose up` 会启动 `frontend` 与 `backend` 服务，创建所需的网络与卷，并将配置与秘密注入到前端服务中。
 
-`docker compose ps` provides a snapshot of the current state of your services, making it easy to see which containers are running, their status, and the ports they are using:
+`docker compose ps` 提供服务当前状态的快照，便于查看哪些容器正在运行、状态如何，以及使用的端口：
 
 ```text
 $ docker compose ps
@@ -162,8 +157,8 @@ example-frontend-1  example/webapp       "nginx -g 'daemon of…"   frontend    
 example-backend-1   example/database     "docker-entrypoint.s…"   backend             2 minutes ago       Up 2 minutes
 ```
 
-## What's next 
+## 下一步 
 
-- [Try the Quickstart guide](/manuals/compose/gettingstarted.md)
-- [Explore some sample applications](/manuals/compose/support-and-feedback/samples-for-compose.md)
-- [Familiarize yourself with the Compose Specification](/reference/compose-file/_index.md)
+- [试试快速开始](/manuals/compose/gettingstarted.md)
+- [查看一些示例应用](/manuals/compose/support-and-feedback/samples-for-compose.md)
+- [熟悉 Compose 规范](/reference/compose-file/_index.md)

@@ -1,42 +1,42 @@
 ---
-description: Learn how to configure Docker Compose to use NVIDIA GPUs with CUDA-based containers
+description: 了解如何配置 Docker Compose 以在基于 CUDA 的容器中使用 NVIDIA GPU
 keywords: documentation, docs, docker, compose, GPU access, NVIDIA, samples
-title: Run Docker Compose services with GPU access 
-linkTitle: Enable GPU support
+title: 使用 GPU 访问运行 Docker Compose 服务 
+linkTitle: 启用 GPU 支持
 weight: 90
 aliases:
 - /compose/gpu-support/
 ---
 
-Compose services can define GPU device reservations if the Docker host contains such devices and the Docker Daemon is set accordingly. For this, make sure you install the [prerequisites](/manuals/engine/containers/resource_constraints.md#gpu) if you haven't already done so.
+如果 Docker 主机具备 GPU 设备，并且 Docker 守护进程已正确配置，那么 Compose 中的服务就可以声明 GPU 设备的保留（reservation）。为此，请确保已安装所需的[先决条件](/manuals/engine/containers/resource_constraints.md#gpu)。
 
-The examples in the following sections focus specifically on providing service containers access to GPU devices with Docker Compose. 
-You can use either `docker-compose` or `docker compose` commands. For more information, see [Migrate to Compose V2](/manuals/compose/releases/migrate.md).
+下文示例专注于通过 Docker Compose 为服务容器提供对 GPU 设备的访问能力。
+你可以使用 `docker-compose` 或 `docker compose` 命令。更多信息参见[迁移到 Compose V2](/manuals/compose/releases/migrate.md)。
 
-## Enabling GPU access to service containers
+## 为服务容器启用 GPU 访问
 
-GPUs are referenced in a `compose.yaml` file using the [device](/reference/compose-file/deploy.md#devices) attribute from the Compose Deploy specification, within your services that need them.
+在需要使用 GPU 的服务中，你可以在 `compose.yaml` 中使用 Compose Deploy 规范里的 [device](/reference/compose-file/deploy.md#devices) 属性来引用 GPU。
 
-This provides more granular control over a GPU reservation as custom values can be set for the following device properties: 
+这使你能够对 GPU 预留进行更细粒度的控制，可为以下设备属性设置自定义值： 
 
-- `capabilities`. This value is specified as a list of strings. For example, `capabilities: [gpu]`. You must set this field in the Compose file. Otherwise, it returns an error on service deployment.
-- `count`. Specified as an integer or the value `all`, represents the number of GPU devices that should be reserved (providing the host holds that number of GPUs). If `count` is set to `all` or not specified, all GPUs available on the host are used by default.
-- `device_ids`. This value, specified as a list of strings, represents GPU device IDs from the host. You can find the device ID in the output of `nvidia-smi` on the host. If no `device_ids` are set, all GPUs available on the host are used by default.
-- `driver`. Specified as a string, for example `driver: 'nvidia'`
-- `options`. Key-value pairs representing driver specific options.
+- `capabilities`：以字符串列表的形式指定。例如 `capabilities: [gpu]`。你必须在 Compose 文件中设置该字段，否则服务部署会报错。
+- `count`：可为整数或 `all`，表示需要预留的 GPU 数量（前提是主机上有足够数量的 GPU）。若设置为 `all` 或未指定，默认使用主机上的所有可用 GPU。
+- `device_ids`：以字符串列表形式指定，表示主机上的 GPU 设备 ID。可通过主机上的 `nvidia-smi` 输出找到设备 ID。若未设置 `device_ids`，默认使用主机上的所有可用 GPU。
+- `driver`：字符串，例如 `driver: 'nvidia'`。
+- `options`：表示驱动程序特定选项的键值对。
 
 
 > [!IMPORTANT]
 >
-> You must set the `capabilities` field. Otherwise, it returns an error on service deployment.
+> 你必须设置 `capabilities` 字段，否则服务部署时会报错。
 
 > [!NOTE]
 >
-> `count` and `device_ids` are mutually exclusive. You must only define one field at a time.
+> `count` 与 `device_ids` 互斥。一次只能定义其中一个字段。
 
-For more information on these properties, see the [Compose Deploy Specification](/reference/compose-file/deploy.md#devices).
+关于这些属性的更多说明，参见 [Compose Deploy 规范](/reference/compose-file/deploy.md#devices)。
 
-### Example of a Compose file for running a service with access to 1 GPU device
+### 示例：可访问 1 块 GPU 的 Compose 文件
 
 ```yaml
 services:
@@ -52,7 +52,7 @@ services:
               capabilities: [gpu]
 ```
 
-Run with Docker Compose:
+使用 Docker Compose 运行：
 
 ```console
 $ docker compose up
@@ -82,9 +82,9 @@ gpu_test_1 exited with code 0
 
 ```
 
-On machines hosting multiple GPUs, the `device_ids` field can be set to target specific GPU devices and `count` can be used to limit the number of GPU devices assigned to a service container. 
+在具有多块 GPU 的主机上，可以通过 `device_ids` 指定要使用的特定 GPU 设备，并使用 `count` 限制分配给服务容器的 GPU 数量。
 
-You can use `count` or `device_ids` in each of your service definitions. An error is returned if you try to combine both, specify an invalid device ID, or use a value of count that’s higher than the number of GPUs in your system.
+在每个服务定义中可以选择使用 `count` 或 `device_ids`。如果同时设置两者、指定了无效的设备 ID，或 `count` 大于系统中的 GPU 数量，都会报错。
 
 ```console
 $ nvidia-smi   
@@ -113,9 +113,9 @@ $ nvidia-smi
 +-------------------------------+----------------------+----------------------+
 ```
 
-## Access specific devices
+## 访问特定设备
 
-To allow access only to GPU-0 and GPU-3 devices:
+仅允许访问 GPU-0 与 GPU-3：
 
 ```yaml
 services:

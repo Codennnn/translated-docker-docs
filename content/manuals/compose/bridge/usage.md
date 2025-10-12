@@ -1,40 +1,40 @@
 ---
-title: Use the default Compose Bridge transformation
-linkTitle: Usage
+title: 使用默认的 Compose Bridge 转换
+linkTitle: 用法
 weight: 10
-description: Learn how to use the default Compose Bridge transformation to convert Compose files into Kubernetes manifests
+description: 了解如何使用默认的 Compose Bridge 转换，将 Compose 文件转换为 Kubernetes 清单
 keywords: docker compose bridge, compose kubernetes transform, kubernetes from compose, compose bridge convert, compose.yaml to kubernetes
 ---
 
 {{< summary-bar feature_name="Compose bridge" >}}
 
-Compose Bridge supplies an out-of-the-box transformation for your Compose configuration file. Based on an arbitrary `compose.yaml` file, Compose Bridge produces:
+Compose Bridge 为你的 Compose 配置文件提供了开箱即用的转换能力。基于任意 `compose.yaml`，Compose Bridge 会生成：
 
-- A [Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) so all your resources are isolated and don't conflict with resources from other deployments.
-- A [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) with an entry for each and every [config](/reference/compose-file/configs.md) resource in your Compose application.
-- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) for application services. This ensures that the specified number of instances of your application are maintained in the Kubernetes cluster.
-- [Services](https://kubernetes.io/docs/concepts/services-networking/service/) for ports exposed by your services, used for service-to-service communication.
-- [Services](https://kubernetes.io/docs/concepts/services-networking/service/) for ports published by your services, with type `LoadBalancer` so that Docker Desktop will also expose the same port on the host.
-- [Network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/) to replicate the networking topology defined in your `compose.yaml` file. 
-- [PersistentVolumeClaims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) for your volumes, using `hostpath` storage class so that Docker Desktop manages volume creation.
-- [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) with your secret encoded. This is designed for local use in a testing environment.
+- 一个 [Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)，用于隔离你的资源，避免与其他部署的资源冲突。
+- 一个 [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)，为 Compose 应用中的每个 [config](/reference/compose-file/configs.md) 资源生成对应条目。
+- 为应用服务生成 [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)，确保在 Kubernetes 集群中维持指定数量的实例。
+- 为服务暴露的端口生成 [Services](https://kubernetes.io/docs/concepts/services-networking/service/)，用于服务间通信。
+- 为服务发布的端口生成 [Services](https://kubernetes.io/docs/concepts/services-networking/service/)，类型为 `LoadBalancer`，以便 Docker Desktop 在主机上映射相同端口。
+- 根据 `compose.yaml` 中定义的网络拓扑生成 [Network policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)。 
+- 为你的卷生成 [PersistentVolumeClaims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)，使用 `hostpath` 存储类，由 Docker Desktop 管理卷创建。
+- 生成包含机密信息的 [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)，用于本地测试环境。
 
-It also supplies a Kustomize overlay dedicated to Docker Desktop with:
- - `Loadbalancer` for services which need to expose ports on host.
- - A `PersistentVolumeClaim` to use the Docker Desktop storage provisioner `desktop-storage-provisioner` to handle volume provisioning more effectively.
- - A Kustomize file to link all the resources together.
+同时还会生成一个专用于 Docker Desktop 的 Kustomize overlay，其中包含：
+ - 为需要在主机上暴露端口的服务提供 `LoadBalancer`。
+ - 一个 `PersistentVolumeClaim`，使用 Docker Desktop 的存储供应器 `desktop-storage-provisioner` 更高效地完成卷的供应。
+ - 一个 Kustomize 配置文件，用于将所有资源关联在一起。
 
-## Use the default Compose Bridge transformation
+## 使用默认的 Compose Bridge 转换
 
-To use the default transformation run the following command:
+运行以下命令以使用默认转换：
 
 ```console
 $ docker compose bridge convert
 ```
 
-Compose looks for a `compose.yaml` file inside the current directory and then converts it.
+Compose 会在当前目录查找 `compose.yaml` 文件并执行转换。
 
-When successful, Compose Bridge generates Kubernetes manifests and logs output similar to the following:
+成功后，Compose Bridge 会生成 Kubernetes 清单，并输出类似如下的日志：
 
 ```console
 $ docker compose bridge convert -f compose.yaml 
@@ -58,22 +58,21 @@ Kubernetes resource web-service.yaml created
 Kubernetes resource kustomization.yaml created
 ```
 
-These files are then stored within your project in the `/out` folder. 
+生成的文件会保存在项目的 `/out` 目录下。 
 
-The Kubernetes manifests can then be used to run the application on Kubernetes using
-the standard deployment command `kubectl apply -k out/overlays/desktop/`.
+随后，可以使用标准部署命令 `kubectl apply -k out/overlays/desktop/` 在 Kubernetes 上运行应用。
 
 > [!IMPORTANT]
 >
-> Make sure you have enabled Kubernetes in Docker Desktop before you deploy your Compose Bridge transformations.
+> 在部署 Compose Bridge 转换结果之前，请确保你已在 Docker Desktop 中启用 Kubernetes。
 
-If you want to convert a `compose.yaml` file that is located in another directory, you can run:
+如果要转换位于其他目录下的 `compose.yaml` 文件，可以运行：
 
 ```console
 $ docker compose bridge convert -f <path-to-file>/compose.yaml 
 ```
 
-To see all available flags, run:
+要查看所有可用参数，运行：
 
 ```console
 $ docker compose bridge convert --help
@@ -81,10 +80,10 @@ $ docker compose bridge convert --help
 
 > [!TIP]
 >
-> You can convert and deploy your Compose project to a Kubernetes cluster from the Compose file viewer.
+> 你也可以在 Docker Desktop 的 Compose 文件查看器中，将 Compose 项目转换并部署到 Kubernetes 集群。
 > 
-> Make sure you are signed in to your Docker account, navigate to your container in the **Containers** view, and in the top-right corner select **View configurations** and then **Convert and Deploy to Kubernetes**. 
+> 确保已登录 Docker 账户，进入 **Containers** 视图找到你的容器，点击右上角 **View configurations**，然后选择 **Convert and Deploy to Kubernetes**。
 
-## What's next?
+## 下一步
 
-- [Explore how you can customize Compose Bridge](customize.md)
+- [了解如何自定义 Compose Bridge](customize.md)

@@ -1,7 +1,7 @@
 ---
-description: Use File watch to automatically update running services as you work
+description: 使用 Compose Watch 在开发过程中自动更新运行中的服务
 keywords: compose, file watch, experimental
-title: Use Compose Watch
+title: 使用 Compose Watch
 weight: 50
 aliases:
 - /compose/file-watch/
@@ -11,64 +11,60 @@ aliases:
 
 {{% include "compose/watch.md" %}}
 
-`watch` adheres to the following file path rules:
-* All paths are relative to the project directory, apart from ignore file patterns
-* Directories are watched recursively
-* Glob patterns aren't supported
-* Rules from `.dockerignore` apply
-  * Use `ignore` option to define additional paths to be ignored (same syntax)
-  * Temporary/backup files for common IDEs (Vim, Emacs, JetBrains, & more) are ignored automatically
-  * `.git` directories are ignored automatically
+`watch` 遵循以下文件路径规则：
+* 除忽略模式外，所有路径均相对于项目目录
+* 目录会被递归监视
+* 不支持 Glob 通配符
+* 应用 `.dockerignore` 中的规则
+  * 使用 `ignore` 选项可定义额外的忽略路径（语法相同）
+  * 常见 IDE（Vim、Emacs、JetBrains 等）的临时/备份文件会被自动忽略
+  * `.git` 目录会被自动忽略
 
-You don't need to switch on `watch` for all services in a Compose project. In some instances, only part of the project, for example the Javascript frontend, might be suitable for automatic updates.
+你无需为 Compose 项目中的所有服务都启用 `watch`。在一些场景下，只有项目的一部分（例如 JavaScript 前端）适合自动更新。
 
-Compose Watch is designed to work with services built from local source code using the `build` attribute. It doesn't track changes for services that rely on pre-built images specified by the `image` attribute.
+Compose Watch 主要面向基于本地源码、通过 `build` 构建的服务。对于使用 `image` 指定预构建镜像的服务，不会跟踪其文件变更。
 
-## Compose Watch versus bind mounts
+## Compose Watch 与绑定挂载
 
-Compose supports sharing a host directory inside service containers. Watch mode does not replace this functionality but exists as a companion specifically suited to developing in containers.
+Compose 支持将主机目录共享到服务容器中。Watch 模式并不取代该功能，而是作为补充，更适合在容器内进行开发。
 
-More importantly, `watch` allows for greater granularity than is practical with a bind mount. Watch rules let you ignore specific files or entire directories within the watched tree.
+更重要的是，与绑定挂载相比，`watch` 提供了更细粒度的控制。你可以通过监视规则忽略监视树中的特定文件或整个目录。
 
-For example, in a JavaScript project, ignoring the `node_modules/` directory has two benefits:
-* Performance. File trees with many small files can cause a high I/O load in some configurations
-* Multi-platform. Compiled artifacts cannot be shared if the host OS or architecture is different from the container
+例如，在 JavaScript 项目中忽略 `node_modules/` 目录有两点好处：
+* 性能：在某些配置下，包含大量小文件的目录会带来较高的 I/O 负载
+* 跨平台：当主机操作系统或架构与容器不同，编译产物无法共享
 
-For example, in a Node.js project, it's not recommended to sync the `node_modules/` directory. Even though JavaScript is interpreted, `npm` packages can contain native code that is not portable across platforms.
+例如，在 Node.js 项目中不建议同步 `node_modules/` 目录。尽管 JavaScript 是解释型语言，`npm` 包可能包含无法跨平台移植的原生代码。
 
-## Configuration
+## 配置
 
-The `watch` attribute defines a list of rules that control automatic service updates based on local file changes.
+`watch` 属性用于定义一组规则，使服务能够基于本地文件变更自动更新。
 
-Each rule requires a `path` pattern and `action` to take when a modification is detected. There are two possible actions for `watch` and depending on
-the `action`, additional fields might be accepted or required. 
+每条规则都需要指定 `path`（路径模式）以及在检测到变更时采取的 `action`（动作）。`watch` 支持多种动作，且根据动作不同，可能需要或接受额外字段。
 
-Watch mode can be used with many different languages and frameworks.
-The specific paths and rules will vary from project to project, but the concepts remain the same. 
+Watch 模式适用于多种语言与框架。具体路径与规则会因项目而异，但概念是一致的。
 
-### Prerequisites
+### 先决条件
 
-In order to work properly, `watch` relies on common executables. Make sure your service image contains the following binaries:
+为了正常工作，`watch` 依赖一些常见可执行程序。请确保你的服务镜像包含以下二进制：
 * stat
 * mkdir
 * rmdir
 
-`watch` also requires that the container's `USER` can write to the target path so it can update files. A common pattern is for 
-initial content to be copied into the container using the `COPY` instruction in a Dockerfile. To ensure such files are owned 
-by the configured user, use the `COPY --chown` flag:
+此外，`watch` 要求容器内的 `USER` 对目标路径具有写权限，以便更新文件。常见做法是在 Dockerfile 中使用 `COPY` 指令将初始内容复制到容器内。为确保这些文件归配置的用户所有，请使用 `COPY --chown` 标志：
 
 ```dockerfile
-# Run as a non-privileged user
+# 以非特权用户运行
 FROM node:18
 RUN useradd -ms /bin/sh -u 1001 app
 USER app
 
-# Install dependencies
+# 安装依赖
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy source files into application directory
+# 将源文件复制到应用目录
 COPY --chown=app:app . /app
 ```
 
@@ -76,39 +72,35 @@ COPY --chown=app:app . /app
 
 #### Sync
 
-If `action` is set to `sync`, Compose makes sure any changes made to files on your host automatically match with the corresponding files within the service container.
+当 `action` 设置为 `sync` 时，Compose 会确保主机上对文件的更改自动与服务容器中的对应文件保持一致。
 
-`sync` is ideal for frameworks that support "Hot Reload" or equivalent functionality.
+`sync` 非常适合支持“热重载”或具备等效能力的框架。
 
-More generally, `sync` rules can be used in place of bind mounts for many development use cases.
+更广义地讲，在许多开发场景中，`sync` 规则可以替代绑定挂载。
 
 #### Rebuild
 
-If `action` is set to `rebuild`, Compose automatically builds a new image with BuildKit and replaces the running service container.
+当 `action` 设置为 `rebuild` 时，Compose 会使用 BuildKit 自动构建新镜像，并替换正在运行的服务容器。
 
-The behavior is the same as running `docker compose up --build <svc>`.
+其行为等同于运行 `docker compose up --build <svc>`。
 
-Rebuild is ideal for compiled languages or as a fallback for modifications to particular files that require a full
-image rebuild (e.g. `package.json`).
+`rebuild` 适用于编译型语言，或作为当某些关键文件（如 `package.json`）发生变更且需要完整重建镜像时的兜底方案。
 
 #### Sync + Restart
 
-If `action` is set to `sync+restart`, Compose synchronizes your changes with the service containers and restarts them. 
+当 `action` 设置为 `sync+restart` 时，Compose 会同步你的变更至服务容器，并重启它们。
 
-`sync+restart` is ideal when the config file changes, and you don't need to rebuild the image but just restart the main process of the service containers. 
-It will work well when you update a database configuration or your `nginx.conf` file, for example.
+当配置文件发生更改且无需重建镜像、只需重启服务主进程时，`sync+restart` 非常适合。例如，更新数据库配置或 `nginx.conf` 文件时效果很好。
 
 >[!TIP]
 >
-> Optimize your `Dockerfile` for speedy
-incremental rebuilds with [image layer caching](/build/cache)
-and [multi-stage builds](/build/building/multi-stage/).
+> 通过 [镜像层缓存](/build/cache) 与 [多阶段构建](/build/building/multi-stage/) 优化 `Dockerfile`，以加快增量重建。
 
-### `path` and `target`
+### `path` 与 `target`
 
-The `target` field controls how the path is mapped into the container.
+`target` 字段用于控制路径在容器内的映射方式。
 
-For `path: ./app/html` and a change to `./app/html/index.html`:
+对于 `path: ./app/html` 且当 `./app/html/index.html` 发生更改时：
 
 * `target: /app/html` -> `/app/html/index.html`
 * `target: /app/static` -> `/app/static/index.html`
@@ -116,15 +108,15 @@ For `path: ./app/html` and a change to `./app/html/index.html`:
 
 ### `ignore`
 
-The `ignore` patterns are relative to the `path` defined in the current `watch` action, not to the project directory. In the following Example 1, the ignore path would be relative to the `./web` directory specified in the `path` attribute.
+`ignore` 模式相对于当前 `watch` 动作中定义的 `path`，而非项目目录。在下方“示例 1”中，忽略路径相对于 `path` 属性指定的 `./web` 目录。
 
 ### `initial_sync`
 
-When using a `sync+x` action, the `initial_sync` attribute tells Compose to ensure files that are part of the defined `path` are up to date before starting a new watch session.
+当使用 `sync+x` 类动作时，`initial_sync` 属性用于告知 Compose 在开始新的监视会话前，先确保 `path` 范围内的文件已同步到最新。
 
-## Example 1
+## 示例 1
 
-This minimal example targets a Node.js application with the following structure:
+这是一个最小示例，目标是具有如下结构的 Node.js 应用：
 ```text
 myproject/
 ├── web/
@@ -153,25 +145,24 @@ services:
           path: package.json
 ```
 
-In this example, when running `docker compose up --watch`, a container for the `web` service is launched using an image built from the `Dockerfile` in the project's root.
-The `web` service runs `npm start` for its command, which then launches a development version of the application with Hot Module Reload enabled in the bundler (Webpack, Vite, Turbopack, etc).
+在该示例中，运行 `docker compose up --watch` 后，会基于项目根目录的 `Dockerfile` 构建的镜像启动 `web` 服务容器。
+`web` 服务执行 `npm start`，随后由打包器（Webpack、Vite、Turbopack 等）启用热模块重载，运行应用的开发版本。
 
-After the service is up, the watch mode starts monitoring the target directories and files.
-Then, whenever a source file in the `web/` directory is changed, Compose syncs the file to the corresponding location under `/src/web` inside the container.
-For example, `./web/App.jsx` is copied to `/src/web/App.jsx`.
+服务启动后，监视模式会开始监听目标目录与文件。
+每当 `web/` 目录中的源文件发生修改，Compose 会将该文件同步到容器内 `/src/web` 下的对应位置。
+例如，`./web/App.jsx` 会被复制到 `/src/web/App.jsx`。
 
-Once copied, the bundler updates the running application without a restart.
+同步完成后，打包器会在无需重启的情况下更新正在运行的应用。
 
-And in this case, the `ignore` rule would apply to `myproject/web/node_modules/`, not `myproject/node_modules/`.
+在此场景下，`ignore` 规则会应用到 `myproject/web/node_modules/`，而非 `myproject/node_modules/`。
 
-Unlike source code files, adding a new dependency can’t be done on-the-fly, so whenever `package.json` is changed, Compose
-rebuilds the image and recreates the `web` service container.
+与源代码文件不同，新增依赖无法“即时生效”。因此，每当 `package.json` 发生变化，Compose 会重建镜像并重建 `web` 服务容器。
 
-This pattern can be followed for many languages and frameworks, such as Python with Flask: Python source files can be synced while a change to `requirements.txt` should trigger a rebuild.
+该模式适用于多种语言与框架，例如使用 Flask 的 Python：Python 源文件可以同步，而修改 `requirements.txt` 则应触发重建。
 
-## Example 2 
+## 示例 2 
 
-Adapting the previous example to demonstrate `sync+restart`:
+基于前述示例，演示 `sync+restart`：
 
 ```yaml
 services:
@@ -195,23 +186,22 @@ services:
       target: builder
 ```
 
-This setup demonstrates how to use the `sync+restart` action in Docker Compose to efficiently develop and test a Node.js application with a frontend web server and backend service. The configuration ensures that changes to the application code and configuration files are quickly synchronized and applied, with the `web` service restarting as needed to reflect the changes.
+该设置展示了如何在 Docker Compose 中使用 `sync+restart` 高效开发与测试包含前端 Web 服务器与后端服务的 Node.js 应用。该配置确保应用代码与配置文件的更改能被快速同步并应用，并在需要时重启 `web` 服务以反映变更。
 
-## Use `watch`
+## 使用 `watch`
 
 {{% include "compose/configure-watch.md" %}}
 
 > [!NOTE]
 >
-> Watch can also be used with the dedicated `docker compose watch` command if you don't want to 
-> get the application logs mixed with the (re)build logs and filesystem sync events.
+> 如果不希望应用日志与（重）建日志及文件系统同步事件混杂在一起，也可以使用专门的 `docker compose watch` 命令单独启用 Watch。
 
 > [!TIP]
 >
-> Check out [`dockersamples/avatars`](https://github.com/dockersamples/avatars),
-> or [local setup for Docker docs](https://github.com/docker/docs/blob/main/CONTRIBUTING.md)
-> for a demonstration of Compose `watch`.
+> 可参考 [`dockersamples/avatars`](https://github.com/dockersamples/avatars)，
+> 或 [Docker 文档的本地搭建指南](https://github.com/docker/docs/blob/main/CONTRIBUTING.md)
+> 了解 Compose `watch` 的演示。
 
-## Reference
+## 参考
 
-- [Compose Develop Specification](/reference/compose-file/develop.md)
+- [Compose 开发规范](/reference/compose-file/develop.md)

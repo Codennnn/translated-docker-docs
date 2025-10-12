@@ -1,25 +1,19 @@
 ---
-description: Build images for services with shared definition
+description: 为具有共享定义的服务构建镜像
 keywords: compose, build
-title: Build dependent images
+title: 构建依赖镜像
 weight: 50
 ---
 
 {{< summary-bar feature_name="Compose dependent images" >}}
 
-To reduce push/pull time and image weight, a common practice for Compose applications is to have services
-share base layers as much as possible. You typically select the same operating system base image for
-all services. But you can also get one step further by sharing image layers when your images share the same
-system packages. The challenge to address is then to avoid repeating the exact same Dockerfile instruction 
-in all services.
+为缩短推送/拉取时间并减小镜像体积，Compose 应用的常见做法是尽量让各服务共享基础层。通常会为所有服务选择相同的操作系统基础镜像；当多个镜像需要相同的系统包时，还可以进一步共享镜像层。接下来要解决的问题是：如何避免在每个服务中重复编写完全相同的 Dockerfile 指令。
 
-For illustration, this page assumes you want all your services to be built with an `alpine` base
-image and install the system package `openssl`.
+为便于说明，本文假设你希望所有服务都基于 `alpine` 作为基础镜像，并安装系统包 `openssl`。
 
-## Multi-stage Dockerfile
+## 多阶段 Dockerfile
 
-The recommended approach is to group the shared declaration in a single Dockerfile, and use multi-stage features
-so that service images are built from this shared declaration.
+推荐做法是将共享的声明集中到一个 Dockerfile 中，并利用多阶段构建特性，让各服务的镜像都从这段共享声明开始构建。
 
 Dockerfile:
 
@@ -28,15 +22,15 @@ FROM alpine as base
 RUN /bin/sh -c apk add --update --no-cache openssl
 
 FROM base as service_a
-# build service a
+# 构建服务 a
 ...
 
 FROM base as service_b
-# build service b
+# 构建服务 b
 ...
 ```
 
-Compose file:
+Compose 文件：
 
 ```yaml
 services:
@@ -48,11 +42,9 @@ services:
        target: service_b
 ```
 
-## Use another service's image as the base image
+## 将其他服务的镜像用作基础镜像
 
-A popular pattern is to reuse a service image as a base image in another service.
-As Compose does not parse the Dockerfile, it can't automatically detect this dependency 
-between services to correctly order the build execution.
+一个常见模式是在某个服务中复用另一个服务的镜像作为基础镜像。由于 Compose 不解析 Dockerfile，它无法自动识别这种服务间依赖关系，也就无法据此自动安排正确的构建顺序。
 
 a.Dockerfile:
 
@@ -65,10 +57,10 @@ b.Dockerfile:
 
 ```dockerfile
 FROM service_a
-# build service b
+# 构建服务 b
 ```
 
-Compose file:
+Compose 文件：
 
 ```yaml
 services:
@@ -82,13 +74,11 @@ services:
        dockerfile: b.Dockerfile
 ```
 
-Legacy Docker Compose v1 used to build images sequentially, which made this pattern usable
-out of the box. Compose v2 uses BuildKit to optimise builds and build images in parallel 
-and requires an explicit declaration.
+早期的 Docker Compose v1 会按顺序构建镜像，因此这种模式可以开箱即用。Compose v2 使用 BuildKit 优化构建、并行构建镜像，因此需要显式声明依赖。
 
-The recommended approach is to declare the dependent base image as an additional build context:
+推荐做法是将依赖的基础镜像声明为额外的构建上下文：
 
-Compose file:
+Compose 文件：
 
 ```yaml
 services:
@@ -101,44 +91,43 @@ services:
      build:
        dockerfile: b.Dockerfile
        additional_contexts:
-         # `FROM service_a` will be resolved as a dependency on service "a" which has to be built first
+         # `FROM service_a` 将被解析为对服务 "a" 的依赖，必须先构建服务 a
          service_a: "service:a"
 ```
 
-With the `additional_contexts` attribute, you can refer to an image built by another service without needing to explicitly name it:
+通过 `additional_contexts` 属性，你可以在不显式命名镜像的情况下引用由其他服务构建的镜像：
 
 b.Dockerfile:
 
 ```dockerfile
 
 FROM base_image  
-# `base_image` doesn't resolve to an actual image. This is used to point to a named additional context
+# `base_image` 不会解析为实际镜像。它用于指向一个已命名的额外构建上下文
 
-# build service b
+# 构建服务 b
 ```
 
-Compose file:
+Compose 文件：
 
 ```yaml
 services:
   a:
      build: 
        dockerfile: a.Dockerfile
-       # built image will be tagged <project_name>_a
+       # 构建出的镜像将被打标签为 <project_name>_a
   b:
      build:
        dockerfile: b.Dockerfile
        additional_contexts:
-         # `FROM base_image` will be resolved as a dependency on service "a" which has to be built first
+         # `FROM base_image` 将被解析为对服务 "a" 的依赖，必须先构建服务 a
          base_image: "service:a"
 ```
 
-## Build with Bake
+## 使用 Bake 构建
 
-Using [Bake](/manuals/build/bake/_index.md) let you pass the complete build definition for all services
-and to orchestrate build execution in the most efficient way. 
+使用 [Bake](/manuals/build/bake/_index.md) 可以一次性传递所有服务的完整构建定义，并以最高效率编排构建流程。
 
-To enable this feature, run Compose with the `COMPOSE_BAKE=true` variable set in your environment.
+要启用该功能，请在环境中设置 `COMPOSE_BAKE=true` 后运行 Compose：
 
 ```console
 $ COMPOSE_BAKE=true docker compose build
@@ -150,7 +139,7 @@ $ COMPOSE_BAKE=true docker compose build
  ✔ service_a  Built    
 ```
 
-Bake can also be selected as the default builder by editing your `$HOME/.docker/config.json` config file:
+Bake 也可以作为默认构建器。你可以通过编辑 `$HOME/.docker/config.json` 配置文件来启用：
 ```json
 {
   ...
@@ -163,7 +152,7 @@ Bake can also be selected as the default builder by editing your `$HOME/.docker/
 }
 ```
 
-## Additional resources
+## 更多资源
 
-- [Docker Compose build reference](/reference/cli/docker/compose/build.md)
-- [Learn about multi-stage Dockerfiles](/manuals/build/building/multi-stage.md)
+- [Docker Compose 构建参考](/reference/cli/docker/compose/build.md)
+- [了解多阶段 Dockerfile](/manuals/build/building/multi-stage.md)

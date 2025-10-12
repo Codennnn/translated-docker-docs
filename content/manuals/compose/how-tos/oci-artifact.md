@@ -1,8 +1,8 @@
 ---
-title: Package and deploy Docker Compose applications as OCI artifacts
-linkTitle: OCI artifact applications
+title: 将 Docker Compose 应用打包为 OCI 制品并部署
+linkTitle: OCI 制品应用
 weight: 110
-description: Learn how to package, publish, and securely run Docker Compose applications from OCI-compliant registries.
+description: 了解如何从符合 OCI 的仓库中打包、发布并安全运行 Docker Compose 应用。
 keywords: cli, compose, oci, docker hub, artificats, publish, package, distribute, docker compose oci support
 params:
   sidebar:
@@ -13,45 +13,45 @@ params:
 
 {{< summary-bar feature_name="Compose OCI artifact" >}}
 
-Docker Compose supports working with [OCI artifacts](/manuals/docker-hub/repos/manage/hub-images/oci-artifacts.md), allowing you to package and distribute your Compose applications through container registries. This means you can store your Compose files alongside your container images, making it easier to version, share, and deploy your multi-container applications.
+Docker Compose 支持与 [OCI 制品](/manuals/docker-hub/repos/manage/hub-images/oci-artifacts.md)协同工作，你可以通过容器仓库来打包并分发 Compose 应用。这意味着你可以把 Compose 文件与容器镜像一并存储，便于为多容器应用做版本管理、分享和部署。
 
-## Publish your Compose application as an OCI artifact
+## 将 Compose 应用发布为 OCI 制品
 
-To distribute your Compose application as an OCI artifact, you can use the `docker compose publish` command, to publish it to an OCI-compliant registry. 
-This allows others to then deploy your application directly from the registry.
+要将 Compose 应用以 OCI 制品的形式分发，可以使用 `docker compose publish` 命令，将其发布到符合 OCI 的仓库。
+这样一来，其他人就可以直接从仓库部署你的应用。
 
-The publish function supports most of the composition capabilities of Compose, like overrides, extends or include, [with some limitations](#limitations).
+发布功能支持 Compose 的大多数组合能力，例如 overrides、extends 或 include，但[存在一些限制](#limitations)。
 
-### General steps
+### 通用步骤
 
-1. Navigate to your Compose application's directory.  
-   Ensure you're in the directory containing your `compose.yml` file or that you are specifying your Compose file with the `-f` flag.
+1. 进入 Compose 应用的目录。  
+   确保当前目录包含 `compose.yml` 文件，或通过 `-f` 标志显式指定 Compose 文件。
 
-2. In your terminal, sign in to your Docker account so you're authenticated with Docker Hub.
+2. 在终端中登录 Docker 账号，以便在 Docker Hub 完成身份验证。
 
    ```console
    $ docker login
    ```
 
-3. Use the `docker compose publish` command to push your application as an OCI artifact:
+3. 使用 `docker compose publish` 命令将应用以 OCI 制品形式推送：
 
    ```console
    $ docker compose publish username/my-compose-app:latest
    ```
-   If you have multiple Compose files, run:
+   如果你有多个 Compose 文件，运行：
 
    ```console
    $ docker compose -f compose-base.yml -f compose-production.yml publish username/my-compose-app:latest
    ```
 
-### Advanced publishing options
+### 高级发布选项
 
-When publishing, you can pass additional options: 
-- `--oci-version`: Specify the OCI version (default is automatically determined).
-- `--resolve-image-digests`: Pin image tags to digests.
-- `--with-env`: Include environment variables in the published OCI artifact.
+发布时，你可以传递以下附加选项： 
+- `--oci-version`：指定 OCI 版本（默认自动判定）。
+- `--resolve-image-digests`：将镜像标签固定到摘要（digest）。
+- `--with-env`：在发布的 OCI 制品中包含环境变量。
 
-Compose checks to make sure there isn't any sensitive data in your configuration and displays your environment variables to confirm you want to publish them.
+Compose 会检查你的配置中是否包含敏感数据，并展示将要发布的环境变量，要求你确认是否继续。
 
 ```text
 ...
@@ -82,38 +82,38 @@ BAR=baz
 Are you ok to publish these environment variables? [y/N]: 
 ```
 
-If you decline, the publish process stops without sending anything to the registry.
+如果你拒绝，发布流程会立即停止，不会向仓库发送任何内容。
 
-## Limitations
+## 限制
 
-There are limitations to publishing Compose applications as OCI artifacts. You can't publish a Compose configuration:
-- With service(s) containing bind mounts
-- With service(s) containing only a `build` section
-- That includes local files with the `include` attribute. To publish successfully, ensure that any included local files are also published. You can then use  `include` to reference these files as remote `include` is supported.
+将 Compose 应用发布为 OCI 制品存在一些限制。你不能发布以下 Compose 配置：
+- 包含绑定挂载（bind mount）的服务
+- 仅包含 `build` 段的服务
+- 使用 `include` 属性包含了本地文件的配置。要成功发布，必须确保这些被包含的本地文件也已经作为制品发布。之后便可通过 `include` 引用这些文件，因为远程 `include` 受支持。
 
-## Start an OCI artifact application
+## 启动基于 OCI 制品的应用
 
-To start a Docker Compose application that uses an OCI artifact, you can use the `-f` (or `--file`) flag followed by the OCI artifact reference. This allows you to specify a Compose file stored as an OCI artifact in a registry.
+要启动一个使用 OCI 制品的 Docker Compose 应用，可以通过 `-f`（或 `--file`）标志传入 OCI 制品引用。这允许你指定存储在仓库中的 Compose 文件（作为 OCI 制品）。
 
-The `oci://` prefix indicates that the Compose file should be pulled from an OCI-compliant registry rather than loaded from the local filesystem.
-
-```console
-$ docker compose -f oci://docker.io/username/my-compose-app:latest up
-```
-
-To then run the Compose application, use the `docker compose up` command with the `-f` flag pointing to your OCI artifact:
+`oci://` 前缀表示应当从符合 OCI 的仓库拉取 Compose 文件，而不是从本地文件系统加载。
 
 ```console
 $ docker compose -f oci://docker.io/username/my-compose-app:latest up
 ```
 
-### Troubleshooting
+随后，使用 `docker compose up` 并通过 `-f` 指向你的 OCI 制品来运行该 Compose 应用：
 
-When you run an application from an OCI artifact, Compose may display warning messages that require you to confirm the following so as to limit the risk of running a malicious application:
+```console
+$ docker compose -f oci://docker.io/username/my-compose-app:latest up
+```
 
-- A list of the interpolation variables used along with their values
-- A list of all environment variables used by the application
-- If your OCI artifact application is using another remote resources, for example via [`include`](/reference/compose-file/include/).
+### 故障排查
+
+当你从 OCI 制品运行应用时，Compose 可能会显示警告信息，要求你对以下内容进行确认，以降低运行恶意应用的风险：
+
+- 所有插值变量及其值的列表
+- 应用使用的全部环境变量列表
+- 该 OCI 制品应用是否使用了其他远程资源，例如通过 [`include`](/reference/compose-file/include/)
 
 ```text 
 $ REGISTRY=myregistry.com docker compose -f oci://docker.io/username/my-compose-app:latest up
@@ -133,7 +133,7 @@ Remote includes could potentially be malicious. Make sure you trust the source.
 Do you want to continue? [y/N]: 
 ```
 
-If you agree to start the application, Compose displays the directory where all the resources from the OCI artifact have been downloaded:
+如果你同意启动该应用，Compose 会显示已从 OCI 制品下载的所有资源所在的目录：
 
 ```text
 ...
@@ -142,14 +142,14 @@ Do you want to continue? [y/N]: y
 Your compose stack "oci://registry.example.com/stack:latest" is stored in "~/Library/Caches/docker-compose/964e715660d6f6c3b384e05e7338613795f7dcd3613890cfa57e3540353b9d6d"
 ```
 
-The `docker compose publish` command supports non-interactive execution, letting you skip the confirmation prompt by including the `-y` (or `--yes`) flag: 
+`docker compose publish` 命令支持非交互执行，你可以通过 `-y`（或 `--yes`）跳过确认提示： 
 
 ```console
 $ docker compose publish -y username/my-compose-app:latest
 ```
 
-## Next steps
+## 进一步阅读
 
-- [Learn about OCI artifacts in Docker Hub](/manuals/docker-hub/repos/manage/hub-images/oci-artifacts.md)
-- [Compose publish command](/reference/cli/docker/compose/publish.md)
-- [Understand `include`](/reference/compose-file/include.md)
+- [在 Docker Hub 中了解 OCI 制品](/manuals/docker-hub/repos/manage/hub-images/oci-artifacts.md)
+- [Compose publish 命令](/reference/cli/docker/compose/publish.md)
+- [理解 `include`](/reference/compose-file/include.md)

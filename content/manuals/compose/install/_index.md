@@ -1,9 +1,8 @@
 ---
-description: Learn how to install Docker Compose. Compose is available natively on
-  Docker Desktop, as a Docker Engine plugin, and as a standalone tool.
+description: 了解如何安装 Docker Compose。你可以通过 Docker Desktop 原生集成、Docker Engine 插件，或独立工具等方式获取 Compose。
 keywords: install docker compose, docker compose plugin, install compose linux, install docker desktop, docker compose windows, standalone docker compose, docker compose not found
-title: Overview of installing Docker Compose
-linkTitle: Install
+title: 安装 Docker Compose 概览
+linkTitle: 安装
 weight: 20
 toc_max: 3
 aliases:
@@ -12,40 +11,40 @@ aliases:
 - /compose/install/compose-desktop/
 ---
 
-This page summarizes the different ways you can install Docker Compose, depending on your platform and needs.
+本页概述在不同平台与场景下安装 Docker Compose 的可选方式。
 
-## Installation scenarios 
+## 安装场景 
 
-### Docker Desktop (Recommended)
+### Docker Desktop（推荐）
 
-The easiest and recommended way to get Docker Compose is to install Docker Desktop. 
+获取 Docker Compose 最简单、也最推荐的方式是安装 Docker Desktop。
 
-Docker Desktop includes Docker Compose along with Docker Engine and Docker CLI which are Compose prerequisites. 
+Docker Desktop 自带 Docker Compose，并同时包含 Compose 所需的 Docker Engine 与 Docker CLI。
 
-Docker Desktop is available for:
+Docker Desktop 适用于：
 - [Linux](/manuals/desktop/setup/install/linux/_index.md)
 - [Mac](/manuals/desktop/setup/install/mac-install.md)
 - [Windows](/manuals/desktop/setup/install/windows-install.md)
 
 > [!TIP]
-> 
-> If you have already installed Docker Desktop, you can check which version of Compose you have by selecting **About Docker Desktop** from the Docker menu {{< inline-image src="../../desktop/images/whale-x.svg" alt="whale menu" >}}.
+>
+> 已安装 Docker Desktop？可在 Docker 菜单中选择 **About Docker Desktop** {{< inline-image src="../../desktop/images/whale-x.svg" alt="whale menu" >}} 查看当前的 Compose 版本。
 
-### Plugin (Linux only)
+### 插件（仅限 Linux）
 
 > [!IMPORTANT]
 >
-> This method is only available on Linux.
+> 此安装方式仅适用于 Linux。
 
-If you already have Docker Engine and Docker CLI installed, you can install the Docker Compose plugin from the command line, by either:
-- [Using Docker's repository](linux.md#install-using-the-repository)
-- [Downloading and installing manually](linux.md#install-the-plugin-manually)
+如果你的环境已安装 Docker Engine 与 Docker CLI，可以通过命令行安装 Docker Compose 插件，方式包括：
+- [使用 Docker 官方软件源](linux.md#install-using-the-repository)
+- [手动下载并安装](linux.md#install-the-plugin-manually)
 
-### Standalone (Legacy)
+### 独立版（旧方案）
 
 > [!WARNING]
 >
-> This install scenario is not recommended and is only supported for backward compatibility purposes.
+> 不建议使用此方式，仅为向后兼容保留支持。
 
-You can [install the Docker Compose standalone](standalone.md) on Linux or on Windows Server.
+你可以在 Linux 或 Windows Server 上[安装独立版 Docker Compose](standalone.md)。
 

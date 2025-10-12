@@ -1,18 +1,18 @@
 ---
-description: Find a way to provide feedback on Docker Compose that's right for you 
+description: 找到适合你的方式，为 Docker Compose 提供反馈 
 keywords: Feedback, Docker Compose, Community forum, bugs, problems, issues
-title: Give feedback
+title: 提供反馈
 weight: 20
 aliases:
 - /compose/feedback/
 ---
 
-There are many ways you can provide feedback on Docker Compose.
+你可以通过多种方式为 Docker Compose 提供反馈。
 
-### Report bugs or problems on GitHub
+### 在 GitHub 报告缺陷或问题
 
-To report bugs or problems, visit [Docker Compose on GitHub](https://github.com/docker/compose/issues)
+如需报告缺陷或问题，请访问 [Docker Compose on GitHub](https://github.com/docker/compose/issues)
 
-### Feedback via Community Slack channels
+### 通过社区 Slack 渠道反馈
 
-You can also provide feedback through the `#docker-compose` [Docker Community Slack](https://dockr.ly/comm-slack) channel. 
+你也可以通过 `#docker-compose` [Docker Community Slack](https://dockr.ly/comm-slack) 频道反馈。

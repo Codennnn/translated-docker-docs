@@ -1,56 +1,56 @@
 ---
-title: History and development of Docker Compose
-linkTitle: History and development
-description: Explore the evolution of Docker Compose from v1 to v2, including CLI changes, YAML versioning, and the Compose Specification.
+title: Docker Compose 的历史与演进
+linkTitle: 历史与演进
+description: 回顾 Docker Compose 从 v1 到 v2 的演进，包括 CLI 变更、YAML 版本演进与 Compose 规范。
 keywords: compose, compose yaml, swarm, migration, compatibility, docker compose vs docker-compose
 weight: 30
 aliases:
 - /compose/history/
 ---
 
-This page provides:
- - A brief history of the development of the Docker Compose CLI
- - A clear explanation of the major versions and file formats that make up Compose v1 and Compose v2
- - The main differences between Compose v1 and Compose v2 
+本页将为你概览：
+ - Docker Compose CLI 的发展简史
+ - 组成 Compose v1 与 v2 的主要版本与文件格式说明
+ - Compose v1 与 v2 的主要差异 
 
-## Introduction
+## 简介
 
-![Image showing the main differences between Compose v1 and Compose v2](../images/v1-versus-v2.png)
+![展示 Compose v1 与 v2 主要差异的示意图](../images/v1-versus-v2.png)
 
-The previous image shows that the currently supported version of the Docker Compose CLI is Compose v2 which is defined by the [Compose Specification](/reference/compose-file/_index.md).
+上图显示，目前受支持的 Docker Compose CLI 版本为 Compose v2，其由[Compose 规范](/reference/compose-file/_index.md)定义。
 
-It also provides a quick snapshot of the differences in file formats, command-line syntax, and top-level elements. This is covered in more detail in the following sections.
+图中也快速对比了文件格式、命令行语法与顶层元素的差异。下文将进一步展开。
 
-### Docker Compose CLI versioning
+### Docker Compose CLI 版本沿革
 
-Version one of the Docker Compose command-line binary was first released in 2014. It was written in Python, and is invoked with `docker-compose`.
-Typically, Compose v1 projects include a top-level `version` element in the `compose.yaml` file, with values ranging from `2.0` to `3.8`, which refer to the specific [file formats](#compose-file-format-versioning).
+Docker Compose 命令行二进制的 v1 首发于 2014 年，采用 Python 编写，通过 `docker-compose` 调用。
+典型的 Compose v1 项目会在 `compose.yaml` 文件中包含顶层的 `version` 字段，取值范围从 `2.0` 到 `3.8`，对应特定的[文件格式](#compose-file-format-versioning)。
 
-Version two of the Docker Compose command-line binary was announced in 2020, is written in Go, and is invoked with `docker compose`.
-Compose v2 ignores the `version` top-level element in the `compose.yaml` file.
+Docker Compose 命令行二进制的 v2 于 2020 年发布，采用 Go 编写，通过 `docker compose` 调用。
+Compose v2 不再使用 `compose.yaml` 顶层的 `version` 字段。
 
-### Compose file format versioning
+### Compose 文件格式版本 {#compose-file-format-versioning}
 
-The Docker Compose CLIs are defined by specific file formats. 
+Docker Compose CLI 的行为由特定的文件格式所定义。
 
-Three major versions of the Compose file format for Compose v1 were released:
-- Compose file format 1 with Compose 1.0.0 in 2014
-- Compose file format 2.x with Compose 1.6.0 in 2016
-- Compose file format 3.x with Compose 1.10.0 in 2017
+围绕 Compose v1，先后发布了三代主要文件格式：
+- 文件格式 1（随 Compose 1.0.0 于 2014 年发布）
+- 文件格式 2.x（随 Compose 1.6.0 于 2016 年发布）
+- 文件格式 3.x（随 Compose 1.10.0 于 2017 年发布）
 
-Compose file format 1 is substantially different to all the following formats as it lacks a top-level `services` key.
-Its usage is historical and files written in this format don't run with Compose v2.
+文件格式 1 与后续格式差异很大，因为它缺少顶层 `services` 键。
+该格式现已历史化，无法在 Compose v2 中运行。
 
-Compose file format 2.x and 3.x are very similar to each other, but the latter introduced many new options targeted at Swarm deployments.
+文件格式 2.x 与 3.x 彼此非常相似，但后者针对 Swarm 部署引入了许多新选项。
 
-To address confusion around Compose CLI versioning, Compose file format versioning, and feature parity depending on whether Swarm mode was in use, file format 2.x and 3.x were merged into the [Compose Specification](/reference/compose-file/_index.md). 
+为解决关于 CLI 版本、文件格式版本，以及是否启用 Swarm 模式导致的能力差异等混淆，2.x 与 3.x 文件格式被合并进[Compose 规范](/reference/compose-file/_index.md)。 
 
-Compose v2 uses the Compose Specification for project definition. Unlike the prior file formats, the Compose Specification is rolling and makes the `version` top-level element optional. Compose v2 also makes use of optional specifications - [Deploy](/reference/compose-file/deploy.md), [Develop](/reference/compose-file/develop.md), and [Build](/reference/compose-file/build.md).
+Compose v2 基于 Compose 规范来定义项目。不同于过去的文件格式，Compose 规范是“滚动演进”的，并将顶层 `version` 字段设为可选。Compose v2 还引入了可选规范模块——[部署](/reference/compose-file/deploy.md)、[开发](/reference/compose-file/develop.md)与[构建](/reference/compose-file/build.md)。
 
-To make [migration](/manuals/compose/releases/migrate.md) easier, Compose v2 has backwards compatibility for certain elements that have been deprecated or changed between Compose file format 2.x/3.x and the Compose Specification.
+为简化[迁移](/manuals/compose/releases/migrate.md)，在 2.x/3.x 文件格式与 Compose 规范之间，Compose v2 对部分已废弃或变更的元素提供后向兼容。
 
-## What's next?
+## 下一步
 
-- [How Compose works](compose-application-model.md)
-- [Compose Specification reference](/reference/compose-file/_index.md)
-- [Migrate from Compose v1 to v2](/manuals/compose/releases/migrate.md)
+- [Compose 的工作原理](compose-application-model.md)
+- [Compose 规范参考](/reference/compose-file/_index.md)
+- [从 Compose v1 迁移到 v2](/manuals/compose/releases/migrate.md)

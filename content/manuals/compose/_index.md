@@ -1,49 +1,49 @@
 ---
 title: Docker Compose
 weight: 30
-description: Learn how to use Docker Compose to define and run multi-container applications
-  with this detailed introduction to the tool.
+description: 通过本指南学习如何使用 Docker Compose 定义并运行多容器应用，
+  全面掌握该工具的核心用法。
 keywords: docker compose, docker-compose, compose.yaml, docker compose command, multi-container applications, container orchestration, docker cli
 params:
   sidebar:
     group: Open source
 grid:
-- title: Why use Compose?
-  description: Understand Docker Compose's key benefits
+- title: 为什么选择 Compose？
+  description: 了解 Docker Compose 的核心优势
   icon: feature_search
   link: /compose/intro/features-uses/
-- title: How Compose works 
-  description: Understand how Compose works
+- title: Compose 的工作原理 
+  description: 理解 Compose 的工作方式
   icon: category
   link: /compose/intro/compose-application-model/
-- title: Install Compose
-  description: Follow the instructions on how to install Docker Compose.
+- title: 安装 Compose
+  description: 按照指南安装 Docker Compose。
   icon: download
   link: /compose/install
-- title: Quickstart
-  description: Learn the key concepts of Docker Compose whilst building a simple Python
-    web application.
+- title: 快速开始
+  description: 在构建一个简单的 Python Web 应用的过程中，
+    掌握 Docker Compose 的关键概念。
   icon: explore
   link: /compose/gettingstarted
-- title: View the release notes
-  description: Find out about the latest enhancements and bug fixes.
+- title: 查看发行说明
+  description: 了解最新的改进与缺陷修复。
   icon: note_add
   link: /compose/release-notes
-- title: Explore the Compose file reference
-  description: Find information on defining services, networks, and volumes for a
-    Docker application.
+- title: 查阅 Compose 文件参考
+  description: 了解如何为 Docker 应用定义服务、网络和卷，
+    以便更好地进行配置。
   icon: polyline
   link: /reference/compose-file
-- title: Use Compose Bridge
-  description: Transform your Compose configuration file into configuration files for different platforms, such as Kubernetes.
+- title: 使用 Compose Bridge
+  description: 将你的 Compose 配置文件转换为适配不同平台的配置，例如 Kubernetes。
   icon: move_down
   link: /compose/bridge
-- title: Browse common FAQs
-  description: Explore general FAQs and find out how to give feedback.
+- title: 常见问题
+  description: 查看常见问题并了解如何反馈。
   icon: help
   link: /compose/faq
-- title: Migrate to Compose v2
-  description: Learn how to migrate from Compose v1 to v2
+- title: 迁移到 Compose v2
+  description: 了解如何从 Compose v1 迁移到 v2
   icon: folder_delete
   link: /compose/releases/migrate/
 aliases:
@@ -54,18 +54,15 @@ aliases:
 - /compose/completion/
 ---
 
-Docker Compose is a tool for defining and running multi-container applications. 
-It is the key to unlocking a streamlined and efficient development and deployment experience. 
+Docker Compose 是用于定义并运行多容器应用的工具，它能帮助你获得更简洁高效的开发与部署体验。 
 
-Compose simplifies the control of your entire application stack, making it easy to manage services, networks, and volumes in a single YAML configuration file. Then, with a single command, you create and start all the services
-from your configuration file.
+Compose 简化了整个应用栈的管理，你可以在一个 YAML 配置文件中轻松管理服务、网络和卷。随后，只需一条命令，就能根据该配置创建并启动所有服务。
 
-Compose works in all environments - production, staging, development, testing, as
-well as CI workflows. It also has commands for managing the whole lifecycle of your application:
+Compose 适用于所有环境：生产、预发布、开发、测试，以及 CI 流程。它还提供了一组命令，用于管理应用的完整生命周期：
 
- - Start, stop, and rebuild services
- - View the status of running services
- - Stream the log output of running services
- - Run a one-off command on a service
+ - 启动、停止和重新构建服务
+ - 查看正在运行的服务状态
+ - 实时查看运行中服务的日志输出
+ - 在某个服务上执行一次性命令
 
 {{< grid >}}

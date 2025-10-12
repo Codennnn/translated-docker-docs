@@ -1,8 +1,8 @@
 ---
-title: Using profiles with Compose
-linkTitle: Use service profiles
+title: 在 Compose 中使用配置集
+linkTitle: 使用服务配置集
 weight: 20
-description: How to use profiles with Docker Compose
+description: 如何在 Docker Compose 中使用配置集
 keywords: cli, compose, profile, profiles reference
 aliases:
 - /compose/profiles/
@@ -10,11 +10,10 @@ aliases:
 
 {{% include "compose/profiles.md" %}}
 
-## Assigning profiles to services
+## 为服务分配配置集
 
-Services are associated with profiles through the
-[`profiles` attribute](/reference/compose-file/services.md#profiles) which takes an
-array of profile names:
+服务通过 [`profiles` 属性](/reference/compose-file/services.md#profiles) 与配置集关联，
+该属性接收一个配置集名称数组：
 
 ```yaml
 services:
@@ -34,24 +33,22 @@ services:
     image: mysql
 ```
 
-Here the services `frontend` and `phpmyadmin` are assigned to the profiles
-`frontend` and `debug` respectively and as such are only started when their
-respective profiles are enabled.
+上例中，`frontend` 与 `phpmyadmin` 分别被分配到 `frontend` 与 `debug` 配置集，
+因此只有在启用相应配置集时才会启动。
 
-Services without a `profiles` attribute are always enabled. In this
-case running `docker compose up` would only start `backend` and `db`.
+未声明 `profiles` 属性的服务始终处于启用状态。上述示例中直接运行 `docker compose up`，
+只会启动 `backend` 和 `db`。
 
-Valid profiles names follow the regex format of `[a-zA-Z0-9][a-zA-Z0-9_.-]+`.
+有效的配置集名称需匹配正则表达式 `[a-zA-Z0-9][a-zA-Z0-9_.-]+`。
 
 > [!TIP]
 >
-> The core services of your application shouldn't be assigned `profiles` so
-> they are always enabled and automatically started.
+> 应用的核心服务不应分配 `profiles`，这样它们会始终启用并自动启动。
 
-## Start specific profiles
+## 启动指定的配置集
 
-To start a specific profile supply the `--profile` [command-line option](/reference/cli/docker/compose.md) or
-use the [`COMPOSE_PROFILES` environment variable](environment-variables/envvars.md#compose_profiles):
+要启用某个特定配置集，可使用 `--profile` [命令行选项](/reference/cli/docker/compose.md)，
+或设置 [`COMPOSE_PROFILES` 环境变量](environment-variables/envvars.md#compose_profiles)：
 
 ```console
 $ docker compose --profile debug up
@@ -60,18 +57,16 @@ $ docker compose --profile debug up
 $ COMPOSE_PROFILES=debug docker compose up
 ```
 
-Both commands start the services with the `debug` profile enabled.
-In the previous `compose.yaml` file, this starts the services
-`db`, `backend` and `phpmyadmin`.
+两种方式都会在启用 `debug` 配置集的情况下启动服务。
+在上面的 `compose.yaml` 中，这将启动 `db`、`backend` 和 `phpmyadmin` 服务。
 
-### Start multiple profiles
+### 启动多个配置集
 
-You can also enable
-multiple profiles, e.g. with `docker compose --profile frontend --profile debug up`
-the profiles `frontend` and `debug` will be enabled.
+你也可以同时启用多个配置集。比如运行
+`docker compose --profile frontend --profile debug up`，
+将同时启用 `frontend` 与 `debug` 配置集。
 
-Multiple profiles can be specified by passing multiple `--profile` flags or
-a comma-separated list for the `COMPOSE_PROFILES` environment variable:
+可通过传入多个 `--profile` 标志，或在 `COMPOSE_PROFILES` 环境变量中使用逗号分隔的列表：
 
 ```console
 $ docker compose --profile frontend --profile debug up
@@ -81,20 +76,21 @@ $ docker compose --profile frontend --profile debug up
 $ COMPOSE_PROFILES=frontend,debug docker compose up
 ```
 
-If you want to enable all profiles at the same time, you can run `docker compose --profile "*"`.
+如果希望一次性启用所有配置集，可以运行 `docker compose --profile "*"`。
 
-## Auto-starting profiles and dependency resolution
+## 自动启动的配置集与依赖解析
 
-When you explicitly target a service on the command line that has one or more profiles assigned, you do not need to enable the profile manually as Compose runs that service regardless of whether its profile is activated. This is useful for running one-off services or debugging tools.
+当你在命令行显式指定某个已分配配置集的服务时，无需手动启用该配置集；
+无论该配置集是否被激活，Compose 都会运行该服务。这对于一次性服务或调试工具非常有用。
 
-Only the targeted service (and any of its declared dependencies via `depends_on`) is started. Other services that share the same profile will not be started unless:
-- They are also explicitly targeted, or
-- The profile is explicitly enabled using `--profile` or `COMPOSE_PROFILES`.
+仅会启动被显式指定的服务（以及其通过 `depends_on` 声明的依赖）。
+同属该配置集的其他服务不会启动，除非：
+- 这些服务也被显式指定；或
+- 通过 `--profile` 或 `COMPOSE_PROFILES` 明确启用了该配置集。
 
-When a service with assigned `profiles` is explicitly targeted on the command
-line its profiles are started automatically so you don't need to start them
-manually. This can be used for one-off services and debugging tools.
-As an example consider the following configuration:
+当一个分配了 `profiles` 的服务被显式指定时，其配置集会自动生效，
+因此无需手动启用。这一能力适合一次性服务与调试工具。
+例如，考虑如下配置：
 
 ```yaml
 services:
@@ -114,24 +110,25 @@ services:
 ```
 
 ```sh
-# Only start backend and db (no profiles involved)
+# 仅启动 backend 和 db（未涉及配置集）
 $ docker compose up -d
 
-# Run the db-migrations service without manually enabling the 'tools' profile
+# 在不手动启用 'tools' 配置集的情况下运行 db-migrations 服务
 $ docker compose run db-migrations
 ```
 
-In this example, `db-migrations` runs even though it is assigned to the tools profile, because it was explicitly targeted. The `db` service is also started automatically because it is listed in `depends_on`.
+在此示例中，尽管 `db-migrations` 被分配到 `tools` 配置集，但由于它被显式指定，仍会运行。
+同时由于在 `depends_on` 中声明，`db` 服务也会自动启动。
 
-If the targeted service has dependencies that are also gated behind a profile, you must ensure those dependencies are either: 
- - In the same profile
- - Started separately
- - Not assigned to any profile so are always enabled
+如果被指定的服务的依赖也被某个配置集“门控”，需确保这些依赖满足以下任一条件：
+- 与其位于同一配置集
+- 单独启动
+- 未分配任何配置集（始终启用）
 
-## Stop application and services with specific profiles
+## 停止包含特定配置集的应用与服务
 
-As with starting specific profiles, you can use the `--profile` [command-line option](/reference/cli/docker/compose.md#use--p-to-specify-a-project-name) or
-use the [`COMPOSE_PROFILES` environment variable](environment-variables/envvars.md#compose_profiles):
+与启动指定配置集类似，你可以使用 `--profile` [命令行选项](/reference/cli/docker/compose.md#use--p-to-specify-a-project-name)，
+或使用 [`COMPOSE_PROFILES` 环境变量](environment-variables/envvars.md#compose_profiles)：
 
 ```console
 $ docker compose --profile debug down
@@ -140,7 +137,8 @@ $ docker compose --profile debug down
 $ COMPOSE_PROFILES=debug docker compose down
 ```
 
-Both commands stop and remove services with the `debug` profile and services without a profile. In the following `compose.yaml` file, this stops the services `db`, `backend` and `phpmyadmin`.
+两种方式都会停止并移除属于 `debug` 配置集的服务，以及未分配配置集的服务。
+在下面的 `compose.yaml` 中，这将停止 `db`、`backend` 与 `phpmyadmin`。
 
 ```yaml
 services:
@@ -160,20 +158,20 @@ services:
     image: mysql
 ```
 
-if you only want to stop the `phpmyadmin` service, you can run 
+如果你只想停止 `phpmyadmin` 服务，可以运行 
 
 ```console 
 $ docker compose down phpmyadmin
 ``` 
-or 
+或 
 ```console 
 $ docker compose stop phpmyadmin
 ```
 
 > [!NOTE]
 >
-> Running `docker compose down` only stops `backend` and `db`.
+> 直接运行 `docker compose down` 只会停止 `backend` 与 `db`。
 
-## Reference information
+## 参考信息
 
 [`profiles`](/reference/compose-file/services.md#profiles)

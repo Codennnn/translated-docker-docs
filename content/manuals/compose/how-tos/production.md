@@ -1,72 +1,54 @@
 ---
-description: Learn how to configure, deploy, and update Docker Compose applications for production environments.
+description: 了解如何为生产环境配置、部署与更新 Docker Compose 应用。
 keywords: compose, orchestration, containers, production, production docker compose configuration
-title: Use Compose in production
+title: 在生产环境中使用 Compose
 weight: 100
 aliases:
 - /compose/production/
 ---
 
-When you define your app with Compose in development, you can use this
-definition to run your application in different environments such as CI,
-staging, and production.
+在开发环境中使用 Compose 定义应用后，你可以复用这份定义，将应用运行在不同环境中，例如 CI、预发布（staging）与生产环境。
 
-The easiest way to deploy an application is to run it on a single server,
-similar to how you would run your development environment. If you want to scale
-up your application, you can run Compose apps on a Swarm cluster.
+部署应用的最简单方式是将其运行在单台服务器上，这与开发环境的运行方式类似。若需要扩展应用规模，可以在 Swarm 集群上运行 Compose 应用。
 
-### Modify your Compose file for production
+### 为生产环境修改 Compose 文件
 
-You may need to make changes to your app configuration to make it ready for
-production. These changes might include:
+为适配生产环境，你可能需要调整应用配置，常见改动包括：
 
-- Removing any volume bindings for application code, so that code stays inside
-  the container and can't be changed from outside
-- Binding to different ports on the host
-- Setting environment variables differently, such as reducing the verbosity of
-  logging, or to specify settings for external services such as an email server
-- Specifying a restart policy like [`restart: always`](/reference/compose-file/services.md#restart)to avoid downtime
-- Adding extra services such as a log aggregator
+- 移除应用代码的卷绑定，使代码保留在容器内，避免被外部修改
+- 在宿主机上绑定不同的端口
+- 以不同方式设置环境变量，例如降低日志详细程度，或为外部服务（如邮件服务器）指定配置
+- 指定重启策略（如 [`restart: always`](/reference/compose-file/services.md#restart)）以降低停机风险
+- 增加辅助服务，如日志聚合器
 
-For this reason, consider defining an additional Compose file, for example
-`compose.production.yaml`, with production-specific
-configuration details. This configuration file only needs to include the changes you want to make from the original Compose file. The additional Compose file
-is then applied over the original `compose.yaml` to create a new configuration.
+基于上述原因，建议新增一份面向生产环境的 Compose 文件，例如 `compose.production.yaml`，用于记录生产特有的配置。该文件只需包含相对原始 Compose 文件的差异配置。运行时再将该文件叠加到原始的 `compose.yaml` 上，以生成最终的配置。
 
-Once you have a second configuration file, you can use it with the
-`-f` option:
+准备好第二份配置文件后，可通过 `-f` 选项使用它：
 
 ```console
 $ docker compose -f compose.yaml -f compose.production.yaml up -d
 ```
 
-See [Using multiple compose files](multiple-compose-files/_index.md) for a more complete example, and other options.
+更多完整示例与可选方式，参见：[使用多个 Compose 文件](multiple-compose-files/_index.md)。
 
-### Deploying changes
+### 部署变更
 
-When you make changes to your app code, remember to rebuild your image and
-recreate your app's containers. To redeploy a service called
-`web`, use:
+当你修改了应用代码，请记得重建镜像并重新创建应用的容器。要重新部署名为 `web` 的服务，可执行：
 
 ```console
 $ docker compose build web
 $ docker compose up --no-deps -d web
 ```
 
-This first command rebuilds the image for `web` and then stops, destroys, and recreates
-just the `web` service. The `--no-deps` flag prevents Compose from also
-recreating any services that `web` depends on.
+第一条命令会为 `web` 重建镜像；第二条命令会停止、销毁并仅重建 `web` 服务本身。`--no-deps` 标志可避免同时重建 `web` 依赖的其他服务。
 
-### Running Compose on a single server
+### 在单台服务器上运行 Compose
 
-You can use Compose to deploy an app to a remote Docker host by setting the
-`DOCKER_HOST`, `DOCKER_TLS_VERIFY`, and `DOCKER_CERT_PATH` environment variables
-appropriately. For more information, see [pre-defined environment variables](environment-variables/envvars.md).
+你可以通过设置 `DOCKER_HOST`、`DOCKER_TLS_VERIFY` 与 `DOCKER_CERT_PATH` 环境变量，将应用部署到远程 Docker 主机。更多信息参见[预定义环境变量](environment-variables/envvars.md)。
 
-Once you've set up your environment variables, all the normal `docker compose`
-commands work with no further configuration.
+一旦配置好这些环境变量，常规的 `docker compose` 命令即可直接使用，无需额外配置。
 
-## Next steps
+## 进一步阅读
 
-- [Using multiple Compose files](multiple-compose-files/_index.md)
+- [使用多个 Compose 文件](multiple-compose-files/_index.md)
 

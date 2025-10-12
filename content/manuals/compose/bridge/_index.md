@@ -1,30 +1,30 @@
 ---
-description: Learn how Compose Bridge transforms Docker Compose files into Kubernetes manifests for seamless platform transitions
+description: 了解 Compose Bridge 如何将 Docker Compose 文件转换为 Kubernetes 清单，实现平台间的无缝迁移
 keywords: docker compose bridge, compose to kubernetes, docker compose kubernetes integration, docker compose kustomize, compose bridge docker desktop
-title: Overview of Compose Bridge
+title: Compose Bridge 概览
 linkTitle: Compose Bridge
 weight: 50
 ---
 
 {{< summary-bar feature_name="Compose bridge" >}}
 
-Compose Bridge converts your Docker Compose configuration into platform-specific formats—primarily Kubernetes manifests. The default transformation generates Kubernetes manifests and a Kustomize overlay which are designed for deployment on Docker Desktop with Kubernetes enabled.  
+Compose Bridge 会将你的 Docker Compose 配置转换为特定平台的格式——主要是 Kubernetes 清单。默认转换会生成 Kubernetes 清单以及一个 Kustomize overlay，适用于在启用 Kubernetes 的 Docker Desktop 上进行部署。  
 
-It's a flexible tool that lets you either take advantage of the [default transformation](usage.md) or [create a custom transformation](customize.md) to suit specific project needs and requirements.  
+这是一款灵活的工具，你可以直接使用[默认转换](usage.md)，也可以[自定义转换](customize.md)以满足特定项目的需求与约束。  
 
-Compose Bridge significantly simplifies the transition from Docker Compose to Kubernetes, making it easier for you to leverage the power of Kubernetes while maintaining the simplicity and efficiency of Docker Compose.
+Compose Bridge 大幅简化了从 Docker Compose 迁移到 Kubernetes 的过程，帮助你在保持 Docker Compose 简洁与高效的同时，更轻松地发挥 Kubernetes 的能力。
 
-## How it works
+## 工作原理
 
-Compose Bridge uses transformations to let you convert a Compose model into another form. 
+Compose Bridge 使用“转换”（transformation）机制，将 Compose 模型转换为其他形式。 
 
-A transformation is packaged as a Docker image that receives the fully resolved Compose model as `/in/compose.yaml` and can produce any target format file under `/out`.
+每个转换以 Docker 镜像的形式交付：它会把完全解析后的 Compose 模型作为 `/in/compose.yaml` 接收，并在 `/out` 目录下生成任意目标格式的文件。
 
-Compose Bridge provides its own transformation for Kubernetes using Go templates, so that it is easy to extend for customization by replacing or appending your own templates.
+Compose Bridge 提供了基于 Go 模板的 Kubernetes 转换，你可以通过替换或追加模板，轻松进行扩展与定制。
 
-For more detailed information on how these transformations work and how you can customize them for your projects, see [Customize](customize.md).
+关于这些转换的工作方式，以及如何为你的项目进行定制，请参见《[自定义](customize.md)》。
 
-## What's next?
+## 下一步
 
-- [Use Compose Bridge](usage.md)
-- [Explore how you can customize Compose Bridge](customize.md)
+- [使用 Compose Bridge](usage.md)
+- [了解如何自定义 Compose Bridge](customize.md)

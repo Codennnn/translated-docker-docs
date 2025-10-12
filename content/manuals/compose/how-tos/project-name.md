@@ -1,45 +1,41 @@
 ---
-title: Specify a project name
+title: 指定项目名
 weight: 10
-description: Learn how to set a custom project name in Compose and understand the precedence of each method.
+description: 了解如何在 Compose 中自定义项目名，以及各类设置方式的优先级。
 keywords: name, compose, project, -p flag, name top-level element
 aliases:
 - /compose/project-name/
 ---
 
-By default, Compose assigns the project name based on the name of the directory that contains the Compose file. You can override this with several methods.
+默认情况下，Compose 会根据包含 Compose 文件的目录名来分配项目名。你可以通过多种方式覆盖该默认值。
 
-This page offers examples of scenarios where custom project names can be helpful, outlines the various methods to set a project name, and provides the order of precedence for each approach.
+本文通过示例说明在哪些场景下自定义项目名更有帮助，梳理设置项目名的可选方法，并给出各方法的优先级顺序。
 
 > [!NOTE]
 >
-> The default project directory is the base directory of the Compose file. A custom value can also be set
-> for it using the [`--project-directory` command line option](/reference/cli/docker/compose.md#options).
+> 默认的项目目录是 Compose 文件所在的基目录。你也可以使用 [`--project-directory` 命令行选项](/reference/cli/docker/compose.md#options)为其设置自定义路径。
 
-## Example use cases
+## 示例用例
 
-Compose uses a project name to isolate environments from each other. There are multiple contexts where a project name is useful:
+Compose 使用项目名来隔离彼此独立的环境。以下场景中，项目名尤为有用：
 
-- On a development host: Create multiple copies of a single environment, useful for running stable copies for each feature branch of a project.
-- On a CI server: Prevent interference between builds by setting the project name to a unique build number.
-- On a shared or development host: Avoid interference between different projects that might share the same service names.
+- 在开发主机上：为同一环境创建多个副本，便于为项目的每个功能分支运行稳定的环境实例。
+- 在 CI 服务器上：将项目名设置为唯一的构建号，防止不同构建之间相互干扰。
+- 在共享或开发主机上：当不同项目可能使用相同的服务名时，通过项目名避免彼此影响。
 
-## Set a project name
+## 设置项目名
 
-Project names must contain only lowercase letters, decimal digits, dashes, and
-underscores, and must begin with a lowercase letter or decimal digit. If the
-base name of the project directory or current directory violates this
-constraint, alternative mechanisms are available.
+项目名只能包含小写字母、十进制数字、连字符和下划线，并且必须以小写字母或十进制数字开头。如果项目目录或当前目录的基本名称不满足上述约束，可以采用其他方式进行设置。
 
-The precedence order for each method, from highest to lowest, is as follows:
+各种设置方式的优先级（从高到低）如下：
 
-1. The `-p` command line flag. 
-2. The [COMPOSE_PROJECT_NAME environment variable](environment-variables/envvars.md).
-3. The [top-level `name:` attribute](/reference/compose-file/version-and-name.md) in your Compose file. Or the last `name:` if you [specify multiple Compose files](multiple-compose-files/merge.md) in the command line with the `-f` flag.
-4. The base name of the project directory containing your Compose file. Or the base name of the first Compose file if you [specify multiple Compose files](multiple-compose-files/merge.md) in the command line with the `-f` flag. 
-5. The base name of the current directory if no Compose file is specified.
+1. `-p` 命令行标志。
+2. `COMPOSE_PROJECT_NAME` 环境变量（见 [环境变量](environment-variables/envvars.md)）。
+3. Compose 文件顶层的 `name:` 属性；或当你在命令行使用 `-f` 指定了多个 Compose 文件时，以最后一个文件中的 `name:` 为准（见 [`version` 与 `name`](/reference/compose-file/version-and-name.md) 以及 [合并多个 Compose 文件](multiple-compose-files/merge.md)）。
+4. 包含 Compose 文件的项目目录的基本名称；或当你在命令行使用 `-f` 指定了多个 Compose 文件时，以第一个 Compose 文件的基本名称为准（见 [合并多个 Compose 文件](multiple-compose-files/merge.md)）。
+5. 如果未指定 Compose 文件，则为当前目录的基本名称。
 
-## What's next?
+## 下一步
 
-- Read up on [working with multiple Compose files](multiple-compose-files/_index.md).
-- Explore some [sample apps](samples-for-compose.md).
+- 继续阅读：[使用多个 Compose 文件](multiple-compose-files/_index.md)。
+- 查看一些[示例应用](samples-for-compose.md)。

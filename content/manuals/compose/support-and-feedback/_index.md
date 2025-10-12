@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Support and feedback
+title: 支持与反馈
 weight: 60
 ---
