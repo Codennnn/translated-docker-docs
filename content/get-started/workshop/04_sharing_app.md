@@ -1,52 +1,50 @@
 ---
-title: Share the application
+title: 分享应用
 weight: 40
-linkTitle: "Part 3: Share the application"
-keywords: get started, setup, orientation, quickstart, intro, concepts, containers,
-  docker desktop, docker hub, sharing
-description: Sharing your image you built for your example application so you can
-  run it else where and other developers can use it
+linkTitle: "第 3 部分：分享应用"
+keywords: 入门, 安装, 上手, 快速开始, 概念, 容器,
+  Docker Desktop, Docker Hub, 分享
+description: 将为示例应用构建的镜像分享出去，便于在其他环境运行并供其他开发者使用
 aliases:
  - /get-started/part3/
  - /get-started/04_sharing_app/
  - /guides/workshop/04_sharing_app/
 ---
 
-Now that you've built an image, you can share it. To share Docker images, you have to use a Docker
-registry. The default registry is Docker Hub and is where all of the images you've used have come from.
+现在你已经构建了镜像，可以将其分享出去。要分享 Docker 镜像，需要使用 Docker 仓库（registry）。默认的仓库是 Docker Hub，你此前使用的镜像都来自这里。
 
 > **Docker ID**
 >
-> A Docker ID lets you access Docker Hub, which is the world's largest library and community for container images. Create a [Docker ID](https://hub.docker.com/signup) for free if you don't have one.
+> Docker ID 可用于访问 Docker Hub——全球最大的容器镜像库与社区。如果你还没有账号，可以免费创建一个 [Docker ID](https://hub.docker.com/signup)。
 
-## Create a repository
+## 创建仓库
 
-To push an image, you first need to create a repository on Docker Hub.
+要推送镜像，你需要先在 Docker Hub 上创建一个仓库。
 
-1. [Sign up](https://www.docker.com/pricing?utm_source=docker&utm_medium=webreferral&utm_campaign=docs_driven_upgrade) or Sign in to [Docker Hub](https://hub.docker.com).
+1. 在 [Docker Hub](https://hub.docker.com) 上 [注册](https://www.docker.com/pricing?utm_source=docker&utm_medium=webreferral&utm_campaign=docs_driven_upgrade) 或登录。
 
-2. Select the **Create Repository** button.
+2. 选择 **Create Repository** 按钮。
 
-3. For the repository name, use `getting-started`. Make sure the **Visibility** is **Public**.
+3. 仓库名称填写 `getting-started`，并确保 **Visibility** 为 **Public**。
 
-4. Select **Create**.
+4. 点击 **Create** 创建仓库。
 
-In the following image, you can see an example Docker command from Docker Hub. This command will push to this repository.
+如下图所示，Docker Hub 会给出一个示例 Docker 命令，用于推送到该仓库。
 
 ![Docker command with push example](images/push-command.webp)
 
 
-## Push the image
+## 推送镜像
 
-Let's try to push the image to Docker Hub.
+现在试着将镜像推送到 Docker Hub。
 
-1. In the command line, run the following command:
+1. 在命令行中运行：
 
    ```console
    docker push docker/getting-started
    ```
 
-   You'll see an error like this:
+   你会看到类似如下的错误：
 
    ```console
    $ docker push docker/getting-started
@@ -54,99 +52,85 @@ Let's try to push the image to Docker Hub.
    An image does not exist locally with the tag: docker/getting-started
    ```
 
-   This failure is expected because the image isn't tagged correctly yet.
-   Docker is looking for an image name `docker/getting started`, but your
-   local image is still named `getting-started`.
+   这是预期之中的失败，因为镜像的标签尚未正确设置。Docker 在查找名为 `docker/getting-started` 的镜像，但你本地的镜像仍然叫做 `getting-started`。
 
-   You can confirm this by running:
+   你可以通过以下命令确认：
 
    ```console
    docker image ls
    ```
 
-2. To fix this, first sign in to Docker Hub using your Docker ID: `docker login YOUR-USER-NAME`.
-3. Use the `docker tag` command to give the `getting-started` image a new name. Replace `YOUR-USER-NAME` with your Docker ID.
+2. 解决方法：先使用你的 Docker ID 登录 Docker Hub：`docker login YOUR-USER-NAME`。
+3. 使用 `docker tag` 命令为 `getting-started` 镜像添加新名称。将 `YOUR-USER-NAME` 替换为你的 Docker ID：
 
    ```console
    $ docker tag getting-started YOUR-USER-NAME/getting-started
    ```
 
-4. Now run the `docker push` command again. If you're copying the value from
-   Docker Hub, you can drop the `tagname` part, as you didn't add a tag to the
-   image name. If you don't specify a tag, Docker uses a tag called `latest`.
+4. 现在再次运行 `docker push` 命令。如果你从 Docker Hub 复制的名称包含 `tagname`，可以省略它，因为我们并未为镜像添加额外的标签。未指定标签时，Docker 会默认使用 `latest`。
 
    ```console
    $ docker push YOUR-USER-NAME/getting-started
    ```
 
-## Run the image on a new instance
+## 在全新实例上运行镜像
 
-Now that your image has been built and pushed into a registry, try running your app on a brand
-new instance that has never seen this container image. To do this, you will use Play with Docker.
+现在镜像已构建并推送到仓库，试着在一台从未拉取过该镜像的全新实例上运行应用。这里我们使用 Play with Docker。
 
 > [!NOTE]
 >
-> Play with Docker uses the amd64 platform. If you are using an ARM based Mac with Apple silicon, you will need to rebuild the image to be compatible with Play with Docker and push the new image to your repository.
+> Play with Docker 使用 amd64 平台。如果你使用的是基于 ARM 的 Apple 芯片 Mac，需要为 amd64 平台重新构建镜像并推送到你的仓库。
 >
-> To build an image for the amd64 platform, use the `--platform` flag.
+> 要为 amd64 平台构建镜像，可使用 `--platform` 参数：
 > ```console
 > $ docker build --platform linux/amd64 -t YOUR-USER-NAME/getting-started .
 > ```
 >
-> Docker buildx also supports building multi-platform images. To learn more, see [Multi-platform images](/manuals/build/building/multi-platform.md).
+> Docker buildx 也支持构建多平台镜像。了解更多，请参阅 [Multi-platform images](/manuals/build/building/multi-platform.md)。
 
 
-1. Open your browser to [Play with Docker](https://labs.play-with-docker.com/).
+1. 在浏览器打开 [Play with Docker](https://labs.play-with-docker.com/)。
 
-2. Select **Login** and then select **docker** from the drop-down list.
+2. 选择 **Login**，在下拉列表中选择 **docker**。
 
-3. Sign in with your Docker Hub account and then select **Start**.
+3. 使用 Docker Hub 账号登录，然后点击 **Start**。
 
-4. Select the **ADD NEW INSTANCE** option on the left side bar. If you don't see it, make your browser a little wider. After a few seconds, a terminal window opens in your browser.
+4. 在左侧边栏选择 **ADD NEW INSTANCE**。如果没有看到该选项，可以适当加宽浏览器窗口。几秒钟后，浏览器中会打开一个终端窗口。
 
     ![Play with Docker add new instance](images/pwd-add-new-instance.webp)
 
-5. In the terminal, start your freshly pushed app.
+5. 在终端中启动你刚刚推送的应用：
 
    ```console
    $ docker run -dp 0.0.0.0:3000:3000 YOUR-USER-NAME/getting-started
    ```
 
-    You should see the image get pulled down and eventually start up.
+    你应当会看到镜像被拉取并最终启动。
 
     > [!TIP]
     >
-    > You may have noticed that this command binds the port mapping to a
-    > different IP address. Previous `docker run` commands published ports to
-    > `127.0.0.1:3000` on the host. This time, you're using `0.0.0.0`.
+    > 你可能注意到该命令绑定端口映射到不同的 IP。之前的 `docker run` 命令将端口发布到宿主机的 `127.0.0.1:3000`，这次我们使用的是 `0.0.0.0`。
     >
-    > Binding to `127.0.0.1` only exposes a container's ports to the loopback
-    > interface. Binding to `0.0.0.0`, however, exposes the container's port
-    > on all interfaces of the host, making it available to the outside world.
+    > 绑定到 `127.0.0.1` 仅将容器端口暴露给回环接口；而绑定到 `0.0.0.0` 会在宿主机的所有网络接口上暴露容器端口，使其能被外部访问。
     >
-    > For more information about how port mapping works, see
-    > [Networking](/manuals/engine/network/_index.md#published-ports).
+    > 关于端口映射的更多信息，请参阅 [Networking](/manuals/engine/network/_index.md#published-ports)。
 
-6. Select the 3000 badge when it appears.
+6. 当界面出现 3000 的徽章（badge）时点击它。
 
-   If the 3000 badge doesn't appear, you can select **Open Port** and specify `3000`.
+   如果没有出现 3000 徽章，可以选择 **Open Port** 并指定 `3000`。
 
-## Summary
+## 小结
 
-In this section, you learned how to share your images by pushing them to a
-registry. You then went to a brand new instance and were able to run the freshly
-pushed image. This is quite common in CI pipelines, where the pipeline will
-create the image and push it to a registry and then the production environment
-can use the latest version of the image.
+本节你学习了如何通过推送到镜像仓库来分享镜像。随后你在一台全新实例上运行了刚刚推送的镜像。这与 CI 流水线中的常见做法类似：流水线创建镜像并将其推送到仓库，生产环境再使用该镜像的最新版本。
 
-Related information:
+相关信息：
 
  - [docker CLI reference](/reference/cli/docker/)
  - [Multi-platform images](/manuals/build/building/multi-platform.md)
  - [Docker Hub overview](/manuals/docker-hub/_index.md)
 
-## Next steps
+## 下一步
 
-In the next section, you'll learn how to persist data in your containerized application.
+下一节你将学习如何在容器化应用中持久化数据。
 
-{{< button text="Persist the DB" url="05_persisting_data.md" >}}
+{{< button text="持久化数据库" url="05_persisting_data.md" >}}

@@ -1,72 +1,71 @@
 ---
-title: Update the application
+title: 更新应用
 weight: 30
-linkTitle: "Part 2: Update the application"
-keywords: get started, setup, orientation, quickstart, intro, concepts, containers,
-  docker desktop
-description: Making changes to your application
+linkTitle: "第 2 部分：更新应用"
+keywords: 入门, 安装, 上手, 快速开始, 概念, 容器, Docker Desktop
+description: 修改你的应用
 aliases:
  - /get-started/03_updating_app/
  - /guides/workshop/03_updating_app/
 ---
 
-In [part 1](./02_our_app.md), you containerized a todo application. In this part, you'll update the application and image. You'll also learn how to stop and remove a container.
+在[第 1 部分](./02_our_app.md)中，你已经将一个待办事项应用容器化。本节你将更新应用及其镜像，并学习如何停止与删除容器。
 
-## Update the source code
+## 更新源代码
 
-In the following steps, you'll change the "empty text" when you don't have any todo list items to "You have no todo items yet! Add one above!"
+接下来，你将把在没有任何待办事项时显示的“空列表提示”从“No items yet! Add one above!”修改为“You have no todo items yet! Add one above!”。
 
 
-1. In the `src/static/js/app.js` file, update line 56 to use the new empty text.
+1. 在 `src/static/js/app.js` 文件中，将第 56 行更新为新的空列表提示文本。
 
    ```diff
    - <p className="text-center">No items yet! Add one above!</p>
    + <p className="text-center">You have no todo items yet! Add one above!</p>
    ```
 
-2. Build your updated version of the image, using the `docker build` command.
+2. 使用 `docker build` 命令构建更新后的镜像：
 
    ```console
    $ docker build -t getting-started .
    ```
 
-3. Start a new container using the updated code.
+3. 使用更新后的代码启动一个新容器：
 
    ```console
    $ docker run -dp 127.0.0.1:3000:3000 getting-started
    ```
 
-You probably saw an error like this:
+你可能会看到如下错误：
 
 ```console
 docker: Error response from daemon: driver failed programming external connectivity on endpoint laughing_burnell 
 (bb242b2ca4d67eba76e79474fb36bb5125708ebdabd7f45c8eaf16caaabde9dd): Bind for 127.0.0.1:3000 failed: port is already allocated.
 ```
 
-The error occurred because you aren't able to start the new container while your old container is still running. The reason is that the old container is already using the host's port 3000 and only one process on the machine (containers included) can listen to a specific port. To fix this, you need to remove the old container.
+出现该错误的原因是旧容器仍在运行，导致无法启动新的容器。旧容器已经占用了宿主机的 3000 端口，而同一台机器上（包括容器在内）同一个端口只能被一个进程监听。要解决这个问题，你需要先移除旧容器。
 
-## Remove the old container
+## 移除旧容器
 
-To remove a container, you first need to stop it. Once it has stopped, you can remove it. You can remove the old container using the CLI or Docker Desktop's graphical interface. Choose the option that you're most comfortable with.
+要移除容器，首先需要停止它。容器停止后，你就可以将其删除。你可以使用 CLI 或 Docker Desktop 图形界面来移除旧容器，选择你更熟悉的方式即可。
 
 {{< tabs >}}
 {{< tab name="CLI" >}}
 
-### Remove a container using the CLI
+### 使用 CLI 移除容器
 
-1. Get the ID of the container by using the `docker ps` command.
+1. 通过 `docker ps` 命令获取容器 ID。
 
    ```console
    $ docker ps
    ```
 
-2. Use the `docker stop` command to stop the container. Replace `<the-container-id>` with the ID from `docker ps`.
+2. 使用 `docker stop` 命令停止容器。将 `<the-container-id>` 替换为 `docker ps` 输出中的容器 ID。
 
    ```console
    $ docker stop <the-container-id>
    ```
 
-3. Once the container has stopped, you can remove it by using the `docker rm` command.
+3. 容器停止后，使用 `docker rm` 命令将其删除。
 
    ```console
    $ docker rm <the-container-id>
@@ -74,39 +73,39 @@ To remove a container, you first need to stop it. Once it has stopped, you can r
 
 > [!NOTE]
 >
-> You can stop and remove a container in a single command by adding the `force` flag to the `docker rm` command. For example: `docker rm -f <the-container-id>`
+> 你也可以通过给 `docker rm` 命令添加 `-f`（`--force`）参数，在一条命令中同时停止并移除容器。例如：`docker rm -f <the-container-id>`
 
 {{< /tab >}}
 {{< tab name="Docker Desktop" >}}
 
-### Remove a container using Docker Desktop
+### 使用 Docker Desktop 移除容器
 
-1. Open Docker Desktop to the **Containers** view.
-2. Select the trash can icon under the **Actions** column for the container that you want to delete.
-3. In the confirmation dialog, select **Delete forever**.
+1. 打开 Docker Desktop，进入 **Containers** 视图。
+2. 在要删除的容器行的 **Actions** 列中，选择垃圾桶图标。
+3. 在确认对话框中，选择 **Delete forever**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Start the updated app container
+### 启动已更新的应用容器
 
-1. Now, start your updated app using the `docker run` command.
+1. 现在使用 `docker run` 命令启动更新后的应用：
 
    ```console
    $ docker run -dp 127.0.0.1:3000:3000 getting-started
    ```
 
-2. Refresh your browser on [http://localhost:3000](http://localhost:3000) and you should see your updated help text.
+2. 刷新浏览器访问 [http://localhost:3000](http://localhost:3000)，你应能看到已更新的提示文本。
 
-## Summary
+## 小结
 
-In this section, you learned how to update and rebuild an image, as well as how to stop and remove a container.
+本节你学习了如何更新并重建镜像，以及如何停止并移除容器。
 
-Related information:
+相关信息：
  - [docker CLI reference](/reference/cli/docker/)
 
-## Next steps
+## 下一步
 
-Next, you'll learn how to share images with others.
+接下来，你将学习如何与他人共享镜像。
 
-{{< button text="Share the application" url="04_sharing_app.md" >}}
+{{< button text="分享应用" url="04_sharing_app.md" >}}

@@ -1,105 +1,80 @@
 ---
-title: Persist the DB
+title: 持久化数据库
 weight: 50
-linkTitle: "Part 4: Persist the DB"
-keywords: get started, setup, orientation, quickstart, intro, concepts, containers,
-  docker desktop
-description: Making your DB persistent in your application
+linkTitle: "第 4 部分：持久化数据库"
+keywords: 入门, 安装, 导览, 快速开始, 介绍, 概念, 容器,
+  Docker Desktop
+description: 让你的应用数据库具备持久化
 aliases:
  - /get-started/05_persisting_data/
  - /guides/workshop/05_persisting_data/
 ---
 
-In case you didn't notice, your todo list is empty every single time
-you launch the container. Why is this? In this part, you'll dive into how the container is working.
+你可能已经注意到，每次启动容器时，待办列表都会是空的。为什么会这样？本节将带你深入理解容器的工作方式。
 
-## The container's filesystem
+## 容器的文件系统
 
-When a container runs, it uses the various layers from an image for its filesystem.
-Each container also gets its own "scratch space" to create/update/remove files. Any
-changes won't be seen in another container, even if they're using the same image.
+容器运行时，会将镜像中的各个分层作为其文件系统。同时，每个容器还会拥有自己的可写“临时层”（scratch space），用于创建、更新和删除文件。即便两个容器使用同一个镜像，它们彼此的改动也不会互相可见。
 
-### See this in practice
+### 实操演示
 
-To see this in action, you're going to start two containers. In one container,
-you'll create a file. In the other container, you'll check whether that same
-file exists.
+为了直观理解上述行为，我们将启动两个容器：在第一个容器中创建一个文件，在第二个容器中检查该文件是否存在。
 
-1. Start an Alpine container and create a new file in it.
+1. 启动一个 Alpine 容器，并在其中创建一个新文件。
 
     ```console
     $ docker run --rm alpine touch greeting.txt
     ```
 
     > [!TIP]
-    > Any commands you specify after the image name (in this case, `alpine`)
-    > are executed inside the container. In this case, the command `touch
-    > greeting.txt` puts a file named `greeting.txt` on the container's filesystem.
+    > 在镜像名（此处为 `alpine`）后面指定的命令都会在容器内执行。本例中的 `touch greeting.txt` 会在容器文件系统中创建一个名为 `greeting.txt` 的文件。
 
-2. Run a new Alpine container and use the `stat` command to check whether the file exists.
+2. 再启动一个新的 Alpine 容器，使用 `stat` 命令检查该文件是否存在。
    
    ```console
    $ docker run --rm alpine stat greeting.txt
    ```
 
-   You should see output similar to the following that indicates the file does not exist in the new container.
+   你会看到类似如下的输出，表明在新的容器中该文件并不存在：
 
    ```console
    stat: can't stat 'greeting.txt': No such file or directory
    ```
 
-The `greeting.txt` file created by the first container did not exist in the
-second container. That is because the writeable "top layer" of each container
-is isolated. Even though both containers shared the same underlying layers that
-make up the base image, the writable layer is unique to each container.
+第一个容器创建的 `greeting.txt` 文件在第二个容器中并不存在。这是因为每个容器的可写“顶层”是相互隔离的。尽管它们共享构成基础镜像的底层分层，但每个容器的可写层都是独立的。
 
-## Container volumes
+## 容器卷
 
-With the previous experiment, you saw that each container starts from the image definition each time it starts. 
-While containers can create, update, and delete files, those changes are lost when you remove the container 
-and Docker isolates all changes to that container. With volumes, you can change all of this.
+通过上面的实验可以看出，每次启动容器，都是从镜像定义重新开始。容器虽然可以创建、更新、删除文件，但当容器被删除时，这些改动也随之消失，且这些改动只在该容器中有效。使用卷（volume）就可以改变这一点。
 
-[Volumes](/manuals/engine/storage/volumes.md) provide the ability to connect specific filesystem paths of 
-the container back to the host machine. If you mount a directory in the container, changes in that
-directory are also seen on the host machine. If you mount that same directory across container restarts, you'd see
-the same files.
+[卷](/manuals/engine/storage/volumes.md)允许将容器中的特定路径与主机相连。如果你在容器中挂载了某个目录，对该目录的改动也会在主机上可见。只要在容器重启后仍然挂载同一目录，你就会看到相同的文件。
 
-There are two main types of volumes. You'll eventually use both, but you'll start with volume mounts.
+卷主要有两种类型。我们最终都会用到，但本节先从卷挂载（volume mount）开始。
 
-## Persist the todo data
+## 持久化 todo 数据
 
-By default, the todo app stores its data in a SQLite database at
-`/etc/todos/todo.db` in the container's filesystem. If you're not familiar with SQLite, no worries! It's simply a relational database that stores all the data in a single file. While this isn't the best for large-scale applications,
-it works for small demos. You'll learn how to switch this to a different database engine later.
+默认情况下，Todo 应用会将数据存储在容器文件系统的 `/etc/todos/todo.db`（一个 SQLite 数据库）中。如果你不熟悉 SQLite，也没关系！它只是一个把所有数据存储在单个文件中的关系型数据库。虽然不适合大规模应用，但对于小型演示完全够用。稍后我们会学习如何切换到其他的数据库引擎。
 
-With the database being a single file, if you can persist that file on the host and make it available to the
-next container, it should be able to pick up where the last one left off. By creating a volume and attaching
-(often called "mounting") it to the directory where you stored the data, you can persist the data. As your container 
-writes to the `todo.db` file, it will persist the data to the host in the volume.
+既然数据库就是一个文件，那么只要把这个文件持久化到主机，并让后续的容器能够访问到它，应用就可以“接着上次进度继续运行”。为此，你可以创建一个卷，并把它“挂载”到存放数据的目录上。当容器向 `todo.db` 写入时，数据就会通过该卷持久化到主机。
 
-As mentioned, you're going to use a volume mount. Think of a volume mount as an opaque bucket of data. 
-Docker fully manages the volume, including the storage location on disk. You only need to remember the
-name of the volume.
+如前所述，我们将使用“卷挂载”。可以把卷挂载理解为一个不透明的数据“桶”。Docker 会全权管理该卷（包括磁盘上的存储位置），你只需要记住卷的名字即可。
 
-### Create a volume and start the container
+### 创建卷并启动容器
 
-You can create the volume and start the container using the CLI or Docker Desktop's graphical interface.
+你可以通过 CLI 或 Docker Desktop 的图形界面来创建卷并启动容器。
 
 {{< tabs >}}
 {{< tab name="CLI" >}}
 
-1. Create a volume by using the `docker volume create` command.
+1. 使用 `docker volume create` 命令创建一个卷。
 
    ```console
    $ docker volume create todo-db
    ```
 
-2. Stop and remove the todo app container once again with `docker rm -f <id>`,
-   as it is still running without using the persistent volume.
+2. 使用 `docker rm -f <id>` 停止并删除当前正在运行的 Todo 应用容器（它仍未使用持久化卷）。
 
-3. Start the todo app container, but add the `--mount` option to specify a
-   volume mount. Give the volume a name, and mount it to `/etc/todos` in the
-   container, which captures all files created at the path.
+3. 启动 Todo 应用容器，并添加 `--mount` 选项来指定卷挂载。为卷命名，并将其挂载到容器内的 `/etc/todos`，从而接管该路径下的所有文件。
 
    ```console
    $ docker run -dp 127.0.0.1:3000:3000 --mount type=volume,src=todo-db,target=/etc/todos getting-started
@@ -107,76 +82,75 @@ You can create the volume and start the container using the CLI or Docker Deskto
 
    > [!NOTE]
    >
-   > If you're using Git Bash, you must use different syntax for this command.
+    > 如果你使用的是 Git Bash，需要使用不同的语法：
    >
    > ```console
    > $ docker run -dp 127.0.0.1:3000:3000 --mount type=volume,src=todo-db,target=//etc/todos getting-started
    > ```
    >
-   > For more details about Git Bash's syntax differences, see
-   > [Working with Git Bash](/desktop/troubleshoot-and-support/troubleshoot/topics/#docker-commands-failing-in-git-bash).
+    > 有关 Git Bash 语法差异的更多信息，参阅
+    > [Working with Git Bash](/desktop/troubleshoot-and-support/troubleshoot/topics/#docker-commands-failing-in-git-bash)。
 
 
 {{< /tab >}}
 {{< tab name="Docker Desktop" >}}
 
-To create a volume:
+创建卷：
 
-1. Select **Volumes** in Docker Desktop.
-2. In **Volumes**, select **Create**.
-3. Specify `todo-db` as the volume name, and then select **Create**.
+1. 在 Docker Desktop 中进入 **Volumes**。
+2. 在 **Volumes** 页面点击 **Create**。
+3. 输入 `todo-db` 作为卷名，然后点击 **Create**。
 
-To stop and remove the app container:
+停止并删除应用容器：
 
-1. Select **Containers** in Docker Desktop.
-2. Select **Delete** in the **Actions** column for the container.
+1. 在 Docker Desktop 中进入 **Containers**。
+2. 在目标容器的 **Actions** 列点击 **Delete**。
 
-To start the todo app container with the volume mounted:
+以挂载卷的方式启动 Todo 应用容器：
 
-1. Select the search box at the top of Docker Desktop.
-2. In the search window, select the **Images** tab.
-3. In the search box, specify the image name, `getting-started`.
+1. 在 Docker Desktop 顶部点击搜索框。
+2. 在搜索窗口切换到 **Images** 选项卡。
+3. 在搜索框中输入镜像名 `getting-started`。
 
    > [!TIP]
    >
-   >  Use the search filter to filter images and only show **Local images**.
+    > 使用搜索过滤器，仅显示 **Local images**。
 
-4. Select your image and then select **Run**.
-5. Select **Optional settings**.
-6. In **Host port**, specify the port, for example, `3000`.
-7. In **Host path**, specify the name of the volume, `todo-db`.
-8. In **Container path**, specify `/etc/todos`.
-9. Select **Run**.
+4. 选择目标镜像并点击 **Run**。
+5. 点击 **Optional settings**。
+6. 在 **Host port** 中填写端口（例如 `3000`）。
+7. 在 **Host path** 中填写卷名 `todo-db`。
+8. 在 **Container path** 中填写 `/etc/todos`。
+9. 点击 **Run**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Verify that the data persists
+### 验证数据是否持久化
 
-1. Once the container starts up, open the app and add a few items to your todo list.
+1. 容器启动后，打开应用，向待办列表添加几条数据。
 
     ![Items added to todo list](images/items-added.webp)
     
 
-2. Stop and remove the container for the todo app. Use Docker Desktop or `docker ps` to get the ID and then `docker rm -f <id>` to remove it.
+2. 停止并删除 Todo 应用容器。可通过 Docker Desktop 或使用 `docker ps` 获取容器 ID，然后执行 `docker rm -f <id>` 删除。
 
-3. Start a new container using the previous steps.
+3. 按前述步骤重新启动一个新容器。
 
-4. Open the app. You should see your items still in your list.
+4. 打开应用，你应能看到列表中仍保留着之前添加的条目。
 
-5. Go ahead and remove the container when you're done checking out your list.
+5. 验证完毕后，可删除该容器。
 
-You've now learned how to persist data.
+至此，你已学会如何实现数据持久化。
 
-## Dive into the volume
+## 深入了解卷
 
-A lot of people frequently ask "Where is Docker storing my data when I use a volume?" If you want to know, 
-you can use the `docker volume inspect` command.
+很多人经常会问：“使用卷时，Docker 到底把我的数据存在哪里？”你可以通过 `docker volume inspect` 命令来查看。
 
 ```console
 $ docker volume inspect todo-db
 ```
-You should see output like the following:
+你会看到类似如下的输出：
 ```console
 [
     {
@@ -191,20 +165,19 @@ You should see output like the following:
 ]
 ```
 
-The `Mountpoint` is the actual location of the data on the disk. Note that on most machines, you will
-need to have root access to access this directory from the host.
+其中的 `Mountpoint` 表示数据在磁盘上的实际位置。注意，在大多数主机上，你需要具备 root 权限才能从主机访问该目录。
 
-## Summary
+## 小结
 
-In this section, you learned how to persist container data.
+本节介绍了如何让容器数据持久化。
 
-Related information:
+相关信息：
 
  - [docker CLI reference](/reference/cli/docker/)
  - [Volumes](/manuals/engine/storage/volumes.md)
 
-## Next steps
+## 下一步
 
-Next, you'll learn how you can develop your app more efficiently using bind mounts.
+接下来，你将学习如何使用绑定挂载更高效地进行应用开发。
 
-{{< button text="Use bind mounts" url="06_bind_mounts.md" >}}
+{{< button text="使用绑定挂载" url="06_bind_mounts.md" >}}

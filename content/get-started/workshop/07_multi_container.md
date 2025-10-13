@@ -1,52 +1,47 @@
 ---
-title: Multi container apps
+title: 多容器应用
 weight: 70
-linkTitle: "Part 6: Multi-container apps"
-keywords: get started, setup, orientation, quickstart, intro, concepts, containers,
-  docker desktop
-description: Using more than one container in your application
+linkTitle: "第 6 部分：多容器应用"
+keywords: 入门, 安装, 导览, 快速开始, 介绍, 概念, 容器,
+  Docker Desktop
+description: 在你的应用中使用多个容器
 aliases:
  - /get-started/07_multi_container/
  - /guides/workshop/07_multi_container/
 ---
 
-Up to this point, you've been working with single container apps. But, now you will add MySQL to the
-application stack. The following question often arises - "Where will MySQL run? Install it in the same
-container or run it separately?" In general, each container should do one thing and do it well. The following are a few reasons to run the container separately:
+到目前为止，你一直在使用单容器应用。接下来，我们要在应用栈中加入 MySQL。常见的问题是：“MySQL 应该在哪里运行？和应用在同一个容器里，还是独立运行？”
+通常的原则是：每个容器只做一件事，并且把这件事做好。以下是将数据库独立为单独容器的几个原因：
 
-- There's a good chance you'd have to scale APIs and front-ends differently than databases.
-- Separate containers let you version and update versions in isolation.
-- While you may use a container for the database locally, you may want to use a managed service
-  for the database in production. You don't want to ship your database engine with your app then.
-- Running multiple processes will require a process manager (the container only starts one process), which adds complexity to container startup/shutdown.
+- API/前端与数据库的扩缩容策略通常不同。
+- 分离的容器可以独立进行版本管理与升级。
+- 本地可以使用容器运行数据库，但生产环境往往会使用托管数据库服务；此时你不会希望把数据库引擎和应用打包在一起。
+- 在一个容器中运行多个进程需要引入进程管理器（容器默认只启动一个进程），这会增加启动/停止的复杂度。
 
-And there are more reasons. So, like the following diagram, it's best to run your app in multiple containers.
+当然还有其他原因。总之，如下图所示，最好将应用拆分为多个容器运行。
 
-![Todo App connected to MySQL container](images/multi-container.webp?w=350h=250)
+![Todo 应用连接到 MySQL 容器](images/multi-container.webp?w=350h=250)
 
 
-## Container networking
+## 容器网络
 
-Remember that containers, by default, run in isolation and don't know anything about other processes
-or containers on the same machine. So, how do you allow one container to talk to another? The answer is
-networking. If you place the two containers on the same network, they can talk to each other.
+请记住，容器默认彼此隔离，同一台机器上的其他进程或容器对它来说是“不可见”的。那么，如何让一个容器与另一个容器通信？答案是“网络”。只要把两个容器放到同一个网络中，它们就可以互相访问。
 
-## Start MySQL
+## 启动 MySQL
 
-There are two ways to put a container on a network:
- - Assign the network when starting the container.
- - Connect an already running container to a network.
+将容器加入某个网络有两种方式：
+ - 在启动容器时指定网络；
+ - 将已在运行的容器连接到某个网络。
 
-In the following steps, you'll create the network first and then attach the MySQL container at startup.
+下面的步骤中，我们先创建网络，然后在启动时将 MySQL 容器加入该网络。
 
-1. Create the network.
+1. 创建网络。
 
    ```console
    $ docker network create todo-app
    ```
 
-2. Start a MySQL container and attach it to the network. You're also going to define a few environment variables that the
-   database will use to initialize the database. To learn more about the MySQL environment variables, see the "Environment Variables" section in the [MySQL Docker Hub listing](https://hub.docker.com/_/mysql/).
+2. 启动一个 MySQL 容器并将其加入该网络。同时，定义一些用于初始化数据库的环境变量。关于 MySQL 支持的环境变量，请参考 [MySQL Docker Hub 页面](https://hub.docker.com/_/mysql/)中的“Environment Variables”部分。
 
    {{< tabs >}}
    {{< tab name="Mac / Linux / Git Bash" >}}
@@ -87,26 +82,25 @@ In the following steps, you'll create the network first and then attach the MySQ
    {{< /tab >}}
    {{< /tabs >}}
    
-   In the previous command, you can see the `--network-alias` flag. In a later section, you'll learn more about this flag.
+   在上面的命令中，你可以看到 `--network-alias` 选项。稍后我们会进一步介绍它的作用。
 
    > [!TIP]
    >
-   > You'll notice a volume named `todo-mysql-data` in the above command that is mounted at `/var/lib/mysql`, which is where MySQL stores its data. However, you never ran a `docker volume create` command. Docker recognizes you want to use a named volume and creates one automatically for you.
+   > 你会注意到，上述命令中挂载了名为 `todo-mysql-data` 的卷到 `/var/lib/mysql`（MySQL 的数据目录）。虽然我们没有运行 `docker volume create`，但 Docker 看到你使用了“命名卷”，会自动为你创建。
 
-3. To confirm you have the database up and running, connect to the database and verify that it connects.
+3. 为确认数据库已正常运行，连接到数据库并验证连接是否成功。
 
    ```console
    $ docker exec -it <mysql-container-id> mysql -u root -p
    ```
 
-   When the password prompt comes up, type in `secret`. In the MySQL shell, list the databases and verify
-   you see the `todos` database.
+   出现密码提示后输入 `secret`。进入 MySQL shell 后，列出数据库并确认能看到 `todos`：
 
    ```console
    mysql> SHOW DATABASES;
    ```
 
-   You should see output that looks like this:
+   你将看到类似如下的输出：
 
    ```plaintext
    +--------------------+
@@ -121,36 +115,33 @@ In the following steps, you'll create the network first and then attach the MySQ
    5 rows in set (0.00 sec)
    ```
 
-4. Exit the MySQL shell to return to the shell on your machine.
+4. 退出 MySQL shell，返回到宿主机的终端。
 
    ```console
    mysql> exit
    ```
 
-   You now have a `todos` database and it's ready for you to use.
+   至此，`todos` 数据库已创建并可供使用。
 
-## Connect to MySQL
+## 连接到 MySQL
 
-Now that you know MySQL is up and running, you can use it. But, how do you use it? If you run
-another container on the same network, how do you find the container? Remember that each container has its own IP address.
+既然 MySQL 已启动并在运行，就可以开始使用它了。但具体怎么用？如果你在同一网络中再运行一个容器，该如何找到 MySQL 容器？请记住，每个容器都有自己的 IP 地址。
 
-To answer the questions above and better understand container networking, you're going to make use of the [nicolaka/netshoot](https://github.com/nicolaka/netshoot) container,
-which ships with a lot of tools that are useful for troubleshooting or debugging networking issues.
+为了解答上述问题并加深对容器网络的理解，我们将使用 [nicolaka/netshoot](https://github.com/nicolaka/netshoot) 容器，它内置了大量用于排查与调试网络问题的工具。
 
-1. Start a new container using the nicolaka/netshoot image. Make sure to connect it to the same network.
+1. 使用 nicolaka/netshoot 镜像启动一个新容器，并确保将其连接到同一个网络。
 
    ```console
    $ docker run -it --network todo-app nicolaka/netshoot
    ```
 
-2. Inside the container, you're going to use the `dig` command, which is a useful DNS tool. You're going to look up
-   the IP address for the hostname `mysql`.
+2. 在该容器内，使用 `dig` 命令（常用的 DNS 工具）查询主机名 `mysql` 对应的 IP 地址。
 
    ```console
    $ dig mysql
    ```
 
-   You should get output like the following.
+   你将看到类似如下的输出：
 
    ```text
    ; <<>> DiG 9.18.8 <<>> mysql
@@ -171,41 +162,31 @@ which ships with a lot of tools that are useful for troubleshooting or debugging
    ;; MSG SIZE  rcvd: 44
    ```
 
-   In the "ANSWER SECTION", you will see an `A` record for `mysql` that resolves to `172.23.0.2`
-   (your IP address will most likely have a different value). While `mysql` isn't normally a valid hostname,
-   Docker was able to resolve it to the IP address of the container that had that network alias. Remember, you used the
-   `--network-alias` earlier.
+   在 “ANSWER SECTION” 中，可以看到 `mysql` 的 `A` 记录解析为 `172.23.0.2`（你的 IP 很可能不同）。虽然 `mysql` 不是常规的主机名，但 Docker 能将其解析到具有该网络别名的容器 IP。还记得之前使用的 `--network-alias` 吗？
 
-   What this means is that your app only simply needs to connect to a host named `mysql` and it'll talk to the
-   database.
+   这意味着你的应用只需要连接主机名 `mysql`，就能与数据库通信。
 
-## Run your app with MySQL
+## 使用 MySQL 运行应用
 
-The todo app supports the setting of a few environment variables to specify MySQL connection settings. They are:
+该 Todo 应用支持通过一组环境变量配置 MySQL 连接，分别是：
 
-- `MYSQL_HOST` - the hostname for the running MySQL server
-- `MYSQL_USER` - the username to use for the connection
-- `MYSQL_PASSWORD` - the password to use for the connection
-- `MYSQL_DB` - the database to use once connected
+- `MYSQL_HOST` - 正在运行的 MySQL 的主机名
+- `MYSQL_USER` - 连接所用的用户名
+- `MYSQL_PASSWORD` - 连接所用的密码
+- `MYSQL_DB` - 连接成功后使用的数据库名
 
 > [!NOTE]
 >
-> While using env vars to set connection settings is generally accepted for development, it's highly discouraged
-> when running applications in production. Diogo Monica, a former lead of security at Docker,
-> [wrote a fantastic blog post](https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/)
-> explaining why.
+> 在开发环境中使用环境变量配置连接信息是常见做法，但在生产环境中并不推荐。Docker 前安全负责人 Diogo Monica 有一篇很好的文章
+> [说明了原因](https://blog.diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/)。
 >
-> A more secure mechanism is to use the secret support provided by your container orchestration framework. In most cases,
-> these secrets are mounted as files in the running container. You'll see many apps (including the MySQL image and the todo app)
-> also support env vars with a `_FILE` suffix to point to a file containing the variable.
+> 更安全的方式是使用容器编排框架提供的“机密（secret）”支持。在多数情况下，这些机密会以文件形式挂载到容器中。很多应用（包括 MySQL 镜像与本 Todo 应用）也支持带有 `_FILE` 后缀的环境变量，用于指向包含机密的文件。
 >
-> As an example, setting the `MYSQL_PASSWORD_FILE` var will cause the app to use the contents of the referenced file
-> as the connection password. Docker doesn't do anything to support these env vars. Your app will need to know to look for
-> the variable and get the file contents.
+> 例如，设置 `MYSQL_PASSWORD_FILE` 后，应用会读取该文件内容作为连接密码。需要注意，Docker 并不会对这些变量做特殊处理，你的应用必须自行读取变量并获取文件内容。
 
-You can now start your dev-ready container.
+现在，可以启动开发环境的容器了。
 
-1. Specify each of the previous environment variables, as well as connect the container to your app network. Make sure that you are in the `getting-started-app` directory when you run this command.
+1. 指定上述环境变量，并将容器连接到应用网络。执行命令前，请确保当前目录为 `getting-started-app`。
 
    {{< tabs >}}
    {{< tab name="Mac / Linux" >}}
@@ -224,7 +205,7 @@ You can now start your dev-ready container.
    
    {{< /tab >}}
    {{< tab name="PowerShell" >}}
-   In Windows, run this command in PowerShell.
+   在 Windows 下，请在 PowerShell 中运行以下命令。
 
    ```powershell
    $ docker run -dp 127.0.0.1:3000:3000 `
@@ -240,7 +221,7 @@ You can now start your dev-ready container.
 
    {{< /tab >}}
    {{< tab name="Command Prompt" >}}
-   In Windows, run this command in Command Prompt.
+   在 Windows 下，请在命令提示符（Command Prompt）中运行以下命令。
 
    ```console
    $ docker run -dp 127.0.0.1:3000:3000 ^
@@ -272,8 +253,7 @@ You can now start your dev-ready container.
    {{< /tab >}}
    {{< /tabs >}}
 
-2. If you look at the logs for the container (`docker logs -f <container-id>`), you should see a message similar to the following, which indicates it's
-   using the mysql database.
+2. 查看该容器的日志（`docker logs -f <container-id>`），你应能看到类似如下的信息，表示应用已连接到 MySQL 数据库：
 
    ```console
    $ nodemon src/index.js
@@ -285,16 +265,15 @@ You can now start your dev-ready container.
    Listening on port 3000
    ```
 
-3. Open the app in your browser and add a few items to your todo list.
+3. 在浏览器中打开应用，向待办列表添加几条数据。
 
-4. Connect to the mysql database and prove that the items are being written to the database. Remember, the password
-   is `secret`.
+4. 连接到 MySQL 数据库，验证这些数据确实写入了数据库。记得密码是 `secret`。
 
    ```console
    $ docker exec -it <mysql-container-id> mysql -p todos
    ```
 
-   And in the mysql shell, run the following:
+   在 mysql shell 中执行：
 
    ```console
    mysql> select * from todo_items;
@@ -306,24 +285,20 @@ You can now start your dev-ready container.
    +--------------------------------------+--------------------+-----------+
    ```
 
-   Your table will look different because it has your items. But, you should see them stored there.
+   你的表内容会与此不同，因为包含你刚添加的记录。但可以确认它们已被存储。
 
-## Summary
+## 小结
 
-At this point, you have an application that now stores its data in an external database running in a separate
-container. You learned a little bit about container networking and service discovery using DNS.
+至此，你已经让应用把数据存储到一个独立容器中的外部数据库里。你还了解了容器网络的基础，以及通过 DNS 实现的服务发现。
 
-Related information:
+相关信息：
  - [docker CLI reference](/reference/cli/docker/)
  - [Networking overview](/manuals/engine/network/_index.md)
 
-## Next steps
+## 下一步
 
-There's a good chance you are starting to feel a little overwhelmed with everything you need to do to start up
-this application. You have to create a network, start containers, specify all of the environment variables, expose
-ports, and more. That's a lot to remember and it's certainly making things harder to pass along to someone else.
+你可能开始觉得启动这个应用要做的事情有些繁琐：创建网络、启动容器、设置一堆环境变量、暴露端口等。这既难以记忆，也不方便分享给他人。
 
-In the next section, you'll learn about Docker Compose. With Docker Compose, you can share your application stacks in a
-much easier way and let others spin them up with a single, simple command.
+下一节将介绍 Docker Compose。借助 Compose，你可以更简单地共享应用栈，其他人也能用一条命令快速启动它们。
 
-{{< button text="Use Docker Compose" url="08_using_compose.md" >}}
+{{< button text="使用 Docker Compose" url="08_using_compose.md" >}}

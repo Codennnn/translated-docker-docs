@@ -1,9 +1,9 @@
 ---
-title: Docker 工作坊概览
-linkTitle: Docker 工作坊
+title: Docker 实践教程概览
+linkTitle: Docker 实践教程
 keywords: Docker 基础，如何启动 Docker 容器，容器设置，环境搭建，
   Docker，如何安装与配置 Docker，Docker 容器指南，Docker 入门
-description: 通过本工作坊快速上手 Docker 基础。你将
+description: 通过本实践教程快速上手 Docker 基础。你将
   学习容器、镜像，并将你的第一个应用容器化。
 aliases:
 - /guides/get-started/
@@ -11,7 +11,7 @@ aliases:
 - /guides/workshop/
 ---
 
-本工作坊约 45 分钟，提供逐步操作指引，帮助你开始使用 Docker。你将学到：
+本实践教程约 45 分钟，提供逐步操作指引，帮助你开始使用 Docker。你将学到：
 
 - 构建镜像并以容器形式运行。
 - 通过 Docker Hub 分享镜像。
