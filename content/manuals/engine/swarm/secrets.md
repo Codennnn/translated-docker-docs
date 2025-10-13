@@ -1,122 +1,62 @@
 ---
-title: Manage sensitive data with Docker secrets
-description: How to securely store, retrieve, and use sensitive data with Docker services
+title: 使用 Docker Secrets 管理敏感数据
+description: 如何在 Docker 服务中安全地存储、获取与使用敏感数据
 keywords: swarm, secrets, credentials, sensitive strings, sensitive data, security,
   encryption, encryption at rest
 tags: [Secrets]
 ---
 
-## About secrets
+## 关于 Secrets
 
-In terms of Docker Swarm services, a _secret_ is a blob of data, such as a
-password, SSH private key, SSL certificate, or another piece of data that should
-not be transmitted over a network or stored unencrypted in a Dockerfile or in
-your application's source code. You can use Docker _secrets_ to centrally manage
-this data and securely transmit it to only those containers that need access to
-it. Secrets are encrypted during transit and at rest in a Docker swarm. A given
-secret is only accessible to those services which have been granted explicit
-access to it, and only while those service tasks are running.
+在 Docker Swarm 服务的语境中，secret（机密）是一段数据，例如密码、SSH 私钥、SSL 证书，或其他不应在网络上明文传输、也不应以明文形式存放在 Dockerfile 或应用源代码中的数据。你可以使用 Docker Secrets 对这些数据进行集中管理，并仅将其安全地传递给需要访问的容器。在 Docker Swarm 中，secret 在传输与静态存储时均会被加密。只有被显式授予访问权限的服务，且仅在其任务运行期间，才能访问相应的 secret。
 
-You can use secrets to manage any sensitive data which a container needs at
-runtime but you don't want to store in the image or in source control, such as:
+当容器在运行时需要某些敏感数据，但你又不希望将其保存到镜像或代码仓库时，可以使用 secrets。典型场景包括：
 
-- Usernames and passwords
-- TLS certificates and keys
-- SSH keys
-- Other important data such as the name of a database or internal server
-- Generic strings or binary content (up to 500 kb in size)
+- 用户名与密码
+- TLS 证书与密钥
+- SSH 密钥
+- 其他重要信息，例如数据库名称或内部服务器地址
+- 一般字符串或二进制内容（最大 500 KB）
 
 > [!NOTE]
 >
-> Docker secrets are only available to swarm services, not to
-> standalone containers. To use this feature, consider adapting your container
-> to run as a service. Stateful containers can typically run with a scale of 1
-> without changing the container code.
+> Docker Secrets 仅适用于 Swarm 服务，不适用于独立容器。要使用该功能，可以考虑将容器改为以“服务”的方式运行。对于有状态的容器，通常可以在不修改容器代码的情况下，以副本数为 1 的形式运行。
 
-Another use case for using secrets is to provide a layer of abstraction between
-the container and a set of credentials. Consider a scenario where you have
-separate development, test, and production environments for your application.
-Each of these environments can have different credentials, stored in the
-development, test, and production swarms with the same secret name. Your
-containers only need to know the name of the secret to function in all
-three environments.
+另一个常见用法是通过 secrets 在容器与凭据之间引入一层抽象。设想你的应用有开发、测试、生产三个环境：每个环境可以在各自的 Swarm 中保存不同的凭据，但都使用同一个 secret 名称。这样你的容器只需要知道 secret 的名字即可在三个环境中正常工作。
 
-You can also use secrets to manage non-sensitive data, such as configuration
-files. However, Docker supports the use of [configs](configs.md)
-for storing non-sensitive data. Configs are mounted into the container's
-filesystem directly, without the use of a RAM disk.
+你也可以使用 secrets 来管理非敏感数据（例如配置文件）。不过，Docker 提供了更合适的机制：[configs](configs.md) 用于存放非敏感数据。Configs 会直接挂载到容器文件系统中，而不是通过内存盘（RAM disk）。
 
-### Windows support
+### Windows 支持
 
-Docker includes support for secrets on Windows containers. Where there are
-differences in the implementations, they are called out in the
-examples below. Keep the following notable differences in mind:
+Docker 在 Windows 容器中同样支持 secrets。实现上存在差异的地方会在下文示例中标注。请注意以下差异：
 
-- Microsoft Windows has no built-in driver for managing RAM disks, so within
-  running Windows containers, secrets are persisted in clear text to the
-  container's root disk. However, the secrets are explicitly removed when a
-  container stops. In addition, Windows does not support persisting a running
-  container as an image using `docker commit` or similar commands.
+- Microsoft Windows 没有内置的 RAM 磁盘驱动，因此在运行中的 Windows 容器内，secrets 会以明文形式存储在容器的根磁盘上。不过，当容器停止时，这些 secrets 会被显式删除。此外，Windows 不支持使用 `docker commit` 或类似命令将正在运行的容器持久化为镜像。
 
-- On Windows, we recommend enabling
-  [BitLocker](https://technet.microsoft.com/en-us/library/cc732774(v=ws.11).aspx)
-  on the volume containing the Docker root directory on the host machine to
-  ensure that secrets for running containers are encrypted at rest.
+- 在 Windows 上，建议在宿主机中启用包含 Docker 根目录卷的 [BitLocker](https://technet.microsoft.com/en-us/library/cc732774(v=ws.11).aspx)，以确保运行中容器的 secrets 在静态存储时被加密。
 
-- Secret files with custom targets are not directly bind-mounted into Windows
-  containers, since Windows does not support non-directory file bind-mounts.
-  Instead, secrets for a container are all mounted in
-  `C:\ProgramData\Docker\internal\secrets` (an implementation detail which
-  should not be relied upon by applications) within the container. Symbolic
-  links are used to point from there to the desired target of the secret within
-  the container. The default target is `C:\ProgramData\Docker\secrets`.
+- 由于 Windows 不支持对非目录文件进行绑定挂载，自定义目标路径的 secret 文件不会被直接绑定挂载到 Windows 容器中。相反，容器的所有 secrets 会统一挂载到容器内的 `C:\ProgramData\Docker\internal\secrets`（这是实现细节，应用不应依赖）。随后通过符号链接指向容器内期望的目标路径。默认目标路径为 `C:\ProgramData\Docker\secrets`。
 
-- When creating a service which uses Windows containers, the options to specify
-  UID, GID, and mode are not supported for secrets. Secrets are currently only
-  accessible by administrators and users with `system` access within the
-  container.
+- 在创建使用 Windows 容器的服务时，secrets 不支持设置 UID、GID 与文件权限（mode）。目前在容器内，只有管理员与具备 `system` 权限的用户可以访问 secrets。
 
-## How Docker manages secrets
+## Docker 如何管理 Secrets
 
-When you add a secret to the swarm, Docker sends the secret to the swarm manager
-over a mutual TLS connection. The secret is stored in the Raft log, which is
-encrypted. The entire Raft log is replicated across the other managers, ensuring
-the same high availability guarantees for secrets as for the rest of the swarm
-management data.
+当你向 Swarm 添加一个 secret 时，Docker 会通过双向 TLS 连接将其发送给管理节点。该 secret 会被写入加密的 Raft 日志。整个 Raft 日志会在所有管理节点间复制，因此 secrets 享有与其他 Swarm 管理数据相同的高可用保障。
 
-When you grant a newly-created or running service access to a secret, the
-decrypted secret is mounted into the container in an in-memory filesystem. The
-location of the mount point within the container defaults to
-`/run/secrets/<secret_name>` in Linux containers, or
-`C:\ProgramData\Docker\secrets` in Windows containers. You can also specify a
-custom location.
+当你为新建或正在运行的服务授予某个 secret 的访问权限时，解密后的 secret 会以内存文件系统的形式挂载到容器中。默认挂载位置为 Linux 容器的 `/run/secrets/<secret_name>`，或 Windows 容器的 `C:\ProgramData\Docker\secrets`。你也可以指定自定义位置。
 
-You can update a service to grant it access to additional secrets or revoke its
-access to a given secret at any time.
+你可以随时更新某个服务，以授予其访问更多 secrets，或撤销其对某个 secret 的访问权限。
 
-A node only has access to (encrypted) secrets if the node is a swarm manager or
-if it is running service tasks which have been granted access to the secret.
-When a container task stops running, the decrypted secrets shared to it are
-unmounted from the in-memory filesystem for that container and flushed from the
-node's memory.
+仅当节点是 Swarm 管理节点，或其正在运行的服务任务已被授予访问权限时，该节点才可访问（加密的）secrets。当容器任务停止运行时，挂载给它的解密后的 secrets 会从内存文件系统中卸载，并从该节点内存中清除。
 
-If a node loses connectivity to the swarm while it is running a task container
-with access to a secret, the task container still has access to its secrets, but
-cannot receive updates until the node reconnects to the swarm.
+如果节点在运行拥有 secret 访问权限的任务容器时与 Swarm 失联，该任务容器仍可访问其已挂载的 secrets，但在节点重新连回 Swarm 之前无法接收更新。
 
-You can add or inspect an individual secret at any time, or list all
-secrets. You cannot remove a secret that a running service is
-using. See [Rotate a secret](secrets.md#example-rotate-a-secret) for a way to
-remove a secret without disrupting running services.
+你可以随时添加或检查单个 secret，或列出全部 secrets。但无法删除正在被运行中服务使用的 secret。可参考「[轮换 secret](secrets.md#example-rotate-a-secret)」在不影响正在运行的服务的情况下移除旧 secret。
 
-To update or roll back secrets more easily, consider adding a version
-number or date to the secret name. This is made easier by the ability to control
-the mount point of the secret within a given container.
+为方便更新或回滚 secrets，可在 secret 名称中加入版本号或日期。同时，你也可以控制 secret 在容器内的挂载路径，这有助于平滑切换。
 
-## Read more about `docker secret` commands
+## 进一步了解 `docker secret` 命令
 
-Use these links to read about specific commands, or continue to the
-[example about using secrets with a service](secrets.md#simple-example-get-started-with-secrets).
+你可以通过以下链接查看具体命令，也可以继续阅读「[使用 secrets 的示例](secrets.md#simple-example-get-started-with-secrets)」。
 
 - [`docker secret create`](/reference/cli/docker/secret/create.md)
 - [`docker secret inspect`](/reference/cli/docker/secret/inspect.md)
@@ -125,50 +65,35 @@ Use these links to read about specific commands, or continue to the
 - [`--secret`](/reference/cli/docker/service/create.md#secret) flag for `docker service create`
 - [`--secret-add` and `--secret-rm`](/reference/cli/docker/service/update.md#secret-add) flags for `docker service update`
 
-## Examples
+## 示例
 
-This section includes three graduated examples which illustrate how to use
-Docker secrets. The images used in these examples have been updated to make it
-easier to use Docker secrets. To find out how to modify your own images in
-a similar way, see
-[Build support for Docker Secrets into your images](#build-support-for-docker-secrets-into-your-images).
+本节通过三个由浅入深的示例，演示如何使用 Docker Secrets。示例中使用的镜像已适配 Secrets，便于上手。若要类似地改造你自己的镜像，请参见「[为镜像添加对 Docker Secrets 的支持](#build-support-for-docker-secrets-into-your-images)」。
 
 > [!NOTE]
 >
-> These examples use a single-Engine swarm and unscaled services for
-> simplicity. The examples use Linux containers, but Windows containers also
-> support secrets. See [Windows support](#windows-support).
+> 为简化演示，以下示例均在单引擎（single-Engine）的 Swarm 上运行，且不进行服务扩容。示例使用 Linux 容器，但 Windows 容器同样支持 Secrets。参见「[Windows 支持](#windows-support)」。
 
-### Defining and using secrets in compose files
+### 在 Compose 文件中定义并使用 secrets
 
-Both the `docker-compose` and `docker stack` commands support defining secrets
-in a compose file. See
-[the Compose file reference](/reference/compose-file/legacy-versions.md) for details.
+`docker-compose` 与 `docker stack` 均支持在 Compose 文件中定义 secrets。详见「[Compose 文件参考](/reference/compose-file/legacy-versions.md)」。
 
-### Simple example: Get started with secrets
+### 简单示例：快速上手 secrets
 
-This simple example shows how secrets work in just a few commands. For a
-real-world example, continue to
-[Intermediate example: Use secrets with a Nginx service](#intermediate-example-use-secrets-with-a-nginx-service).
+该示例用少量命令演示 secrets 的基本用法。更贴近实战的示例请继续阅读「[进阶示例：在 Nginx 服务中使用 secrets](#intermediate-example-use-secrets-with-a-nginx-service)」。
 
-1.  Add a secret to Docker. The `docker secret create` command reads standard
-    input because the last argument, which represents the file to read the
-    secret from, is set to `-`.
+1.  向 Docker 添加一个 secret。`docker secret create` 的最后一个参数用于指定读取 secret 的文件路径；当其为 `-` 时，表示从标准输入读取。
 
     ```console
     $ printf "This is a secret" | docker secret create my_secret_data -
     ```
 
-2.  Create a `redis` service and grant it access to the secret. By default,
-    the container can access the secret at `/run/secrets/<secret_name>`, but
-    you can customize the file name on the container using the `target` option.
+2.  创建一个 `redis` 服务并授予其访问该 secret 的权限。默认情况下，容器可通过 `/run/secrets/<secret_name>` 访问该 secret；你也可以通过 `target` 选项自定义容器内的目标文件名。
 
     ```console
     $ docker service  create --name redis --secret my_secret_data redis:alpine
     ```
 
-3.  Verify that the task is running without issues using `docker service ps`. If
-    everything is working, the output looks similar to this:
+3.  使用 `docker service ps` 验证任务是否正常运行。若一切正常，输出类似：
 
     ```console
     $ docker service ps redis
@@ -177,8 +102,7 @@ real-world example, continue to
     bkna6bpn8r1a  redis.1  redis:alpine  ip-172-31-46-109  Running        Running 8 seconds ago  
     ```
 
-    If there were an error, and the task were failing and repeatedly restarting,
-    you would see something like this:
+    若任务失败并不断重启，你会看到类似输出：
 
     ```console
     $ docker service ps redis
@@ -191,12 +115,7 @@ real-world example, continue to
      \_ redis.1.wrny5v4xyps6  redis:alpine  moby  Shutdown       Failed 2 minutes ago       "task: non-zero exit (1)"
     ```
 
-4.  Get the ID of the `redis` service task container using `docker ps` , so that
-    you can use `docker container exec` to connect to the container and read the contents
-    of the secret data file, which defaults to being readable by all and has the
-    same name as the name of the secret. The first command below illustrates
-    how to find the container ID, and the second and third commands use shell
-    completion to do this automatically.
+4.  通过 `docker ps` 获取 `redis` 服务任务容器的 ID，然后用 `docker container exec` 进入容器读取 secret 文件内容。该文件默认所有用户可读，且文件名与 secret 名一致。第一条命令演示如何查找容器 ID；第二与第三条命令使用 shell 展开自动完成。
 
     ```console
     $ docker ps --filter name=redis -q
@@ -213,7 +132,7 @@ real-world example, continue to
     This is a secret
     ```
 
-5.  Verify that the secret is not available if you commit the container.
+5.  验证当你对容器执行 commit 时，secret 不会被提交进镜像。
 
     ```console
     $ docker commit $(docker ps --filter name=redis -q) committed_redis
@@ -223,8 +142,7 @@ real-world example, continue to
     cat: can't open '/run/secrets/my_secret_data': No such file or directory
     ```
 
-6.  Try removing the secret. The removal fails because the `redis` service is
-    running and has access to the secret.
+6.  尝试删除该 secret。由于 `redis` 服务仍在运行且拥有访问权限，因此删除会失败。
 
     ```console
     $ docker secret ls
@@ -239,16 +157,13 @@ real-world example, continue to
     'my_secret_data' is in use by the following service: redis
     ```
 
-7.  Remove access to the secret from the running `redis` service by updating the
-    service.
+7.  通过更新服务，撤销运行中 `redis` 服务对该 secret 的访问权限。
 
     ```console
     $ docker service update --secret-rm my_secret_data redis
     ```
 
-8.  Repeat steps 3 and 4 again, verifying that the service no longer has access
-    to the secret. The container ID is different, because the
-    `service update` command redeploys the service.
+8.  重复步骤 3 与 4，验证服务已无法访问该 secret。注意容器 ID 会不同，因为 `service update` 会重新部署该服务。
 
     ```console
     $ docker container exec -it $(docker ps --filter name=redis -q) cat /run/secrets/my_secret_data
@@ -256,7 +171,7 @@ real-world example, continue to
     cat: can't open '/run/secrets/my_secret_data': No such file or directory
     ```
 
-9.  Stop and remove the service, and remove the secret from Docker.
+9.  停止并删除服务，同时从 Docker 中删除该 secret。
 
     ```console
     $ docker service rm redis
@@ -264,13 +179,11 @@ real-world example, continue to
     $ docker secret rm my_secret_data
     ```
 
-### Simple example: Use secrets in a Windows service
+### 简单示例：在 Windows 服务中使用 secrets
 
-This is a very simple example which shows how to use secrets with a Microsoft
-IIS service running on Docker for Windows running Windows containers on
-Microsoft Windows 10. It is a naive example that stores the webpage in a secret.
+这是一个在 Windows 10 上，基于 Docker for Windows 运行 Windows 容器、并以 Microsoft IIS 服务演示 secrets 的简单示例。示例较为“朴素”，把网页内容存放在 secret 中。
 
-This example assumes that you have PowerShell installed.
+该示例假设你已安装 PowerShell。
 
 1.  Save the following into a new file `index.html`.
 
@@ -283,7 +196,7 @@ This example assumes that you have PowerShell installed.
     </html>
     ```
 
-2.  If you have not already done so, initialize or join the swarm.
+2.  若尚未进行，先初始化或加入 Swarm。
 
     ```console
     > docker swarm init
@@ -295,7 +208,7 @@ This example assumes that you have PowerShell installed.
     > docker secret create homepage index.html
     ```
 
-4.  Create an IIS service and grant it access to the `homepage` secret.
+4.  创建一个 IIS 服务，并授予其访问 `homepage` secret 的权限。
 
     ```console
     > docker service create `
@@ -307,14 +220,12 @@ This example assumes that you have PowerShell installed.
 
     > [!NOTE]
     >
-    > There is technically no reason to use secrets for this
-    > example; [configs](configs.md) are a better fit. This example is
-    > for illustration only.
+    > 从技术上讲，本示例并不需要使用 secrets；[configs](configs.md) 更为合适。本示例仅用于演示。
 
 5.  Access the IIS service at `http://localhost:8000/`. It should serve
     the HTML content from the first step.
 
-6.  Remove the service and the secret.
+6.  删除服务与 secret。
 
     ```console
     > docker service rm my-iis
@@ -322,25 +233,13 @@ This example assumes that you have PowerShell installed.
     > docker image remove secret-test
     ```
 
-### Intermediate example: Use secrets with a Nginx service
+### 进阶示例：在 Nginx 服务中使用 secrets
 
-This example is divided into two parts.
-[The first part](#generate-the-site-certificate) is all about generating
-the site certificate and does not directly involve Docker secrets at all, but
-it sets up [the second part](#configure-the-nginx-container), where you store
-and use the site certificate and Nginx configuration as secrets.
+本示例分为两部分。[第一部分](#generate-the-site-certificate) 仅用于生成站点证书，并不直接涉及 Docker Secrets；但它是为[第二部分](#configure-the-nginx-container)做准备——在第二部分中，我们会将站点证书与 Nginx 配置以 secrets 的形式存储并使用。
 
-#### Generate the site certificate
+#### 生成站点证书
 
-Generate a root CA and TLS certificate and key for your site. For production
-sites, you may want to use a service such as `Let’s Encrypt` to generate the
-TLS certificate and key, but this example uses command-line tools. This step
-is a little complicated, but is only a set-up step so that you have
-something to store as a Docker secret. If you want to skip these sub-steps,
-you can [use Let's Encrypt](https://letsencrypt.org/getting-started/) to
-generate the site key and certificate, name the files `site.key` and
-`site.crt`, and skip to
-[Configure the Nginx container](#configure-the-nginx-container).
+为站点生成根 CA 与 TLS 证书及密钥。生产环境中，你可以使用 `Let’s Encrypt` 等服务生成 TLS 证书与密钥；本示例使用命令行工具。此步骤略显繁琐，但仅是为了后续能有内容可作为 Docker secret 存储。若你希望跳过这些子步骤，可[使用 Let’s Encrypt](https://letsencrypt.org/getting-started/) 生成站点密钥与证书（文件名分别为 `site.key` 与 `site.crt`），然后直接跳到「[配置 Nginx 容器](#configure-the-nginx-container)」。
 
 1.  Generate a root key.
 
@@ -357,9 +256,7 @@ generate the site key and certificate, name the files `site.key` and
               -subj '/C=US/ST=CA/L=San Francisco/O=Docker/CN=Swarm Secret Example CA'
     ```
 
-3.  Configure the root CA. Edit a new file called `root-ca.cnf` and paste
-    the following contents into it. This constrains the root CA to signing leaf
-    certificates and not intermediate CAs.
+3.  配置根 CA。新建文件 `root-ca.cnf` 并粘贴以下内容。该配置限制根 CA 仅签发叶子证书，而不能签发中间 CA：
 
     ```ini
     [root_ca]
@@ -368,7 +265,7 @@ generate the site key and certificate, name the files `site.key` and
     subjectKeyIdentifier=hash
     ```
 
-4.  Sign the certificate.
+4.  签发证书。
 
     ```console
     $ openssl x509 -req  -days 3650  -in "root-ca.csr" \
@@ -383,17 +280,14 @@ generate the site key and certificate, name the files `site.key` and
     $ openssl genrsa -out "site.key" 4096
     ```
 
-6.  Generate the site certificate and sign it with the site key.
+6.  生成站点证书并使用站点密钥对其签名。
 
     ```console
     $ openssl req -new -key "site.key" -out "site.csr" -sha256 \
               -subj '/C=US/ST=CA/L=San Francisco/O=Docker/CN=localhost'
     ```
 
-7.  Configure the site certificate. Edit a new file  called `site.cnf` and
-    paste the following contents into it. This constrains the site
-    certificate so that it can only be used to authenticate a server and
-    can't be used to sign certificates.
+7.  配置站点证书。新建文件 `site.cnf` 并粘贴以下内容。该配置限制站点证书只能用于服务器认证，不能用于签发其他证书：
 
     ```ini
     [server]
@@ -405,7 +299,7 @@ generate the site key and certificate, name the files `site.key` and
     subjectKeyIdentifier=hash
     ```
 
-8.  Sign the site certificate.
+8.  签发站点证书。
 
     ```console
     $ openssl x509 -req -days 750 -in "site.csr" -sha256 \
@@ -413,15 +307,11 @@ generate the site key and certificate, name the files `site.key` and
         -out "site.crt" -extfile "site.cnf" -extensions server
     ```
 
-9.  The `site.csr` and `site.cnf` files are not needed by the Nginx service, but
-    you need them if you want to generate a new site certificate. Protect
-    the `root-ca.key` file.
+9.  Nginx 服务不需要 `site.csr` 与 `site.cnf` 文件；但若你想重新生成站点证书，它们仍然有用。请妥善保护 `root-ca.key` 文件。
 
-#### Configure the Nginx container
+#### 配置 Nginx 容器
 
-1.  Produce a very basic Nginx configuration that serves static files over HTTPS.
-    The TLS certificate and key are stored as Docker secrets so that they
-    can be rotated easily.
+1.  准备一个最基本的 Nginx 配置，用于通过 HTTPS 提供静态文件。TLS 证书与密钥将作为 Docker secrets 存储，方便后续轮换。
 
     In the current directory, create a new file called `site.conf` with the
     following contents:
@@ -440,13 +330,7 @@ generate the site key and certificate, name the files `site.key` and
     }
     ```
 
-2.  Create three secrets, representing the key, the certificate, and the
-    `site.conf`. You can store any file as a secret as long as it is smaller
-    than 500 KB. This allows you to decouple the key, certificate, and
-    configuration from the services that use them. In each of these
-    commands, the last argument represents the path to the file to read the
-    secret from on the host machine's filesystem. In these examples, the secret
-    name and the file name are the same.
+2.  创建三个 secrets，分别对应密钥、证书与 `site.conf`。任意小于 500 KB 的文件都可以作为 secret 存储。这使得密钥、证书与配置可以与使用它们的服务解耦。以下命令的最后一个参数为主机文件系统中读取 secret 的文件路径；示例中 secret 名与文件名相同。
 
     ```console
     $ docker secret create site.key site.key
@@ -465,12 +349,7 @@ generate the site key and certificate, name the files `site.key` and
     zoa5df26f7vpcoz42qf2csth8   site.conf      11 seconds ago      11 seconds ago
     ```
 
-3.  Create a service that runs Nginx and has access to the three secrets. The
-    last part of the `docker service create` command creates a symbolic link
-    from the location of the `site.conf` secret to `/etc/nginx.conf.d/`, where
-    Nginx looks for extra configuration files. This step happens before Nginx
-    actually starts, so you don't need to rebuild your image if you change the
-    Nginx configuration.
+3.  创建一个运行 Nginx 的服务，并授予其访问上述三个 secrets 的权限。`docker service create` 命令结尾处会把 `site.conf` 的真实位置创建成指向 `/etc/nginx/conf.d/` 的符号链接，Nginx 会在该目录查找额外配置。此步骤在 Nginx 启动前完成，因此即便变更配置也无需重建镜像。
 
     > [!NOTE]
     >
@@ -479,10 +358,7 @@ generate the site key and certificate, name the files `site.key` and
     > This example does not require a custom image. It puts the `site.conf`
     > into place and runs the container all in one step.
 
-    Secrets are located within the `/run/secrets/` directory in the container
-    by default, which may require extra steps in the container to make the
-    secret available in a different path. The example below creates a symbolic
-    link to the true location of the `site.conf` file so that Nginx can read it:
+    默认情况下，secrets 会位于容器内的 `/run/secrets/` 目录。如果你希望在其他路径使用 secret，可能需要额外操作。下面示例通过创建符号链接，让 Nginx 能从期望路径读取 `site.conf`：
 
     ```console
     $ docker service create \
@@ -495,10 +371,7 @@ generate the site key and certificate, name the files `site.key` and
          sh -c "ln -s /run/secrets/site.conf /etc/nginx/conf.d/site.conf && exec nginx -g 'daemon off;'"
     ```
 
-    Instead of creating symlinks, secrets allow you to specify a custom location
-    using the `target` option. The example below illustrates how the `site.conf`
-    secret is made available at `/etc/nginx/conf.d/site.conf` inside the container
-    without the use of symbolic links:
+    除了创建符号链接外，你也可以通过 `target` 选项为 secret 指定自定义位置。下面示例展示了如何无需符号链接，就将 `site.conf` 暴露在容器内的 `/etc/nginx/conf.d/site.conf`：
 
     ```console
     $ docker service create \
@@ -511,16 +384,13 @@ generate the site key and certificate, name the files `site.key` and
          sh -c "exec nginx -g 'daemon off;'"
     ```
 
-    The `site.key` and `site.crt` secrets use the short-hand syntax, without a 
-    custom `target` location set. The short syntax mounts the secrets in `/run/secrets/
-    with the same name as the secret. Within the running containers, the following
-    three files now exist:
+    `site.key` 与 `site.crt` 使用了简写语法，未设置自定义 `target`，因此它们会以各自名称挂载在 `/run/secrets/` 下。此时，容器中将存在以下三个文件：
 
     - `/run/secrets/site.key`
     - `/run/secrets/site.crt`
     - `/etc/nginx/conf.d/site.conf`
 
-4.  Verify that the Nginx service is running.
+4.  验证 Nginx 服务已成功运行。
 
     ```console
     $ docker service ls
@@ -534,8 +404,7 @@ generate the site key and certificate, name the files `site.key` and
     nginx.1.9ls3yo9ugcls  nginx:latest  moby  Running        Running 3 minutes ago
     ```
 
-5.  Verify that the service is operational: you can reach the Nginx
-    server, and that the correct TLS certificate is being used.
+5.  验证服务可用性：确保可以访问 Nginx，且使用了正确的 TLS 证书。
 
     ```console
     $ curl --cacert root-ca.crt https://localhost:3000
@@ -608,8 +477,7 @@ generate the site key and certificate, name the files `site.key` and
         Verify return code: 0 (ok)
     ```
 
-6.  To clean up after running this example, remove the `nginx` service and the
-    stored secrets.
+6.  清理：删除 `nginx` 服务与创建的 secrets。
 
     ```console
     $ docker service rm nginx
@@ -617,49 +485,25 @@ generate the site key and certificate, name the files `site.key` and
     $ docker secret rm site.crt site.key site.conf
     ```
 
-### Advanced example: Use secrets with a WordPress service
+### 高阶示例：在 WordPress 服务中使用 secrets
 
-In this example, you create a single-node MySQL service with a custom root
-password, add the credentials as secrets, and create a single-node WordPress
-service which uses these credentials to connect to MySQL. The
-[next example](#example-rotate-a-secret) builds on this one and shows you how to
-rotate the MySQL password and update the services so that the WordPress service
-can still connect to MySQL.
+本示例中，你将创建一个单节点 MySQL 服务并设置自定义 root 密码，将凭据以 secrets 形式存储，然后创建一个单节点的 WordPress 服务，并通过这些凭据连接到 MySQL。[下一个示例](#example-rotate-a-secret) 会在此基础上演示如何轮换 MySQL 密码并更新服务，确保 WordPress 仍可连接。
 
-This example illustrates some techniques to use Docker secrets to avoid saving
-sensitive credentials within your image or passing them directly on the command
-line.
+该示例展示了如何使用 Docker Secrets，避免将敏感凭据写入镜像或直接通过命令行传递。
 
 > [!NOTE]
 >
-> This example uses a single-Engine swarm for simplicity, and uses a
-> single-node MySQL service because a single MySQL server instance cannot be
-> scaled by simply using a replicated service, and setting up a MySQL cluster is
-> beyond the scope of this example.
+> 为简化演示，本示例使用单引擎 Swarm，且 MySQL 使用单节点。MySQL 并不能仅通过增加副本来实现水平扩展，搭建 MySQL 集群也超出了本文范围。
 >
-> Also, changing a MySQL root passphrase isn’t as simple as changing
-> a file on disk. You must use a query or a `mysqladmin` command to change the
-> password in MySQL.
+> 另外，修改 MySQL 的 root 密码并非简单地改一个磁盘文件；你需要使用查询语句或 `mysqladmin` 来修改。
 
-1.  Generate a random alphanumeric password for MySQL and store it as a Docker
-    secret with the name `mysql_password` using the `docker secret create`
-    command. To make the password shorter or longer, adjust the last argument of
-    the `openssl` command. This is just one way to create a relatively random
-    password. You can use another command to generate the password if you
-    choose.
+1.  生成一个随机的字母数字组合作为 MySQL 密码，并通过 `docker secret create` 将其保存为名为 `mysql_password` 的 Docker secret。若要更改密码长度，调整 `openssl` 命令最后一个参数即可。这只是创建随机密码的一种方式，你也可以使用其他方法生成。
 
     > [!NOTE]
     >
-    > After you create a secret, you cannot update it. You can only
-    > remove and re-create it, and you cannot remove a secret that a service is
-    > using. However, you can grant or revoke a running service's access to
-    > secrets using `docker service update`. If you need the ability to update a
-    > secret, consider adding a version component to the secret name, so that you
-    > can later add a new version, update the service to use it, then remove the
-    > old version.
+    > 创建 secret 后无法直接更新；你只能删除并重新创建，且不能删除被服务使用中的 secret。不过，你可以通过 `docker service update` 为运行中的服务授予或撤销对 secret 的访问权限。若需要“更新”能力，建议在 secret 名称中加入版本号，以便添加新版本、更新服务并移除旧版本。
 
-    The last argument is set to `-`, which indicates that the input is read from
-    standard input.
+    最后一个参数为 `-`，表示从标准输入读取内容。
 
     ```console
     $ openssl rand -base64 20 | docker secret create mysql_password -
@@ -667,18 +511,15 @@ line.
     l1vinzevzhj4goakjap5ya409
     ```
 
-    The value returned is not the password, but the ID of the secret. In the
-    remainder of this tutorial, the ID output is omitted.
+    返回值不是密码本身，而是 secret 的 ID。本文后续将省略该 ID 的显示。
 
-    Generate a second secret for the MySQL `root` user. This secret isn't
-    shared with the WordPress service created later. It's only needed to
-    bootstrap the `mysql` service.
+    为 MySQL 的 `root` 用户生成第二个 secret。该 secret 不会与稍后创建的 WordPress 服务共享，只用于初始化 `mysql` 服务。
 
     ```console
     $ openssl rand -base64 20 | docker secret create mysql_root_password -
     ```
 
-    List the secrets managed by Docker using `docker secret ls`:
+    使用 `docker secret ls` 列出 Docker 管理的 secrets：
 
     ```console
     $ docker secret ls
@@ -688,42 +529,22 @@ line.
     yvsczlx9votfw3l0nz5rlidig   mysql_root_password   12 seconds ago      12 seconds ago
     ```
 
-    The secrets are stored in the encrypted Raft logs for the swarm.
+    这些 secrets 会被存储在 Swarm 的加密 Raft 日志中。
 
-2.  Create a user-defined overlay network which is used for communication
-    between the MySQL and WordPress services. There is no need to expose the
-    MySQL service to any external host or container.
+2.  创建一个用户自定义 overlay 网络，供 MySQL 与 WordPress 服务之间通信使用。无需向外部主机或容器暴露 MySQL 服务。
 
     ```console
     $ docker network create -d overlay mysql_private
     ```
 
-3.  Create the MySQL service. The MySQL service has the following
-    characteristics:
+3.  创建 MySQL 服务。该服务具有以下特征：
 
-    - Because the scale is set to `1`, only a single MySQL task runs.
-      Load-balancing MySQL is left as an exercise to the reader and involves
-      more than just scaling the service.
-    - Only reachable by other containers on the `mysql_private` network.
-    - Uses the volume `mydata` to store the MySQL data, so that it persists
-      across restarts to the `mysql` service.
-    - The secrets are each mounted in a `tmpfs` filesystem at
-      `/run/secrets/mysql_password` and `/run/secrets/mysql_root_password`.
-      They are never exposed as environment variables, nor can they be committed
-      to an image if the `docker commit` command is run. The `mysql_password`
-      secret is the one used by the non-privileged WordPress container to
-      connect to MySQL.
-    - Sets the environment variables `MYSQL_PASSWORD_FILE` and
-      `MYSQL_ROOT_PASSWORD_FILE` to point to the
-      files `/run/secrets/mysql_password` and `/run/secrets/mysql_root_password`.
-      The `mysql` image reads the password strings from those files when
-      initializing the system database for the first time. Afterward, the
-      passwords are stored in the MySQL system database itself.
-    - Sets environment variables `MYSQL_USER` and `MYSQL_DATABASE`. A new
-      database called `wordpress` is created when the container starts, and the
-      `wordpress` user has full permissions for this database only. This
-      user cannot create or drop databases or change the MySQL
-      configuration.
+    - 由于副本数设置为 `1`，仅运行一个 MySQL 任务。对 MySQL 的负载均衡实现不在本示例范围内，且并非仅靠增加副本即可完成。
+    - 仅允许 `mysql_private` 网络中的其他容器访问。
+    - 使用卷 `mydata` 存储 MySQL 数据，使其在 `mysql` 服务重启后仍可保留。
+    - 这些 secrets 会以 `tmpfs` 内存文件系统的形式挂载在 `/run/secrets/mysql_password` 与 `/run/secrets/mysql_root_password`。它们不会以环境变量方式暴露；即便执行 `docker commit` 也不会被提交进镜像。`mysql_password` 是非特权的 WordPress 容器用于连接 MySQL 的 secret。
+    - 设置环境变量 `MYSQL_PASSWORD_FILE` 与 `MYSQL_ROOT_PASSWORD_FILE`，分别指向 `/run/secrets/mysql_password` 与 `/run/secrets/mysql_root_password`。`mysql` 镜像在首次初始化系统数据库时会从这些文件读取密码字符串；之后，密码会存储在 MySQL 的系统数据库中。
+    - 设置环境变量 `MYSQL_USER` 与 `MYSQL_DATABASE`。容器启动时会创建名为 `wordpress` 的数据库；`wordpress` 用户仅对该数据库拥有完整权限，不能创建/删除数据库，也不能修改 MySQL 配置。
 
       ```console
       $ docker service create \
@@ -740,7 +561,7 @@ line.
            mysql:latest
       ```
 
-4.  Verify that the `mysql` container is running using the `docker service ls` command.
+4.  使用 `docker service ls` 验证 `mysql` 容器已运行。
 
     ```console
     $ docker service ls
@@ -749,31 +570,15 @@ line.
     wvnh0siktqr3  mysql  replicated  1/1       mysql:latest
     ```
 
-5.  Now that MySQL is set up, create a WordPress service that connects to the
-    MySQL service. The WordPress service has the following characteristics:
+5.  完成 MySQL 的准备后，创建一个连接到 MySQL 的 WordPress 服务。该服务具有以下特征：
 
-    - Because the scale is set to `1`, only a single WordPress task runs.
-      Load-balancing WordPress is left as an exercise to the reader, because of
-      limitations with storing WordPress session data on the container
-      filesystem.
-    - Exposes WordPress on port 30000 of the host machine, so that you can access
-      it from external hosts. You can expose port 80 instead if you do not have
-      a web server running on port 80 of the host machine.
-    - Connects to the `mysql_private` network so it can communicate with the
-      `mysql` container, and also publishes port 80 to port 30000 on all swarm
-      nodes.
-    - Has access to the `mysql_password` secret, but specifies a different
-      target file name within the container. The WordPress container uses
-      the mount point `/run/secrets/wp_db_password`.
-    - Sets the environment variable `WORDPRESS_DB_PASSWORD_FILE` to the file
-      path where the secret is mounted. The WordPress service reads the
-      MySQL password string from that file and add it to the `wp-config.php`
-      configuration file.
-    - Connects to the MySQL container using the username `wordpress` and the
-      password in `/run/secrets/wp_db_password` and creates the `wordpress`
-      database if it does not yet exist.
-    - Stores its data, such as themes and plugins, in a volume called `wpdata`
-      so these files  persist when the service restarts.
+    - 由于副本数设置为 `1`，仅运行一个 WordPress 任务。受限于会话数据存储在容器文件系统，WordPress 的负载均衡不在本示例范围内，留作读者实践。
+    - 将 WordPress 暴露在宿主机的 30000 端口，便于外部访问；如果宿主机 80 端口空闲，也可以改为对外暴露 80 端口。
+    - 连接到 `mysql_private` 网络以便与 `mysql` 容器通信；同时在所有 Swarm 节点上将容器的 80 端口发布到 30000 端口。
+    - 拥有对 `mysql_password` secret 的访问权限，但在容器内指定了不同的目标文件名；WordPress 容器使用的挂载路径为 `/run/secrets/wp_db_password`。
+    - 设置环境变量 `WORDPRESS_DB_PASSWORD_FILE` 为该 secret 的挂载路径。WordPress 服务会从该文件读取 MySQL 密码，并写入 `wp-config.php` 配置文件。
+    - 使用用户名 `wordpress` 与 `/run/secrets/wp_db_password` 中的密码连接到 MySQL；若不存在，将创建名为 `wordpress` 的数据库。
+    - 将主题与插件等数据存储在名为 `wpdata` 的卷中，以确保服务重启后仍可保留。
 
     ```console
     $ docker service create \
@@ -790,8 +595,7 @@ line.
          wordpress:latest
     ```
 
-6.  Verify the service is running using `docker service ls` and
-    `docker service ps` commands.
+6.  使用 `docker service ls` 与 `docker service ps` 验证服务运行状态。
 
     ```console
     $ docker service ls
@@ -808,40 +612,21 @@ line.
     aukx6hgs9gwc  wordpress.1  wordpress:latest  moby  Running        Running 52 seconds ago   
     ```
 
-    At this point, you could actually revoke the WordPress service's access to
-    the `mysql_password` secret, because WordPress has copied the secret to its
-    configuration file `wp-config.php`. Don't do that for now, because we
-    use it later to facilitate rotating the MySQL password.
+    此时理论上可以撤销 WordPress 对 `mysql_password` secret 的访问，因为 WordPress 已将其写入 `wp-config.php`。不过暂时不要这么做，我们稍后还会用到它来演示密码轮换。
 
-7.  Access `http://localhost:30000/` from any swarm node and set up WordPress
-    using the web-based wizard. All of these settings are stored in the MySQL
-    `wordpress` database. WordPress automatically generates a password for your
-    WordPress user, which is completely different from the password WordPress
-    uses to access MySQL. Store this password securely, such as in a password
-    manager. You need it to log into WordPress after
-    [rotating the secret](#example-rotate-a-secret).
+7.  在任意 Swarm 节点访问 `http://localhost:30000/` 并通过 Web 向导完成 WordPress 初始化。上述设置会保存在 MySQL 的 `wordpress` 数据库中。WordPress 会为你的站点用户自动生成一个密码，这与 WordPress 访问 MySQL 的密码完全不同。请妥善保存该密码（例如使用密码管理器），在[轮换 secret](#example-rotate-a-secret) 后需要用它登录 WordPress。
 
-    Go ahead and write a blog post or two and install a WordPress plugin or
-    theme to verify that WordPress is fully operational and its state is saved
-    across service restarts.
+    现在可以尝试发表一两篇文章，并安装一个 WordPress 插件或主题，以验证 WordPress 正常工作，且其状态能在服务重启后被保留。
 
-8.  Do not clean up any services or secrets if you intend to proceed to the next
-    example, which demonstrates how to rotate the MySQL root password.
+8.  如果你打算继续下一示例（演示如何轮换 MySQL root 密码），现在不要清理任何服务或 secrets。
 
-### Example: Rotate a secret
+### 示例：轮换 secret
 
-This example builds upon the previous one. In this scenario, you create a new
-secret with a new MySQL password, update the `mysql` and `wordpress` services to
-use it, then remove the old secret.
+本示例基于上一示例：你将创建一个新的 MySQL 密码并保存为新的 secret，更新 `mysql` 与 `wordpress` 服务以使用它，然后移除旧 secret。
 
 > [!NOTE]
 >
-> Changing the password on a MySQL database involves running extra
-> queries or commands, as opposed to just changing a single environment variable
-> or a file, since the image only sets the MySQL password if the database doesn’t
-> already exist, and MySQL stores the password within a MySQL database by default.
-> Rotating passwords or other secrets may involve additional steps outside of
-> Docker.
+> 更改 MySQL 数据库密码需要执行额外的查询或命令，而非修改一个环境变量或文件。镜像仅会在数据库不存在时设置密码；默认情况下，密码存储在 MySQL 自身的数据库中。因此，轮换密码或其他 secrets 往往需要 Docker 之外的配合步骤。
 
 1.  Create the new password and store it as a secret named `mysql_password_v2`.
 
@@ -849,9 +634,7 @@ use it, then remove the old secret.
     $ openssl rand -base64 20 | docker secret create mysql_password_v2 -
     ```
 
-2.  Update the MySQL service to give it access to both the old and new secrets.
-    Remember that you cannot update or rename a secret, but you can revoke a
-    secret and grant access to it using a new target filename.
+2.  更新 MySQL 服务，使其同时访问旧与新两个 secrets。注意你无法直接更新或重命名 secret，但可以撤销并以新的目标文件名重新授予访问。
 
     ```console
     $ docker service update \
@@ -863,25 +646,17 @@ use it, then remove the old secret.
          mysql
     ```
 
-    Updating a service causes it to restart, and when the MySQL service restarts
-    the second time, it has access to the old secret under
-    `/run/secrets/old_mysql_password` and the new secret under
-    `/run/secrets/mysql_password`.
+    更新服务会触发重启；第二次启动后，MySQL 服务可以同时在 `/run/secrets/old_mysql_password` 与 `/run/secrets/mysql_password` 下访问旧/新密码。
 
-    Even though the MySQL service has access to both the old and new secrets
-    now, the MySQL password for the WordPress user has not yet been changed.
+    尽管 MySQL 服务此时可访问两个 secrets，但 WordPress 用户的 MySQL 密码尚未变更。
 
     > [!NOTE]
     >
     > This example does not rotate the MySQL `root` password.
 
-3.  Now, change the MySQL password for the `wordpress` user using the
-    `mysqladmin` CLI. This command reads the old and new password from the files
-    in `/run/secrets` but does not expose them on the command line or save them
-    in the shell history.
+3.  接着，使用 `mysqladmin` CLI 修改 `wordpress` 用户的 MySQL 密码。该命令会从 `/run/secrets` 中读取旧/新密码，不会在命令行暴露或写入 shell 历史。
 
-    Do this quickly and move on to the next step, because WordPress loses
-    the ability to connect to MySQL.
+    请快速完成并继续下一步，因为此时 WordPress 会暂时无法连接 MySQL。
 
     First, find the ID of the `mysql` container task.
 
@@ -906,9 +681,7 @@ use it, then remove the old secret.
         bash -c 'mysqladmin --user=wordpress --password="$(< /run/secrets/old_mysql_password)" password "$(< /run/secrets/mysql_password)"'
     ```
 
-4.  Update the `wordpress` service to use the new password, keeping the target
-    path at `/run/secrets/wp_db_password`. This triggers a rolling restart of
-    the WordPress service and the new secret is used.
+4.  更新 `wordpress` 服务以使用新密码，同时保持目标路径 `/run/secrets/wp_db_password` 不变。该操作会触发滚动重启，并生效新 secret。
 
     ```console
     $ docker service update \
@@ -917,15 +690,12 @@ use it, then remove the old secret.
          wordpress    
     ```
 
-5.  Verify that WordPress works by browsing to http://localhost:30000/ on any
-    swarm node again. Use the WordPress username and password
-    from when you ran through the WordPress wizard in the previous task.
+5.  再次在任意 Swarm 节点访问 http://localhost:30000/ 验证 WordPress 可用。使用你在上一示例中通过向导创建的 WordPress 用户名与密码登录。
 
     Verify that the blog post you wrote still exists, and if you changed any
     configuration values, verify that they are still changed.
 
-6.  Revoke access to the old secret from the MySQL service and
-    remove the old secret from Docker.
+6.  从 MySQL 服务撤销旧 secret 的访问权限，并将其从 Docker 中删除。
 
     ```console
     $ docker service update \
@@ -936,8 +706,7 @@ use it, then remove the old secret.
     ```
 
 
-7.  Run the following commands to remove the WordPress service, the MySQL container,
-    the `mydata` and `wpdata` volumes, and the Docker secrets:
+7.  运行以下命令，删除 WordPress 与 MySQL 服务、移除 `mydata` 与 `wpdata` 卷，并清理相关 secrets：
 
     ```console
     $ docker service rm wordpress mysql
@@ -947,34 +716,19 @@ use it, then remove the old secret.
     $ docker secret rm mysql_password_v2 mysql_root_password
     ```
 
-## Build support for Docker Secrets into your images
+## 为镜像添加对 Docker Secrets 的支持
 
-If you develop a container that can be deployed as a service and requires
-sensitive data, such as a credential, as an environment variable, consider
-adapting your image to take advantage of Docker secrets. One way to do this is
-to ensure that each parameter you pass to the image when creating the container
-can also be read from a file.
+如果你要构建一个以服务形式部署的容器，且需要以环境变量形式提供凭据等敏感数据，建议改造镜像以利用 Docker Secrets。做法之一是：确保创建容器时传入镜像的每个参数，都可以改为从文件读取。
 
-Many of the Docker Official Images in the
-[Docker library](https://github.com/docker-library/), such as the
-[wordpress](https://github.com/docker-library/wordpress/)
-image used in the above examples, have been updated in this way.
+许多来自 [Docker Library](https://github.com/docker-library/) 的官方镜像（例如上文使用的 [wordpress](https://github.com/docker-library/wordpress/)）已按此方式适配。
 
-When you start a WordPress container, you provide it with the parameters it
-needs by setting them as environment variables. The WordPress image has been
-updated so that the environment variables which contain important data for
-WordPress, such as `WORDPRESS_DB_PASSWORD`, also have variants which can read
-their values from a file (`WORDPRESS_DB_PASSWORD_FILE`). This strategy ensures
-that backward compatibility is preserved, while allowing your container to read
-the information from a Docker-managed secret instead of being passed directly.
+启动 WordPress 容器时，通常通过环境变量传入必要参数。该镜像已更新：凡是重要参数（如 `WORDPRESS_DB_PASSWORD`），都提供了从文件读取的变体（如 `WORDPRESS_DB_PASSWORD_FILE`）。这既保证了向后兼容性，也允许容器从 Docker 管理的 secret 中读取信息，而非直接通过环境变量传入。
 
 > [!NOTE]
 >
-> Docker secrets do not set environment variables directly. This was a
-> conscious decision, because environment variables can unintentionally be leaked
-> between containers (for instance, if you use `--link`).
+> Docker Secrets 不会直接注入环境变量。这样设计是为了避免环境变量在容器之间被意外泄露（例如使用 `--link` 时）。
 
-## Use Secrets in Compose
+## 在 Compose 中使用 Secrets
 
 ```yaml
 
@@ -1016,22 +770,16 @@ volumes:
     db_data:
 ```
 
-This example creates a simple WordPress site using two secrets in
-a Compose file.
+下面的示例使用 Compose 文件与两个 secrets，创建一个简单的 WordPress 站点。
 
-The top-level element `secrets` defines two secrets `db_password` and
-`db_root_password`.
+顶层的 `secrets` 元素定义了两个 secrets：`db_password` 与 `db_root_password`。
 
-When deploying, Docker creates these two secrets and populates them with the
-content from the file specified in the Compose file.
+部署时，Docker 会创建这两个 secrets，并将 Compose 文件中指定的文件内容写入其中。
 
-The `db` service uses both secrets, and `wordpress` is using one.
+`db` 服务使用这两个 secrets，`wordpress` 服务使用其中一个。
 
-When you deploy, Docker mounts a file under `/run/secrets/<secret_name>` in the
-services. These files are never persisted on disk, but are managed in memory.
+部署后，Docker 会在服务容器内挂载 `/run/secrets/<secret_name>` 文件。这些文件不会持久化到磁盘，而是在内存中管理。
 
-Each service uses environment variables to specify where the service should look
-for that secret data.
+每个服务通过环境变量指定在容器内读取 secret 的路径。
 
-More information on short and long syntax for secrets can be found in the
-[Compose Specification](/reference/compose-file/secrets.md).
+关于 secrets 的短/长语法，详见《[Compose 规范](/reference/compose-file/secrets.md)》。

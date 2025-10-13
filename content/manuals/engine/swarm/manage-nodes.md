@@ -1,19 +1,19 @@
 ---
-description: Manage existing nodes in a swarm
+description: 在 Swarm 中管理现有节点
 keywords: guide, swarm mode, node
-title: Manage nodes in a swarm
+title: 管理 Swarm 中的节点
 ---
 
-As part of the swarm management lifecycle, you may need to:
+在 Swarm 的日常运维中，你可能需要进行以下操作：
 
-* [List nodes in the swarm](#list-nodes)
-* [Inspect an individual node](#inspect-an-individual-node)
-* [Update a node](#update-a-node)
-* [Leave the swarm](#leave-the-swarm)
+* [查看 Swarm 中的节点列表](#list-nodes)
+* [检查单个节点详情](#inspect-an-individual-node)
+* [更新节点属性](#update-a-node)
+* [使节点退出 Swarm](#leave-the-swarm)
 
-## List nodes
+## 查看节点列表
 
-To view a list of nodes in the swarm run `docker node ls` from a manager node:
+在管理节点上运行 `docker node ls` 可查看 Swarm 中所有节点：
 
 ```console
 $ docker node ls
@@ -26,37 +26,24 @@ e7p8btxeu3ioshyuj6lxiv6g0    node-2    Ready   Active
 ehkv3bcimagdese79dn78otj5 *  node-1    Ready   Active        Leader
 ```
 
-The `AVAILABILITY` column shows whether or not the scheduler can assign tasks to
-the node:
+`AVAILABILITY` 列表示调度器是否可以向该节点分配任务：
 
-* `Active` means that the scheduler can assign tasks to the node.
-* `Pause` means the scheduler doesn't assign new tasks to the node, but existing
-  tasks remain running.
-* `Drain` means the scheduler doesn't assign new tasks to the node. The
-   scheduler shuts down any existing tasks and schedules them on an available
-   node.
+* `Active`：调度器可以向该节点分配任务。
+* `Pause`：调度器不再向该节点分配新任务，但已有任务继续运行。
+* `Drain`：调度器不再向该节点分配新任务，并会关闭该节点上的现有任务，然后将它们调度到其他可用节点。
 
-The `MANAGER STATUS` column shows node participation in the Raft consensus:
+`MANAGER STATUS` 列表示节点在 Raft 共识中的角色：
 
-* No value indicates a worker node that does not participate in swarm
-  management.
-* `Leader` means the node is the primary manager node that makes all swarm
-  management and orchestration decisions for the swarm.
-* `Reachable` means the node is a manager node participating in the Raft
-  consensus quorum. If the leader node becomes unavailable, the node is eligible for
-  election as the new leader.
-* `Unavailable` means the node is a manager that can't communicate with
-  other managers. If a manager node becomes unavailable, you should either join a
-  new manager node to the swarm or promote a worker node to be a
-  manager.
+* 为空：表示该节点为 worker，不参与 Swarm 管理。
+* `Leader`：该节点为主管理节点，负责做出集群的编排与管理决策。
+* `Reachable`：该节点为参与 Raft 共识投票的管理节点。如果 `Leader` 不可用，该节点有资格参与新 Leader 的选举。
+* `Unavailable`：该节点为管理节点，但无法与其他管理节点通信。此时应添加新的管理节点，或将某个 worker 提升为管理节点。
 
-For more information on swarm administration refer to the [Swarm administration guide](admin_guide.md).
+更多 Swarm 管理内容，请参阅《[Swarm 管理指南](admin_guide.md)》。
 
-## Inspect an individual node
+## 检查单个节点
 
-You can run `docker node inspect <NODE-ID>` on a manager node to view the
-details for an individual node. The output defaults to JSON format, but you can
-pass the `--pretty` flag to print the results in human-readable format. For example:
+在管理节点上运行 `docker node inspect <NODE-ID>` 可查看某个节点的详细信息。默认输出为 JSON；你也可以添加 `--pretty` 标志，以更易读的格式显示结果。例如：
 
 ```console
 $ docker node inspect self --pretty
@@ -83,25 +70,24 @@ Plugins:
 Engine Version:         1.12.0-dev
 ```
 
-## Update a node
+## 更新节点
 
-You can modify node attributes to:
+你可以通过修改节点属性来：
 
-* [Change node availability](#change-node-availability)
-* [Add or remove label metadata](#add-or-remove-label-metadata)
-* [Change a node role](#promote-or-demote-a-node)
+* [更改节点可用性](#change-node-availability)
+* [添加或删除标签元数据](#add-or-remove-label-metadata)
+* [变更节点角色](#promote-or-demote-a-node)
 
-### Change node availability
+### 更改节点可用性
 
-Changing node availability lets you:
+通过调整节点的可用性，你可以：
 
-* Drain a manager node so that it only performs swarm management tasks and is
-  unavailable for task assignment.
-* Drain a node so you can take it down for maintenance.
-* Pause a node so it can't receive new tasks.
-* Restore unavailable or paused nodes availability status.
+* 将管理节点设置为 `Drain`，使其只执行集群管理，不参与任务分配。
+* 将某节点设置为 `Drain` 以便进行维护停机。
+* 将节点设置为 `Pause`，阻止其接收新任务。
+* 恢复处于不可用或暂停状态节点的可用性。
 
-For example, to change a manager node to `Drain` availability:
+例如，将某个管理节点设置为 `Drain`：
 
 ```console
 $ docker node update --availability drain node-1
@@ -109,20 +95,15 @@ $ docker node update --availability drain node-1
 node-1
 ```
 
-See [list nodes](#list-nodes) for descriptions of the different availability
-options.
+不同可用性状态的说明见「[查看节点列表](#list-nodes)」。
 
-### Add or remove label metadata
+### 添加或删除标签元数据
 
-Node labels provide a flexible method of node organization. You can also use
-node labels in service constraints. Apply constraints when you create a service
-to limit the nodes where the scheduler assigns tasks for the service.
+节点标签是一种灵活的组织方式。你也可以在创建服务时使用标签作为约束，限制调度器将该服务的任务分配到哪些节点。
 
-Run `docker node update --label-add` on a manager node to add label metadata to
-a node. The `--label-add` flag supports either a `<key>` or a `<key>=<value>`
-pair.
+在管理节点上运行 `docker node update --label-add` 为节点添加标签。`--label-add` 可以接受 `<key>` 或 `<key>=<value>` 形式。
 
-Pass the `--label-add` flag once for each node label you want to add:
+为每个要添加的标签分别传入一次 `--label-add`：
 
 ```console
 $ docker node update --label-add foo --label-add bar=baz node-1
@@ -130,41 +111,25 @@ $ docker node update --label-add foo --label-add bar=baz node-1
 node-1
 ```
 
-The labels you set for nodes using `docker node update` apply only to the node
-entity within the swarm. Do not confuse them with the Docker daemon labels for
-[dockerd](/manuals/engine/manage-resources/labels.md).
+通过 `docker node update` 设置的标签仅用于 Swarm 内的“节点实体”。不要将其与 Docker 守护进程（`dockerd`）的引擎标签混淆，后者见《[管理资源：标签](/manuals/engine/manage-resources/labels.md)》。
 
-Therefore, node labels can be used to limit critical tasks to nodes that meet
-certain requirements. For example, schedule only on machines where special
-workloads should be run, such as machines that meet [PCI-SS
-compliance](https://www.pcisecuritystandards.org/).
+因此，你可以使用节点标签将关键任务限定在满足特定要求的节点上。例如，仅在满足 [PCI-SS 合规性](https://www.pcisecuritystandards.org/) 的机器上运行某些特殊工作负载。
 
-A compromised worker could not compromise these special workloads because it
-cannot change node labels.
+即便某个 worker 被攻破，也无法篡改这些节点标签，从而难以影响这类敏感工作负载。
 
-Engine labels, however, are still useful because some features that do not
-affect secure orchestration of containers might be better off set in a
-decentralized manner. For instance, an engine could have a label to indicate
-that it has a certain type of disk device, which may not be relevant to security
-directly. These labels are more easily "trusted" by the swarm orchestrator.
+另一方面，引擎标签依然有其价值：对于不影响容器安全编排的功能，分散设置会更灵活。例如，可以为某个引擎设置一个标签，标识其具备某种磁盘设备类型——这与安全无直接关系，但此类标签更容易被编排器“信任”。
 
-Refer to the `docker service create` [CLI reference](/reference/cli/docker/service/create.md)
-for more information about service constraints.
+关于服务约束的更多用法，参阅 `docker service create` 的《[CLI 参考](/reference/cli/docker/service/create.md)》。
 
-### Promote or demote a node
+### 提升或降级节点角色
 
-You can promote a worker node to the manager role. This is useful when a
-manager node becomes unavailable or if you want to take a manager offline for
-maintenance. Similarly, you can demote a manager node to the worker role.
+你可以将 worker 提升为 manager。当某个管理节点不可用，或计划让其下线维护时，这很有用。相应地，你也可以将 manager 降级为 worker。
 
 > [!NOTE]
 >
-> Regardless of your reason to promote or demote
-> a node, you must always maintain a quorum of manager nodes in the
-> swarm. For more information refer to the [Swarm administration guide](admin_guide.md).
+> 无论因何进行节点的提升或降级，都必须始终保证集群中管理节点达到法定数量（quorum）。更多信息参阅《[Swarm 管理指南](admin_guide.md)》。
 
-To promote a node or set of nodes, run `docker node promote` from a manager
-node:
+要提升一个或多个节点，请在管理节点上运行 `docker node promote`：
 
 ```console
 $ docker node promote node-3 node-2
@@ -173,7 +138,7 @@ Node node-3 promoted to a manager in the swarm.
 Node node-2 promoted to a manager in the swarm.
 ```
 
-To demote a node or set of nodes, run `docker node demote` from a manager node:
+要降级一个或多个节点，请在管理节点上运行 `docker node demote`：
 
 ```console
 $ docker node demote node-3 node-2
@@ -182,35 +147,23 @@ Manager node-3 demoted in the swarm.
 Manager node-2 demoted in the swarm.
 ```
 
-`docker node promote` and `docker node demote` are convenience commands for
-`docker node update --role manager` and `docker node update --role worker`
-respectively.
+`docker node promote` 与 `docker node demote` 是便捷命令，分别等价于 `docker node update --role manager` 与 `docker node update --role worker`。
 
-## Install plugins on swarm nodes
+## 在 Swarm 节点上安装插件
 
-If your swarm service relies on one or more
-[plugins](/engine/extend/plugin_api/), these plugins need to be available on
-every node where the service could potentially be deployed. You can manually
-install the plugin on each node or script the installation. You can also deploy
-the plugin in a similar way as a global service using the Docker API, by specifying
-a `PluginSpec` instead of a `ContainerSpec`.
+如果你的 Swarm 服务依赖一个或多个[插件](/engine/extend/plugin_api/)，那么这些插件必须存在于所有可能被调度到的节点上。你可以在每台节点上手动安装，或编写脚本自动安装。也可以通过 Docker API 类似“全局服务”的方式进行部署，只需在任务模板中指定 `PluginSpec`（而非 `ContainerSpec`）。
 
 > [!NOTE]
 >
-> There is currently no way to deploy a plugin to a swarm using the
-> Docker CLI or Docker Compose. In addition, it is not possible to install
-> plugins from a private repository.
+> 目前无法通过 Docker CLI 或 Docker Compose 将插件直接部署到 Swarm；此外，也无法从私有仓库安装插件。
 
-The [`PluginSpec`](/engine/extend/plugin_api/#json-specification)
-is defined by the plugin developer. To add the plugin to all Docker nodes, use
-the [`service/create`](/reference/api/engine/v1.31/#operation/ServiceCreate) API, passing
-the `PluginSpec` JSON defined in the `TaskTemplate`.
+[`PluginSpec`](/engine/extend/plugin_api/#json-specification) 由插件开发者定义。若要将插件添加到所有 Docker 节点，可调用 [`service/create`](/reference/api/engine/v1.31/#operation/ServiceCreate) API，并在 `TaskTemplate` 中传入 `PluginSpec` 的 JSON。
 
-## Leave the swarm
+## 退出 Swarm
 
-Run the `docker swarm leave` command on a node to remove it from the swarm.
+在目标节点上运行 `docker swarm leave`，即可将其从 Swarm 中移除。
 
-For example to leave the swarm on a worker node:
+例如，在某个 worker 节点上执行退出：
 
 ```console
 $ docker swarm leave
@@ -218,19 +171,13 @@ $ docker swarm leave
 Node left the swarm.
 ```
 
-When a node leaves the swarm, Docker Engine stops running in Swarm
-mode. The orchestrator no longer schedules tasks to the node.
+节点退出后，Docker Engine 将停止运行 Swarm 模式，编排器也不会再向该节点调度任务。
 
-If the node is a manager node, you receive a warning about maintaining the
-quorum. To override the warning, pass the `--force` flag. If the last manager
-node leaves the swarm, the swarm becomes unavailable requiring you to take
-disaster recovery measures.
+如果该节点是管理节点，你会看到关于维持法定数量的警告。可通过 `--force` 强制执行。但如果最后一个管理节点也离开，整个集群将不可用，你需要执行灾难恢复。
 
-For information about maintaining a quorum and disaster recovery, refer to the
-[Swarm administration guide](admin_guide.md).
+关于维持法定数量与灾难恢复，请参阅《[Swarm 管理指南](admin_guide.md)》。
 
-After a node leaves the swarm, you can run `docker node rm` on a
-manager node to remove the node from the node list.
+节点退出后，可在管理节点上运行 `docker node rm` 将其从节点列表中删除。
 
 For instance:
 
@@ -238,8 +185,8 @@ For instance:
 $ docker node rm node-2
 ```
 
-## Learn more
+## 延伸阅读
 
-* [Swarm administration guide](admin_guide.md)
-* [Docker Engine command line reference](/reference/cli/docker/)
-* [Swarm mode tutorial](swarm-tutorial/_index.md)
+* [Swarm 管理指南](admin_guide.md)
+* [Docker Engine 命令行参考](/reference/cli/docker/)
+* [Swarm 模式入门教程](swarm-tutorial/_index.md)

@@ -1,40 +1,31 @@
 ---
-description: Deploy services to a swarm
+description: 将服务部署到 Swarm
 keywords: guide, swarm mode, swarm, service
-title: Deploy services to a swarm
+title: 在 Swarm 中部署服务
 toc_max: 4
 ---
 
-Swarm services use a declarative model, which means that you define the
-desired state of the service, and rely upon Docker to maintain this state. The
-state includes information such as (but not limited to):
+Swarm 服务采用“声明式”模型：你定义服务的期望状态，并由 Docker 负责维持这一状态。期望状态包括（但不限于）：
 
-- The image name and tag the service containers should run
-- How many containers participate in the service
-- Whether any ports are exposed to clients outside the swarm
-- Whether the service should start automatically when Docker starts
-- The specific behavior that happens when the service is restarted (such as
-  whether a rolling restart is used)
-- Characteristics of the nodes where the service can run (such as resource
-  constraints and placement preferences)
+- 服务容器应运行的镜像名称与标签
+- 参与该服务的容器数量
+- 是否向 Swarm 外部客户端暴露端口
+- Docker 启动时该服务是否应自动启动
+- 服务重启时的具体行为（例如是否采用滚动重启）
+- 服务可运行节点的特征（如资源约束与放置偏好）
 
-For an overview of Swarm mode, see [Swarm mode key concepts](key-concepts.md).
-For an overview of how services work, see
-[How services work](how-swarm-mode-works/services.md).
+想要了解 Swarm 模式的整体概念，请参阅《[Swarm 模式关键概念](key-concepts.md)》。
+了解服务工作方式，请参阅《[服务的工作原理](how-swarm-mode-works/services.md)》。
 
-## Create a service
+## 创建服务
 
-To create a single-replica service with no extra configuration, you only need
-to supply the image name. This command starts an Nginx service with a
-randomly-generated name and no published ports. This is a naive example, since
-you can't interact with the Nginx service.
+如果只需一个副本且无需额外配置，只需提供镜像名称即可。下面的命令会启动一个未发布端口、随机命名的 Nginx 服务。该示例较为简单，因为无法直接与该服务交互。
 
 ```console
 $ docker service create nginx
 ```
 
-The service is scheduled on an available node. To confirm that the service
-was created and started successfully, use the `docker service ls` command:
+服务会调度到某个可用节点上。使用 `docker service ls` 可确认服务是否创建并成功启动：
 
 ```console
 $ docker service ls
@@ -43,67 +34,55 @@ ID                  NAME                MODE                REPLICAS            
 a3iixnklxuem        quizzical_lamarr    replicated          1/1                 docker.io/library/nginx@sha256:41ad9967ea448d7c2b203c699b429abe1ed5af331cd92533900c6d77490e0268
 ```
 
-Created services do not always run right away. A service can be in a pending
-state if its image is unavailable, if no node meets the requirements you
-configure for the service, or for other reasons. See
-[Pending services](how-swarm-mode-works/services.md#pending-services) for more
-information.
+新建的服务并不总是立即运行。如果镜像不可用、或没有节点满足服务的配置要求（等多种原因），服务可能会处于 pending 状态。参见《[挂起中的服务](how-swarm-mode-works/services.md#pending-services)》。
 
-To provide a name for your service, use the `--name` flag:
+使用 `--name` 为服务指定名称：
 
 ```console
 $ docker service create --name my_web nginx
 ```
 
-Just like with standalone containers, you can specify a command that the
-service's containers should run, by adding it after the image name. This example
-starts a service called `helloworld` which uses an `alpine` image and runs the
-command `ping docker.com`:
+与独立容器类似，你可以在镜像名之后追加要运行的命令。以下示例创建名为 `helloworld` 的服务，使用 `alpine` 镜像并运行 `ping docker.com`：
 
 ```console
 $ docker service create --name helloworld alpine ping docker.com
 ```
 
-You can also specify an image tag for the service to use. This example modifies
-the previous one to use the `alpine:3.6` tag:
+你也可以指定镜像标签。如下对上例进行修改，使用 `alpine:3.6`：
 
 ```console
 $ docker service create --name helloworld alpine:3.6 ping docker.com
 ```
 
-For more details about image tag resolution, see
-[Specify the image version the service should use](#specify-the-image-version-a-service-should-use).
+关于镜像标签解析的更多细节，参见「[指定服务应使用的镜像版本](#specify-the-image-version-a-service-should-use)」。
 
-### gMSA for Swarm
+### 在 Swarm 中使用 gMSA
 
 > [!NOTE]
 >
-> This example only works for a Windows container.
+> 下述示例仅适用于 Windows 容器。
 
-Swarm now allows using a Docker config as a gMSA credential spec - a requirement for Active Directory-authenticated applications. This reduces the burden of distributing credential specs to the nodes they're used on. 
+Swarm 现已支持将 Docker config 用作 gMSA 的凭据规范（credential spec），以满足使用 Active Directory 进行身份验证的应用需求。这减少了在各节点分发凭据规范文件的负担。
 
-The following example assumes a gMSA and its credential spec (called credspec.json) already exists, and that the nodes being deployed to are correctly configured for the gMSA.
+以下示例假设 gMSA 及其凭据规范文件（credspec.json）已存在，且待部署的节点已正确配置好 gMSA 环境。
 
-To use a config as a credential spec, first create the Docker config containing the credential spec:
+要将 config 用作凭据规范，先创建一个包含该规范内容的 Docker config：
 
 ```console
 $ docker config create credspec credspec.json
 ```
 
-Now, you should have a Docker config named credspec, and you can create a service using this credential spec. To do so, use the --credential-spec flag with the config name, like this:
+现在你已有名为 credspec 的 Docker config，可以据此创建服务。通过 `--credential-spec` 指定该 config 名称，例如：
 
 ```console
 $ docker service create --credential-spec="config://credspec" <your image>
 ```
 
-Your service uses the gMSA credential spec when it starts, but unlike a typical Docker config (used by passing the --config flag), the credential spec is not mounted into the container.
+服务启动时会使用 gMSA 凭据规范。不同于常规的 Docker config（通过 `--config` 挂载到容器内），凭据规范不会被挂载进容器。
 
-### Create a service using an image on a private registry
+### 使用私有仓库镜像创建服务
 
-If your image is available on a private registry which requires login, use the
-`--with-registry-auth` flag with `docker service create`, after logging in. If
-your image is stored on `registry.example.com`, which is a private registry, use
-a command like the following:
+如果镜像存放在需要登录的私有仓库，请先登录，并在 `docker service create` 时使用 `--with-registry-auth`。假设镜像位于私有仓库 `registry.example.com`，可执行：
 
 ```console
 $ docker login registry.example.com
@@ -114,28 +93,25 @@ $ docker service  create \
   registry.example.com/acme/my_image:latest
 ```
 
-This passes the login token from your local client to the swarm nodes where the
-service is deployed, using the encrypted WAL logs. With this information, the
-nodes are able to log into the registry and pull the image.
+该操作会将本地客户端的登录令牌通过加密的 WAL 日志传递给部署服务的 Swarm 节点，使这些节点能够登录仓库并拉取镜像。
 
-### Provide credential specs for managed service accounts
+### 为托管服务账户提供凭据规范
 
- In Enterprise Edition 3.0, security is improved through the centralized distribution and management of Group Managed Service Account(gMSA) credentials using Docker config functionality. Swarm now allows using a Docker config as a gMSA credential spec, which reduces the burden of distributing credential specs to the nodes on which they are used. 
+ 在 Enterprise Edition 3.0 中，可通过 Docker config 实现 gMSA 凭据的集中分发与管理，从而提升安全性。Swarm 支持使用 Docker config 作为 gMSA 凭据规范，减少在各节点分发凭据规范的负担。
 
 > [!NOTE]
 >
-> This option is only applicable to services using Windows containers.
+> 此选项仅适用于使用 Windows 容器的服务。
 
- Credential spec files are applied at runtime, eliminating the need for host-based credential spec files or registry entries - no gMSA credentials are written to disk on worker nodes. You can make credential specs available to Docker Engine running swarm kit worker nodes before a container starts. When deploying a service using a gMSA-based config, the credential spec is passed directly to the runtime of containers in that service.
+ 运行时会应用凭据规范文件，无需在宿主机上保存规范文件或注册表项——工作节点的磁盘不会写入 gMSA 凭据。你可以在容器启动前，将凭据规范提供给运行在工作节点的 Docker Engine；部署使用 gMSA 配置的服务时，凭据规范会直接传递给容器运行时。
 
- The `--credential-spec` must be in one of the following formats:
+ `--credential-spec` 的取值必须符合以下格式之一：
 
- - `file://<filename>`: The referenced file must be present in the `CredentialSpecs` subdirectory in the docker data directory, which defaults to `C:\ProgramData\Docker\` on Windows. For example, specifying `file://spec.json` loads `C:\ProgramData\Docker\CredentialSpecs\spec.json`.
-- `registry://<value-name>`: The credential spec is read from the Windows registry on the daemon’s host. 
-- `config://<config-name>`: The config name is automatically converted to the config ID in the CLI. 
-The credential spec contained in the specified `config` is used.
+- `file://<filename>`：引用的文件必须位于 Docker 数据目录下的 `CredentialSpecs` 子目录中，Windows 默认路径为 `C:\ProgramData\Docker\`。例如，指定 `file://spec.json` 将加载 `C:\ProgramData\Docker\CredentialSpecs\spec.json`。
+- `registry://<value-name>`：从守护进程所在主机的 Windows 注册表读取凭据规范。
+- `config://<config-name>`：CLI 会自动将 config 名转换为其 ID，并使用该 `config` 中包含的凭据规范。
 
- The following simple example retrieves the gMSA name and JSON contents from your Active Directory (AD) instance:
+ 下面是一个从 Active Directory（AD）中获取 gMSA 名称与 JSON 内容的简单示例：
 
  ```console
 $ name="mygmsa"
@@ -143,43 +119,35 @@ $ contents="{...}"
 $ echo $contents > contents.json
 ```
 
-Make sure that the nodes to which you are deploying are correctly configured for the gMSA.
+ 请确保目标节点已正确配置 gMSA。
 
- To use a config as a credential spec, create a Docker config in a credential spec file named `credpspec.json`. 
- You can specify any name for the name of the `config`. 
+ 若要使用 config 作为凭据规范，请将凭据规范内容保存到 `credpspec.json` 并创建 Docker config。`config` 的名称可自行指定。
 
 ```console
 $ docker config create --label com.docker.gmsa.name=mygmsa credspec credspec.json
 ```
 
-Now you can create a service using this credential spec. Specify the `--credential-spec` flag with the config name:
+随后即可使用该凭据规范创建服务。通过 `--credential-spec` 指定该 config 名称：
 
 ```console
 $ docker service create --credential-spec="config://credspec" <your image>
 ```
 
- Your service uses the gMSA credential spec when it starts, but unlike a typical Docker config (used by passing the --config flag), the credential spec is not mounted into the container.
+ 服务启动时会使用 gMSA 凭据规范，但不同于使用 `--config` 的常规 Docker config，凭据规范不会挂载到容器内。
 
-## Update a service
+## 更新服务
 
-You can change almost everything about an existing service using the
-`docker service update` command. When you update a service, Docker stops its
-containers and restarts them with the new configuration.
+使用 `docker service update` 可以修改现有服务的大多数配置。更新时，Docker 会停止其容器并以新配置重启。
 
-Since Nginx is a web service, it works much better if you publish port 80
-to clients outside the swarm. You can specify this when you create the service,
-using the `-p` or `--publish` flag. When updating an existing service, the flag
-is `--publish-add`. There is also a `--publish-rm` flag to remove a port that
-was previously published.
+对于 Nginx 这类 Web 服务，通常需要对外发布 80 端口。你可以在创建服务时通过 `-p` 或 `--publish` 指定；更新已有服务时使用 `--publish-add`，若要移除已发布端口则使用 `--publish-rm`。
 
-Assuming that the `my_web` service from the previous section still exists, use
-the following command to update it to publish port 80.
+假设上一节创建的 `my_web` 服务仍存在，可用以下命令为其发布 80 端口：
 
 ```console
 $ docker service update --publish-add 80 my_web
 ```
 
-To verify that it worked, use `docker service ls`:
+使用 `docker service ls` 验证是否生效：
 
 ```console
 $ docker service ls
@@ -188,47 +156,35 @@ ID                  NAME                MODE                REPLICAS            
 4nhxl7oxw5vz        my_web              replicated          1/1                 docker.io/library/nginx@sha256:41ad9967ea448d7c2b203c699b429abe1ed5af331cd92533900c6d77490e0268   *:0->80/tcp
 ```
 
-For more information on how publishing ports works, see
-[publish ports](#publish-ports).
+关于端口发布的工作原理，参见「[发布端口](#publish-ports)」。
 
-You can update almost every configuration detail about an existing service,
-including the image name and tag it runs. See
-[Update a service's image after creation](#update-a-services-image-after-creation).
+你可以更新服务的大多数细节，包括其运行的镜像名称与标签。详见「[在创建后更新服务镜像](#update-a-services-image-after-creation)」。
 
-## Remove a service
+## 删除服务
 
-To remove a service, use the `docker service remove` command. You can remove a
-service by its ID or name, as shown in the output of the `docker service ls`
-command. The following command removes the `my_web` service.
+要删除服务，使用 `docker service remove`。可以通过服务 ID 或名称删除（可在 `docker service ls` 的输出中查到）。例如：
 
 ```console
 $ docker service remove my_web
 ```
 
-## Service configuration details
+## 服务配置详解
 
-The following sections provide details about service configuration. This topic
-does not cover every flag or scenario. In almost every instance where you can
-define a configuration at service creation, you can also update an existing
-service's configuration in a similar way.
+以下章节详细介绍服务配置。本文不可能覆盖所有标志或场景；通常，凡是在创建服务时可设置的配置，都可以通过类似方式在事后更新。
 
-See the command-line references for
-[`docker service create`](/reference/cli/docker/service/create.md) and
-[`docker service update`](/reference/cli/docker/service/update.md), or run
-one of those commands with the `--help` flag.
+可参考命令行文档：
+[`docker service create`](/reference/cli/docker/service/create.md) 与
+[`docker service update`](/reference/cli/docker/service/update.md)，或直接使用 `--help` 查看帮助。
 
-### Configure the runtime environment
+### 配置运行时环境
 
-You can configure the following options for the runtime environment in the
-container:
+你可以为容器的运行时环境配置以下选项：
 
-* Environment variables using the `--env` flag
-* The working directory inside the container using the `--workdir` flag
-* The username or UID using the `--user` flag
+* 通过 `--env` 设置环境变量
+* 通过 `--workdir` 设置容器内工作目录
+* 通过 `--user` 设置用户名或 UID
 
-The following service's containers have an environment variable `$MYVAR`
-set to `myvalue`, run from the `/tmp/` directory, and run as the
-`my_user` user.
+下面的示例将容器环境变量 `$MYVAR` 设为 `myvalue`，工作目录为 `/tmp/`，并以 `my_user` 用户运行：
 
 ```console
 $ docker service create --name helloworld \
@@ -238,49 +194,33 @@ $ docker service create --name helloworld \
   alpine ping docker.com
 ```
 
-### Update the command an existing service runs
+### 更新现有服务的启动命令
 
-To update the command an existing service runs, you can use the `--args` flag.
-The following example updates an existing service called `helloworld` so that
-it runs the command `ping docker.com` instead of whatever command it was running
-before:
+可通过 `--args` 更新现有服务的启动命令。以下示例将名为 `helloworld` 的服务改为运行 `ping docker.com`：
 
 ```console
 $ docker service update --args "ping docker.com" helloworld
 ```
 
-### Specify the image version a service should use
+### 指定服务应使用的镜像版本
 
-When you create a service without specifying any details about the version of
-the image to use, the service uses the version tagged with the `latest` tag.
-You can force the service to use a specific version of the image in a few
-different ways, depending on your desired outcome.
+如果创建服务时未指定镜像版本，默认使用带 `latest` 标签的版本。根据需求，你可以用不同方式固定服务使用的镜像版本。
 
-An image version can be expressed in several different ways:
+镜像版本可以用多种方式表达：
 
-- If you specify a tag, the manager (or the Docker client, if you use
-  [content trust](../security/trust/_index.md)) resolves that tag to a digest.
-  When the request to create a container task is received on a worker node, the
-  worker node only sees the digest, not the tag.
+- 如果指定标签，管理节点（或在启用[内容信任](../security/trust/_index.md)时由 Docker 客户端）会将该标签解析为摘要（digest）。工作节点接收到创建任务请求时仅看到摘要，而非标签。
 
   ```console
   $ docker service create --name="myservice" ubuntu:16.04
   ```
 
-  Some tags represent discrete releases, such as `ubuntu:16.04`. Tags like this
-  almost always resolve to a stable digest over time. It is recommended
-  that you use this kind of tag when possible.
+  一些标签代表明确的发行版本，如 `ubuntu:16.04`，通常会解析为稳定的摘要。建议尽量使用此类标签。
 
-  Other types of tags, such as `latest` or `nightly`, may resolve to a new
-  digest often, depending on how often an image's author updates the tag. It is
-  not recommended to run services using a tag which is updated frequently, to
-  prevent different service replica tasks from using different image versions.
+  另一些标签如 `latest` 或 `nightly` 可能频繁变化，具体取决于镜像作者的更新频率。为避免不同副本使用不同版本，不建议用此类频繁变动的标签运行服务。
 
-- If you don't specify a version at all, by convention the image's `latest` tag
-  is resolved to a digest. Workers use the image at this digest when creating
-  the service task.
+- 如果完全不指定版本，按约定会解析为 `latest` 的摘要；工作节点据此拉取镜像用于创建任务。
 
-  Thus, the following two commands are equivalent:
+  因此，下面两条命令等价：
 
   ```console
   $ docker service create --name="myservice" ubuntu
@@ -288,8 +228,7 @@ An image version can be expressed in several different ways:
   $ docker service create --name="myservice" ubuntu:latest
   ```
 
-- If you specify a digest directly, that exact version of the image is always
-  used when creating service tasks.
+- 如果直接指定摘要，创建任务时将始终使用该确切版本：
 
   ```console
   $ docker service create \
@@ -297,14 +236,9 @@ An image version can be expressed in several different ways:
       ubuntu:16.04@sha256:35bc48a1ca97c3971611dc4662d08d131869daa692acb281c7e9e052924e38b1
   ```
 
-When you create a service, the image's tag is resolved to the specific digest
-the tag points to **at the time of service creation**. Worker nodes for that
-service use that specific digest forever unless the service is explicitly
-updated. This feature is particularly important if you do use often-changing tags
-such as `latest`, because it ensures that all service tasks use the same version
-of the image.
+创建服务时，镜像标签会被解析为当时对应的具体摘要；除非你显式更新服务，否则工作节点会一直使用该摘要。这一点对 `latest` 等经常变化的标签尤为重要，确保任务使用一致的镜像版本。
 
-> [!NOTE]>
+> [!NOTE]
 >
 > If [content trust](../security/trust/_index.md) is
 > enabled, the client actually resolves the image's tag to a digest before
@@ -313,19 +247,13 @@ of the image.
 > pre-resolved. In this case, if the client cannot resolve the image to a
 > digest, the request fails.
 
-If the manager can't resolve the tag to a digest, each worker
-node is responsible for resolving the tag to a digest, and different nodes may
-use different versions of the image. If this happens, a warning like the
-following is logged, substituting the placeholders for real information.
+如果管理节点无法将标签解析为摘要，则由各个工作节点自行解析，可能导致不同节点使用不同的镜像版本。出现这种情况时会记录类似如下的警告：
 
 ```text
 unable to pin image <IMAGE-NAME> to digest: <REASON>
 ```
 
-To see an image's current digest, issue the command
-`docker inspect <IMAGE>:<TAG>` and look for the `RepoDigests` line. The
-following is the current digest for `ubuntu:latest` at the time this content
-was written. The output is truncated for clarity.
+要查看镜像当前摘要，可执行 `docker inspect <IMAGE>:<TAG>` 并查找 `RepoDigests` 字段。以下为撰写本文时 `ubuntu:latest` 的示例输出（已截断）：
 
 ```console
 $ docker inspect ubuntu:latest
@@ -337,105 +265,66 @@ $ docker inspect ubuntu:latest
 ],
 ```
 
-After you create a service, its image is never updated unless you explicitly run
-`docker service update` with the `--image` flag as described below. Other update
-operations such as scaling the service, adding or removing networks or volumes,
-renaming the service, or any other type of update operation do not update the
-service's image.
+创建服务后，除非显式使用 `docker service update --image`，否则服务镜像不会自动更新。其他更新操作（如扩缩容、增删网络/卷、重命名服务等）不会影响镜像版本。
 
-### Update a service's image after creation
+### 创建后更新服务镜像
 
-Each tag represents a digest, similar to a Git hash. Some tags, such as
-`latest`, are updated often to point to a new digest. Others, such as
-`ubuntu:16.04`, represent a released software version and are not expected to
-update to point to a new digest often if at all. When you create a service, it
-is constrained to create tasks using a specific digest of an image until you
-update the service using `service update` with the `--image` flag.
+每个标签对应一个摘要，类似 Git 的哈希。有些标签（如 `latest`）会频繁更新，指向新的摘要；另一些（如 `ubuntu:16.04`）代表发布版本，通常不会频繁变更。服务创建后会固定使用当时的摘要，直到你用 `service update --image` 更新为止。
 
-When you run `service update` with the `--image` flag, the swarm manager queries
-Docker Hub or your private Docker registry for the digest the tag currently
-points to and updates the service tasks to use that digest.
+运行 `service update --image` 时，管理节点会查询 Docker Hub 或私有仓库获取该标签当前指向的摘要，并更新服务任务使用该摘要。
 
 > [!NOTE]
 >
-> If you use [content trust](../security/trust/_index.md), the Docker
-> client resolves image and the swarm manager receives the image and digest,
->  rather than a tag.
+> 若启用[内容信任](../security/trust/_index.md)，由 Docker 客户端解析镜像，管理节点接收的是镜像与摘要，而非标签。
 
 Usually, the manager can resolve the tag to a new digest and the service
 updates, redeploying each task to use the new image. If the manager can't
 resolve the tag or some other problem occurs, the next two sections outline what
 to expect.
 
-#### If the manager resolves the tag
+#### 当管理节点可解析该标签时
 
-If the swarm manager can resolve the image tag to a digest, it instructs the
-worker nodes to redeploy the tasks and use the image at that digest.
+如果管理节点可将镜像标签解析为摘要，它会指示工作节点重新部署任务并使用该摘要对应的镜像。
 
-- If a worker has cached the image at that digest, it uses it.
+– 若工作节点本地已缓存该摘要的镜像，直接使用。
 
-- If not, it attempts to pull the image from Docker Hub or the private registry.
+– 否则尝试从 Docker Hub 或私有仓库拉取；
 
-  - If it succeeds, the task is deployed using the new image.
+  – 拉取成功则用新镜像部署任务；
 
-  - If the worker fails to pull the image, the service fails to deploy on that
-    worker node. Docker tries again to deploy the task, possibly on a different
-    worker node.
+  – 拉取失败则该节点上的部署失败，Docker 会重试，可能调度到其他节点。
 
-#### If the manager cannot resolve the tag
+#### 当管理节点无法解析该标签时
 
-If the swarm manager cannot resolve the image to a digest, all is not lost:
+若管理节点无法将镜像解析为摘要，并非无计可施：
 
-- The manager instructs the worker nodes to redeploy the tasks using the image
-  at that tag.
+– 管理节点会指示工作节点使用该标签重新部署任务；
 
-- If the worker has a locally cached image that resolves to that tag, it uses
-  that image.
+– 若工作节点本地缓存了与该标签匹配的镜像，则直接使用；
 
-- If the worker does not have a locally cached image that resolves to the tag,
-  the worker tries to connect to Docker Hub or the private registry to pull the
-  image at that tag.
+– 若未缓存，则尝试从 Docker Hub 或私有仓库拉取该标签的镜像；
 
-  - If this succeeds, the worker uses that image.
+  – 拉取成功则使用该镜像；
 
-  - If this fails, the task fails to deploy and the manager tries again to deploy
-    the task, possibly on a different worker node.
+  – 拉取失败则任务部署失败，管理节点会再次尝试部署，可能调度到其他节点。
 
-### Publish ports
+### 发布端口
 
-When you create a swarm service, you can publish that service's ports to hosts
-outside the swarm in two ways:
+创建 Swarm 服务时，你可以通过两种方式将其端口发布到集群外部：
 
-- [You can rely on the routing mesh](#publish-a-services-ports-using-the-routing-mesh).
-  When you publish a service port, the swarm makes the service accessible at the
-  target port on every node, regardless of whether there is a task for the
-  service running on that node or not. This is less complex and is the right
-  choice for many types of services.
+- [依赖路由网格](#publish-a-services-ports-using-the-routing-mesh)：发布后，目标端口会在每个节点上可达，无论该节点是否运行有该服务任务。实现简单，适用于多数场景。
 
-- [You can publish a service task's port directly on the swarm node](#publish-a-services-ports-directly-on-the-swarm-node)
-  where that service is running. This bypasses the routing mesh and provides the
-  maximum flexibility, including the ability for you to develop your own routing
-  framework. However, you are responsible for keeping track of where each task is
-  running and routing requests to the tasks, and load-balancing across the nodes.
+- [直接在运行任务的节点上发布端口](#publish-a-services-ports-directly-on-the-swarm-node)：绕过路由网格，提供最大灵活性（可自建路由框架）。但你需要自行跟踪任务运行位置、请求路由与节点间负载均衡。
 
-Keep reading for more information and use cases for each of these methods.
+下文将分别介绍两种方式的细节与适用场景。
 
-#### Publish a service's ports using the routing mesh
+#### 使用路由网格发布端口
 
-To publish a service's ports externally to the swarm, use the
-`--publish <PUBLISHED-PORT>:<SERVICE-PORT>` flag. The swarm makes the service
-accessible at the published port on every swarm node. If an external host
-connects to that port on any swarm node, the routing mesh routes it to a task.
-The external host does not need to know the IP addresses or internally-used
-ports of the service tasks to interact with the service. When a user or process
-connects to a service, any worker node running a service task may respond. For
-more details about swarm service networking, see
-[Manage swarm service networks](networking.md).
+要将服务端口对外发布，使用 `--publish <PUBLISHED-PORT>:<SERVICE-PORT>`。发布后，任意节点上的该端口都可访问；路由网格会将外部连接路由到某个任务。外部客户端无需了解任务的内部 IP 或端口。更多网络细节见《[管理 Swarm 服务网络](networking.md)》。
 
-##### Example: Run a three-task Nginx service on 10-node swarm
+##### 示例：在 10 节点集群上运行 3 个副本的 Nginx 服务
 
-Imagine that you have a 10-node swarm, and you deploy an Nginx service running
-three tasks on a 10-node swarm:
+假设你有一个由 10 个节点组成的 Swarm，并部署一个包含 3 个任务的 Nginx 服务：
 
 ```console
 $ docker service create --name my_web \
@@ -444,12 +333,7 @@ $ docker service create --name my_web \
                         nginx
 ```
 
-Three tasks run on up to three nodes. You don't need to know which nodes
-are running the tasks; connecting to port 8080 on any of the 10 nodes
-connects you to one of the three `nginx` tasks. You can test this using `curl`.
-The following example assumes that `localhost` is one of the swarm nodes. If
-this is not the case, or `localhost` does not resolve to an IP address on your
-host, substitute the host's IP address or resolvable host name.
+这 3 个任务会运行在最多 3 台节点上。你无需关心任务具体在哪些节点；访问任意节点的 8080 端口都会路由到其中一个 `nginx` 任务。可用 `curl` 进行测试。下面示例假设 `localhost` 即其中一个 Swarm 节点；若不是，请替换为对应的 IP 或可解析的主机名。
 
 The HTML output is truncated:
 
@@ -464,37 +348,23 @@ $ curl localhost:8080
 </html>
 ```
 
-Subsequent connections may be routed to the same swarm node or a different one.
+后续的连接可能路由到同一节点，也可能是不同节点。
 
-#### Publish a service's ports directly on the swarm node
+#### 直接在 Swarm 节点上发布端口
 
-Using the routing mesh may not be the right choice for your application if you
-need to make routing decisions based on application state or you need total
-control of the process for routing requests to your service's tasks. To publish
-a service's port directly on the node where it is running, use the `mode=host`
-option to the `--publish` flag.
+如果你需要基于应用状态做路由决策，或需要完全控制请求到任务的路由过程，则不适合使用路由网格。此时可选择在任务所在节点上直接发布端口：在 `--publish` 中使用 `mode=host`。
 
 > [!NOTE]
 >
-> If you publish a service's ports directly on the swarm node using
-> `mode=host` and also set `published=<PORT>` this creates an implicit
-> limitation that you can only run one task for that service on a given swarm
-> node. You can work around this by specifying `published` without a port
-> definition, which causes Docker to assign a random port for each task.
+> 使用 `mode=host` 并显式设置 `published=<PORT>` 时，隐含约束是在单个节点上该服务只能运行一个任务。可通过省略 `published` 的端口号来规避，令 Docker 为每个任务分配随机端口。
 >
-> In addition, if you use `mode=host` and you do not use the
-> `--mode=global` flag on `docker service create`, it is difficult to know
-> which nodes are running the service to route work to them.
+> 另外，如果使用 `mode=host` 且未使用 `--mode=global`，将更难判断哪些节点在运行该服务，以便对其路由请求。
 
-##### Example: Run an `nginx` web server service on every swarm node
+##### 示例：在每个 Swarm 节点上运行一个 `nginx` Web 服务
 
-[nginx](https://hub.docker.com/_/nginx/) is an open source reverse proxy, load
-balancer, HTTP cache, and a web server. If you run nginx as a service using the
-routing mesh, connecting to the nginx port on any swarm node shows you the
-web page for (effectively) a random swarm node running the service.
+[nginx](https://hub.docker.com/_/nginx/) 是开源的反向代理、负载均衡、HTTP 缓存与 Web 服务器。若通过路由网格发布 nginx 服务，访问任意节点的 nginx 端口，实际上会看到某个随机节点上的页面。
 
-The following example runs nginx as a service on each node in your swarm and
-exposes nginx port locally on each swarm node.
+下面示例将在 Swarm 的每个节点上运行一个 nginx 服务，并在各节点本地暴露端口：
 
 ```console
 $ docker service create \
@@ -504,32 +374,25 @@ $ docker service create \
   nginx:latest
 ```
 
-You can reach the nginx server on port 8080 of every swarm node. If you add a
-node to the swarm, a nginx task is started on it. You cannot start another
-service or container on any swarm node which binds to port 8080.
+现在可以通过每个节点的 8080 端口访问 nginx。如果向集群添加节点，会在其上自动启动一个 nginx 任务。同时请注意，你不能在任何节点上再启动绑定到 8080 端口的其他服务或容器。
 
 > [!NOTE]
 >
-> This is a purely illustrative example. Creating an application-layer
-> routing framework for a multi-tiered service is complex and out of scope for
-> this topic.
+> 以上仅为演示示例。为多层应用构建应用层路由框架较为复杂，超出本文范围。
 
-### Connect the service to an overlay network
+### 将服务连接到 overlay 网络
 
-You can use overlay networks to connect one or more services within the swarm.
+你可以使用 overlay 网络连接 Swarm 内的一项或多项服务。
 
-First, create overlay network on a manager node using the `docker network create`
-command with the `--driver overlay` flag.
+首先在管理节点上使用 `docker network create --driver overlay` 创建网络：
 
 ```console
 $ docker network create --driver overlay my-network
 ```
 
-After you create an overlay network in swarm mode, all manager nodes have access
-to the network.
+在 Swarm 模式下创建 overlay 网络后，所有管理节点都能访问该网络。
 
-You can create a new service and pass the `--network` flag to attach the service
-to the overlay network:
+创建服务时使用 `--network` 将其连接到该 overlay 网络：
 
 ```console
 $ docker service create \
@@ -539,113 +402,66 @@ $ docker service create \
   nginx
 ```
 
-The swarm extends `my-network` to each node running the service.
+Swarm 会将 `my-network` 扩展到运行该服务的每个节点上。
 
-You can also connect an existing service to an overlay network using the
-`--network-add` flag.
+你也可以通过 `--network-add` 将现有服务连接到 overlay 网络：
 
 ```console
 $ docker service update --network-add my-network my-web
 ```
 
-To disconnect a running service from a network, use the `--network-rm` flag.
+要将运行中的服务从网络断开，使用 `--network-rm`：
 
 ```console
 $ docker service update --network-rm my-network my-web
 ```
 
-For more information on overlay networking and service discovery, refer to
-[Attach services to an overlay network](networking.md) and
-[Docker swarm mode overlay network security model](/manuals/engine/network/drivers/overlay.md).
+更多关于 overlay 网络与服务发现的信息，参阅《[将服务连接到 overlay 网络](networking.md)》与《[Swarm 模式 overlay 网络安全模型](/manuals/engine/network/drivers/overlay.md)》。
 
-### Grant a service access to secrets
+### 授予服务访问 secrets 的权限
 
-To create a service with access to Docker-managed secrets, use the `--secret`
-flag. For more information, see
-[Manage sensitive strings (secrets) for Docker services](secrets.md)
+创建服务并授予其访问 Docker 管理的 secrets，请使用 `--secret`。详见《[使用 Docker Secrets 管理敏感数据](secrets.md)》。
 
-### Customize a service's isolation mode
+### 自定义服务的隔离模式
 
 > [!IMPORTANT]
 >
-> This setting applies to Windows hosts only and is ignored for Linux hosts.
+> 仅适用于 Windows 宿主机；在 Linux 上会被忽略。
 
-Docker allows you to specify a swarm service's isolation
-mode. The isolation mode can be one of the following:
+Docker 允许为 Swarm 服务指定隔离模式，可选值如下：
 
-- `default`: Use the default isolation mode configured for the Docker host, as
-  configured by the `-exec-opt` flag or `exec-opts` array in `daemon.json`. If
-  the daemon does not specify an isolation technology, `process` is the default
-  for Windows Server, and `hyperv` is the default (and only) choice for
-  Windows 10.
+- `default`：使用该宿主机上的默认隔离模式。该默认值由 `daemon.json` 中的 `-exec-opt` 或 `exec-opts` 指定。若未指定，Windows Server 默认 `process`，Windows 10 默认且仅支持 `hyperv`。
 
-- `process`: Run the service tasks as a separate process on the host.
+- `process`：以独立进程的形式在宿主机上运行任务。
 
   > [!NOTE]
   >
-  > `process` isolation mode is only supported on Windows Server.
-  > Windows 10 only supports `hyperv` isolation mode.
+  > `process` 隔离仅支持 Windows Server；Windows 10 仅支持 `hyperv`。
 
-- `hyperv`: Run the service tasks as isolated `hyperv` tasks. This increases
-  overhead but provides more isolation.
+- `hyperv`：以隔离的 `hyperv` 任务运行，开销更大但隔离更强。
 
-You can specify the isolation mode when creating or updating a new service using
-the `--isolation` flag.
+通过 `--isolation` 可在创建或更新服务时指定隔离模式。
 
-### Control service placement
+### 控制服务放置
 
-Swarm services provide a few different ways for you to control scale and
-placement of services on different nodes.
+Swarm 服务提供多种方式控制服务在不同节点上的规模与放置策略。
 
-- You can specify whether the service needs to run a specific number of replicas
-  or should run globally on every worker node. See
-  [Replicated or global services](#replicated-or-global-services).
+- 你可以指定服务运行固定数量的副本，或以全局模式在每个工作节点上运行。参见「[副本服务与全局服务](#replicated-or-global-services)」。
 
-- You can configure the service's
-  [CPU or memory requirements](#reserve-memory-or-cpus-for-a-service), and the
-  service only runs on nodes which can meet those requirements.
+- 你可以配置服务的[CPU 或内存需求](#reserve-memory-or-cpus-for-a-service)，服务仅会在满足要求的节点上运行。
 
-- [Placement constraints](#placement-constraints) let you configure the service
-  to run only on nodes with specific (arbitrary) metadata set, and cause the
-  deployment to fail if appropriate nodes do not exist. For instance, you can
-  specify that your service should only run on nodes where an arbitrary label
-  `pci_compliant` is set to `true`.
+- 使用[放置约束](#placement-constraints)可限制服务仅在具有特定（自定义）元数据的节点上运行；若无匹配节点则部署失败。例如，可要求仅在带有 `pci_compliant=true` 标签的节点上运行。
 
-- [Placement preferences](#placement-preferences) let you apply an arbitrary
-  label with a range of values to each node, and spread your service's tasks
-  across those nodes using an algorithm. Currently, the only supported algorithm
-  is `spread`, which tries to place them evenly. For instance, if you
-  label each node with a label `rack` which has a value from 1-10, then specify
-  a placement preference keyed on `rack`, then service tasks are placed as
-  evenly as possible across all nodes with the label `rack`, after taking other
-  placement constraints, placement preferences, and other node-specific
-  limitations into account.
+- 使用[放置偏好](#placement-preferences)可在每个节点上定义一个取值范围的标签，并通过算法将任务均衡地分布到这些节点。目前仅支持 `spread` 算法（尽量平均分布）。例如，若每个节点都有 `rack=1..10` 标签，并以 `rack` 作为放置偏好键，则在考虑其他约束之后，任务会尽可能平均分布到带有该标签的节点上。
 
-  Unlike constraints, placement preferences are best-effort, and a service does
-  not fail to deploy if no nodes can satisfy the preference. If you specify a
-  placement preference for a service, nodes that match that preference are
-  ranked higher when the swarm managers decide which nodes should run the
-  service tasks. Other factors, such as high availability of the service,
-  also factor into which nodes are scheduled to run service tasks. For
-  example, if you have N nodes with the rack label (and then some others), and
-  your service is configured to run N+1 replicas, the +1 is scheduled on a
-  node that doesn't already have the service on it if there is one, regardless
-  of whether that node has the `rack` label or not.
+  与“约束”不同，放置偏好是尽力而为；即使没有节点满足偏好，部署也不会失败。指定偏好后，匹配的节点会在调度时获得更高优先级；高可用等因素也会影响调度决策。例如，若有 N 台带有 `rack` 标签的节点（以及其他若干节点），且服务配置为 N+1 个副本，那么额外的 1 个副本会优先调度到尚未运行该服务的节点上，无论其是否带有 `rack` 标签。
 
 
-#### Replicated or global services
+#### 副本服务与全局服务
 
-Swarm mode has two types of services: replicated and global. For replicated
-services, you specify the number of replica tasks for the swarm manager to
-schedule onto available nodes. For global services, the scheduler places one
-task on each available node that meets the service's
-[placement constraints](#placement-constraints) and
-[resource requirements](#reserve-memory-or-cpus-for-a-service).
+Swarm 模式有两类服务：副本（replicated）与全局（global）。对于副本服务，你需要指定副本任务数，调度器会将这些任务分配到可用节点；对于全局服务，凡是满足[放置约束](#placement-constraints)与[资源需求](#reserve-memory-or-cpus-for-a-service)的节点都会运行 1 个任务。
 
-You control the type of service using the `--mode` flag. If you don't specify a
-mode, the service defaults to `replicated`. For replicated services, you specify
-the number of replica tasks you want to start using the `--replicas` flag. For
-example, to start a replicated nginx service with 3 replica tasks:
+使用 `--mode` 指定服务类型；默认是 `replicated`。对于副本服务，使用 `--replicas` 指定副本数。例如，启动一个 3 副本的 nginx 服务：
 
 ```console
 $ docker service create \
@@ -654,10 +470,7 @@ $ docker service create \
   nginx
 ```
 
-To start a global service on each available node, pass `--mode global` to
-`docker service create`. Every time a new node becomes available, the scheduler
-places a task for the global service on the new node. For example to start a
-service that runs alpine on every node in the swarm:
+若要在每个可用节点上运行全局服务，请在 `docker service create` 中使用 `--mode global`。每当有新节点可用，调度器都会在其上放置一个任务。例如，让每个节点都运行一个 alpine：
 
 ```console
 $ docker service create \
@@ -666,43 +479,21 @@ $ docker service create \
   alpine top
 ```
 
-Service constraints let you set criteria for a node to meet before the scheduler
-deploys a service to the node. You can apply constraints to the
-service based upon node attributes and metadata or engine metadata. For more
-information on constraints, refer to the `docker service create`
-[CLI reference](/reference/cli/docker/service/create.md).
+服务放置约束允许你设置节点必须满足的条件后，调度器才会在其上部署服务。约束既可基于节点属性与元数据，也可基于引擎元数据。详见 `docker service create` 的《[CLI 参考](/reference/cli/docker/service/create.md)》。
 
-#### Reserve memory or CPUs for a service
+#### 为服务预留内存或 CPU
 
-To reserve a given amount of memory or number of CPUs for a service, use the
-`--reserve-memory` or `--reserve-cpu` flags. If no available nodes can satisfy
-the requirement (for instance, if you request 4 CPUs and no node in the swarm
-has 4 CPUs), the service remains in a pending state until an appropriate node is
-available to run its tasks.
+使用 `--reserve-memory` 或 `--reserve-cpu` 为服务预留内存或 CPU。如果没有节点满足需求（例如请求 4 个 CPU 而集群中没有任何节点拥有 4 个 CPU），该服务将保持挂起，直到有合适节点可用。
 
-##### Out Of Memory Exceptions (OOME)
+##### 内存不足异常（OOME）
 
-If your service attempts to use more memory than the swarm node has available,
-you may experience an Out Of Memory Exception (OOME) and a container, or the
-Docker daemon, might be killed by the kernel OOM killer. To prevent this from
-happening, ensure that your application runs on hosts with adequate memory and
-see
-[Understand the risks of running out of memory](/manuals/engine/containers/resource_constraints.md#understand-the-risks-of-running-out-of-memory).
+如果服务尝试使用超过节点可用内存，可能会触发内存不足异常（OOME），导致容器或 Docker 守护进程被内核的 OOM killer 杀死。为避免此情况，请确保应用运行在内存充足的主机上，并参阅《[了解内存耗尽的风险](/manuals/engine/containers/resource_constraints.md#understand-the-risks-of-running-out-of-memory)》。
 
-Swarm services allow you to use resource constraints, placement preferences, and
-labels to ensure that your service is deployed to the appropriate swarm nodes.
+Swarm 服务支持使用资源约束、放置偏好与标签，帮助你将服务部署到合适的节点上。
 
-#### Placement constraints
+#### 放置约束
 
-Use placement constraints to control the nodes a service can be assigned to. In
-the following example, the service only runs on nodes with the
-[label](manage-nodes.md#add-or-remove-label-metadata) `region` set
-to `east`. If no appropriately-labelled nodes are available, tasks will wait in
-`Pending` until they become available. The `--constraint` flag uses an equality
-operator (`==` or `!=`). For replicated services, it is possible that all
-services run on the same node, or each node only runs one replica, or that some
-nodes don't run any replicas. For global services, the service runs on every
-node that meets the placement constraint and any [resource requirements](#reserve-memory-or-cpus-for-a-service).
+放置约束用于控制服务可被分配到哪些节点。如下示例仅在带有 `region=east` [标签](manage-nodes.md#add-or-remove-label-metadata) 的节点上运行。如果没有匹配节点，任务将处于 `Pending`。`--constraint` 使用等式操作符（`==` 或 `!=`）。对于副本服务，可能所有副本都在同一节点，或每节点一个，或部分节点没有副本；对于全局服务，凡满足放置约束与[资源需求](#reserve-memory-or-cpus-for-a-service)的节点都会运行任务。
 
 ```console
 $ docker service create \
@@ -712,12 +503,9 @@ $ docker service create \
   nginx
 ```
 
-You can also use the `constraint` service-level key in a `compose.yaml`
-file.
+在 `compose.yaml` 中也可通过服务级的 `constraint` 键定义约束。
 
-If you specify multiple placement constraints, the service only deploys onto
-nodes where they are all met. The following example limits the service to run on
-all nodes where `region` is set to `east` and `type` is not set to `devel`:
+如果设置了多个放置约束，只有同时满足所有约束的节点才会部署。如下示例限制服务只运行在 `region=east` 且 `type!=devel` 的节点上：
 
 ```console
 $ docker service create \
@@ -728,34 +516,21 @@ $ docker service create \
   nginx
 ```
 
-You can also use placement constraints in conjunction with placement preferences
-and CPU/memory constraints. Be careful not to use settings that are not
-possible to fulfill.
+放置约束可以与放置偏好、CPU/内存约束搭配使用。请注意避免设置无法满足的组合。
 
-For more information on constraints, refer to the `docker service create`
-[CLI reference](/reference/cli/docker/service/create.md).
+更多约束用法，参阅 `docker service create` 的《[CLI 参考](/reference/cli/docker/service/create.md)》。
 
-#### Placement preferences
+#### 放置偏好
 
-While [placement constraints](#placement-constraints) limit the nodes a service
-can run on, _placement preferences_ try to place tasks on appropriate nodes
-in an algorithmic way (currently, only spread evenly). For instance, if you
-assign each node a `rack` label, you can set a placement preference to spread
-the service evenly across nodes with the `rack` label, by value. This way, if
-you lose a rack, the service is still running on nodes on other racks.
+与[放置约束](#placement-constraints)将可运行节点进行限制不同，放置偏好会通过算法（当前仅支持平均分布）尽量将任务放在“更合适”的节点上。例如，为每个节点设置 `rack` 标签后，可配置按 `rack` 值进行分布；即使某一机架故障，服务仍可在其他机架上的节点运行。
 
-Placement preferences are not strictly enforced. If no node has the label
-you specify in your preference, the service is deployed as though the
-preference were not set.
+放置偏好并非强制。如果没有任何节点满足该偏好，服务仍会部署（等同未设置偏好）。
 
 > [!NOTE]
 >
-> Placement preferences are ignored for global services.
+> 放置偏好对全局服务无效。
 
-The following example sets a preference to spread the deployment across nodes
-based on the value of the `datacenter` label. If some nodes have
-`datacenter=us-east` and others have `datacenter=us-west`, the service is
-deployed as evenly as possible across the two sets of nodes.
+下面示例按 `datacenter` 标签的值进行分布：若一部分节点 `datacenter=us-east`，另一部分为 `us-west`，则任务会尽量在两组节点间平均分布。
 
 ```console
 $ docker service create \
@@ -767,18 +542,9 @@ $ docker service create \
 
 > [!NOTE]
 >
-> Nodes which are missing the label used to spread still receive
-> task assignments. As a group, these nodes receive tasks in equal
-> proportion to any of the other groups identified by a specific label
-> value. In a sense, a missing label is the same as having the label with
-> a null value attached to it. If the service should only run on
-> nodes with the label being used for the spread preference, the
-> preference should be combined with a constraint.
+> 不带该标签的节点依然可能接收到任务。从整体看，这些节点会与任一标签值组按相同比例接收任务。从某种意义上讲，“缺失标签”等于带有该标签但为空值。若你希望服务只运行在带有该标签的节点上，应将放置偏好与放置约束结合使用。
 
-You can specify multiple placement preferences, and they are processed in the
-order they are encountered. The following example sets up a service with
-multiple placement preferences. Tasks are spread first over the various
-datacenters, and then over racks (as indicated by the respective labels):
+你可以指定多个放置偏好，它们按出现顺序依次生效。如下示例先按数据中心分布，再按机架分布：
 
 ```console
 $ docker service create \
@@ -789,45 +555,26 @@ $ docker service create \
   redis:7.4.0
 ```
 
-You can also use placement preferences in conjunction with placement constraints
-or CPU/memory constraints. Be careful not to use settings that are not
-possible to fulfill.
+放置偏好也可与放置约束、CPU/内存约束组合使用。注意避免无法满足的配置。
 
-This diagram illustrates how placement preferences work:
+下图展示了放置偏好的工作方式：
 
 ![How placement preferences work](images/placement_prefs.png)
 
-When updating a service with `docker service update`, `--placement-pref-add`
-appends a new placement preference after all existing placement preferences.
-`--placement-pref-rm` removes an existing placement preference that matches the
-argument.
+使用 `docker service update` 更新服务时，`--placement-pref-add` 会在已有偏好之后追加新的放置偏好；`--placement-pref-rm` 用于移除与参数匹配的现有放置偏好。
 
 
-### Configure a service's update behavior
+### 配置服务的更新行为
 
-When you create a service, you can specify a rolling update behavior for how the
-swarm should apply changes to the service when you run `docker service update`.
-You can also specify these flags as part of the update, as arguments to
-`docker service update`.
+创建服务时，你可以指定滚动更新策略，用于在执行 `docker service update` 时应用变更。同样，这些参数也可以在更新时传入。
 
-The `--update-delay` flag configures the time delay between updates to a service
-task or sets of tasks. You can describe the time `T` as a combination of the
-number of seconds `Ts`, minutes `Tm`, or hours `Th`. So `10m30s` indicates a 10
-minute 30 second delay.
+`--update-delay` 用于配置任务（或任务集合）之间的更新间隔。时间 `T` 可用秒 `Ts`、分 `Tm`、时 `Th` 的组合表示，如 `10m30s` 表示延迟 10 分 30 秒。
 
-By default the scheduler updates 1 task at a time. You can pass the
-`--update-parallelism` flag to configure the maximum number of service tasks
-that the scheduler updates simultaneously.
+默认情况下调度器一次更新 1 个任务。通过 `--update-parallelism` 可设置并行更新的最大任务数。
 
-When an update to an individual task returns a state of `RUNNING`, the scheduler
-continues the update by continuing to another task until all tasks are updated.
-If at any time during an update a task returns `FAILED`, the scheduler pauses
-the update. You can control the behavior using the `--update-failure-action`
-flag for `docker service create` or `docker service update`.
+当某个任务更新后进入 `RUNNING` 状态，调度器会继续更新下一个，直至全部完成。若期间有任务进入 `FAILED`，更新将被暂停。可通过 `docker service create` 或 `docker service update` 的 `--update-failure-action` 控制此行为。
 
-In the example service below, the scheduler applies updates to a maximum of 2
-replicas at a time. When an updated task returns either `RUNNING` or `FAILED`,
-the scheduler waits 10 seconds before stopping the next task to update:
+如下示例中，调度器每次最多并行更新 2 个副本；当某个任务返回 `RUNNING` 或 `FAILED` 后，调度器会等待 10 秒再继续停止下一个任务进行更新：
 
 ```console
 $ docker service create \
@@ -839,28 +586,15 @@ $ docker service create \
   alpine
 ```
 
-The `--update-max-failure-ratio` flag controls what fraction of tasks can fail
-during an update before the update as a whole is considered to have failed. For
-example, with `--update-max-failure-ratio 0.1 --update-failure-action pause`,
-after 10% of the tasks being updated fail, the update is paused.
+`--update-max-failure-ratio` 控制在一次更新中允许失败的任务比例。比如设置 `--update-max-failure-ratio 0.1 --update-failure-action pause`，当失败达到 10% 时暂停更新。
 
-An individual task update is considered to have failed if the task doesn't
-start up, or if it stops running within the monitoring period specified with
-the `--update-monitor` flag. The default value for `--update-monitor` is 30
-seconds, which means that a task failing in the first 30 seconds after it's
-started counts towards the service update failure threshold, and a failure
-after that is not counted.
+若任务未能启动，或在 `--update-monitor` 监控时间内停止运行，则视为该任务更新失败。`--update-monitor` 默认 30 秒，即在启动后 30 秒内失败会计入失败阈值，之后的失败不计入。
 
-### Roll back to the previous version of a service
+### 回滚到上一个服务版本
 
-In case the updated version of a service doesn't function as expected, it's
-possible to manually roll back to the previous version of the service using
-`docker service update`'s `--rollback` flag. This reverts the service
-to the configuration that was in place before the most recent
-`docker service update` command.
+如果服务更新后行为异常，可以使用 `docker service update --rollback` 手动回滚到上一个版本，恢复到上一次更新前的配置。
 
-Other options can be combined with `--rollback`; for example,
-`--update-delay 0s`, to execute the rollback without a delay between tasks:
+`--rollback` 可与其他参数组合使用，例如 `--update-delay 0s` 以在任务间不引入延迟：
 
 ```console
 $ docker service update \
@@ -869,20 +603,13 @@ $ docker service update \
   my_web
 ```
 
-You can configure a service to roll back automatically if a service update fails
-to deploy. See [Automatically roll back if an update fails](#automatically-roll-back-if-an-update-fails).
+你也可以配置服务在更新失败时自动回滚。参见「[更新失败时自动回滚](#automatically-roll-back-if-an-update-fails)」。
 
-Manual rollback is handled at the server side, which allows manually-initiated
-rollbacks to respect the new rollback parameters. Note that `--rollback` cannot
-be used in conjunction with other flags to `docker service update`.
+手动回滚在服务端执行，因此可遵循新设置的回滚参数。注意：`--rollback` 不能与 `docker service update` 的其他标志同时使用。
 
-### Automatically roll back if an update fails
+### 更新失败时自动回滚
 
-You can configure a service in such a way that if an update to the service
-causes redeployment to fail, the service can automatically roll back to the
-previous configuration. This helps protect service availability. You can set
-one or more of the following flags at service creation or update. If you do not
-set a value, the default is used.
+你可以配置服务在因更新导致重新部署失败时自动回滚到先前配置，以保护服务可用性。可在创建或更新时设置以下一个或多个标志；未设置时使用默认值。
 
 | Flag                           | Default | Description                                                                                                                                                                                                                                                                                                             |
 |:-------------------------------|:--------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -892,11 +619,7 @@ set a value, the default is used.
 | `--rollback-monitor`           | `5s`    | Duration after each task rollback to monitor for failure. If a task stops before this time period has elapsed, the rollback is considered to have failed.                                                                                                                                                               |
 | `--rollback-parallelism`       | `1`     | The maximum number of tasks to roll back in parallel. By default, one task is rolled back at a time. A value of `0` causes all tasks to be rolled back in parallel.                                                                                                                                                     |
 
-The following example configures a `redis` service to roll back automatically
-if a `docker service update` fails to deploy. Two tasks can be rolled back in
-parallel. Tasks are monitored for 20 seconds after rollback to be sure they do
-not exit, and a maximum failure ratio of 20% is tolerated. Default values are
-used for `--rollback-delay` and `--rollback-failure-action`.
+下面示例配置 `redis` 服务在 `docker service update` 部署失败时自动回滚；每次最多并行回滚 2 个任务；回滚后监控 20 秒确保不退出；允许的失败比例为 20%。`--rollback-delay` 与 `--rollback-failure-action` 使用默认值。
 
 ```console
 $ docker service create --name=my_redis \
@@ -907,28 +630,17 @@ $ docker service create --name=my_redis \
                         redis:latest
 ```
 
-### Give a service access to volumes or bind mounts
+### 为服务提供对数据卷或绑定挂载的访问
 
-For best performance and portability, you should avoid writing important data
-directly into a container's writable layer. You should instead use data volumes
-or bind mounts. This principle also applies to services.
+为获得更好的性能与可移植性，请避免将重要数据写入容器的可写层；应使用数据卷或绑定挂载。服务同样遵循这一原则。
 
-You can create two types of mounts for services in a swarm, `volume` mounts or
-`bind` mounts. Regardless of which type of mount you use, configure it using the
-`--mount` flag when you create a service, or the `--mount-add` or `--mount-rm`
-flag when updating an existing service. The default is a data volume if you
-don't specify a type.
+在 Swarm 中可为服务创建两类挂载：`volume` 与 `bind`。无论哪种类型，创建服务时使用 `--mount`，更新服务时使用 `--mount-add` 或 `--mount-rm`。若未指定类型，默认使用数据卷。
 
-#### Data volumes
+#### 数据卷（Data volumes）
 
-Data volumes are storage that exist independently of a container. The
-lifecycle of data volumes under swarm services is similar to that under
-containers. Volumes outlive tasks and services, so their removal must be
-managed separately. Volumes can be created before deploying a service, or if
-they don't exist on a particular host when a task is scheduled there, they are
-created automatically according to the volume specification on the service.
+数据卷独立于容器而存在。在 Swarm 服务下，数据卷的生命周期与在普通容器中类似：它们独立于任务与服务存在，删除需要单独管理。数据卷可以在部署服务前创建；若在某节点调度任务时卷不存在，会按服务的卷定义自动创建。
 
-To use existing data volumes with a service use the `--mount` flag:
+要在服务中挂载已有数据卷，使用 `--mount`：
 
 ```console
 $ docker service create \
@@ -937,10 +649,7 @@ $ docker service create \
   <IMAGE>
 ```
 
-If a volume with the name `<VOLUME-NAME>` doesn't exist when a task is
-scheduled to a particular host, then one is created. The default volume
-driver is `local`.  To use a different volume driver with this create-on-demand
-pattern, specify the driver and its options with the `--mount` flag:
+如果在某节点调度任务时不存在名为 `<VOLUME-NAME>` 的卷，将自动创建。默认卷驱动为 `local`。若要在按需创建时使用其他驱动，请在 `--mount` 中指定驱动及其选项：
 
 ```console
 $ docker service create \
@@ -949,20 +658,16 @@ $ docker service create \
   <IMAGE>
 ```
 
-For more information on how to create data volumes and the use of volume
-drivers, see [Use volumes](/manuals/engine/storage/volumes.md).
+关于创建数据卷与卷驱动的更多信息，参见《[使用卷](/manuals/engine/storage/volumes.md)》。
 
 
-#### Bind mounts
+#### 绑定挂载（Bind mounts）
 
-Bind mounts are file system paths from the host where the scheduler deploys
-the container for the task. Docker mounts the path into the container. The
-file system path must exist before the swarm initializes the container for the
-task.
+绑定挂载将任务所在宿主机的文件系统路径挂载到容器中。该路径必须在 Swarm 初始化该任务的容器之前就已存在。
 
-The following examples show bind mount syntax:
+以下示例展示绑定挂载的语法：
 
-- To mount a read-write bind:
+- 挂载读写绑定：
 
   ```console
   $ docker service create \
@@ -971,7 +676,7 @@ The following examples show bind mount syntax:
     <IMAGE>
   ```
 
-- To mount a read-only bind:
+- 挂载只读绑定：
 
   ```console
   $ docker service create \
@@ -982,36 +687,25 @@ The following examples show bind mount syntax:
 
 > [!IMPORTANT]
 >
-> Bind mounts can be useful but they can also cause problems. In
-> most cases, it is recommended that you architect your application such that
-> mounting paths from the host is unnecessary. The main risks include the
-> following:
+> 绑定挂载虽有用，但也可能带来问题。多数情况下建议从架构上避免依赖宿主机路径。主要风险包括：
 >
-> - If you bind mount a host path into your service’s containers, the path
->   must exist on every swarm node. The Docker swarm mode scheduler can schedule
->   containers on any machine that meets resource availability requirements
->   and satisfies all constraints and placement preferences you specify.
+> - 若将宿主机路径绑定到服务容器，该路径必须存在于每个 Swarm 节点上。调度器可能把任务分配到任一满足资源与约束的机器。
 >
-> - The Docker swarm mode scheduler may reschedule your running service
->   containers at any time if they become unhealthy or unreachable.
+> - 运行中的服务容器可能因不健康或不可达而被调度器随时迁移。
 >
-> - Host bind mounts are non-portable. When you use bind mounts, there is no
->   guarantee that your application runs the same way in development as it does
->   in production.
+> - 绑定挂载不可移植。开发与生产环境可能行为不一致。
 
-### Create services using templates
+### 使用模板创建服务
 
-You can use templates for some flags of `service create`, using the syntax
-provided by the Go's [text/template](https://golang.org/pkg/text/template/)
-package.
+在 `service create` 的部分标志中可以使用模板，语法遵循 Go 的 [text/template](https://golang.org/pkg/text/template/) 包。
 
-The following flags are supported:
+支持以下标志：
 
 - `--hostname`
 - `--mount`
 - `--env`
 
-Valid placeholders for the Go template are:
+可用的模板占位符包括：
 
 | Placeholder       | Description    |
 |:------------------|:---------------|
@@ -1023,10 +717,9 @@ Valid placeholders for the Go template are:
 | `.Task.Name`      | Task name      |
 | `.Task.Slot`      | Task slot      |
 
-#### Template example
+#### 模板示例
 
-This example sets the template of the created containers based on the
-service's name and the ID of the node where the container is running:
+下面示例根据服务名称与容器运行所在节点的 ID 设置容器主机名模板：
 
 
 ```console
@@ -1036,8 +729,7 @@ $ docker service create --name hosttempl \
 ```
 
 
-To see the result of using the template, use the `docker service ps` and
-`docker inspect` commands.
+可通过 `docker service ps` 与 `docker inspect` 查看模板应用结果。
 
 ```console
 $ docker service ps va8ew30grofhjoychbr6iot8c
@@ -1052,8 +744,8 @@ $ docker inspect --format="{{.Config.Hostname}}" hosttempl.1.wo41w8hg8qanxwjwsg4
 ```
 
 
-## Learn More
+## 延伸阅读
 
-* [Swarm administration guide](admin_guide.md)
-* [Docker Engine command line reference](/reference/cli/docker/)
-* [Swarm mode tutorial](swarm-tutorial/_index.md)
+* [Swarm 管理指南](admin_guide.md)
+* [Docker Engine 命令行参考](/reference/cli/docker/)
+* [Swarm 模式入门教程](swarm-tutorial/_index.md)

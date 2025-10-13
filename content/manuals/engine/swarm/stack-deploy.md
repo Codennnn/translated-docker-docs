@@ -1,47 +1,37 @@
 ---
-description: How to deploy a stack to a swarm
+description: 在 Swarm 中部署应用栈（Stack）
 keywords: guide, swarm mode, composefile, stack, compose, deploy
-title: Deploy a stack to a swarm
+title: 在 Swarm 中部署应用栈
 ---
 
-When running Docker Engine in swarm mode, you can use `docker stack deploy` to
-deploy a complete application stack to the swarm. The `deploy` command accepts
-a stack description in the form of a [Compose file](/reference/compose-file/legacy-versions.md).
+当 Docker Engine 以 Swarm 模式运行时，你可以使用 `docker stack deploy` 将完整的应用栈部署到集群。`deploy` 命令接受以 [Compose 文件](/reference/compose-file/legacy-versions.md) 描述的栈定义。
 
 {{% include "swarm-compose-compat.md" %}}
 
-To run through this tutorial, you need:
+开始本教程前，你需要：
 
-1.  A Docker Engine running in [Swarm mode](swarm-mode.md).
-    If you're not familiar with Swarm mode, you might want to read
-    [Swarm mode key concepts](key-concepts.md)
-    and [How services work](how-swarm-mode-works/services.md).
+1.  一台已开启 [Swarm 模式](swarm-mode.md) 的 Docker Engine。
+    如果你不熟悉 Swarm 模式，建议先阅读《[Swarm 模式关键概念](key-concepts.md)》与《[服务的工作原理](how-swarm-mode-works/services.md)》。
 
     > [!NOTE]
     >
-    > If you're trying things out on a local development environment,
-    > you can put your engine into Swarm mode with `docker swarm init`.
+    > 如果你在本地开发环境试用，可通过 `docker swarm init` 将引擎切换为 Swarm 模式。
     >
-    > If you've already got a multi-node swarm running, keep in mind that all
-    > `docker stack` and `docker service` commands must be run from a manager
-    > node.
+    > 若你已有多节点集群在运行，请注意所有 `docker stack` 与 `docker service` 命令都必须在管理节点上执行。
 
-2.  A current version of [Docker Compose](/manuals/compose/install/_index.md).
+2.  安装当前版本的 [Docker Compose](/manuals/compose/install/_index.md)。
 
-## Set up a Docker registry
+## 准备 Docker 仓库（Registry）
 
-Because a swarm consists of multiple Docker Engines, a registry is required to
-distribute images to all of them. You can use the
-[Docker Hub](https://hub.docker.com) or maintain your own. Here's how to create
-a throwaway registry, which you can discard afterward.
+由于 Swarm 由多台 Docker Engine 组成，需要一个仓库来向所有节点分发镜像。你可以使用 [Docker Hub](https://hub.docker.com) 或自建仓库。以下示例演示如何创建一个临时测试用的本地仓库，完成后即可删除。
 
-1.  Start the registry as a service on your swarm:
+1.  在集群中以服务的方式启动仓库：
 
     ```console
     $ docker service create --name registry --publish published=5000,target=5000 registry:2
     ```
 
-2.  Check its status with `docker service ls`:
+2.  使用 `docker service ls` 查看状态：
 
     ```console
     $ docker service ls
@@ -50,10 +40,9 @@ a throwaway registry, which you can discard afterward.
     l7791tpuwkco  registry  1/1       registry:2@sha256:1152291c7f93a4ea2ddc95e46d142c31e743b6dd70e194af9e6ebe530f782c17
     ```
 
-    Once it reads `1/1` under `REPLICAS`, it's running. If it reads `0/1`, it's
-    probably still pulling the image.
+    当 `REPLICAS` 一栏为 `1/1` 时表示已运行；若为 `0/1`，通常是镜像仍在拉取中。
 
-3.  Check that it's working with `curl`:
+3.  使用 `curl` 验证服务是否可用：
 
     ```console
     $ curl http://127.0.0.1:5000/v2/
@@ -61,21 +50,18 @@ a throwaway registry, which you can discard afterward.
     {}
     ```
 
-## Create the example application
+## 创建示例应用
 
-The app used in this guide is based on the hit counter app in the
-[Get started with Docker Compose](/manuals/compose/gettingstarted.md) guide. It consists
-of a Python app which maintains a counter in a Redis instance and increments the
-counter whenever you visit it.
+本指南的示例应用改自《[Docker Compose 入门](/manuals/compose/gettingstarted.md)》中的计数器应用。它包含一个 Python 程序，通过 Redis 维护访问计数，每访问一次即自增。
 
-1.  Create a directory for the project:
+1.  为项目创建目录：
 
     ```console
     $ mkdir stackdemo
     $ cd stackdemo
     ```
 
-2.  Create a file called `app.py` in the project directory and paste this in:
+2.  在项目目录中创建 `app.py`，并粘贴如下内容：
 
     ```python
     from flask import Flask
@@ -93,14 +79,14 @@ counter whenever you visit it.
         app.run(host="0.0.0.0", port=8000, debug=True)
     ```
 
-3.  Create a file called `requirements.txt` and paste these two lines in:
+3.  创建 `requirements.txt`，写入以下两行：
 
     ```text
     flask
     redis
     ```
 
-4.  Create a file called `Dockerfile` and paste this in:
+4.  创建 `Dockerfile`，写入以下内容：
 
     ```dockerfile
     # syntax=docker/dockerfile:1
@@ -111,7 +97,7 @@ counter whenever you visit it.
     CMD ["python", "app.py"]
     ```
 
-5.  Create a file called `compose.yaml` and paste this in:
+5.  创建 `compose.yaml`，写入以下内容：
 
     ```yaml
       services:
@@ -124,21 +110,14 @@ counter whenever you visit it.
           image: redis:alpine
     ```
 
-    The image for the web app is built using the Dockerfile defined
-    above. It's also tagged with `127.0.0.1:5000` - the address of the registry
-    created earlier. This is important when distributing the app to the
-    swarm.
+    Web 应用镜像由上面的 Dockerfile 构建，并打上 `127.0.0.1:5000` 的仓库标签（即前面创建的本地仓库地址）。这一步对将应用分发到 Swarm 至关重要。
 
 
-## Test the app with Compose
+## 使用 Compose 进行本地验证
 
-1.  Start the app with `docker compose up`. This builds the web app image,
-    pulls the Redis image if you don't already have it, and creates two
-    containers.
+1.  通过 `docker compose up` 启动应用。该命令会构建 Web 镜像、拉取（如需）Redis 镜像，并创建两个容器。
 
-    You see a warning about the Engine being in swarm mode. This is because
-    Compose doesn't take advantage of swarm mode, and deploys everything to a
-    single node. You can safely ignore this.
+    你可能会看到关于引擎处于 Swarm 模式的警告。原因是 Compose 不会利用 Swarm，多数情况下仅在单个节点部署。这里可以忽略该警告。
 
     ```console
     $ docker compose up -d
@@ -157,7 +136,7 @@ counter whenever you visit it.
     Creating stackdemo_web_1
     ```
 
-2.  Check that the app is running with `docker compose ps`:
+2.  使用 `docker compose ps` 查看应用是否运行：
 
     ```console
     $ docker compose ps
@@ -168,7 +147,7 @@ counter whenever you visit it.
     stackdemo_web_1     python app.py                    Up      0.0.0.0:8000->8000/tcp
     ```
 
-    You can test the app with `curl`:
+    使用 `curl` 测试应用：
 
     ```console
     $ curl http://localhost:8000
@@ -181,7 +160,7 @@ counter whenever you visit it.
     Hello World! I have been seen 3 times.
     ```
 
-3.  Bring the app down:
+3.  停止并移除应用：
 
     ```console
     $ docker compose down --volumes
@@ -194,10 +173,9 @@ counter whenever you visit it.
     ```
 
 
-## Push the generated image to the registry
+## 将构建出的镜像推送到仓库
 
-To distribute the web app's image across the swarm, it needs to be pushed to the
-registry you set up earlier. With Compose, this is very simple:
+要在 Swarm 中分发 Web 应用镜像，需要先推送到前面设置的仓库。使用 Compose 推送非常简单：
 
 ```console
 $ docker compose push
@@ -212,12 +190,12 @@ c9fc143a069a: Pushed
 latest: digest: sha256:a81840ebf5ac24b42c1c676cbda3b2cb144580ee347c07e1bc80e35e5ca76507 size: 1372
 ```
 
-The stack is now ready to be deployed.
+现在，应用栈已经可以部署了。
 
 
-## Deploy the stack to the swarm
+## 将应用栈部署到 Swarm
 
-1.  Create the stack with `docker stack deploy`:
+1.  使用 `docker stack deploy` 创建栈：
 
     ```console
     $ docker stack deploy --compose-file compose.yaml stackdemo
@@ -229,10 +207,9 @@ The stack is now ready to be deployed.
     Creating service stackdemo_redis
     ```
 
-    The last argument is a name for the stack. Each network, volume and service
-    name is prefixed with the stack name.
+    最后的参数是栈名。创建后，网络、卷与服务的名称都会加上该栈名前缀。
 
-2.  Check that it's running with `docker stack services stackdemo`:
+2.  使用 `docker stack services stackdemo` 查看运行状态：
 
     ```console
     $ docker stack services stackdemo
@@ -242,11 +219,9 @@ The stack is now ready to be deployed.
     s1nf0xy8t1un  stackdemo_web    replicated  1/1       127.0.0.1:5000/stackdemo@sha256:adb070e0805d04ba2f92c724298370b7a4eb19860222120d43e0f6351ddbc26f
     ```
 
-    Once it's running, you should see `1/1` under `REPLICAS` for both services.
-    This might take some time if you have a multi-node swarm, as images need to
-    be pulled.
+    当两项服务的 `REPLICAS` 都显示为 `1/1` 时表示已就绪。若为多节点集群，因涉及镜像拉取，可能需要等待片刻。
 
-    As before, you can test the app with `curl`:
+    同前，你可以用 `curl` 测试应用：
 
     ```console
     $ curl http://localhost:8000
@@ -259,15 +234,14 @@ The stack is now ready to be deployed.
     Hello World! I have been seen 3 times.
     ```
 
-    With Docker's built-in routing mesh, you can access any node in the
-    swarm on port `8000` and get routed to the app:
+    借助 Docker 内置的路由网格，你可以访问 Swarm 中任一节点的 `8000` 端口，都会被路由到应用：
 
     ```console
     $ curl http://address-of-other-node:8000
     Hello World! I have been seen 4 times.
     ```
 
-3.  Bring the stack down with `docker stack rm`:
+3.  使用 `docker stack rm` 删除应用栈：
 
     ```console
     $ docker stack rm stackdemo
@@ -277,14 +251,13 @@ The stack is now ready to be deployed.
     Removing network stackdemo_default
     ```
 
-4.  Bring the registry down with `docker service rm`:
+4.  使用 `docker service rm` 删除仓库服务：
 
     ```console
     $ docker service rm registry
     ```
 
-5.  If you're just testing things out on a local machine and want to bring your
-    Docker Engine out of Swarm mode, use `docker swarm leave`:
+5.  如果你只是在本机测试，完成后想退出 Swarm 模式，可使用：
 
     ```console
     $ docker swarm leave --force

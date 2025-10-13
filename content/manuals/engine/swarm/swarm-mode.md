@@ -1,55 +1,41 @@
 ---
-description: Run Docker Engine in swarm mode
-keywords: guide, swarm mode, node, Docker Engines
-title: Run Docker Engine in swarm mode
+description: 在 Swarm 模式下运行 Docker Engine
+keywords: 指南, Swarm 模式, 节点, Docker Engine
+title: 在 Swarm 模式下运行 Docker Engine
 ---
 
-When you first install and start working with Docker Engine, Swarm mode is
-disabled by default. When you enable Swarm mode, you work with the concept of
-services managed through the `docker service` command.
+当你首次安装并开始使用 Docker Engine 时，默认未启用 Swarm 模式。启用 Swarm 模式后，你将以“服务（service）”为核心进行工作，并通过 `docker service` 命令进行管理。
 
-There are two ways to run the engine in Swarm mode:
+以 Swarm 模式运行 Engine 有两种方式：
 
-* Create a new swarm, covered in this article.
-* [Join an existing swarm](join-nodes.md).
+* 新建一个 swarm（本文介绍）。
+* [加入一个现有的 swarm](join-nodes.md)。
 
-When you run the engine in Swarm mode on your local machine, you can create and
-test services based upon images you've created or other available images. In
-your production environment, Swarm mode provides a fault-tolerant platform with
-cluster management features to keep your services running and available.
+当你在本地机器上以 Swarm 模式运行 Engine 时，可以基于你构建的镜像或其他可用镜像来创建并测试服务。在生产环境中，Swarm 模式提供具备容错能力的集群管理平台，帮助你的服务持续运行并保持高可用。
 
-These instructions assume you have installed the Docker Engine on
-a machine to serve as a manager node in your swarm.
+本文假设你已在一台机器上安装了 Docker Engine，并将其作为 swarm 的管理节点（manager）。
 
-If you haven't already, read through the [Swarm mode key concepts](key-concepts.md)
-and try the [Swarm mode tutorial](swarm-tutorial/_index.md).
+如果尚未阅读，建议先了解[Swarm 模式关键概念](key-concepts.md)并试用[Swarm 模式教程](swarm-tutorial/_index.md)。
 
-## Create a swarm
+## 创建一个 swarm
 
-When you run the command to create a swarm, Docker Engine starts running in Swarm mode.
+当你运行创建 swarm 的命令时，Docker Engine 会启动并进入 Swarm 模式。
 
-Run [`docker swarm init`](/reference/cli/docker/swarm/init.md)
-to create a single-node swarm on the current node. The engine sets up the swarm
-as follows:
+运行 [`docker swarm init`](/reference/cli/docker/swarm/init.md) 可在当前节点上创建一个单节点的 swarm。Engine 会按如下方式完成初始化：
 
-* Switches the current node into Swarm mode.
-* Creates a swarm named `default`.
-* Designates the current node as a leader manager node for the swarm.
-* Names the node with the machine hostname.
-* Configures the manager to listen on an active network interface on port `2377`.
-* Sets the current node to `Active` availability, meaning it can receive tasks
-from the scheduler.
-* Starts an internal distributed data store for Engines participating in the
-swarm to maintain a consistent view of the swarm and all services running on it.
-* By default, generates a self-signed root CA for the swarm.
-* By default, generates tokens for worker and manager nodes to join the
-swarm.
-* Creates an overlay network named `ingress` for publishing service ports
-external to the swarm.
-* Creates an overlay default IP addresses and subnet mask for your networks
+* 将当前节点切换到 Swarm 模式。
+* 创建一个名为 `default` 的 swarm。
+* 将当前节点指定为该 swarm 的管理节点领导者（leader manager）。
+* 使用机器的主机名为节点命名。
+* 配置管理节点在一个活动的网络接口上监听 `2377` 端口。
+* 将当前节点的可用性设置为 `Active`，表示它可以从调度器接收任务。
+* 为参与该 swarm 的 Engine 启动一个内部的分布式数据存储，以维持整个 swarm 及其上所有服务的一致视图。
+* 默认为该 swarm 生成自签名的根 CA。
+* 默认生成用于 worker 与 manager 节点加入 swarm 的令牌（tokens）。
+* 创建一个名为 `ingress` 的覆盖网络（overlay），用于将服务端口发布到 swarm 之外。
+* 为你的网络创建默认的覆盖网络 IP 地址池与子网掩码。
 
-The output for `docker swarm init` provides the connection command to use when
-you join new worker nodes to the swarm:
+`docker swarm init` 的输出中会提供在向 swarm 添加新的 worker 节点时所需的连接命令：
 
 ```console
 $ docker swarm init
@@ -64,88 +50,62 @@ To add a worker to this swarm, run the following command:
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 ```
 
-### Configuring default address pools
+### 配置默认地址池
 
-By default Swarm mode uses a default address pool `10.0.0.0/8` for global scope (overlay) networks. Every 
-network that does not have a subnet specified will have a subnet sequentially allocated from this pool. In 
-some circumstances it may be desirable to use a different default IP address pool for networks. 
+默认情况下，Swarm 模式为全局范围（overlay）的网络使用默认地址池 `10.0.0.0/8`。任何未显式指定子网的网络，都会从该地址池中按顺序分配一个子网。在某些情况下，你可能希望为网络使用不同的默认 IP 地址池。
 
-For example, if the default `10.0.0.0/8` range conflicts with already allocated address space in your network, 
-then it is desirable to ensure that networks use a different range without requiring swarm users to specify 
-each subnet with the `--subnet` command. 
+例如，如果默认的 `10.0.0.0/8` 范围与你网络中已分配的地址空间冲突，则最好为网络使用另一个地址范围，而无需让 swarm 的使用者每次都通过 `--subnet` 指定子网。
 
-To configure custom default address pools, you must define pools at swarm initialization using the 
-`--default-addr-pool` command line option. This command line option uses CIDR notation for defining the subnet mask.
-To create the custom address pool for Swarm, you must define at least one default address pool, and an optional default address pool subnet mask. For example, for the `10.0.0.0/27`, use the value `27`.
+要配置自定义默认地址池，必须在初始化 swarm 时通过 `--default-addr-pool` 命令行选项定义地址池。该选项使用 CIDR 表示法来定义子网掩码。要为 Swarm 创建自定义地址池，至少需要定义一个默认地址池，并可选地定义默认地址池的子网掩码长度。例如，对于 `10.0.0.0/27`，掩码长度设置为 `27`。
 
-Docker allocates subnet addresses from the address ranges specified by the `--default-addr-pool` option. For example, a command line option `--default-addr-pool 10.10.0.0/16` indicates that Docker will allocate subnets from that `/16` address range. If `--default-addr-pool-mask-len` were unspecified or set explicitly to 24, this would result in 256 `/24` networks of the form `10.10.X.0/24`.
+Docker 会从 `--default-addr-pool` 指定的地址范围分配子网。例如，命令行选项 `--default-addr-pool 10.10.0.0/16` 表示 Docker 将从该 `/16` 范围中分配子网。如果未指定 `--default-addr-pool-mask-len` 或显式设为 24，则会得到 256 个 `/24` 网络，形如 `10.10.X.0/24`。
 
-The subnet range comes from the `--default-addr-pool`, (such as `10.10.0.0/16`). The size of 16 there represents the number of networks one can create within that `default-addr-pool` range. The `--default-addr-pool` option may occur multiple times with each option providing additional addresses for docker to use for overlay subnets.
+子网范围来自 `--default-addr-pool`（例如 `10.10.0.0/16`）。其中的 `16` 表示在该默认地址池范围内可创建的网络规模。`--default-addr-pool` 选项可重复多次，每次提供额外的地址范围供 Docker 用于 overlay 子网。
 
-The format of the command is:
+命令格式如下：
 
 ```console
 $ docker swarm init --default-addr-pool <IP range in CIDR> [--default-addr-pool <IP range in CIDR> --default-addr-pool-mask-length <CIDR value>]
 ```
 
-The command to create a default IP address pool with a /16 (class B) for the `10.20.0.0` network looks like this:
+为 `10.20.0.0` 网络创建一个 `/16`（B 类）默认地址池的命令如下：
 
 ```console
 $ docker swarm init --default-addr-pool 10.20.0.0/16
 ```
 
-The command to create a default IP address pool with a `/16` (class B) for the `10.20.0.0` and `10.30.0.0` networks, and to 
-create a subnet mask of `/26` for each network looks like this:
+同时为 `10.20.0.0` 与 `10.30.0.0` 网络创建 `/16`（B 类）默认地址池，且为每个网络创建 `/26` 子网掩码的命令如下：
 
 ```console
 $ docker swarm init --default-addr-pool 10.20.0.0/16 --default-addr-pool 10.30.0.0/16 --default-addr-pool-mask-length 26
 ```
 
-In this example, `docker network create -d overlay net1` will result in `10.20.0.0/26` as the allocated subnet for `net1`, 
-and `docker network create -d overlay net2` will result in `10.20.0.64/26` as the allocated subnet for `net2`. This continues until 
-all the subnets are exhausted. 
+在上述示例中，执行 `docker network create -d overlay net1` 会分配到 `10.20.0.0/26` 作为 `net1` 的子网；
+执行 `docker network create -d overlay net2` 会分配到 `10.20.0.64/26` 作为 `net2` 的子网。如此继续，直到所有子网被分配完。
 
-Refer to the following pages for more information:
-- [Swarm networking](./networking.md) for more information about the default address pool usage
-- `docker swarm init` [CLI reference](/reference/cli/docker/swarm/init.md) for more detail on the `--default-addr-pool` flag.
+更多信息请参见以下页面：
+- [Swarm 网络](./networking.md)：了解默认地址池的使用方式
+- `docker swarm init` 的[命令行参考](/reference/cli/docker/swarm/init.md)：了解 `--default-addr-pool` 标志的详细说明
 
-### Configure the advertise address
+### 配置对外通告地址（advertise address）
 
-Manager nodes use an advertise address to allow other nodes in the swarm access
-to the Swarmkit API and overlay networking. The other nodes on the swarm must be
-able to access the manager node on its advertise address.
+管理节点使用对外通告地址，使 swarm 中的其他节点可以访问 Swarmkit API 与 overlay 网络。其他节点必须能够通过该对外通告地址访问管理节点。
 
-If you don't specify an advertise address, Docker checks if the system has a
-single IP address. If so, Docker uses the IP address with the listening port
-`2377` by default. If the system has multiple IP addresses, you must specify the
-correct `--advertise-addr` to enable inter-manager communication and overlay
-networking:
+如果你没有指定对外通告地址，Docker 会检查系统是否只有一个 IP 地址：若是，则默认使用该 IP 地址及监听端口 `2377`；若系统有多个 IP 地址，则必须显式指定正确的 `--advertise-addr`，以启用管理节点之间的通信与 overlay 网络：
 
 ```console
 $ docker swarm init --advertise-addr <MANAGER-IP>
 ```
 
-You must also specify the `--advertise-addr` if the address where other nodes
-reach the first manager node is not the same address the manager sees as its
-own. For instance, in a cloud setup that spans different regions, hosts have
-both internal addresses for access within the region and external addresses that
-you use for access from outside that region. In this case, specify the external
-address with `--advertise-addr` so that the node can propagate that information
-to other nodes that subsequently connect to it.
+当其他节点用于访问首个管理节点的地址与该管理节点自身看到的地址不一致时，也必须指定 `--advertise-addr`。例如，在跨区域的云环境中，主机既有区域内访问的内网地址，也有区域外访问的外网地址。在这种情况下，请使用 `--advertise-addr` 指定外网地址，以便该节点将此信息传播给随后连接的其他节点。
 
-Refer to the `docker swarm init` [CLI reference](/reference/cli/docker/swarm/init.md)
-for more detail on the advertise address.
+参见 `docker swarm init` 的[命令行参考](/reference/cli/docker/swarm/init.md)以了解更多关于对外通告地址的细节。
 
-### View the join command or update a swarm join token
+### 查看加入命令或轮换（更新）swarm 加入令牌
 
-Nodes require a secret token to join the swarm. The token for worker nodes is
-different from the token for manager nodes. Nodes only use the join-token at the
-moment they join the swarm. Rotating the join token after a node has already
-joined a swarm does not affect the node's swarm membership. Token rotation
-ensures an old token cannot be used by any new nodes attempting to join the
-swarm.
+节点加入 swarm 需要一个密钥令牌。worker 节点的令牌与 manager 节点的令牌不同。节点仅在加入时使用该令牌。对已加入的节点来说，轮换加入令牌不会影响其在 swarm 中的成员身份。轮换可以确保旧令牌不会被新的节点用来加入 swarm。
 
-To retrieve the join command including the join token for worker nodes, run:
+要检索包含 worker 节点加入令牌的加入命令，运行：
 
 ```console
 $ docker swarm join-token worker
@@ -159,7 +119,7 @@ To add a worker to this swarm, run the following command:
 This node joined a swarm as a worker.
 ```
 
-To view the join command and token for manager nodes, run:
+要查看 manager 节点的加入命令与令牌，运行：
 
 ```console
 $ docker swarm join-token manager
@@ -171,7 +131,7 @@ To add a manager to this swarm, run the following command:
     192.168.99.100:2377
 ```
 
-Pass the `--quiet` flag to print only the token:
+仅输出令牌时可使用 `--quiet`：
 
 ```console
 $ docker swarm join-token --quiet worker
@@ -179,27 +139,17 @@ $ docker swarm join-token --quiet worker
 SWMTKN-1-49nj1cmql0jkz5s954yi3oex3nedyz0fb0xx14ie39trti4wxv-8vxv8rssmk743ojnwacrr2e7c
 ```
 
-Be careful with the join tokens because they are the secrets necessary to join
-the swarm. In particular, checking a secret into version control is a bad
-practice because it would allow anyone with access to the application source
-code to add new nodes to the swarm. Manager tokens are especially sensitive
-because they allow a new manager node to join and gain control over the whole
-swarm.
+请谨慎保管加入令牌，因为它是加入 swarm 所必需的“秘密”。尤其不要将令牌提交到版本控制系统中，这会让任何能访问源代码的人都有能力向该 swarm 添加新节点。manager 令牌尤为敏感，因为它允许新管理节点加入并获得对整个 swarm 的控制权。
 
-We recommend that you rotate the join tokens in the following circumstances:
+我们建议在以下情况下轮换加入令牌：
 
-* If a token was checked-in by accident into a version control system, group
-chat or accidentally printed to your logs.
-* If you suspect a node has been compromised.
-* If you wish to guarantee that no new nodes can join the swarm.
+* 令牌被误提交到版本库、群聊，或被意外打印到日志中。
+* 你怀疑某个节点已被入侵。
+* 你希望确保不再有新节点加入该 swarm。
 
-Additionally, it is a best practice to implement a regular rotation schedule for
-any secret including swarm join tokens. We recommend that you rotate your tokens
-at least every 6 months.
+此外，最佳实践是为所有“秘密”（包括 swarm 加入令牌）制定定期轮换计划。建议至少每 6 个月轮换一次。
 
-Run `swarm join-token --rotate` to invalidate the old token and generate a new
-token. Specify whether you want to rotate the token for `worker` or `manager`
-nodes:
+运行 `docker swarm join-token --rotate` 以作废旧令牌并生成新令牌。使用该命令时，需要指定对 `worker` 还是 `manager` 节点进行轮换：
 
 ```console
 $ docker swarm join-token  --rotate worker
@@ -211,8 +161,8 @@ To add a worker to this swarm, run the following command:
     192.168.99.100:2377
 ```
 
-## Learn more
+## 了解更多
 
-* [Join nodes to a swarm](join-nodes.md)
-* `swarm init` [command line reference](/reference/cli/docker/swarm/init.md)
-* [Swarm mode tutorial](swarm-tutorial/_index.md)
+* [向 swarm 加入节点](join-nodes.md)
+* `swarm init` 的[命令行参考](/reference/cli/docker/swarm/init.md)
+* [Swarm 模式教程](swarm-tutorial/_index.md)

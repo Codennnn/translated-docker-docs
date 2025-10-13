@@ -1,86 +1,57 @@
 ---
-description: Use swarm mode overlay networking features
+description: 在 Swarm 模式下使用 Overlay 网络功能
 keywords: swarm, networking, ingress, overlay, service discovery
-title: Manage swarm service networks
+title: 管理 Swarm 服务网络
 toc_max: 3
 ---
 
-This page describes networking for swarm services.
+本文介绍 Swarm 服务的网络相关内容。
 
-## Swarm and types of traffic
+## Swarm 与流量类型
 
-A Docker swarm generates two different kinds of traffic:
+Docker Swarm 涉及两类不同的网络流量：
 
-- Control and management plane traffic: This includes swarm management
-  messages, such as requests to join or leave the swarm. This traffic is
-  always encrypted.
+- 控制与管理平面流量：包括 Swarm 的管理消息，例如加入/退出集群的请求等。该类流量始终加密。
 
-- Application data plane traffic: This includes container traffic and
-  traffic to and from external clients.
+- 应用数据平面流量：包括容器之间的通信，以及与外部客户端之间的流量。
 
-## Key network concepts
+## 关键网络概念
 
-The following three network concepts are important to swarm services:
+以下三个网络概念对 Swarm 服务尤为重要：
 
-- Overlay networks manage communications among the Docker daemons
-  participating in the swarm. You can create overlay networks, in the same way
-  as user-defined networks for standalone containers. You can attach a service
-  to one or more existing overlay networks as well, to enable service-to-service
-  communication. Overlay networks are Docker networks that use the `overlay`
-  network driver.
+- Overlay 网络用于管理参与 Swarm 的各个 Docker 守护进程之间的通信。你可以像为独立容器创建自定义网络一样创建 overlay 网络。你也可以将某个服务连接到一个或多个现有 overlay 网络，从而实现服务间通信。Overlay 网络本质上是使用 `overlay` 网络驱动的 Docker 网络。
 
-- The ingress network is a special overlay network that facilitates
-  load balancing among a service's nodes. When any swarm node receives a
-  request on a published port, it hands that request off to a module called
-  `IPVS`. `IPVS` keeps track of all the IP addresses participating in that
-  service, selects one of them, and routes the request to it, over the
-  `ingress` network.
+- `ingress` 网络是一个特殊的 overlay 网络，用于在某个服务的多个节点间进行负载均衡。当任一 Swarm 节点在已发布端口上收到请求时，会将该请求交给名为 `IPVS` 的模块处理。`IPVS` 维护该服务内所有参与容器的 IP 列表，选择其中一个目标，并通过 `ingress` 网络将请求路由过去。
 
-  The `ingress` network is created automatically when you initialize or join a
-  swarm. Most users do not need to customize its configuration, but Docker allows
-  you to do so.
+  在初始化或加入 Swarm 时，`ingress` 网络会自动创建。大多数场景无需自定义其配置，但 Docker 也允许你进行自定义。
 
-- The docker_gwbridge is a bridge network that connects the overlay
-  networks (including the `ingress` network) to an individual Docker daemon's
-  physical network. By default, each container a service is running is connected
-  to its local Docker daemon host's `docker_gwbridge` network.
+- `docker_gwbridge` 是一个桥接网络，用于将 overlay 网络（包括 `ingress`）连接到单个 Docker 守护进程所在主机的物理网络。默认情况下，服务运行的每个容器都会连接到其所在宿主机的 `docker_gwbridge` 网络。
 
-  The `docker_gwbridge` network is created automatically when you initialize or
-  join a swarm. Most users do not need to customize its configuration, but
-  Docker allows you to do so.
+  当你初始化或加入 Swarm 时，`docker_gwbridge` 会自动创建。通常也无需自定义其配置，但 Docker 提供了可选的自定义能力。
 
 > [!TIP]
 >
-> See also [Networking overview](/manuals/engine/network/_index.md) for more details about Swarm networking in general.
+> 想要了解更多 Swarm 网络整体信息，请参阅《[网络概览](/manuals/engine/network/_index.md)》。
 
-## Firewall considerations
+## 防火墙注意事项
 
-Docker daemons participating in a swarm need the ability to communicate with
-each other over the following ports:
+参与 Swarm 的各个 Docker 守护进程需要能够通过以下端口相互通信：
 
-* Port `7946` TCP/UDP for container network discovery.
-* Port `4789` UDP (configurable) for the overlay network (including ingress) data path.
+* 端口 `7946` TCP/UDP：用于容器网络发现。
+* 端口 `4789` UDP（可配置）：用于 overlay 网络（包括 ingress）的数据路径。
 
-When setting up networking in a Swarm, special care should be taken. Consult
-the [tutorial](swarm-tutorial/_index.md#open-protocols-and-ports-between-the-hosts)
-for an overview.
+在搭建 Swarm 网络时，需要特别注意上述端口设置。可以参考《[教程](swarm-tutorial/_index.md#open-protocols-and-ports-between-the-hosts)》了解概要说明。
 
-## Overlay networking
+## Overlay 网络
 
-When you initialize a swarm or join a Docker host to an existing swarm, two
-new networks are created on that Docker host:
+当你初始化 Swarm 或将某台 Docker 主机加入已有的 Swarm 时，该主机会自动创建两个网络：
 
-- An overlay network called `ingress`, which handles the control and data traffic
-  related to swarm services. When you create a swarm service and do not
-  connect it to a user-defined overlay network, it connects to the `ingress`
-  network by default.
-- A bridge network called `docker_gwbridge`, which connects the individual
-  Docker daemon to the other daemons participating in the swarm.
+- 一个名为 `ingress` 的 overlay 网络，用于处理与 Swarm 服务相关的控制与数据流量。当你创建某个 Swarm 服务且未显式连接到自定义 overlay 网络时，它会默认连接到 `ingress`。
+- 一个名为 `docker_gwbridge` 的桥接网络，用于将该 Docker 守护进程与 Swarm 中其他守护进程连接起来。
 
-### Create an overlay network
+### 创建 overlay 网络
 
-To create an overlay network, specify the `overlay` driver when using the
-`docker network create` command:
+要创建 overlay 网络，请在 `docker network create` 中指定 `overlay` 驱动：
 
 ```console
 $ docker network create \
@@ -88,12 +59,9 @@ $ docker network create \
   my-network
 ```
 
-The above command doesn't specify any custom options, so Docker assigns a
-subnet and uses default options. You can see information about the network using
-`docker network inspect`.
+上述命令未指定任何自定义选项，因此 Docker 会自动分配子网并使用默认配置。可通过 `docker network inspect` 查看网络详情。
 
-When no containers are connected to the overlay network, its configuration is
-not very exciting:
+当 overlay 网络上尚无容器连接时，网络配置看起来较为“空”：
 
 ```console
 $ docker network inspect my-network
@@ -122,15 +90,9 @@ $ docker network inspect my-network
 ]
 ```
 
-In the above output, notice that the driver is `overlay` and that the scope is
-`swarm`, rather than `local`, `host`, or `global` scopes you might see in
-other types of Docker networks. This scope indicates that only hosts which are
-participating in the swarm can access this network.
+在以上输出中，可以看到网络驱动为 `overlay`，作用域为 `swarm`（而非 `local`、`host` 或 `global`）。这表示仅参与该 Swarm 的主机才能访问此网络。
 
-The network's subnet and gateway are dynamically configured when a service
-connects to the network for the first time. The following example shows
-the same network as above, but with three containers of a `redis` service
-connected to it.
+当第一个服务连接到该网络时，网络的子网与网关会被动态配置。下面示例展示了同一个网络在连接了 `redis` 服务的三个容器之后的情况：
 
 ```console
 $ docker network inspect my-network
@@ -192,19 +154,13 @@ $ docker network inspect my-network
 ]
 ```
 
-### Customize an overlay network
+### 自定义 overlay 网络
 
-There may be situations where you don't want to use the default configuration
-for an overlay network. For a full list of configurable options, run the
-command `docker network create --help`. The following are some of the most
-common options to change.
+在某些场景中，你可能不希望使用 overlay 网络的默认配置。可运行 `docker network create --help` 查看全部可配置项。以下列出一些常见的自定义选项。
 
-#### Configure the subnet and gateway
+#### 配置子网与网关
 
-By default, the network's subnet and gateway are configured automatically when
-the first service is connected to the network. You can configure these when
-creating a network using the `--subnet` and `--gateway` flags. The following
-example extends the previous one by configuring the subnet and gateway.
+默认情况下，当第一个服务连接到网络时，网络的子网与网关会自动配置。你也可以在创建网络时使用 `--subnet` 与 `--gateway` 明确指定。如下示例在前文基础上补充了子网与网关配置：
 
 ```console
 $ docker network create \
@@ -214,57 +170,46 @@ $ docker network create \
   my-network
 ```
 
-##### Using custom default address pools
+##### 使用自定义默认地址池
 
-To customize subnet allocation for your Swarm networks, you can [optionally configure them](swarm-mode.md) during `swarm init`.
+要自定义 Swarm 网络的子网分配，可在执行 `swarm init` 时进行[可选配置](swarm-mode.md)。
 
-For example, the following command is used when initializing Swarm:
+例如，初始化 Swarm 时可执行：
 
 ```console
 $ docker swarm init --default-addr-pool 10.20.0.0/16 --default-addr-pool-mask-length 26
 ```
 
-Whenever a user creates a network, but does not use the `--subnet` command line option, the subnet for this network will be allocated sequentially from the next available subnet from the pool. If the specified network is already allocated, that network will not be used for Swarm. 
+之后，当用户创建网络且未使用 `--subnet` 指定子网时，系统会从地址池中按顺序分配下一个可用子网；若该子网已被占用，则不会用于 Swarm。
 
-Multiple pools can be configured if discontiguous address space is required. However, allocation from specific pools is not supported. Network subnets will be allocated sequentially from the IP pool space and subnets will be reused as they are deallocated from networks that are deleted.
+如需非连续的地址空间，可配置多个地址池。但暂不支持从特定地址池定向分配。子网会按顺序从 IP 地址池中分配，并在网络被删除后回收再用。
 
-The default mask length can be configured and is the same for all networks. It is set to `/24` by default. To change the default subnet mask length, use the `--default-addr-pool-mask-length` command line option.
-
-> [!NOTE]
->
-> Default address pools can only be configured on `swarm init` and cannot be altered after cluster creation.
-
-##### Overlay network size limitations
-
-Docker recommends creating overlay networks with `/24` blocks. The `/24` overlay network blocks limit the network to 256 IP addresses. 
-
-This recommendation addresses [limitations with swarm mode](https://github.com/moby/moby/issues/30820). 
-If you need more than 256 IP addresses, do not increase the IP block size. You can either use `dnsrr` 
-endpoint mode with an external load balancer, or use multiple smaller overlay networks. See 
-[Configure service discovery](#configure-service-discovery) for more information about different endpoint modes.
-
-#### Configure encryption of application data {#encryption}
-
-Management and control plane data related to a swarm is always encrypted.
-For more details about the encryption mechanisms, see the
-[Docker swarm mode overlay network security model](/manuals/engine/network/drivers/overlay.md).
-
-Application data among swarm nodes is not encrypted by default. To encrypt this
-traffic on a given overlay network, use the `--opt encrypted` flag on `docker
-network create`. This enables IPSEC encryption at the level of the vxlan. This
-encryption imposes a non-negligible performance penalty, so you should test this
-option before using it in production.
+默认子网掩码长度可配置，且对所有网络一致。默认值为 `/24`；可通过 `--default-addr-pool-mask-length` 修改。
 
 > [!NOTE]
 >
-> You must [customize the automatically created ingress](#customize-ingress)
-> to enable encryption. By default, all ingress traffic is unencrypted, as encryption
-> is a network-level option.
+> 默认地址池只能在 `swarm init` 时配置，集群创建后无法修改。
 
-## Attach a service to an overlay network
+##### Overlay 网络规模限制
 
-To attach a service to an existing overlay network, pass the `--network` flag to
-`docker service create`, or the `--network-add` flag to `docker service update`.
+Docker 建议将 overlay 网络创建为 `/24` 网段。`/24` 网段最多提供 256 个 IP 地址。
+
+该建议是基于 Swarm 模式的[已知限制](https://github.com/moby/moby/issues/30820)。
+如果你需要超过 256 个 IP 地址，不要扩大网段大小。可以考虑使用带外部负载均衡器的 `dnsrr` 端点模式，或拆分为多个较小的 overlay 网络。参见「[配置服务发现](#configure-service-discovery)」了解不同端点模式。
+
+#### 配置应用数据加密 {#encryption}
+
+与 Swarm 相关的管理与控制平面数据始终会被加密。关于加密机制的细节，请参阅《[Swarm 模式 Overlay 网络安全模型](/manuals/engine/network/drivers/overlay.md)》。
+
+Swarm 节点之间的应用数据默认不加密。若要对某个 overlay 网络上的此类流量进行加密，可在 `docker network create` 时添加 `--opt encrypted`。这会在 VXLAN 层启用 IPsec 加密。请注意，加密会带来一定性能开销，建议在生产前充分评估。
+
+> [!NOTE]
+>
+> 若希望对 `ingress` 网络启用加密，你需要先[自定义自动创建的 ingress](#customize-ingress)。默认情况下，`ingress` 上的流量不加密，因为加密属于网络级别的可选项。
+
+## 将服务连接到 overlay 网络
+
+要将服务连接到现有 overlay 网络，可在 `docker service create` 中添加 `--network`，或在 `docker service update` 中使用 `--network-add`。
 
 ```console
 $ docker service create \
@@ -274,85 +219,45 @@ $ docker service create \
   nginx
 ```
 
-Service containers connected to an overlay network can communicate with
-each other across it.
+连接到同一 overlay 网络的服务容器可以彼此通信。
 
-To see which networks a service is connected to, use `docker service ls` to find
-the name of the service, then `docker service ps <service-name>` to list the
-networks. Alternately, to see which services' containers are connected to a
-network, use `docker network inspect <network-name>`. You can run these commands
-from any swarm node which is joined to the swarm and is in a `running` state.
+要查看某个服务连接了哪些网络，可以先用 `docker service ls` 找到服务名，再用 `docker service ps <service-name>` 列出网络。反过来，若要查看某个网络连接了哪些服务容器，可使用 `docker network inspect <network-name>`。这些命令可在任意已加入且处于 `running` 状态的 Swarm 节点上执行。
 
-### Configure service discovery
+### 配置服务发现
 
-Service discovery is the mechanism Docker uses to route a request from your
-service's external clients to an individual swarm node, without the client
-needing to know how many nodes are participating in the service or their
-IP addresses or ports. You don't need to publish ports which are used between
-services on the same network. For instance, if you have a
-[WordPress service that stores its data in a MySQL service](https://training.play-with-docker.com/swarm-service-discovery/),
-and they are connected to the same overlay network, you do not need to publish
-the MySQL port to the client, only the WordPress HTTP port.
+服务发现是 Docker 用来把外部客户端的请求路由到某个具体 Swarm 节点的机制，客户端无需关心服务后端参与的节点数量、IP 地址或端口。同一网络内的服务间通信无需对外发布端口。例如，若你有一个[将数据存储在 MySQL 服务中的 WordPress 服务](https://training.play-with-docker.com/swarm-service-discovery/)，且它们连接到同一 overlay 网络，则无需向客户端发布 MySQL 端口，只需发布 WordPress 的 HTTP 端口。
 
-Service discovery can work in two different ways: internal connection-based
-load-balancing at Layers 3 and 4 using the embedded DNS and a virtual IP (VIP),
-or external and customized request-based load-balancing at Layer 7 using DNS
-round robin (DNSRR). You can configure this per service.
+服务发现可以有两种方式：
+— 基于内置 DNS 与虚拟 IP（VIP）的三/四层连接级负载均衡；
+— 基于 DNS 轮询（DNSRR）的七层请求级负载均衡（通常配合外部负载均衡器）。
+你可以按服务粒度进行配置。
 
-- By default, when you attach a service to a network and that service publishes
-  one or more ports, Docker assigns the service a virtual IP (VIP), which is the
-  "front end" for clients to reach the service. Docker keeps a list of all
-  worker nodes in the service, and routes requests between the client and one of
-  the nodes. Each request from the client might be routed to a different node.
+- 默认情况下，当你将服务连接到网络且发布了一个或多个端口，Docker 会为该服务分配一个虚拟 IP（VIP），作为客户端访问该服务的“前端”。Docker 维护该服务的所有工作节点列表，并在客户端与其中某个节点之间进行请求转发。来自客户端的每个请求可能被路由到不同的节点。
 
-- If you configure a service to use DNS round-robin (DNSRR) service discovery,
-  there is not a single virtual IP. Instead, Docker sets up DNS entries for the
-  service such that a DNS query for the service name returns a list of IP
-  addresses, and the client connects directly to one of these.
+- 如果将服务配置为使用 DNS 轮询（DNSRR）进行服务发现，则不会存在唯一的虚拟 IP。Docker 会为服务创建 DNS 记录，使对服务名的查询返回一组 IP，客户端会直接连到其中之一。
 
-  DNS round-robin is useful in cases where you want to use your own load
-  balancer, such as HAProxy. To configure a service to use DNSRR, use the flag
-  `--endpoint-mode dnsrr` when creating a new service or updating an existing
-  one.
+  当你打算使用自有负载均衡器（如 HAProxy）时，DNS 轮询非常有用。要启用 DNSRR，可在创建或更新服务时添加 `--endpoint-mode dnsrr`。
 
-## Customize the ingress network {#customize-ingress}
+## 自定义 ingress 网络 {#customize-ingress}
 
-Most users never need to configure the `ingress` network, but Docker allows you
-to do so. This can be useful if the automatically-chosen subnet
-conflicts with one that already exists on your network, or you need to customize
-other low-level network settings such as the MTU, or if you want to
-[enable encryption](#encryption).
+多数用户无需配置 `ingress` 网络，但 Docker 允许这样做。当自动选择的子网与你现有网络冲突、或你需要自定义 MTU 等底层网络设置，或你想要[启用加密](#encryption)时，这会很有用。
 
-Customizing the `ingress` network involves removing and recreating it. This is
-usually done before you create any services in the swarm. If you have existing
-services which publish ports, those services need to be removed before you can
-remove the `ingress` network.
+自定义 `ingress` 网络需要先删除再重建。通常应在创建任何服务之前进行此操作。若已有对外发布端口的服务，必须先删除这些服务后才能移除 `ingress` 网络。
 
-During the time that no `ingress` network exists, existing services which do not
-publish ports continue to function but are not load-balanced. This affects
-services which publish ports, such as a WordPress service which publishes port
-80.
+在 `ingress` 网络不存在的期间，未发布端口的现有服务可继续运行，但不会进行负载均衡。这会影响那些发布端口的服务，例如对外发布 80 端口的 WordPress 服务。
 
-1.  Inspect the `ingress` network using `docker network inspect ingress`, and
-    remove any services whose containers are connected to it. These are services
-    that publish ports, such as a WordPress service which publishes port 80. If
-    all such services are not stopped, the next step fails.
+1.  使用 `docker network inspect ingress` 检查 `ingress` 网络，并删除所有连接到它的服务容器。通常这些都是发布了端口的服务，如发布 80 端口的 WordPress 服务。若这些服务未完全停止，下一步将失败。
 
-2.  Remove the existing `ingress` network:
+2.  删除现有的 `ingress` 网络：
 
     ```console
     $ docker network rm ingress
 
-    WARNING! Before removing the routing-mesh network, make sure all the nodes
-    in your swarm run the same docker engine version. Otherwise, removal may not
-    be effective and functionality of newly created ingress networks will be
-    impaired.
+    WARNING! 在移除 routing-mesh 网络之前，请确保集群中所有节点运行相同版本的 Docker Engine。否则，移除可能不会生效，并影响新创建的 ingress 网络功能。
     Are you sure you want to continue? [y/N]
     ```
 
-3.  Create a new overlay network using the `--ingress` flag, along  with the
-    custom options you want to set. This example sets the MTU to 1200, sets
-    the subnet to `10.11.0.0/16`, and sets the gateway to `10.11.0.2`.
+3.  使用 `--ingress` 标志创建新的 overlay 网络，并按需设置自定义选项。以下示例将 MTU 设为 1200，子网设为 `10.11.0.0/16`，网关设为 `10.11.0.2`：
 
     ```console
     $ docker network create \
@@ -366,36 +271,23 @@ services which publish ports, such as a WordPress service which publishes port
 
     > [!NOTE]
     >
-    > You can name your `ingress` network something other than
-    > `ingress`, but you can only have one. An attempt to create a second one
-    > fails.
+    > 你可以把 `ingress` 网络命名为其他名称，但集群中同时只能有一个。尝试创建第二个将失败。
 
-4.  Restart the services that you stopped in the first step.
+4.  重启第一步中停止的那些服务。
 
-## Customize the docker_gwbridge
+## 自定义 docker_gwbridge
 
-The `docker_gwbridge` is a virtual bridge that connects the overlay networks
-(including the `ingress` network) to an individual Docker daemon's physical
-network. Docker creates it automatically when you initialize a swarm or join a
-Docker host to a swarm, but it is not a Docker device. It exists in the kernel
-of the Docker host. If you need to customize its settings, you must do so before
-joining the Docker host to the swarm, or after temporarily removing the host
-from the swarm.
+`docker_gwbridge` 是一个虚拟网桥，用于将 overlay 网络（包括 `ingress`）连接到单个 Docker 守护进程的物理网络。当你初始化或将宿主机加入 Swarm 时，它会被自动创建。它并非 Docker 设备，而是存在于宿主机内核中的网桥。若需自定义其配置，必须在主机加入 Swarm 之前，或将主机临时移出 Swarm 之后进行。
 
-You need to have the `brctl` application installed on your operating system in
-order to delete an existing bridge. The package name is `bridge-utils`.
+删除已有网桥需要操作系统安装 `brctl` 工具（软件包名为 `bridge-utils`）。
 
-1.  Stop Docker.
+1.  停止 Docker。
 
-2.  Use the `brctl show docker_gwbridge` command to check whether a bridge
-    device exists called `docker_gwbridge`. If so, remove it using
-    `brctl delbr docker_gwbridge`.
+2.  使用 `brctl show docker_gwbridge` 检查是否存在名为 `docker_gwbridge` 的网桥；若存在，使用 `brctl delbr docker_gwbridge` 将其删除。
 
-3.  Start Docker. Do not join or initialize the swarm.
+3.  启动 Docker，但先不要加入或初始化 Swarm。
 
-4.  Create or re-create the `docker_gwbridge` bridge with your custom settings.
-    This example uses the subnet `10.11.0.0/16`. For a full list of customizable
-    options, see [Bridge driver options](/reference/cli/docker/network/create.md#bridge-driver-options).
+4.  使用你的自定义设置创建或重建 `docker_gwbridge` 网桥。以下示例使用子网 `10.11.0.0/16`。更多可自定义选项参见《[Bridge 驱动选项](/reference/cli/docker/network/create.md#bridge-driver-options)》。
 
     ```console
     $ docker network create \
@@ -406,34 +298,21 @@ order to delete an existing bridge. The package name is `bridge-utils`.
     docker_gwbridge
     ```
 
-5.  Initialize or join the swarm.
+5.  初始化或加入 Swarm。
 
-## Use a separate interface for control and data traffic
+## 为控制与数据流量使用独立网卡
 
-By default, all swarm traffic is sent over the same interface, including control
-and management traffic for maintaining the swarm itself and data traffic to and
-from the service containers.
+默认情况下，所有 Swarm 流量都通过同一网卡发送，包括用于维持集群的控制/管理流量，以及服务容器的进出数据流量。
 
-You can separate this traffic by passing
-the `--data-path-addr` flag when initializing or joining the swarm. If there are
-multiple interfaces, `--advertise-addr` must be specified explicitly, and
-`--data-path-addr` defaults to `--advertise-addr` if not specified. Traffic about
-joining, leaving, and managing the swarm is sent over the
-`--advertise-addr` interface, and traffic among a service's containers is sent 
-over the `--data-path-addr` interface. These flags can take an IP address or
-a network device name, such as `eth0`.
+你可以在初始化或加入 Swarm 时通过 `--data-path-addr` 来实现控制/数据流量分离。若存在多块网卡，需要显式指定 `--advertise-addr`；若未指定，`--data-path-addr` 将默认与 `--advertise-addr` 相同。关于加入、退出与管理 Swarm 的流量会走 `--advertise-addr` 指定的接口，服务容器之间的流量会走 `--data-path-addr` 指定的接口。这两个参数都可以是 IP 地址或网卡名（如 `eth0`）。
 
-This example initializes a swarm with a separate `--data-path-addr`. It assumes
-that your Docker host has two different network interfaces: 10.0.0.1 should be
-used for control and management traffic and 192.168.0.1 should be used for
-traffic relating to services.
+下面示例展示在初始化 Swarm 时设置独立的 `--data-path-addr`。假定你的宿主机有两块网卡：10.0.0.1 用于控制/管理流量，192.168.0.1 用于服务相关流量。
 
 ```console
 $ docker swarm init --advertise-addr 10.0.0.1 --data-path-addr 192.168.0.1
 ```
 
-This example joins the swarm managed by host `192.168.99.100:2377` and sets the
-`--advertise-addr` flag to `eth0` and the `--data-path-addr` flag to `eth1`.
+下面示例演示加入由 `192.168.99.100:2377` 管理的 Swarm，同时将 `--advertise-addr` 设为 `eth0`，`--data-path-addr` 设为 `eth1`：
 
 ```console
 $ docker swarm join \
@@ -443,40 +322,35 @@ $ docker swarm join \
   192.168.99.100:2377
 ```
 
-## Publish ports on an overlay network
+## 在 overlay 网络上发布端口
 
-Swarm services connected to the same overlay network effectively expose all
-ports to each other. For a port to be accessible outside of the service, that
-port must be _published_ using the `-p` or `--publish` flag on `docker service
-create` or `docker service update`. Both the legacy colon-separated syntax and
-the newer comma-separated value syntax are supported. The longer syntax is
-preferred because it is somewhat self-documenting.
+连接到同一 overlay 网络的 Swarm 服务彼此之间等价于端口全通。若某个端口需要对集群外部可达，必须在 `docker service create` 或 `docker service update` 中使用 `-p` 或 `--publish` 进行“发布”。支持旧的冒号分隔语法与新的逗号分隔语法。推荐使用较长的新语法，因为表达更加自描述。
 
 <table>
 <thead>
 <tr>
-<th>Flag value</th>
-<th>Description</th>
+<th>参数值</th>
+<th>说明</th>
 </tr>
 </thead>
 <tr>
-<td><tt>-p 8080:80</tt> or<br /><tt>-p published=8080,target=80</tt></td>
-<td>Map TCP port 80 on the service to port 8080 on the routing mesh.</td>
+<td><tt>-p 8080:80</tt> 或<br /><tt>-p published=8080,target=80</tt></td>
+<td>将服务的 TCP 80 端口映射到路由网格的 8080 端口。</td>
 </tr>
 <tr>
-<td><tt>-p 8080:80/udp</tt> or<br /><tt>-p published=8080,target=80,protocol=udp</tt></td>
-<td>Map UDP port 80 on the service to port 8080 on the routing mesh.</td>
+<td><tt>-p 8080:80/udp</tt> 或<br /><tt>-p published=8080,target=80,protocol=udp</tt></td>
+<td>将服务的 UDP 80 端口映射到路由网格的 8080 端口。</td>
 </tr>
 <tr>
-<td><tt>-p 8080:80/tcp -p 8080:80/udp</tt> or <br /><tt>-p published=8080,target=80,protocol=tcp -p published=8080,target=80,protocol=udp</tt></td>
-<td>Map TCP port 80 on the service to TCP port 8080 on the routing mesh, and map UDP port 80 on the service to UDP port 8080 on the routing mesh.</td>
+<td><tt>-p 8080:80/tcp -p 8080:80/udp</tt> 或 <br /><tt>-p published=8080,target=80,protocol=tcp -p published=8080,target=80,protocol=udp</tt></td>
+<td>将服务的 TCP 80 端口映射到路由网格的 TCP 8080 端口，同时将服务的 UDP 80 端口映射到路由网格的 UDP 8080 端口。</td>
 </tr>
 </table>
 
-## Learn more
+## 延伸阅读
 
-* [Deploy services to a swarm](services.md)
-* [Swarm administration guide](admin_guide.md)
-* [Swarm mode tutorial](swarm-tutorial/_index.md)
-* [Networking overview](/manuals/engine/network/_index.md)
-* [Docker CLI reference](/reference/cli/docker/)
+* [将服务部署到 Swarm](services.md)
+* [Swarm 管理指南](admin_guide.md)
+* [Swarm 模式入门教程](swarm-tutorial/_index.md)
+* [网络概览](/manuals/engine/network/_index.md)
+* [Docker CLI 参考](/reference/cli/docker/)

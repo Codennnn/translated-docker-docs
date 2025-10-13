@@ -1,27 +1,22 @@
 ---
-description: Scale the service running in the swarm
+description: 扩缩在 swarm 中运行的服务
 keywords: tutorial, cluster management, swarm mode, scale, get started
-title: Scale the service in the swarm
+title: 在 swarm 中扩缩服务
 weight: 50
 notoc: true
 ---
 
-Once you have [deployed a service](deploy-service.md) to a swarm, you are ready
-to use the Docker CLI to scale the number of containers in
-the service. Containers running in a service are called tasks.
+当你已将[服务部署](deploy-service.md)到 swarm 后，就可以使用 Docker CLI 调整该服务中的容器数量。服务中的运行单元称为任务（task）。
 
-1.  If you haven't already, open a terminal and ssh into the machine where you
-    run your manager node. For example, the tutorial uses a machine named
-    `manager1`.
+1.  如果尚未操作，请打开终端并通过 ssh 登录到运行管理节点的那台机器。例如，本教程使用名为 `manager1` 的机器。
 
-2.  Run the following command to change the desired state of the
-    service running in the swarm:
+2.  运行以下命令以更改该服务在 swarm 中的期望状态：
 
     ```console
     $ docker service scale <SERVICE-ID>=<NUMBER-OF-TASKS>
     ```
 
-    For example:
+    例如：
 
     ```console
     $ docker service scale helloworld=5
@@ -29,7 +24,7 @@ the service. Containers running in a service are called tasks.
     helloworld scaled to 5
     ```
 
-3.  Run `docker service ps <SERVICE-ID>` to see the updated task list:
+3.  执行 `docker service ps <SERVICE-ID>` 查看更新后的任务列表：
 
     ```console
     $ docker service ps helloworld
@@ -42,12 +37,9 @@ the service. Containers running in a service are called tasks.
     helloworld.5.ba19kca06l18zujfwxyc5lkyn  alpine  worker2   Running        Running 24 seconds
     ```
 
-    You can see that swarm has created 4 new tasks to scale to a total of 5
-    running instances of Alpine Linux. The tasks are distributed between the
-    three nodes of the swarm. One is running on `manager1`.
+    可以看到，swarm 新创建了 4 个任务，使总运行实例数达到 5 个（Alpine Linux）。这些任务分布在集群的 3 个节点上，其中一个运行在 `manager1`。
 
-4.  Run `docker ps` to see the containers running on the node where you're
-    connected. The following example shows the tasks running on `manager1`:
+4.  运行 `docker ps` 查看当前所连节点上运行的容器。下面示例展示了运行在 `manager1` 上的任务：
 
     ```console
     $ docker ps
@@ -56,11 +48,10 @@ the service. Containers running in a service are called tasks.
     528d68040f95        alpine:latest       "ping docker.com"   About a minute ago   Up About a minute                       helloworld.4.auky6trawmdlcne8ad8phb0f1
     ```
 
-    If you want to see the containers running on other nodes, ssh into
-    those nodes and run the `docker ps` command.
+    如需查看其他节点上的容器，请 ssh 到对应节点后执行 `docker ps`。
 
-## Next steps
+## 下一步
 
-At this point in the tutorial, you're finished with the `helloworld` service. Next, you'll delete the service
+至此，本教程中的 `helloworld` 服务已完成演示。接下来，你将删除该服务。
 
-{{< button text="Delete the service" url="delete-service.md" >}}
+{{< button text="删除该服务" url="delete-service.md" >}}

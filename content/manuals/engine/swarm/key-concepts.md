@@ -1,111 +1,56 @@
 ---
-description: Introducing key concepts for Docker Engine swarm mode
-keywords: docker, container, cluster, swarm mode, docker engine
-title: Swarm mode key concepts
+description: 介绍 Docker Engine Swarm 模式的关键概念
+keywords: docker, 容器, 集群, swarm 模式, docker engine
+title: Swarm 模式关键概念
 ---
 
-This topic introduces some of the concepts unique to the cluster management and
-orchestration features of Docker Engine 1.12.
+本文介绍 Docker Engine 的集群管理与编排功能中的一些独有概念。
 
-## What is a swarm?
+## 什么是 swarm？
 
-The cluster management and orchestration features embedded in Docker Engine
-are built using [swarmkit](https://github.com/docker/swarmkit/). Swarmkit is a
-separate project which implements Docker's orchestration layer and is used
-directly within Docker.
+Docker Engine 内置的集群管理与编排功能基于 [swarmkit](https://github.com/docker/swarmkit/) 构建。swarmkit 是一个独立项目，实现了 Docker 的编排层，并被 Docker 直接使用。
 
-A swarm consists of multiple Docker hosts which run in Swarm mode and act as
-managers, to manage membership and delegation, and workers, which run
-[swarm services](#services-and-tasks). A given Docker host can
-be a manager, a worker, or perform both roles. When you create a service, you
-define its optimal state - number of replicas, network and storage resources
-available to it, ports the service exposes to the outside world, and more.
-Docker works to maintain that desired state. For instance, if a worker node
-becomes unavailable, Docker schedules that node's tasks on other nodes. A task
-is a running container which is part of a swarm service and is managed by a
-swarm manager, as opposed to a standalone container.
+一个 swarm 由多个以 Swarm 模式运行的 Docker 主机组成：其中管理成员关系与任务分派的称为管理节点（manager），实际运行[swarm 服务](#services-and-tasks)的称为工作节点（worker）。同一台 Docker 主机既可以充当管理节点，也可以充当工作节点，或同时承担两种角色。当你创建服务时，需要定义其期望状态（desired state），例如副本数量、可用的网络与存储资源、对外暴露的端口等。Docker 会努力维持该期望状态。例如，当某个工作节点不可用时，Docker 会在其他节点上调度该节点的任务。任务（task）是 swarm 服务中的一个运行中容器，由管理节点管理；这与独立容器不同。
 
-One of the key advantages of swarm services over standalone containers is that
-you can modify a service's configuration, including the networks and volumes it
-is connected to, without the need to manually restart the service. Docker will
-update the configuration, stop the service tasks with out of date
-configuration, and create new ones matching the desired configuration.
+相较于独立容器，swarm 服务的一个关键优势是：你可以在无需手动重启服务的情况下修改其配置（包括所连接的网络与卷）。Docker 会更新配置，停止配置过期的服务任务，并创建符合期望配置的新任务。
 
-When Docker is running in Swarm mode, you can still run standalone containers
-on any of the Docker hosts participating in the swarm, as well as swarm
-services. A key difference between standalone containers and swarm services is
-that only swarm managers can manage a swarm, while standalone containers can be
-started on any daemon. Docker daemons can participate in a swarm as managers,
-workers, or both.
+当 Docker 以 Swarm 模式运行时，你仍然可以在参与该 swarm 的任意 Docker 主机上运行独立容器与 swarm 服务。独立容器与 swarm 服务的关键区别在于：只有管理节点可以管理一个 swarm，而独立容器可以在任意守护进程上启动。Docker 守护进程可以以管理节点、工作节点或两者兼具的角色参与到 swarm 中。
 
-In the same way that you can use [Docker Compose](/manuals/compose/_index.md) to define and run
-containers, you can define and run [Swarm service](services.md) stacks.
+类似于你可以使用 [Docker Compose](/manuals/compose/_index.md) 定义并运行容器，你也可以定义并运行[Swarm 服务](services.md)栈（stack）。
 
-Keep reading for details about concepts related to Docker swarm services,
-including nodes, services, tasks, and load balancing.
+继续阅读以了解与 Docker swarm 服务相关的更多概念，包括节点、服务、任务与负载均衡。
 
-## Nodes
+## 节点（Nodes）
 
-A node is an instance of the Docker engine participating in the swarm. You can also think of this as a Docker node. You can run one or more nodes on a single physical computer or cloud server, but production swarm deployments typically include Docker nodes distributed across multiple physical and cloud machines.
+节点是参与到 swarm 中的 Docker Engine 实例，也可以理解为 Docker 节点。你可以在同一台物理机器或云服务器上运行一个或多个节点，但生产环境中的 swarm 通常会将 Docker 节点分布在多台物理或云主机上。
 
-To deploy your application to a swarm, you submit a service definition to a
-manager node. The manager node dispatches units of work called
-[tasks](#services-and-tasks) to worker nodes.
+要将应用部署到 swarm，你需要将服务定义提交到某个管理节点。该管理节点会把称为[任务](#services-and-tasks)的工作单元分派给工作节点。
 
-Manager nodes also perform the orchestration and cluster management functions
-required to maintain the desired state of the swarm. Manager nodes select a
-single leader to conduct orchestration tasks.
+管理节点还负责执行维持 swarm 期望状态所需的编排与集群管理任务。管理节点会选举出一个领导者（leader）来执行编排任务。
 
-Worker nodes receive and execute tasks dispatched from manager nodes.
-By default manager nodes also run services as worker nodes, but you can
-configure them to run manager tasks exclusively and be manager-only
-nodes. An agent runs on each worker node and reports on the tasks assigned to
-it. The worker node notifies the manager node of the current state of its
-assigned tasks so that the manager can maintain the desired state of each
-worker.
+工作节点接收并执行管理节点分派的任务。默认情况下，管理节点也会像工作节点一样运行服务；你也可以将其配置为只运行管理职责，成为“仅管理节点”。在每个工作节点上都有一个代理（agent）运行，汇报分配给它的任务状态。工作节点会将其被分配任务的当前状态通知管理节点，以便管理节点维持每个工作节点的期望状态。
 
-## Services and tasks
+## 服务与任务（Services and tasks）
 
-A service is the definition of the tasks to execute on the manager or worker nodes. It
-is the central structure of the swarm system and the primary root of user
-interaction with the swarm.
+服务是要在管理节点或工作节点上执行的一组任务的定义。服务是 swarm 体系的核心结构，也是用户与 swarm 交互的主要入口。
 
-When you create a service, you specify which container image to use and which
-commands to execute inside running containers.
+创建服务时，你需要指定要使用的容器镜像，以及在运行中的容器内要执行的命令。
 
-In the replicated services model, the swarm manager distributes a specific
-number of replica tasks among the nodes based upon the scale you set in the
-desired state.
+在副本型服务（replicated services）模型中，管理节点会根据你在期望状态中设定的规模，将指定数量的任务副本分发到各节点上。
 
-For global services, the swarm runs one task for the service on every
-available node in the cluster.
+对于全局服务（global services），swarm 会在集群中的每个可用节点上运行该服务的一个任务。
 
-A task carries a Docker container and the commands to run inside the
-container. It is the atomic scheduling unit of swarm. Manager nodes assign tasks
-to worker nodes according to the number of replicas set in the service scale.
-Once a task is assigned to a node, it cannot move to another node. It can only
-run on the assigned node or fail.
+任务包含一个 Docker 容器以及在容器内运行的命令。任务是 swarm 的原子级调度单元。管理节点会根据服务规模中设定的副本数量，将任务分配到工作节点。一旦任务被分配到某个节点，就不会迁移到其他节点；它只能在被分配的节点上运行，或失败。
 
-## Load balancing
+## 负载均衡（Load balancing）
 
-The swarm manager uses ingress load balancing to expose the services you
-want to make available externally to the swarm. The swarm manager can
-automatically assign the service a published port or you can configure a
-published port for the service. You can specify any unused port. If you do not
-specify a port, the swarm manager assigns the service a port in the 30000-32767
-range.
+管理节点使用入口（ingress）负载均衡将你希望对外提供的服务暴露出去。管理节点可以自动为服务分配一个已发布端口，也可以由你为服务手动配置一个已发布端口。可指定任意未被占用的端口；如果未指定，管理节点会在 30000-32767 范围内为服务分配端口。
 
-External components, such as cloud load balancers, can access the service on the
-published port of any node in the cluster whether or not the node is currently
-running the task for the service. All nodes in the swarm route ingress
-connections to a running task instance.
+外部组件（如云负载均衡器）可以通过集群中任意节点的已发布端口访问该服务，无论该节点当前是否运行该服务的任务。swarm 中的所有节点都会将到达的入口连接路由到运行中的任务实例。
 
-Swarm mode has an internal DNS component that automatically assigns each service
-in the swarm a DNS entry. The swarm manager uses internal load balancing to
-distribute requests among services within the cluster based upon the DNS name of
-the service.
+Swarm 模式内置了一个 DNS 组件，会自动为 swarm 中的每个服务分配一个 DNS 记录。管理节点使用内部负载均衡，根据服务的 DNS 名称在集群内不同任务实例之间分发请求。
 
-## What's next?
+## 下一步
 
-* Read the [Swarm mode overview](index.md).
-* Get started with the [Swarm mode tutorial](swarm-tutorial/_index.md).
+* 阅读 [Swarm 模式概览](index.md)。
+* 通过[Swarm 模式教程](swarm-tutorial/_index.md)开始上手。

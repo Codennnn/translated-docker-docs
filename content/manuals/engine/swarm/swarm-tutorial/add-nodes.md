@@ -1,20 +1,18 @@
 ---
-description: Add nodes to the swarm
+description: 向 Swarm 添加节点
 keywords: tutorial, cluster management, swarm, get started
-title: Add nodes to the swarm
+title: 向 Swarm 添加节点
 weight: 20
 notoc: true
 ---
 
-Once you've [created a swarm](create-swarm.md) with a manager node, you're ready
-to add worker nodes.
+当你已经通过[创建 swarm](create-swarm.md) 获得了一个包含管理节点的集群后，就可以开始添加工作节点了。
 
-1.  Open a terminal and ssh into the machine where you want to run a worker node.
-    This tutorial uses the name `worker1`.
+1.  打开终端，使用 ssh 登录到你希望运行工作节点的那台机器。
+    本教程将其命名为 `worker1`。
 
-2.  Run the command produced by the `docker swarm init` output from the
-    [Create a swarm](create-swarm.md) tutorial step to create a worker node
-    joined to the existing swarm:
+2.  在该机器上执行 `docker swarm init` 输出中给出的加入命令（来自
+    「[创建 swarm](create-swarm.md)」步骤），将其作为工作节点加入现有的 swarm：
 
     ```console
     $ docker swarm join \
@@ -24,8 +22,7 @@ to add worker nodes.
     This node joined a swarm as a worker.
     ```
 
-    If you don't have the command available, you can run the following command
-    on a manager node to retrieve the join command for a worker:
+    如果你手头没有该加入命令，可以在任一管理节点上运行下面的命令，重新获取用于加入为工作节点的命令：
 
     ```console
     $ docker swarm join-token worker
@@ -37,12 +34,11 @@ to add worker nodes.
         192.168.99.100:2377
     ```
 
-3.  Open a terminal and ssh into the machine where you want to run a second
-    worker node. This tutorial uses the name `worker2`.
+3.  打开终端，使用 ssh 登录到第二台将运行工作节点的机器。
+    本教程将其命名为 `worker2`。
 
-4.  Run the command produced by the `docker swarm init` output from the
-    [Create a swarm](create-swarm.md) tutorial step to create a second worker
-    node joined to the existing swarm:
+4.  在该机器上执行「[创建 swarm](create-swarm.md)」步骤的 `docker swarm init` 输出中给出的加入命令，
+    将其作为第二个工作节点加入现有的 swarm：
 
     ```console
     $ docker swarm join \
@@ -52,8 +48,7 @@ to add worker nodes.
     This node joined a swarm as a worker.
     ```
 
-5.  Open a terminal and ssh into the machine where the manager node runs and
-    run the `docker node ls` command to see the worker nodes:
+5.  在运行管理节点的那台机器上打开终端，执行 `docker node ls` 查看工作节点是否加入：
 
     ```console
     $ docker node ls
@@ -63,14 +58,13 @@ to add worker nodes.
     dxn1zf6l61qsb1josjja83ngz *  manager1  Ready   Active        Leader
     ```
 
-    The `MANAGER` column identifies the manager nodes in the swarm. The empty
-    status in this column for `worker1` and `worker2` identifies them as worker nodes.
+    `MANAGER STATUS` 列用于标识 swarm 中的管理节点。`worker1` 与 `worker2` 在该列为空，说明它们是工作节点。
 
-    Swarm management commands like `docker node ls` only work on manager nodes.
+    `docker node ls` 等 Swarm 管理命令只能在管理节点上运行。
 
 
-## What's next?
+## 下一步
 
-Now your swarm consists of a manager and two worker nodes. Next, you'll deploy a service.
+现在你的 swarm 由 1 个管理节点与 2 个工作节点组成。接下来，你将部署一个服务。
 
-{{< button text="Deploy a service" url="deploy-service.md" >}}
+{{< button text="部署服务" url="deploy-service.md" >}}

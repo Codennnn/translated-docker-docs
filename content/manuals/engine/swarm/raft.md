@@ -1,38 +1,31 @@
 ---
-description: Raft consensus algorithm in swarm mode
+description: Swarm 模式下的 Raft 共识算法
 keywords: docker, container, cluster, swarm, raft
-title: Raft consensus in swarm mode
+title: Swarm 模式中的 Raft 共识
 ---
 
-When Docker Engine runs in Swarm mode, manager nodes implement the
-[Raft Consensus Algorithm](http://thesecretlivesofdata.com/raft/) to manage the global cluster state.
+当 Docker Engine 以 Swarm 模式运行时，管理节点会实现并使用
+[Raft 共识算法](http://thesecretlivesofdata.com/raft/) 来维护全局集群状态。
 
-The reason why Swarm mode is using a consensus algorithm is to make sure that
-all the manager nodes that are in charge of managing and scheduling tasks in the cluster
-are storing the same consistent state.
+Swarm 模式采用共识算法的原因，是为了确保负责集群管理与任务调度的所有管理节点
+始终持有一致的状态副本。
 
-Having the same consistent state across the cluster means that in case of a failure,
-any Manager node can pick up the tasks and restore the services to a stable state.
-For example, if the Leader Manager which is responsible for scheduling tasks in the
-cluster dies unexpectedly, any other Manager can pick up the task of scheduling and
-re-balance tasks to match the desired state.
+当整个集群保持一致状态时，即便发生故障，任意管理节点都能接管工作并将服务恢复到稳定状态。
+例如，如果负责调度的 Leader 管理节点意外宕机，其他任意管理节点都可以接手调度，
+并对任务进行再平衡，以满足期望状态。
 
-Systems using consensus algorithms to replicate logs in a distributed systems
-do require special care. They ensure that the cluster state stays consistent
-in the presence of failures by requiring a majority of nodes to agree on values.
+在分布式系统中，通过共识算法复制日志的架构需要特别关注。此类系统通过要求多数节点就提议达成一致，
+来确保在出现故障时，集群状态仍然保持一致。
 
-Raft tolerates up to `(N-1)/2` failures and requires a majority or quorum of
-`(N/2)+1` members to agree on values proposed to the cluster. This means that in
-a cluster of 5 Managers running Raft, if 3 nodes are unavailable, the system
-cannot process any more requests to schedule additional tasks. The existing
-tasks keep running but the scheduler cannot rebalance tasks to
-cope with failures if the manager set is not healthy.
+Raft 最多可容忍 `(N-1)/2` 个节点故障，并要求多数（法定人数）即 `(N/2)+1` 个成员
+对提交给集群的提议达成一致。这意味着：在一个包含 5 个管理节点并运行 Raft 的集群中，
+如果有 3 个节点不可用，系统将无法继续处理新的调度请求。现有任务虽会继续运行，
+但若管理节点集合不健康，调度器将无法对任务进行再平衡以应对故障。
 
-The implementation of the consensus algorithm in Swarm mode means it features
-the properties inherent to distributed systems:
+Swarm 模式下对共识算法的实现，具备分布式系统应有的特性：
 
-- Agreement on values in a fault tolerant system. (Refer to [FLP impossibility theorem](https://www.the-paper-trail.org/post/2008-08-13-a-brief-tour-of-flp-impossibility/)
- and the [Raft Consensus Algorithm paper](https://www.usenix.org/system/files/conference/atc14/atc14-paper-ongaro.pdf))
-- Mutual exclusion through the leader election process
-- Cluster membership management
-- Globally consistent object sequencing and CAS (compare-and-swap) primitives
+- 在容错系统中对提议达成一致。（参见 [FLP 不可能性定理](https://www.the-paper-trail.org/post/2008-08-13-a-brief-tour-of-flp-impossibility/)
+  与 [Raft 共识算法论文](https://www.usenix.org/system/files/conference/atc14/atc14-paper-ongaro.pdf)）
+- 通过领导者选举实现互斥
+- 集群成员关系管理
+- 全局一致的对象序列与 CAS（Compare-And-Swap，比较并交换）原语

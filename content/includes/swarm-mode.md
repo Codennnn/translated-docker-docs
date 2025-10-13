@@ -1,10 +1,10 @@
 > [!NOTE]
 >
-> Swarm mode is an advanced feature for managing a cluster of Docker daemons.
+> Swarm 模式是用于管理 Docker 守护进程集群的高级功能。
 >
-> Use Swarm mode if you intend to use Swarm as a production runtime environment.
+> 如果你计划将 Swarm 作为生产运行环境，请使用 Swarm 模式。
 > 
-> If you're not planning on deploying with Swarm, use
-> [Docker Compose](/compose/) instead.
-> If you're developing for a Kubernetes deployment, consider using the
-> [integrated Kubernetes feature](/manuals/desktop/features/kubernetes.md) in Docker Desktop.
+> 如果你不打算使用 Swarm 进行部署，建议改用
+> [Docker Compose](/compose/)。
+> 如果你的目标是 Kubernetes 部署，建议使用 Docker Desktop 的
+> [集成 Kubernetes 功能](/manuals/desktop/features/kubernetes.md)。

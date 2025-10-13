@@ -1,8 +1,8 @@
 ---
-title: Security for developers
-linkTitle: Security
-description: Learn about developer-level security features like 2FA and access tokens
-keywords: docker, docker hub, docker desktop, security, developer security, 2FA, access tokens
+title: 面向开发者的安全
+linkTitle: 安全
+description: 了解开发者层面的安全功能，例如双重认证（2FA）与访问令牌
+keywords: docker, docker hub, docker desktop, 安全, 开发者安全, 2FA, 访问令牌
 weight: 40
 params:
   sidebar:
@@ -47,20 +47,16 @@ grid_resources:
   link: /dhi/
 ---
 
-Docker helps you protect your local environments, infrastructure, and networks
-with its developer-level security features.
+Docker 通过面向开发者的安全功能，帮助你保护本地环境、基础设施与网络。
 
-Use tools like two-factor authentication (2FA), personal access tokens, and
-Docker Scout to manage access and detect vulnerabilities early in your workflow.
-You can also integrate secrets securely into your development stack using Docker Compose,
-or enhance your software supply security with Docker Hardened Images.
+你可以使用双重认证（2FA）、个人访问令牌（PAT）与 Docker Scout 等工具，在工作流早期进行访问控制与漏洞发现。你还可以通过 Docker Compose 在开发栈中安全集成机密（secrets），或使用 Docker Hardened Images 提升软件供应链安全性。
 
-Explore the following sections to learn more.
+浏览以下章节了解更多信息。
 
-## For developers
+## 面向开发者
 
 {{< grid items="grid_developers" >}}
 
-## More resources
+## 更多资源
 
 {{< grid items="grid_resources" >}}

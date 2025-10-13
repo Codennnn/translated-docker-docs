@@ -1,32 +1,22 @@
 ---
-description: Drain nodes on the swarm
+description: 将 swarm 中的节点设为 Drain
 keywords: tutorial, cluster management, swarm, service, drain, get started
-title: Drain a node on the swarm
+title: 将 swarm 中的某个节点设为 Drain
 weight: 80
 notoc: true
 ---
 
-In earlier steps of the tutorial, all the nodes have been running with `Active`
-availability. The swarm manager can assign tasks to any `Active` node, so up to
-now all nodes have been available to receive tasks.
+在本教程的前面步骤中，所有节点的可用性均为 `Active`。swarm 管理节点可以把任务分配给任意 `Active` 节点，因此到目前为止所有节点都可接收任务。
 
-Sometimes, such as planned maintenance times, you need to set a node to `Drain`
-availability. `Drain` availability  prevents a node from receiving new tasks
-from the swarm manager. It also means the manager stops tasks running on the
-node and launches replica tasks on a node with `Active` availability.
+在某些场景（例如计划性维护）下，你需要将某个节点的可用性设置为 `Drain`。`Drain` 会阻止管理节点向该节点分配新任务；同时，管理节点会停止该节点上正在运行的任务，并在处于 `Active` 状态的节点上启动等价副本任务。
 
-> [!IMPORTANT]: 
+> [!IMPORTANT]
 >
-> Setting a node to `Drain` does not remove standalone containers from that node,
-> such as those created with `docker run`, `docker compose up`, or the Docker Engine
-> API. A node's status, including `Drain`, only affects the node's ability to schedule
-> swarm service workloads.
+> 将节点设为 `Drain` 不会移除该节点上的独立容器，例如通过 `docker run`、`docker compose up` 或 Docker Engine API 创建的容器。节点状态（包括 `Drain`）仅影响该节点调度 Swarm 服务工作负载的能力。
 
-1.  If you haven't already, open a terminal and ssh into the machine where you
-    run your manager node. For example, the tutorial uses a machine named
-    `manager1`.
+1.  如果尚未操作，请打开终端并通过 ssh 登录到运行管理节点的那台机器。例如，本教程使用名为 `manager1` 的机器。
 
-2.  Verify that all your nodes are actively available.
+2.  验证所有节点当前均为 `Active`：
 
     ```console
     $ docker node ls
@@ -37,8 +27,7 @@ node and launches replica tasks on a node with `Active` availability.
     e216jshn25ckzbvmwlnh5jr3g *  manager1  Ready   Active        Leader
     ```
 
-3.  If you aren't still running the `redis` service from the
-    [rolling update](rolling-update.md) tutorial, start it now:
+3.  如果你没有继续运行来自[滚动更新](rolling-update.md) 教程的 `redis` 服务，请现在启动它：
 
     ```console
     $ docker service create --replicas 3 --name redis --update-delay 10s redis:7.4.0
@@ -46,8 +35,7 @@ node and launches replica tasks on a node with `Active` availability.
     c5uo6kdmzpon37mgj9mwglcfw
     ```
 
-4.  Run `docker service ps redis` to see how the swarm manager assigned the
-tasks to different nodes:
+4.  运行 `docker service ps redis` 查看管理节点如何将任务分配到不同节点：
 
     ```console
     $ docker service ps redis
@@ -58,11 +46,9 @@ tasks to different nodes:
     redis.3.9bg7cezvedmkgg6c8yzvbhwsd  redis:7.4.0  worker2  Running        Running 26 seconds
     ```
 
-    In this case the swarm manager distributed one task to each node. You may
-    see the tasks distributed differently among the nodes in your environment.
+    在此示例中，管理节点将 1 个任务分配到每台节点。不同环境中任务的分配可能有所差异。
 
-5.  Run `docker node update --availability drain <NODE-ID>` to drain a node that
-had a task assigned to it:
+5.  运行 `docker node update --availability drain <NODE-ID>` 将某个已分配任务的节点设为 `Drain`：
 
     ```console
     $ docker node update --availability drain worker1
@@ -70,7 +56,7 @@ had a task assigned to it:
     worker1
     ```
 
-6.  Inspect the node to check its availability:
+6.  检查该节点以确认其可用性：
 
     ```console
     $ docker node inspect --pretty worker1
@@ -83,10 +69,9 @@ had a task assigned to it:
     ...snip...
     ```
 
-    The drained node shows `Drain` for `Availability`.
+    被设置为 `Drain` 的节点，其 `Availability` 字段会显示为 `Drain`。
 
-7.  Run `docker service ps redis` to see how the swarm manager updated the
-task assignments for the `redis` service:
+7.  再次执行 `docker service ps redis`，查看管理节点如何更新 `redis` 服务的任务分配：
 
     ```console
     $ docker service ps redis
@@ -98,12 +83,9 @@ task assignments for the `redis` service:
     redis.3.9bg7cezvedmkgg6c8yzvbhwsd       redis:7.4.0  worker2   Running        Running 4 minutes
     ```
 
-    The swarm manager maintains the desired state by ending the task on a node
-    with `Drain` availability and creating a new task on a node with `Active`
-    availability.
+    管理节点通过在 `Drain` 节点上终止任务、并在 `Active` 节点上创建新任务的方式来维持期望状态。
 
-8.  Run  `docker node update --availability active <NODE-ID>` to return the
-drained node to an active state:
+8.  运行 `docker node update --availability active <NODE-ID>` 将被 Drain 的节点恢复为 `Active`：
 
     ```console
     $ docker node update --availability active worker1
@@ -111,7 +93,7 @@ drained node to an active state:
     worker1
     ```
 
-9.  Inspect the node to see the updated state:
+9.  检查该节点以查看更新后的状态：
 
     ```console
     $ docker node inspect --pretty worker1
@@ -124,15 +106,15 @@ drained node to an active state:
     ...snip...
     ```
 
-    When you set the node back to `Active` availability, it can receive new tasks:
+    当你将节点恢复为 `Active` 后，它可以在以下情况下接收新任务：
 
-    * during a service update to scale up
-    * during a rolling update
-    * when you set another node to `Drain` availability
-    * when a task fails on another active node
+    * 在服务扩容更新期间
+    * 在滚动更新期间
+    * 当你将另一台节点设为 `Drain` 时
+    * 当其他 `Active` 节点上的任务失败时
 
-## Next steps
+## 下一步
 
-Next, you'll learn how to use a Swarm mode routing mesh
+接下来，你将学习如何使用 Swarm 模式下的路由网格（routing mesh）。
 
-{{< button text="Use a Swarm mode routing mesh" url="../ingress.md" >}}
+{{< button text="使用 Swarm 模式的路由网格" url="../ingress.md" >}}

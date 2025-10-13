@@ -1,55 +1,45 @@
 ---
-description: Learn how to use the Event Tracing for Windows (ETW) logging driver with Docker Engine
-keywords: ETW, docker, logging, driver
-title: ETW logging driver
+description: 了解如何在 Docker Engine 中使用 Windows 事件跟踪（ETW）日志驱动
+keywords: ETW, docker, 日志, 驱动
+title: ETW 日志驱动
 aliases:
   - /engine/admin/logging/etwlogs/
   - /config/containers/logging/etwlogs/
 ---
 
-The Event Tracing for Windows (ETW) logging driver forwards container logs as ETW events.
-ETW stands for Event Tracing in Windows, and is the common framework
-for tracing applications in Windows. Each ETW event contains a message
-with both the log and its context information. A client can then create
-an ETW listener to listen to these events.
+Windows 事件跟踪（Event Tracing for Windows，ETW）日志驱动会将容器日志转发为 ETW 事件。
+ETW 是 Windows 上用于应用跟踪的通用框架。每个 ETW 事件都包含一条消息，其中既有日志内容，也包含上下文信息。客户端可以创建 ETW 监听器来监听这些事件。
 
-The ETW provider that this logging driver registers with Windows, has the
-GUID identifier of: `{a3693192-9ed6-46d2-a981-f8226c8363bd}`. A client creates an
-ETW listener and registers to listen to events from the logging driver's provider.
-It doesn't matter the order in which the provider and listener are created.
-A client can create their ETW listener and start listening for events from the provider,
-before the provider has been registered with the system.
+该日志驱动在 Windows 中注册的 ETW 提供程序（provider）具有如下 GUID 标识：`{a3693192-9ed6-46d2-a981-f8226c8363bd}`。
+客户端创建 ETW 监听器并注册监听来自此提供程序的事件。提供程序与监听器的创建顺序无关：在提供程序注册到系统之前，客户端就可以创建监听器并开始监听其事件。
 
-## Usage
+## 用法
 
-Here is an example of how to listen to these events using the logman utility program
-included in most installations of Windows:
+下面演示如何使用大多数 Windows 安装中自带的 logman 工具来监听这些事件：
 
 1. `logman start -ets DockerContainerLogs -p "{a3693192-9ed6-46d2-a981-f8226c8363bd}" 0x0 -o trace.etl`
-2. Run your container(s) with the etwlogs driver, by adding
-   `--log-driver=etwlogs` to the Docker run command, and generate log messages.
+2. 通过在 Docker run 命令中添加 `--log-driver=etwlogs`，使用 etwlogs 驱动运行容器，并产生一些日志。
 3. `logman stop -ets DockerContainerLogs`
-4. This generates an etl file that contains the events. One way to convert this
-   file into human-readable form is to run: `tracerpt -y trace.etl`.
+4. 以上步骤会生成包含事件的 etl 文件。可通过运行 `tracerpt -y trace.etl` 将其转换为可读格式。
 
-Each ETW event contains a structured message string in this format:
+每条 ETW 事件包含一条结构化的消息字符串，格式如下：
 
 ```text
 container_name: %s, image_name: %s, container_id: %s, image_id: %s, source: [stdout | stderr], log: %s
 ```
 
-Details on each item in the message can be found below:
+各字段含义如下：
 
-| Field            | Description                                    |
+| 字段              | 说明                                           |
 | ---------------- | ---------------------------------------------- |
-| `container_name` | The container name at the time it was started. |
-| `image_name`     | The name of the container's image.             |
-| `container_id`   | The full 64-character container ID.            |
-| `image_id`       | The full ID of the container's image.          |
-| `source`         | `stdout` or `stderr`.                          |
-| `log`            | The container log message.                     |
+| `container_name` | 容器启动时的名称。                             |
+| `image_name`     | 容器所用镜像的名称。                           |
+| `container_id`   | 完整的 64 位容器 ID。                           |
+| `image_id`       | 容器所用镜像的完整 ID。                         |
+| `source`         | `stdout` 或 `stderr`。                          |
+| `log`            | 容器日志消息内容。                             |
 
-Here is an example event message (output formatted for readability):
+下面是一个事件消息示例（为便于阅读进行了格式化）：
 
 ```yaml
 container_name: backstabbing_spence,
@@ -60,11 +50,8 @@ source: stdout,
 log: Hello world!
 ```
 
-A client can parse this message string to get both the log message, as well as its
-context information. The timestamp is also available within the ETW event.
+客户端可以解析该消息字符串，从中获取日志消息及其上下文信息。时间戳也包含在 ETW 事件中。
 
 > [!NOTE]
 >
-> This ETW provider only emits a message string, and not a specially structured
-> ETW event. Therefore, you don't have to register a manifest file with the
-> system to read and interpret its ETW events.
+> 此 ETW 提供程序仅输出消息字符串，而非专门结构化的 ETW 事件。因此，无需在系统中注册清单文件即可读取与解析这些 ETW 事件。

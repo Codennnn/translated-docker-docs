@@ -1,32 +1,19 @@
 ---
-description: Add worker and manager nodes to a swarm
-keywords: guide, swarm mode, node
-title: Join nodes to a swarm
+description: 向 swarm 添加工作节点与管理节点
+keywords: 指南, Swarm 模式, 节点
+title: 向 swarm 加入节点
 ---
 
-When you first create a swarm, you place a single Docker Engine into
-Swarm mode. To take full advantage of Swarm mode you can add nodes to the swarm:
+当你首次创建一个 swarm 时，你会让单个 Docker Engine 进入 Swarm 模式。要充分发挥 Swarm 模式的能力，你可以向该 swarm 添加更多节点：
 
-* Adding worker nodes increases capacity. When you deploy a service to a swarm,
-the engine schedules tasks on available nodes whether they are worker nodes or
-manager nodes. When you add workers to your swarm, you increase the scale of
-the swarm to handle tasks without affecting the manager raft consensus.
-* Manager nodes increase fault-tolerance. Manager nodes perform the
-orchestration and cluster management functions for the swarm. Among manager
-nodes, a single leader node conducts orchestration tasks. If a leader node
-goes down, the remaining manager nodes elect a new leader and resume
-orchestration and maintenance of the swarm state. By default, manager nodes
-also run tasks.
+* 添加工作节点可提升容量。当你将服务部署到一个 swarm 时，引擎会把任务调度到可用节点上，无论这些节点是工作节点还是管理节点。向 swarm 添加更多工作节点，可以在不影响管理节点 Raft 共识的前提下提升任务处理规模。
+* 管理节点提升容错能力。管理节点负责 swarm 的编排与集群管理。在多个管理节点中，会有一个领导者（leader）负责执行编排任务。若领导者宕机，其余管理节点会选举新的领导者并恢复对 swarm 状态的编排与维护。默认情况下，管理节点同样会运行任务。
 
-Docker Engine joins the swarm depending on the **join-token** you provide to
-the `docker swarm join` command. The node only uses the token at join time. If
-you subsequently rotate the token, it doesn't affect existing swarm nodes. Refer
-to [Run Docker Engine in swarm mode](swarm-mode.md#view-the-join-command-or-update-a-swarm-join-token).
+Docker Engine 是否以及以何种角色加入 swarm，取决于你传给 `docker swarm join` 命令的加入令牌（join-token）。节点只在加入时使用该令牌。之后如果你轮换令牌，不会影响已在 swarm 中的节点。参见[在 Swarm 模式下运行 Docker Engine](swarm-mode.md#view-the-join-command-or-update-a-swarm-join-token)。
 
-## Join as a worker node
+## 以工作节点身份加入
 
-To retrieve the join command including the join token for worker nodes, run the
-following command on a manager node:
+在某个管理节点上运行以下命令，获取包含工作节点加入令牌的加入命令：
 
 ```console
 $ docker swarm join-token worker
@@ -38,7 +25,7 @@ To add a worker to this swarm, run the following command:
     192.168.99.100:2377
 ```
 
-Run the command from the output on the worker to join the swarm:
+在工作节点上执行上述输出中的命令以加入 swarm：
 
 ```console
 $ docker swarm join \
@@ -48,33 +35,24 @@ $ docker swarm join \
 This node joined a swarm as a worker.
 ```
 
-The `docker swarm join` command does the following:
+`docker swarm join` 命令会执行以下操作：
 
-* Switches Docker Engine on the current node into Swarm mode.
-* Requests a TLS certificate from the manager.
-* Names the node with the machine hostname.
-* Joins the current node to the swarm at the manager listen address based upon the swarm token.
-* Sets the current node to `Active` availability, meaning it can receive tasks
-from the scheduler.
-* Extends the `ingress` overlay network to the current node.
+* 将当前节点上的 Docker Engine 切换到 Swarm 模式。
+* 向管理节点请求 TLS 证书。
+* 使用机器的主机名为节点命名。
+* 根据提供的 swarm 令牌，使用管理节点的监听地址将当前节点加入 swarm。
+* 将当前节点的可用性设置为 `Active`，表示它可以从调度器接收任务。
+* 将 `ingress` 覆盖网络扩展到当前节点。
 
-## Join as a manager node
+## 以管理节点身份加入
 
-When you run `docker swarm join` and pass the manager token, Docker Engine
-switches into Swarm mode the same as for workers. Manager nodes also participate
-in the raft consensus. The new nodes should be `Reachable`, but the existing
-manager remains the swarm `Leader`.
+当你运行 `docker swarm join` 并传入管理节点的令牌时，Docker Engine 会像工作节点一样切换到 Swarm 模式。同时，管理节点会参与 Raft 共识。新加入的管理节点状态应当为 `Reachable`，而原有的管理节点仍为 swarm 的 `Leader`。
 
-Docker recommends three or five manager nodes per cluster to implement high
-availability. Because Swarm-mode manager nodes share data using Raft, there
-must be an odd number of managers. The swarm can continue to function after as
-long as a quorum of more than half of the manager nodes are available.
+Docker 推荐每个集群使用三或五个管理节点以实现高可用。由于 Swarm 模式下的管理节点通过 Raft 共享数据，管理节点数量必须为奇数。只要超过半数的管理节点可用，swarm 就能继续对外提供服务。
 
-For more detail about swarm managers and administering a swarm, see
-[Administer and maintain a swarm of Docker Engines](admin_guide.md).
+关于管理节点与 swarm 运维的更多细节，参见[运维与维护由多个 Docker Engine 组成的 swarm](admin_guide.md)。
 
-To retrieve the join command including the join token for manager nodes, run the
-following command on a manager node:
+在某个管理节点上运行以下命令，获取包含管理节点加入令牌的加入命令：
 
 ```console
 $ docker swarm join-token manager
@@ -86,7 +64,7 @@ To add a manager to this swarm, run the following command:
     192.168.99.100:2377
 ```
 
-Run the command from the output on the new manager node to join it to the swarm:
+在新管理节点上执行输出中的命令，使其加入该 swarm：
 
 ```console
 $ docker swarm join \
@@ -96,7 +74,7 @@ $ docker swarm join \
 This node joined a swarm as a manager.
 ```
 
-## Learn More
+## 了解更多
 
-* `swarm join` [command line reference](/reference/cli/docker/swarm/join.md)
-* [Swarm mode tutorial](swarm-tutorial/_index.md)
+* `swarm join` 的[命令行参考](/reference/cli/docker/swarm/join.md)
+* [Swarm 模式教程](swarm-tutorial/_index.md)

@@ -1,26 +1,22 @@
 ---
-description: Initialize the swarm
+description: 初始化一个 swarm
 keywords: tutorial, cluster management, swarm mode, get started, docker engine
-title: Create a swarm
+title: 创建一个 swarm
 weight: 10
 notoc: true
 ---
 
-After you complete the [tutorial setup](index.md) steps, you're ready
-to create a swarm. Make sure the Docker Engine daemon is started on the host
-machines.
+完成[教程环境准备](index.md)后，你就可以创建一个 swarm。请确保宿主机上的 Docker Engine 守护进程已启动。
 
-1.  Open a terminal and ssh into the machine where you want to run your manager
-    node. This tutorial uses a machine named `manager1`. 
+1.  打开终端，使用 ssh 登录到你想要运行管理节点的那台机器。本教程中该机器命名为 `manager1`。
 
-2.  Run the following command to create a new swarm:
+2.  运行以下命令创建一个新的 swarm：
 
     ```console
     $ docker swarm init --advertise-addr <MANAGER-IP>
     ```
 
-    In the tutorial, the following command creates a swarm on the `manager1`
-    machine:
+    在本教程中，下面的命令会在 `manager1` 这台机器上创建一个 swarm：
 
     ```console
     $ docker swarm init --advertise-addr 192.168.99.100
@@ -35,15 +31,11 @@ machines.
     To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
     ```
 
-    The `--advertise-addr` flag configures the manager node to publish its
-    address as `192.168.99.100`. The other nodes in the swarm must be able
-    to access the manager at the IP address.
+    `--advertise-addr` 用于将管理节点对外通告为 `192.168.99.100`。swarm 中的其他节点必须能够通过该 IP 访问该管理节点。
 
-    The output includes the commands to join new nodes to the swarm. Nodes will
-    join as managers or workers depending on the value for the `--token`
-    flag.
+    命令输出中包含用于将新节点加入到 swarm 的相关命令。节点以管理节点或工作节点加入，取决于 `--token` 的取值。
 
-3.  Run `docker info` to view the current state of the swarm:
+3.  执行 `docker info` 查看当前 swarm 状态：
 
     ```console
     $ docker info
@@ -61,7 +53,7 @@ machines.
       ...snip...
     ```
 
-4.  Run the `docker node ls` command to view information about nodes:
+4.  执行 `docker node ls` 查看节点信息：
 
     ```console
     $ docker node ls
@@ -71,14 +63,12 @@ machines.
 
     ```
 
-    The `*` next to the node ID indicates that you're currently connected on
-    this node.
+    节点 ID 旁的 `*` 表示你当前连接的是此节点。
 
-    Docker Engine Swarm mode automatically names the node with the machine host
-    name. The tutorial covers other columns in later steps.
+    Docker Engine 的 Swarm 模式会自动使用机器的主机名作为节点名称。关于输出中的其他列，本教程后续步骤会进行介绍。
 
-## Next steps
+## 下一步
 
-Next, you'll add two more nodes to the cluster. 
+接下来，你将向集群中再添加两个节点。
 
-{{< button text="Add two more nodes" url="add-nodes.md" >}}
+{{< button text="添加两个节点" url="add-nodes.md" >}}
