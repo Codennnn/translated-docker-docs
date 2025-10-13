@@ -1,14 +1,13 @@
 ---
-title: Provenance attestations
+title: 溯源证明（Provenance attestations）
 keywords: build, attestations, provenance, slsa, git, metadata
 description: >
-  Provenance build attestations describe how and where your image was built.
+  溯源构建证明用于描述镜像是如何、在何处被构建的。
 aliases:
   - /build/attestations/slsa-provenance/
 ---
 
-The provenance attestations include facts about the build process, including
-details such as:
+溯源证明包含关于构建过程的事实信息，例如：
 
 - Build timestamps
 - Build parameters and environment
@@ -16,38 +15,36 @@ details such as:
 - Source code details
 - Materials (files, scripts) consumed during the build
 
-Provenance attestations follow the
-[SLSA provenance schema, version 0.2](https://slsa.dev/provenance/v0.2#schema).
+溯源证明遵循
+[SLSA 溯源模式（0.2 版）](https://slsa.dev/provenance/v0.2#schema)。
 
-For more information about how BuildKit populates these provenance properties, refer to
-[SLSA definitions](slsa-definitions.md).
+关于 BuildKit 如何填充这些溯源属性的更多信息，请参见
+[SLSA 定义](slsa-definitions.md)。
 
-## Create provenance attestations
+## 创建溯源证明
 
-To create a provenance attestation, pass the `--attest type=provenance` option
-to the `docker buildx build` command:
+要创建溯源证明，请在 `docker buildx build` 命令中传入
+`--attest type=provenance` 选项：
 
 ```console
 $ docker buildx build --tag <namespace>/<image>:<version> \
     --attest type=provenance,mode=[min,max] .
 ```
 
-Alternatively, you can use the shorthand `--provenance=true` option instead of `--attest type=provenance`.
-To specify the `mode` parameter using the shorthand option, use: `--provenance=mode=max`.
+你也可以使用简写选项 `--provenance=true` 来替代 `--attest type=provenance`。
+若需通过简写指定 `mode` 参数，可使用：`--provenance=mode=max`。
 
-For an example on how to add provenance attestations with GitHub Actions, see
-[Add attestations with GitHub Actions](/manuals/build/ci/github-actions/attestations.md).
+若要在 GitHub Actions 中添加溯源证明，请参见
+[通过 GitHub Actions 添加证明](/manuals/build/ci/github-actions/attestations.md)。
 
-## Mode
+## 模式（Mode）
 
-You can use the `mode` parameter to define the level of detail to be included in
-the provenance attestation. Supported values are `mode=min` (default) and
-`mode=max`.
+你可以使用 `mode` 参数控制溯源证明包含的详细程度。可选值为 `mode=min`
+（默认）与 `mode=max`。
 
 ### Min
 
-In `min` mode, the provenance attestations include a minimal set of information,
-such as:
+在 `min` 模式下，溯源证明仅包含最小化的信息，例如：
 
 - Build timestamps
 - The frontend used
@@ -56,12 +53,11 @@ such as:
 - Build platform
 - Reproducibility
 
-Values of build arguments, the identities of secrets, and rich layer metadata is
-not included `mode=min`. The `min`-level provenance is safe to use for all
-builds, as it doesn't leak information from any part of the build environment.
+构建参数的取值、秘钥标识、以及丰富的层（layer）元数据不会包含在 `min`
+模式中。`min` 级别的溯源对所有构建都是安全的，因为它不会泄露任何构建环境
+中的敏感信息。
 
-The following JSON example shows the information included in a provenance
-attestations created using the `min` mode:
+下面的 JSON 示例展示了以 `min` 模式创建的溯源证明所包含的信息：
 
 ```json
 {
@@ -128,8 +124,7 @@ attestations created using the `min` mode:
 
 ### Max
 
-The `max` mode includes all of the information included in the `min` mode, as
-well as:
+`max` 模式包含 `min` 模式中的所有信息，此外还包括：
 
 - The LLB definition of the build. These show the exact steps taken to produce
   the image.
@@ -137,27 +132,24 @@ well as:
   the file.
 - Source maps describing the relationship between build steps and image layers.
 
-When possible, you should prefer `mode=max` as it contains significantly more
-detailed information for analysis.
+在可能的情况下，建议优先使用 `mode=max`，因为它提供了更多可用于分析的细节。
 
 > [!WARNING]
 >
-> Note that `mode=max` exposes the values of
-> [build arguments](/reference/cli/docker/buildx/build.md#build-arg).
+> 注意：`mode=max` 会暴露
+> [构建参数](/reference/cli/docker/buildx/build.md#build-arg) 的取值。
 >
-> If you're misusing build arguments to pass credentials, authentication
-> tokens, or other secrets, you should refactor your build to pass the secrets using
-> [secret mounts](/reference/cli/docker/buildx/build.md#secret) instead.
-> Secret mounts don't leak outside of the build and are never included in provenance attestations.
+> 如果你误用构建参数来传递凭据、认证令牌或其他机密信息，应尽快改为使用
+> [secret mount](/reference/cli/docker/buildx/build.md#secret)。
+> secret mount 不会泄露到构建之外，且不会被包含在溯源证明中。
 
-## Inspecting Provenance
+## 查看溯源信息
 
-To explore created Provenance exported through the `image` exporter, you can
-use [`imagetools inspect`](/reference/cli/docker/buildx/imagetools/inspect.md).
+若要查看通过 `image` 导出器导出的溯源信息，可使用
+[`imagetools inspect`](/reference/cli/docker/buildx/imagetools/inspect.md)。
 
-Using the `--format` option, you can specify a template for the output. All
-provenance-related data is available under the `.Provenance` attribute. For
-example, to get the raw contents of the Provenance in the SLSA format:
+配合 `--format` 选项可指定输出模板。所有与溯源相关的数据均可通过
+`.Provenance` 属性访问。例如，获取 SLSA 格式的原始溯源内容：
 
 ```console
 $ docker buildx imagetools inspect <namespace>/<image>:<version> \
@@ -168,9 +160,8 @@ $ docker buildx imagetools inspect <namespace>/<image>:<version> \
 }
 ```
 
-You can also construct more complex expressions using the full functionality of
-Go templates. For example, for provenance generated with `mode=max`, you can
-extract the full source code of the Dockerfile used to build the image:
+你也可以使用 Go 模板的完整能力来构造更复杂的表达式。例如，对于
+`mode=max` 生成的溯源信息，可以提取用于构建镜像的 Dockerfile 的完整源码：
 
 ```console
 $ docker buildx imagetools inspect <namespace>/<image>:<version> \
@@ -180,12 +171,11 @@ RUN apt-get update
 ...
 ```
 
-## Provenance attestation example
+## 溯源证明示例
 
 <!-- TODO: add a link to the definitions page, imported from moby/buildkit -->
 
-The following example shows what a JSON representation of a provenance
-attestation with `mode=max` looks like:
+下面的示例展示了 `mode=max` 模式下溯源证明的 JSON 表示：
 
 ```json
 {
