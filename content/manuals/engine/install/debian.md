@@ -1,8 +1,7 @@
 ---
-description: Learn how to install Docker Engine on Debian. These instructions cover
-  the different installation methods, how to uninstall, and next steps.
+description: 了解如何在 Debian 上安装 Docker Engine。本文涵盖多种安装方式、卸载方法与后续步骤。
 keywords: requirements, apt, installation, debian, install, uninstall, install debian, docker engine, install docker engine, upgrade, update
-title: Install Docker Engine on Debian
+title: 在 Debian 上安装 Docker Engine
 linkTitle: Debian
 weight: 20
 toc_max: 4
@@ -14,98 +13,79 @@ aliases:
 download-url-base: https://download.docker.com/linux/debian
 ---
 
-To get started with Docker Engine on Debian, make sure you
-[meet the prerequisites](#prerequisites), and then follow the
-[installation steps](#installation-methods).
+开始在 Debian 上使用 Docker Engine 之前，请先确认你已[满足先决条件](#prerequisites)，然后按照[安装步骤](#installation-methods)进行安装。
 
-## Prerequisites
+## 先决条件
 
-### Firewall limitations
+### 防火墙限制
 
 > [!WARNING]
 >
-> Before you install Docker, make sure you consider the following
-> security implications and firewall incompatibilities.
+> 在安装 Docker 之前，请务必了解以下安全注意事项与防火墙兼容性限制。
 
-- If you use ufw or firewalld to manage firewall settings, be aware that
-  when you expose container ports using Docker, these ports bypass your
-  firewall rules. For more information, refer to
-  [Docker and ufw](/manuals/engine/network/packet-filtering-firewalls.md#docker-and-ufw).
-- Docker is only compatible with `iptables-nft` and `iptables-legacy`.
-  Firewall rules created with `nft` are not supported on a system with Docker installed.
-  Make sure that any firewall rulesets you use are created with `iptables` or `ip6tables`,
-  and that you add them to the `DOCKER-USER` chain,
-  see [Packet filtering and firewalls](/manuals/engine/network/packet-filtering-firewalls.md).
+- 如果你使用 ufw 或 firewalld 管理防火墙设置，请注意：当你通过 Docker 暴露容器端口时，这些端口会绕过你的防火墙规则。更多信息参见
+  [Docker 与 ufw](/manuals/engine/network/packet-filtering-firewalls.md#docker-and-ufw)。
+- Docker 仅兼容 `iptables-nft` 与 `iptables-legacy`。在安装了 Docker 的系统上，使用 `nft` 创建的防火墙规则不受支持。
+  请确保你的防火墙规则集使用 `iptables` 或 `ip6tables` 创建，并将其添加到 `DOCKER-USER` 链。参见
+  [数据包过滤与防火墙](/manuals/engine/network/packet-filtering-firewalls.md)。
 
-### OS requirements
+### 操作系统要求
 
-To install Docker Engine, you need one of these Debian versions:
+要安装 Docker Engine，需要以下任一 Debian 版本：
 
-- Debian Trixie 13 (stable)
-- Debian Bookworm 12 (oldstable)
-- Debian Bullseye 11 (oldoldstable)
+- Debian Trixie 13（stable）
+- Debian Bookworm 12（oldstable）
+- Debian Bullseye 11（oldoldstable）
 
-Docker Engine for Debian is compatible with x86_64 (or amd64), armhf (arm/v7),
-arm64, and ppc64le (ppc64el) architectures.
+Debian 版 Docker Engine 兼容 x86_64（或 amd64）、armhf（arm/v7）、arm64 与 ppc64le（ppc64el）架构。
 
-### Uninstall old versions
+### 卸载旧版本
 
-Before you can install Docker Engine, you need to uninstall any conflicting packages.
+安装 Docker Engine 之前，需要卸载任何可能冲突的软件包。
 
-Your Linux distribution may provide unofficial Docker packages, which may conflict
-with the official packages provided by Docker. You must uninstall these packages
-before you install the official version of Docker Engine.
+你的发行版可能提供了非官方的 Docker 软件包，可能与 Docker 官方软件包发生冲突。请在安装官方版本之前卸载这些软件包。
 
-The unofficial packages to uninstall are:
+需要卸载的非官方软件包包括：
 
 - `docker.io`
 - `docker-compose`
 - `docker-doc`
 - `podman-docker`
 
-Moreover, Docker Engine depends on `containerd` and `runc`. Docker Engine
-bundles these dependencies as one bundle: `containerd.io`. If you have
-installed the `containerd` or `runc` previously, uninstall them to avoid
-conflicts with the versions bundled with Docker Engine.
+此外，Docker Engine 依赖 `containerd` 与 `runc`。Docker Engine 通过 `containerd.io` 一并打包这些依赖。
+如果你之前安装过 `containerd` 或 `runc`，请卸载它们，以避免与 Docker Engine 打包版本产生冲突。
 
-Run the following command to uninstall all conflicting packages:
+运行以下命令卸载所有冲突软件包：
 
 ```console
 $ for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
 ```
 
-`apt-get` might report that you have none of these packages installed.
+`apt-get` 可能会提示这些软件包均未安装。
 
-Images, containers, volumes, and networks stored in `/var/lib/docker/` aren't
-automatically removed when you uninstall Docker. If you want to start with a
-clean installation, and prefer to clean up any existing data, read the
-[uninstall Docker Engine](#uninstall-docker-engine) section.
+位于 `/var/lib/docker/` 的镜像、容器、卷与网络在卸载 Docker 时不会自动删除。
+如果你希望进行“干净安装”，并清理已有数据，请参见[卸载 Docker Engine](#uninstall-docker-engine)。
 
-## Installation methods
+## 安装方式
 
-You can install Docker Engine in different ways, depending on your needs:
+根据你的需求，你可以使用不同方式安装 Docker Engine：
 
-- Docker Engine comes bundled with
-  [Docker Desktop for Linux](/manuals/desktop/setup/install/linux/_index.md). This is
-  the easiest and quickest way to get started.
+- Docker Engine 随 [Docker Desktop for Linux](/manuals/desktop/setup/install/linux/_index.md) 一同提供。
+  这是最简单、最快速的上手方式。
 
-- Set up and install Docker Engine from
-  [Docker's `apt` repository](#install-using-the-repository).
+- 通过 [Docker 的 `apt` 仓库](#install-using-the-repository) 进行配置与安装。
 
-- [Install it manually](#install-from-a-package) and manage upgrades manually.
+- [手动安装](#install-from-a-package)，并由你手动管理升级。
 
-- Use a [convenience script](#install-using-the-convenience-script). Only
-  recommended for testing and development environments.
+- 使用[便捷脚本](#install-using-the-convenience-script)。仅推荐用于测试与开发环境。
 
 {{% include "engine-license.md" %}}
 
-### Install using the `apt` repository {#install-using-the-repository}
+### 通过 `apt` 仓库安装 {#install-using-the-repository}
 
-Before you install Docker Engine for the first time on a new host machine, you
-need to set up the Docker `apt` repository. Afterward, you can install and update
-Docker from the repository.
+在新主机上首次安装 Docker Engine 之前，需要先配置 Docker 的 `apt` 仓库。之后即可从该仓库安装与更新 Docker。
 
-1. Set up Docker's `apt` repository.
+1. 配置 Docker 的 `apt` 仓库。
 
    ```bash
    # Add Docker's official GPG key:
@@ -125,23 +105,20 @@ Docker from the repository.
 
    > [!NOTE]
    >
-   > If you use a derivative distribution, such as Kali Linux,
-   > you may need to substitute the part of this command that's expected to
-   > print the version codename:
+   > 如果你使用衍生发行版（例如 Kali Linux），可能需要替换命令中用于打印发行版代号的部分：
    >
    > ```console
    > $(. /etc/os-release && echo "$VERSION_CODENAME")
    > ```
    >
-   > Replace this part with the codename of the corresponding Debian release,
-   > such as `bookworm`.
+   > 将其替换为对应 Debian 发行版的代号，例如 `bookworm`。
 
-2. Install the Docker packages.
+2. 安装 Docker 软件包。
 
    {{< tabs >}}
    {{< tab name="Latest" >}}
 
-   To install the latest version, run:
+   安装最新版本：
 
    ```console
    $ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -150,8 +127,7 @@ Docker from the repository.
    {{< /tab >}}
    {{< tab name="Specific version" >}}
 
-   To install a specific version of Docker Engine, start by listing the
-   available versions in the repository:
+   若需安装特定版本，先列出仓库中可用的版本：
 
    ```console
    # List the available versions:
@@ -162,7 +138,7 @@ Docker from the repository.
    ...
    ```
 
-   Select the desired version and install:
+   选择目标版本并安装：
 
    ```console
    $ VERSION_STRING=5:{{% param "docker_ce_version" %}}-1~debian.12~bookworm
@@ -174,54 +150,46 @@ Docker from the repository.
 
     > [!NOTE]
     >
-    > The Docker service starts automatically after installation. To verify that
-    > Docker is running, use:
+    > 安装完成后，Docker 服务会自动启动。你可以通过以下命令验证 Docker 是否正在运行：
     > 
     > ```console
     > $ sudo systemctl status docker
     > ```
     >
-    > Some systems may have this behavior disabled and will require a manual start:
+    > 部分系统可能禁用了自动启动，此时需要手动启动：
     >
     > ```console
     > $ sudo systemctl start docker
     > ```
 
-3. Verify that the installation is successful by running the `hello-world` image:
+3. 通过运行 `hello-world` 镜像验证安装是否成功：
 
    ```console
    $ sudo docker run hello-world
    ```
 
-   This command downloads a test image and runs it in a container. When the
-   container runs, it prints a confirmation message and exits.
+   该命令会下载一个测试镜像并在容器中运行。容器运行后会打印确认信息，然后退出。
 
-You have now successfully installed and started Docker Engine.
+至此，你已经成功安装并启动了 Docker Engine。
 
 {{% include "root-errors.md" %}}
 
-#### Upgrade Docker Engine
+#### 升级 Docker Engine
 
-To upgrade Docker Engine, follow step 2 of the
-[installation instructions](#install-using-the-repository),
-choosing the new version you want to install.
+要升级 Docker Engine，请按照[安装说明](#install-using-the-repository)中的第 2 步执行，选择你希望安装的新版本。
 
-### Install from a package
+### 通过安装包进行安装
 
-If you can't use Docker's `apt` repository to install Docker Engine, you can
-download the `deb` file for your release and install it manually. You need to
-download a new file each time you want to upgrade Docker Engine.
+如果无法使用 Docker 的 `apt` 仓库安装 Docker Engine，你可以下载与你发行版对应的 `deb` 安装包并手动安装。每次升级 Docker Engine 时，都需要下载新的安装包。
 
 <!-- markdownlint-disable-next-line -->
-1. Go to [`{{% param "download-url-base" %}}/dists/`]({{% param "download-url-base" %}}/dists/).
+1. 访问 [`{{% param "download-url-base" %}}/dists/`]({{% param "download-url-base" %}}/dists/)。
 
-2. Select your Debian version in the list.
+2. 在列表中选择你的 Debian 版本。
 
-3. Go to `pool/stable/` and select the applicable architecture (`amd64`,
-   `armhf`, `arm64`, or `s390x`).
+3. 进入 `pool/stable/`，选择适用的架构（`amd64`、`armhf`、`arm64` 或 `s390x`）。
 
-4. Download the following `deb` files for the Docker Engine, CLI, containerd,
-   and Docker Compose packages:
+4. 下载以下 Docker Engine、CLI、containerd 与 Docker Compose 的 `deb` 安装包：
 
    - `containerd.io_<version>_<arch>.deb`
    - `docker-ce_<version>_<arch>.deb`
@@ -229,8 +197,7 @@ download a new file each time you want to upgrade Docker Engine.
    - `docker-buildx-plugin_<version>_<arch>.deb`
    - `docker-compose-plugin_<version>_<arch>.deb`
 
-5. Install the `.deb` packages. Update the paths in the following example to
-   where you downloaded the Docker packages.
+5. 安装这些 `.deb` 包。请将以下示例中的路径替换为你下载 Docker 包的位置。
 
    ```console
    $ sudo dpkg -i ./containerd.io_<version>_<arch>.deb \
@@ -242,64 +209,60 @@ download a new file each time you want to upgrade Docker Engine.
 
     > [!NOTE]
     >
-    > The Docker service starts automatically after installation. To verify that
-    > Docker is running, use:
+    > 安装完成后，Docker 服务会自动启动。使用以下命令验证 Docker 是否在运行：
     > 
     > ```console
     > $ sudo systemctl status docker
     > ```
     >
-    > Some systems may have this behavior disabled and will require a manual start:
+    > 如果你的系统禁用了该行为，请手动启动：
     >
     > ```console
     > $ sudo systemctl start docker
     > ```
 
-6. Verify that the installation is successful by running the `hello-world` image:
+6. 通过运行 `hello-world` 镜像验证安装是否成功：
 
    ```console
    $ sudo docker run hello-world
    ```
 
-   This command downloads a test image and runs it in a container. When the
-   container runs, it prints a confirmation message and exits.
+   该命令会下载一个测试镜像并在容器中运行。容器运行后会打印确认信息，然后退出。
 
-You have now successfully installed and started Docker Engine.
+至此，你已经成功安装并启动了 Docker Engine。
 
 {{% include "root-errors.md" %}}
 
-#### Upgrade Docker Engine
+#### 升级 Docker Engine
 
-To upgrade Docker Engine, download the newer package files and repeat the
-[installation procedure](#install-from-a-package), pointing to the new files.
+要升级 Docker Engine，请下载新版安装包并重复[安装流程](#install-from-a-package)，将命令指向新文件。
 
 {{% include "install-script.md" %}}
 
-## Uninstall Docker Engine
+## 卸载 Docker Engine
 
-1. Uninstall the Docker Engine, CLI, containerd, and Docker Compose packages:
+1. 卸载 Docker Engine、CLI、containerd 与 Docker Compose 软件包：
 
    ```console
    $ sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
    ```
 
-2. Images, containers, volumes, or custom configuration files on your host
-   aren't automatically removed. To delete all images, containers, and volumes:
+2. 主机上的镜像、容器、卷或自定义配置文件不会自动删除。若要删除所有镜像、容器与卷：
 
    ```console
    $ sudo rm -rf /var/lib/docker
    $ sudo rm -rf /var/lib/containerd
    ```
 
-3. Remove source list and keyrings
+3. 移除源列表与密钥环
 
    ```console
    $ sudo rm /etc/apt/sources.list.d/docker.list
    $ sudo rm /etc/apt/keyrings/docker.asc
    ```
 
-You have to delete any edited configuration files manually.
+任何你修改过的配置文件需要手动删除。
 
-## Next steps
+## 进一步阅读
 
-- Continue to [Post-installation steps for Linux](linux-postinstall.md).
+- 继续阅读 [Linux 安装后的步骤](linux-postinstall.md)。

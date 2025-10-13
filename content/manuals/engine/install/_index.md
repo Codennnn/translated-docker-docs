@@ -1,9 +1,9 @@
 ---
-title: Install Docker Engine
-linkTitle: Install
+title: 安装 Docker Engine
+linkTitle: 安装
 weight: 10
-description: Learn how to choose the best method for you to install Docker Engine. This client-server
-  application is available on Linux, Mac, Windows, and as a static binary.
+description: 了解如何选择最适合你的方式安装 Docker Engine。该客户端-服务器
+  应用可用于 Linux、Mac、Windows，亦可作为静态二进制发布。
 keywords: install engine, docker engine install, install docker engine, docker engine
   installation, engine install, docker ce installation, docker ce install, engine
   installer, installing docker engine, docker server install, docker desktop vs docker engine
@@ -33,16 +33,15 @@ aliases:
 - /install/linux/docker-ee/oracle/
 ---
 
-This section describes how to install Docker Engine on Linux, also known as
-Docker CE. Docker Engine is also available for Windows, macOS, and Linux,
-through Docker Desktop. For instructions on how to install Docker Desktop,
-see: [Overview of Docker Desktop](/manuals/desktop/_index.md).
+本节介绍如何在 Linux 上安装 Docker Engine（亦称 Docker CE）。
+Docker Engine 也可通过 Docker Desktop 在 Windows、macOS 和 Linux 上使用。
+关于如何安装 Docker Desktop，请参见：[Docker Desktop 概览](/manuals/desktop/_index.md)。
 
-## Installation procedures for supported platforms
+## 受支持平台的安装步骤
 
-Click on a platform's link to view the relevant installation procedure.
+点击相应平台的链接以查看安装流程。
 
-| Platform                                       | x86_64 / amd64 | arm64 / aarch64 | arm (32-bit) | ppc64le | s390x |
+| 平台                                           | x86_64 / amd64 | arm64 / aarch64 | arm（32 位） | ppc64le | s390x |
 | :--------------------------------------------- | :------------: | :-------------: | :----------: | :-----: | :---: |
 | [CentOS](centos.md)                            |       ✅       |       ✅        |              |   ✅    |       |
 | [Debian](debian.md)                            |       ✅       |       ✅        |      ✅      |   ✅    |       |
@@ -53,74 +52,65 @@ Click on a platform's link to view the relevant installation procedure.
 | [Ubuntu](ubuntu.md)                            |       ✅       |       ✅        |      ✅      |   ✅    |  ✅   |
 | [Binaries](binaries.md)                        |       ✅       |       ✅        |      ✅      |         |       |
 
-### Other Linux distributions
+### 其他 Linux 发行版
 
 > [!NOTE]
 >
-> While the following instructions may work, Docker doesn't test or verify
-> installation on distribution derivatives.
+> 以下说明可能有效，但 Docker 不对衍生发行版的安装进行测试或验证。
 
-- If you use Debian derivatives such as "BunsenLabs Linux", "Kali Linux" or
-  "LMDE" (Debian-based Mint) should follow the installation instructions for
-  [Debian](debian.md), substitute the version of your distribution for the
-  corresponding Debian release. Refer to the documentation of your distribution to find
-  which Debian release corresponds with your derivative version.
-- Likewise, if you use Ubuntu derivatives such as "Kubuntu", "Lubuntu" or "Xubuntu"
-  you should follow the installation instructions for [Ubuntu](ubuntu.md),
-  substituting the version of your distribution for the corresponding Ubuntu release.
-  Refer to the documentation of your distribution to find which Ubuntu release
-  corresponds with your derivative version.
-- Some Linux distributions provide a package of Docker Engine through their
-  package repositories. These packages are built and maintained by the Linux
-  distribution's package maintainers and may have differences in configuration
-  or are built from modified source code. Docker isn't involved in releasing these
-  packages and you should report any bugs or issues involving these packages to
-  your Linux distribution's issue tracker.
+- 如果你使用基于 Debian 的发行版（如 “BunsenLabs Linux”、“Kali Linux” 或
+  “LMDE”（基于 Debian 的 Mint）），请参考 [Debian](debian.md) 的安装指南，
+  并将你的发行版版本替换为对应的 Debian 版本。请查阅你的发行版文档以确定
+  你的衍生版对应哪个 Debian 发行版本。
+- 同样地，如果你使用基于 Ubuntu 的发行版（如 “Kubuntu”、“Lubuntu” 或 “Xubuntu”），
+  请参考 [Ubuntu](ubuntu.md) 的安装指南，并将你的发行版版本替换为对应的 Ubuntu 版本。
+  请查阅你的发行版文档以确定你的衍生版对应哪个 Ubuntu 发行版本。
+- 某些 Linux 发行版会通过其软件仓库提供 Docker Engine 的软件包。
+  这些软件包由发行版的打包维护者构建和维护，可能在配置上有所差异，
+  或基于修改过的源码构建。Docker 不参与这些软件包的发布，如遇到这些软件包的
+  缺陷或问题，请向你的发行版问题跟踪器反馈。
 
-Docker provides [binaries](binaries.md) for manual installation of Docker Engine.
-These binaries are statically linked and you can use them on any Linux distribution.
+Docker 提供用于手动安装 Docker Engine 的[二进制文件](binaries.md)。
+这些二进制文件为静态链接，可在任意 Linux 发行版上使用。
 
-## Release channels
+## 发布通道
 
-Docker Engine has two types of update channels, **stable** and **test**:
+Docker Engine 提供两类更新通道：**stable** 与 **test**：
 
-* The **stable** channel gives you the latest versions released for general availability.
-* The **test** channel gives you pre-release versions that are ready for testing before
-  general availability.
+* **stable**：提供已正式发布、可用于生产的最新版本。
+* **test**：提供用于发布前测试的预发布版本。
 
-Use the test channel with caution. Pre-release versions include experimental and
-early-access features that are subject to breaking changes.
+请谨慎使用 test 通道。预发布版本包含实验性与抢先体验功能，可能发生不兼容变更。
 
-## Support
+## 支持
 
-Docker Engine is an open source project, supported by the Moby project maintainers
-and community members. Docker doesn't provide support for Docker Engine.
-Docker provides support for Docker products, including Docker Desktop, which uses
-Docker Engine as one of its components.
+Docker Engine 是一个开源项目，由 Moby 项目的维护者与社区成员共同支持。
+Docker 不为 Docker Engine 提供官方技术支持。
+Docker 为其产品提供支持，其中包括 Docker Desktop（其组件之一为 Docker Engine）。
 
-For information about the open source project, refer to the
-[Moby project website](https://mobyproject.org/).
+关于该开源项目的更多信息，请参阅 [Moby 项目网站](https://mobyproject.org/)。
 
-### Upgrade path
+### 升级路径
 
-Patch releases are always backward compatible with its major and minor version.
+补丁版本始终与其所属的大版本与小版本向后兼容。
 
-### Licensing
+### 许可
 
-Commercial use of Docker Engine obtained via Docker Desktop
-within larger enterprises (exceeding 250 employees OR with annual revenue surpassing
-$10 million USD), requires a [paid subscription](https://www.docker.com/pricing/).
-Apache License, Version 2.0. See [LICENSE](https://github.com/moby/moby/blob/master/LICENSE) for the full license.
+在大型企业环境（员工人数超过 250 人，或年营收超过 1,000 万美元）中，
+通过 Docker Desktop 获得的 Docker Engine 若用于商业用途，则需购买
+[付费订阅](https://www.docker.com/pricing/)。
+Apache License, Version 2.0。完整许可请参见
+[LICENSE](https://github.com/moby/moby/blob/master/LICENSE)。
 
-## Reporting security issues
+## 报告安全问题
 
-If you discover a security issue, we request that you bring it to our attention immediately.
+如果你发现安全问题，请尽快告知我们。
 
-DO NOT file a public issue. Instead, submit your report privately to security@docker.com.
+请勿创建公开 issue。请将报告私下发送至 security@docker.com。
 
-Security reports are greatly appreciated, and Docker will publicly thank you for it.
+我们非常感谢你的安全报告，Docker 会对此公开致谢。
 
-## Get started
+## 开始上手
 
-After setting up Docker, you can learn the basics with
-[Getting started with Docker](/get-started/introduction/_index.md).
+完成 Docker 的安装与设置后，你可以通过
+[Docker 入门指南](/get-started/introduction/_index.md)学习基础知识。
