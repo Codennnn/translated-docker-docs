@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: The basics
+title: 基础入门
 weight: 10
 ---

@@ -1,14 +1,12 @@
 ---
-title: Using the build cache
+title: 使用构建缓存
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you about the build cache, what changes invalidate the cache and how to effectively use the build cache.
+description: 本文介绍构建缓存、哪些更改会使缓存失效，以及如何高效使用构建缓存。
 summary: |
-  Using the build cache effectively allows you to achieve faster builds by
-  reusing results from previous builds and skipping unnecessary steps. To
-  maximize cache usage and avoid resource-intensive and time-consuming
-  rebuilds, it's crucial to understand how cache invalidation works. In this
-  guide, you’ll learn how to use the Docker build cache efficiently for
-  streamlined Docker image development and continuous integration workflows.
+  合理使用构建缓存可以复用以往构建的结果，从而跳过不必要的步骤，
+  大幅缩短构建时间。要想最大化缓存命中并避免高开销、耗时的全量重建，
+  需要理解缓存失效机制。本指南将教你如何高效利用 Docker 构建缓存，
+  优化镜像开发与持续集成工作流。
 weight: 4
 aliases: 
  - /guides/docker-concepts/building-images/using-the-build-cache/
@@ -16,10 +14,9 @@ aliases:
 
 {{< youtube-embed Ri6jMknjprY >}}
 
-## Explanation
+## 概念解析
 
-Consider the following Dockerfile that you created for the [getting-started](./writing-a-dockerfile/) app.
-
+回顾你在[编写 Dockerfile](./writing-a-dockerfile/) 为 getting-started 应用创建的示例：
 
 ```dockerfile
 FROM node:22-alpine
@@ -29,44 +26,37 @@ RUN yarn install --production
 CMD ["node", "./src/index.js"]
 ```
 
-When you run the `docker build` command to create a new image, Docker executes each instruction in your Dockerfile, creating a layer for each command and in the order specified. For each instruction, Docker checks whether it can reuse the instruction from a previous build. If it finds that you've already executed a similar instruction before, Docker doesn't need to redo it. Instead, it’ll use the cached result. This way, your build process becomes faster and more efficient, saving you valuable time and resources.
+当你运行 `docker build` 创建新镜像时，Docker 会按顺序执行 Dockerfile 中的每条指令，并为每条指令创建一层。在执行每条指令时，Docker 都会检查是否可以复用之前构建的结果。如果发现某条指令此前已经执行过且上下文一致，Docker 将直接复用缓存的结果，而无需重复执行。这样就能显著加速构建、节省时间与资源。
 
-Using the build cache effectively lets you achieve faster builds by reusing results from previous builds and skipping unnecessary work.
-In order to maximize cache usage and avoid resource-intensive and time-consuming rebuilds, it's important to understand how cache invalidation works.
-Here are a few examples of situations that can cause cache to be invalidated:
+高效利用构建缓存的关键在于理解“缓存何时会失效”。以下情况会导致缓存被判定为失效：
 
-- Any changes to the command of a `RUN` instruction invalidates that layer. Docker detects the change and invalidates the build cache if there's any modification to a `RUN` command in your Dockerfile.
+- 对 `RUN` 指令中命令的任何更改，都会使对应层的缓存失效。Docker 会比对命令是否发生变化，一旦变更就会丢弃该层缓存。
+- 对通过 `COPY` 或 `ADD` 指令复制到镜像中的任何文件发生变化。无论是文件内容，还是如权限等属性变化，都会被视为缓存失效的触发条件。
+- 一旦某一层缓存失效，其后的所有层也会一并失效。包括基础镜像或中间层在内的任意前置层发生变化，依赖它们的后续层都会被重新构建，以确保一致性。
 
-- Any changes to files copied into the image with the `COPY` or `ADD` instructions. Docker keeps an eye on any alterations to files within your project directory. Whether it's a change in content or properties like permissions, Docker considers these modifications as triggers to invalidate the cache.
+在编写或修改 Dockerfile 时，应尽量避免不必要的缓存未命中，以保证构建尽可能快速、稳定。
 
-- Once one layer is invalidated, all following layers are also invalidated. If any previous layer, including the base image or intermediary layers, has been invalidated due to changes, Docker ensures that subsequent layers relying on it are also invalidated. This keeps the build process synchronized and prevents inconsistencies.
+## 动手试试
 
-When you're writing or editing a Dockerfile, keep an eye out for unnecessary cache misses to ensure that builds run as fast and efficiently as possible.
+本实践将演示如何在一个 Node.js 应用中有效利用 Docker 构建缓存。
 
-## Try it out
+### 构建应用
 
-In this hands-on guide, you will learn how to use the Docker build cache effectively for a Node.js application.
+1. [下载并安装](https://www.docker.com/products/docker-desktop/) Docker Desktop。
 
-### Build the application
-
-1. [Download and install](https://www.docker.com/products/docker-desktop/) Docker Desktop.
-
-2. Open a terminal and [clone this sample application](https://github.com/dockersamples/todo-list-app).
-
+2. 打开终端，[克隆示例应用](https://github.com/dockersamples/todo-list-app)。
 
     ```console
     $ git clone https://github.com/dockersamples/todo-list-app
     ```
 
-3. Navigate into the `todo-list-app` directory:
-
+3. 进入 `todo-list-app` 目录：
 
     ```console
     $ cd todo-list-app
     ```
 
-    Inside this directory, you'll find a file named `Dockerfile` with the following content:
-
+    在该目录下，你会看到一个 `Dockerfile`，内容如下：
 
     ```dockerfile
     FROM node:22-alpine
@@ -77,29 +67,29 @@ In this hands-on guide, you will learn how to use the Docker build cache effecti
     CMD ["node", "./src/index.js"]
     ```
 
-4. Execute the following command to build the Docker image:
+4. 执行以下命令构建镜像：
 
     ```console
     $ docker build .
     ```
 
-    Here’s the result of the build process:
+    构建结果类似：
 
     ```console
     [+] Building 20.0s (10/10) FINISHED
     ```
 
-    The first line indicates that the entire build process took *20.0 seconds*. The first build may take some time as it installs dependencies.
+    第一行表示整个构建耗时约为 20.0 秒。首次构建通常较慢，因为需要安装依赖。
 
-5. Rebuild without making changes.
+5. 在不做任何修改的情况下再次构建。
 
-   Now, re-run the `docker build` command without making any change in the source code or Dockerfile as shown:
+   如下所示，再次执行 `docker build`，且不修改源码或 Dockerfile：
 
     ```console
     $ docker build .
     ```
 
-   Subsequent builds after the initial are faster due to the caching mechanism, as long as the commands and context remain unchanged. Docker caches the intermediate layers generated during the build process. When you rebuild the image without making any changes to the Dockerfile or the source code, Docker can reuse the cached layers, significantly speeding up the build process.
+   除首次构建外，后续构建若命令与上下文均未变化，将显著提速。这是因为 Docker 会缓存中间层；当 Dockerfile 与源码均未变更时，构建可以直接复用缓存层。
 
     ```console
     [+] Building 1.0s (9/9) FINISHED                                                                            docker:desktop-linux
@@ -116,149 +106,104 @@ In this hands-on guide, you will learn how to use the Docker build cache effecti
      => => exporting manifest
    ```
 
+   可以看到，通过复用缓存层，二次构建仅耗时约 1.0 秒，无需重复执行诸如依赖安装等耗时步骤。
 
-   The subsequent build was completed in just 1.0 second by leveraging the cached layers. No need to repeat time-consuming steps like installing dependencies.
-
-
-    <table>
-      <thead>
-        <tr>
-          <th>Steps
-          </th>
-          <th>Description
-          </th>
-          <th>Time Taken (1st Run)
-          </th>
-          <th>Time Taken (2nd Run)
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr>
-       <td>1
-       </td>
-       <td><code>Load build definition from Dockerfile</code>
-       </td>
-       <td>0.0 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>2
-       </td>
-       <td><code>Load metadata for docker.io/library/node:22-alpine</code>
-       </td>
-       <td>2.7 seconds
-       </td>
-       <td>0.9 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>3
-       </td>
-       <td><code>Load .dockerignore</code>
-       </td>
-       <td>0.0 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>4
-       </td>
-       <td><code>Load build context</code>
-    <p>
-    (Context size: 4.60MB)
-       </td>
-       <td>0.1 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>5
-       </td>
-       <td><code>Set the working directory (WORKDIR)</code>
-       </td>
-       <td>0.1 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>6
-       </td>
-       <td><code>Copy the local code into the container</code>
-       </td>
-       <td>0.0 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>7
-       </td>
-       <td><code>Run yarn install --production</code>
-       </td>
-       <td>10.0 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>8
-       </td>
-       <td><code>Exporting layers</code>
-       </td>
-       <td>2.2 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-      </tr>
-      <tr>
-       <td>9
-       </td>
-       <td><code>Exporting the final image</code>
-       </td>
-       <td>3.0 seconds
-       </td>
-       <td>0.0 seconds
-       </td>
-     </tr>
+   <table>
+     <thead>
+       <tr>
+         <th>步骤</th>
+         <th>说明</th>
+         <th>首次用时</th>
+         <th>二次用时</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td>1</td>
+         <td><code>从 Dockerfile 读取构建定义</code></td>
+         <td>0.0s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>2</td>
+         <td><code>加载 docker.io/library/node:22-alpine 元数据</code></td>
+         <td>2.7s</td>
+         <td>0.9s</td>
+       </tr>
+       <tr>
+         <td>3</td>
+         <td><code>加载 .dockerignore</code></td>
+         <td>0.0s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>4</td>
+         <td><code>加载构建上下文</code><p>(上下文大小：4.60MB)</p></td>
+         <td>0.1s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>5</td>
+         <td><code>设置工作目录（WORKDIR）</code></td>
+         <td>0.1s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>6</td>
+         <td><code>复制本地代码到容器</code></td>
+         <td>0.0s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>7</td>
+         <td><code>运行 yarn install --production</code></td>
+         <td>10.0s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>8</td>
+         <td><code>导出分层</code></td>
+         <td>2.2s</td>
+         <td>0.0s</td>
+       </tr>
+       <tr>
+         <td>9</td>
+         <td><code>导出最终镜像</code></td>
+         <td>3.0s</td>
+         <td>0.0s</td>
+       </tr>
      </tbody>
-    </table>
+   </table>
 
+   回到 `docker image history` 的输出可以发现，Dockerfile 中的每条命令都会成为镜像中的一层。你可能注意到，每当对镜像做出更改时，`yarn` 依赖就需要重新安装。有没有办法避免每次都重装依赖？
 
-    Going back to the `docker image history` output, you see that each command in the Dockerfile becomes a new layer in the image. You might remember that when you made a change to the image, the `yarn` dependencies had to be reinstalled. Is there a way to fix this? It doesn't make much sense to reinstall the same dependencies every time you build, right?
+   解决思路是：重构 Dockerfile，使依赖缓存在不需要时不会被无谓地失效。对于基于 Node 的应用，依赖由 `package.json`（以及 `yarn.lock`）定义。只有当这些文件变化时才需要重新安装依赖；若未变化，则应复用缓存。因此应先仅复制这两个文件，再安装依赖，最后复制其余文件。这样只有当 `package.json` 或 `yarn.lock` 改动时，依赖层才会被重建。
 
-    To fix this, restructure your Dockerfile so that the dependency cache remains valid unless it really needs to be invalidated. For Node-based applications, dependencies are defined in the `package.json` file. You'll want to reinstall the dependencies if that file changes, but use cached dependencies if the file is unchanged. So, start by copying only that file first, then install the dependencies, and finally copy everything else. Then, you only need to recreate the yarn dependencies if there was a change to the `package.json` file.
+6. 更新 Dockerfile：先复制 `package.json` 与 `yarn.lock`，安装依赖，再复制其余内容。
 
-6. Update the Dockerfile to copy in the `package.json` file first, install dependencies, and then copy everything else in.
+    ```dockerfile
+    FROM node:22-alpine
+    WORKDIR /app
+    COPY package.json yarn.lock ./
+    RUN yarn install --production 
+    COPY . . 
+    EXPOSE 3000
+    CMD ["node", "src/index.js"]
+    ```
 
-     ```dockerfile
-     FROM node:22-alpine
-     WORKDIR /app
-     COPY package.json yarn.lock ./
-     RUN yarn install --production 
-     COPY . . 
-     EXPOSE 3000
-     CMD ["node", "src/index.js"]
-     ```
+7. 在与 Dockerfile 同级目录创建 `.dockerignore` 文件，内容如下：
 
-7. Create a file named `.dockerignore` in the same folder as the Dockerfile with the following contents.
+    ```plaintext
+    node_modules
+    ```
 
-     ```plaintext
-     node_modules
-     ```
-
-8. Build the new image:
+8. 构建新镜像：
 
     ```console
     $ docker build .
     ```
 
-    You'll then see output similar to the following:
+    你将看到类似如下输出：
 
     ```console
     [+] Building 16.1s (10/10) FINISHED
@@ -281,17 +226,17 @@ In this hands-on guide, you will learn how to use the Docker build cache effecti
     => => naming to docker.io/library/node-app:2.0                                                 0.0s
     ```
 
-    You'll see that all layers were rebuilt. Perfectly fine since you changed the Dockerfile quite a bit.
+    由于 Dockerfile 改动较大，此处所有层重建是正常的。
 
-9. Now, make a change to the `src/static/index.html` file (like change the title to say "The Awesome Todo App").
+9. 修改 `src/static/index.html`（例如把标题改成 "The Awesome Todo App"）。
 
-10. Build the Docker image. This time, your output should look a little different.
+10. 再次构建 Docker 镜像，这次输出会有所不同：
 
     ```console
     $ docker build -t node-app:3.0 .
     ```
 
-    You'll then see output similar to the following:
+    可能的输出如下：
 
     ```console
     [+] Building 1.2s (10/10) FINISHED 
@@ -314,19 +259,18 @@ In this hands-on guide, you will learn how to use the Docker build cache effecti
     => => naming to docker.io/library/node-app:3.0                                                 0.0s
     ```
 
-    First off, you should notice that the build was much faster. You'll see that several steps are using previously cached layers. That's good news; you're using the build cache. Pushing and pulling this image and updates to it will be much faster as well.
+    你会注意到构建速度明显加快，同时多个步骤复用了缓存层。这意味着你已经在有效使用构建缓存；后续推送与拉取镜像也会更快。
 
-By following these optimization techniques, you can make your Docker builds faster and more efficient, leading to quicker iteration cycles and improved development productivity.
+通过这些优化技巧，你可以让 Docker 构建更快、更高效，加速迭代并提升研发效率。
 
-## Additional resources
+## 延伸阅读
 
-* [Optimizing builds with cache management](/build/cache/)
-* [Cache Storage Backend](/build/cache/backends/)
-* [Build cache invalidation](/build/cache/invalidation/)
+* [使用缓存优化构建](/build/cache/)
+* [缓存存储后端](/build/cache/backends/)
+* [构建缓存失效](/build/cache/invalidation/)
 
+## 下一步
 
-## Next steps
+现在你已经掌握了如何高效使用 Docker 构建缓存，可以继续学习多阶段构建。
 
-Now that you understand how to use the Docker build cache effectively, you're ready to learn about Multi-stage builds.
-
-{{< button text="Multi-stage builds" url="multi-stage-builds" >}}
+{{< button text="多阶段构建" url="multi-stage-builds" >}}

@@ -1,13 +1,12 @@
 ---
-title: Get Docker Desktop 
+title: 获取 Docker Desktop 
 keywords: concepts, container, docker desktop
-description: This concept page will teach you download Docker Desktop and install it on Windows, Mac, and Linux
+description: 本页将指导你在 Windows、Mac 和 Linux 上下载并安装 Docker Desktop。
 summary: |
-  Getting Docker Desktop up and running is the first crucial step for
-  developers diving into containerization, offering a seamless and
-  user-friendly interface for managing Docker containers. Docker Desktop
-  simplifies the process of building, sharing, and running applications in
-  containers, ensuring consistency across different environments.
+  让 Docker Desktop 运行起来，是开发者迈向容器化的关键第一步。
+  它提供直观、易用的一体化界面，帮助你管理 Docker 容器。
+  Docker Desktop 简化了在容器中构建、共享与运行应用的流程，
+  并确保在不同环境之间保持一致性。
 weight: 1
 aliases:
  - /getting-started/get-docker-desktop/
@@ -15,46 +14,45 @@ aliases:
 
 {{< youtube-embed C2bPVhiNU-0 >}}
 
-## Explanation
+## 说明
 
-Docker Desktop is the all-in-one package to build images, run containers, and so much more.
-This guide will walk you through the installation process, enabling you to experience Docker Desktop firsthand.
+Docker Desktop 是一个一体化套件，可用于构建镜像、运行容器等更多操作。
+本指南将带你完成安装流程，让你亲身体验 Docker Desktop。
 
 
-> **Docker Desktop terms**
+> **Docker Desktop 使用条款**
 >
-> Commercial use of Docker Desktop in larger enterprises (more than 250
-> employees OR more than $10 million USD in annual revenue) requires a [paid subscription](https://www.docker.com/pricing/?_gl=1*1nyypal*_ga*MTYxMTUxMzkzOS4xNjgzNTM0MTcw*_ga_XJWPQMJYHQ*MTcxNjk4MzU4Mi4xMjE2LjEuMTcxNjk4MzkzNS4xNy4wLjA.).
+> 若在大型企业中将 Docker Desktop 用于商业用途（员工人数超过 250 人，或年营收超过 1000 万美元），需要购买[付费订阅](https://www.docker.com/pricing/?_gl=1*1nyypal*_ga*MTYxMTUxMzkzOS4xNjgzNTM0MTcw*_ga_XJWPQMJYHQ*MTcxNjk4MzU4Mi4xMjE2LjEuMTcxNjk4MzkzNS4xNy4wLjA.).
 
 <div class="not-prose">
 {{< card
-  title="Docker Desktop for Mac"
-  description="[Download (Apple Silicon)](https://desktop.docker.com/mac/main/arm64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-arm64) | [Download (Intel)](https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-amd64) | [Install instructions](/desktop/setup/install/mac-install)"
+  title="适用于 Mac 的 Docker Desktop"
+  description="[下载（Apple Silicon）](https://desktop.docker.com/mac/main/arm64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-arm64) | [下载（Intel）](https://desktop.docker.com/mac/main/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-amd64) | [安装指南](/desktop/setup/install/mac-install)"
   icon="/icons/AppleMac.svg" >}}
 
 {{< card
-  title="Docker Desktop for Windows"
-  description="[Download](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-windows) | [Install instructions](/desktop/setup/install/windows-install)"
+  title="适用于 Windows 的 Docker Desktop"
+  description="[下载](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-windows) | [安装指南](/desktop/setup/install/windows-install)"
   icon="/icons/Windows.svg" >}}
 
 {{< card
-  title="Docker Desktop for Linux"
-  description="[Install instructions](/desktop/setup/install/linux/)"
+  title="适用于 Linux 的 Docker Desktop"
+  description="[安装指南](/desktop/setup/install/linux/)"
   icon="/icons/Linux.svg" >}}
 </div>
 
-Once it's installed, complete the setup process and you're all set to run a Docker container.
+安装完成后，继续完成初始化设置，你就可以开始运行 Docker 容器了。
 
-## Try it out
+## 试一试
 
-In this hands-on guide, you will see how to run a Docker container using Docker Desktop.
+在这个动手指南中，你将了解如何使用 Docker Desktop 运行一个 Docker 容器。
 
-Follow the instructions to run a container using the CLI.
+按照以下步骤，通过 CLI 启动一个容器。
 
 
-## Run your first container
+## 运行第一个容器
 
-Open your CLI terminal and start a container by running the `docker run` command:
+打开命令行终端，使用 `docker run` 命令启动一个容器：
 
 
 
@@ -62,33 +60,33 @@ Open your CLI terminal and start a container by running the `docker run` command
 $ docker run -d -p 8080:80 docker/welcome-to-docker
 ```
 
-## Access the frontend
+## 访问前端
 
-For this container, the frontend is accessible on port `8080`. To open the website, visit [http://localhost:8080](http://localhost:8080) in your browser.
-
-
+对于该容器，前端服务映射到 `8080` 端口。打开浏览器访问 [http://localhost:8080](http://localhost:8080) 即可查看页面。
 
 
 
-![Screenshot of the landing page of the Nginx web server, coming from the running container](../docker-concepts/the-basics/images/access-the-frontend.webp?border=true)
-
-## Manage containers using Docker Desktop
 
 
-1. Open Docker Desktop and select the **Containers** field on the left sidebar.
-2. You can view information about your container including logs, and files, and even access the shell by selecting the **Exec** tab.
+![来自正在运行容器的 Nginx Web 服务器首页截图](../docker-concepts/the-basics/images/access-the-frontend.webp?border=true)
 
-   ![Screenshot of exec into the running container in Docker Desktop](images/exec-into-docker-container.webp?border=true)
+## 使用 Docker Desktop 管理容器
 
 
-3. Select the **Inspect** field to obtain detailed information about the container. You can perform various actions such as pause, resume, start or stop containers, or explore the **Logs**, **Bind mounts**, **Exec**, **Files**, and **Stats** tabs.
+1. 打开 Docker Desktop，在左侧边栏选择 **Containers**。
+2. 你可以查看容器的日志与文件，并可在 **Exec** 选项卡中进入容器终端。
 
-![Screenshot of inspecting the running container in Docker Desktop](images/inspecting-container.webp?border=true)
+   ![在 Docker Desktop 中进入正在运行容器终端的截图](images/exec-into-docker-container.webp?border=true)
 
-Docker Desktop simplifies container management for developers by streamlining the setup, configuration, and compatibility of applications across different environments, thereby addressing the pain points of environment inconsistencies and deployment challenges.
 
-## What's next?
+3. 选择 **Inspect** 获取容器的详细信息。你还可以执行暂停、恢复、启动或停止等操作，或查看 **Logs**、**Bind mounts**、**Exec**、**Files**、**Stats** 等选项卡。
 
-Now that you have Docker Desktop installed and ran your first container, it's time to start developing with containers.
+![在 Docker Desktop 中检查正在运行容器的截图](images/inspecting-container.webp?border=true)
 
-{{< button text="Develop with containers" url="develop-with-containers" >}}
+Docker Desktop 通过简化跨环境的安装、配置与兼容性，为开发者提供一致体验，从而缓解环境不一致与部署困难等痛点。
+
+## 下一步
+
+现在你已安装 Docker Desktop 并运行了第一个容器，是时候开始使用容器进行开发了。
+
+{{< button text="使用容器进行开发" url="develop-with-containers" >}}

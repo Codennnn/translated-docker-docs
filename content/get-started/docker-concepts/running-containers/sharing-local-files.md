@@ -1,8 +1,8 @@
 ---
-title: Sharing local files with containers
+title: 与容器共享本地文件
 weight: 4
 keywords: concepts, images, container, docker desktop
-description: This concept page will teach you the various storage options available in Docker and their common usage.
+description: 本文将介绍 Docker 中可用的多种存储选项及其常见用法。
 aliases: 
  - /guides/docker-concepts/running-containers/sharing-local-files/
 ---
@@ -10,35 +10,34 @@ aliases:
 {{< youtube-embed 2dAzsVg3Dek >}}
 
 
-## Explanation
+## 概念解析
 
-Each container has everything it needs to function with no reliance on any pre-installed dependencies on the host machine. Since containers run in isolation, they have minimal influence on the host and other containers. This isolation has a major benefit: containers minimize conflicts with the host system and other containers. However, this isolation also means containers can't directly access data on the host machine by default.
+每个容器都包含其运行所需的一切，而不依赖宿主机预先安装的依赖。容器在隔离环境中运行，尽量减少对宿主机与其他容器的影响。这种隔离带来一个重要好处：最大程度降低与宿主系统或其他容器之间的冲突。然而，也正因为隔离，容器默认无法直接访问宿主机上的数据。
 
-Consider a scenario where you have a web application container that requires access to configuration settings stored in a file on your host system. This file may contain sensitive data such as database credentials or API keys. Storing such sensitive information directly within the container image poses security risks, especially during image sharing. To address this challenge, Docker offers storage options that bridge the gap between container isolation and your host machine's data.
+设想一个场景：你的 Web 应用容器需要读取宿主机上的某个配置文件。该文件可能包含敏感信息，如数据库凭据或 API Key。如果把这些敏感信息直接打包进镜像，在镜像分发时就会存在安全风险。为解决隔离与数据访问之间的矛盾，Docker 提供了在宿主机与容器之间共享文件的存储选项。
 
-Docker offers two primary storage options for persisting data and sharing files between the host machine and containers: volumes and bind mounts.
+Docker 提供两种主要方式来进行数据持久化与主机-容器文件共享：卷（volumes）与绑定挂载（bind mounts）。
 
-### Volume versus bind mounts
+### 卷 vs 绑定挂载
 
-If you want to ensure that data generated or modified inside the container persists even after the container stops running, you would opt for a volume. See [Persisting container data](/get-started/docker-concepts/running-containers/persisting-container-data/) to learn more about volumes and their use cases.
+- 如果你希望确保容器内部生成或修改的数据在容器停止后仍能保留，应该使用“卷”。参见[持久化容器数据](/get-started/docker-concepts/running-containers/persisting-container-data/)了解更多场景与用法。
+- 如果你希望把宿主机上的某些特定文件或目录直接共享给容器（如配置文件或开发代码），应使用“绑定挂载”。它就像在主机与容器之间开了一扇“直通门”。绑定挂载非常适合需要实时文件访问与共享的开发场景。
 
-If you have specific files or directories on your host system that you want to directly share with your container, like configuration files or development code, then you would use a bind mount. It's like opening a direct portal between your host and container for sharing. Bind mounts are ideal for development environments where real-time file access and sharing between the host and container are crucial.
+### 在主机与容器之间共享文件
 
-### Sharing files between a host and container
+在 `docker run` 命令中，`-v`（或 `--volume`）与 `--mount` 都可用于在宿主机与容器间共享文件或目录，但两者在行为与用法上存在差异。
 
-Both `-v` (or `--volume`) and `--mount` flags used with the `docker run` command let you share files or directories between your local machine (host) and a Docker container. However, there are some key differences in their behavior and usage.
+- `-v` 语法更简单，适合基础的卷或绑定挂载操作。如果使用 `-v`/`--volume` 指定的宿主路径不存在，会被自动创建为目录。
 
-The `-v` flag is simpler and more convenient for basic volume or bind mount operations. If the host location doesn’t exist when using `-v` or `--volume`, a directory will be automatically created.
+设想你在开发机上有一个源码目录，构建生成的产物（可执行文件、图片等）放在该目录的子目录中，下文示例把这个子目录称为 `/HOST/PATH`。你希望这些产物在容器中可用，并且每次重新构建时容器能读取到最新的产物。
 
-Imagine you're a developer working on a project. You have a source directory on your development machine where your code resides. When you compile or build your code, the generated artifacts (compiled code, executables, images, etc.) are saved in a separate subdirectory within your source directory. In the following examples, this subdirectory is `/HOST/PATH`. Now you want these build artifacts to be accessible within a Docker container running your application. Additionally, you want the container to automatically access the latest build artifacts whenever you rebuild your code.
-
-Here's a way to use `docker run` to start a container using a bind mount and map it to the container file location.
+使用绑定挂载启动容器并把它映射到容器内的指定路径：
 
 ```console
 $ docker run -v /HOST/PATH:/CONTAINER/PATH -it nginx
 ```
 
-The `--mount` flag offers more advanced features and granular control, making it suitable for complex mount scenarios or production deployments. If you use `--mount` to bind-mount a file or directory that doesn't yet exist on the Docker host, the `docker run` command doesn't automatically create it for you but generates an error.
+- `--mount` 提供更高级、更细粒度的控制，更适合复杂挂载或生产部署。如果用 `--mount` 绑定一个宿主机上尚不存在的路径，`docker run` 不会自动创建该路径，而是报错。
 
 ```console
 $ docker run --mount type=bind,source=/HOST/PATH,target=/CONTAINER/PATH,readonly nginx
@@ -46,62 +45,61 @@ $ docker run --mount type=bind,source=/HOST/PATH,target=/CONTAINER/PATH,readonly
 
 > [!NOTE]
 >
-> Docker recommends using the `--mount` syntax instead of `-v`. It provides better control over the mounting process and avoids potential issues with missing directories.
+> 官方建议优先使用 `--mount` 语法，它对挂载过程的控制更精细，也可以避免因目录缺失导致的隐性问题。
 
-### File permissions for Docker access to host files
+### 宿主文件的访问权限
 
-When using bind mounts, it's crucial to ensure that Docker has the necessary permissions to access the host directory. To grant read/write access, you can use the `:ro` flag (read-only) or `:rw` (read-write) with the `-v` or `--mount` flag during container creation.
-For example, the following command grants read-write access permission.
+使用绑定挂载时，务必确保 Docker 对宿主目录具有相应权限。你可以在创建容器时为挂载路径添加 `:ro`（只读）或 `:rw`（读写）后缀来控制权限。
+
+例如，以下命令为容器授予读写权限：
 
 ```console
 $ docker run -v HOST-DIRECTORY:/CONTAINER-DIRECTORY:rw nginx
 ```
 
-Read-only bind mounts let the container access the mounted files on the host for reading, but it can't change or delete the files. With read-write bind mounts, containers can modify or delete mounted files, and these changes or deletions will also be reflected on the host system. Read-only bind mounts ensures that files on the host can't be accidentally modified or deleted by a container.
+只读挂载允许容器读取宿主文件，但不能修改或删除；读写挂载允许容器修改/删除文件，并会同步反映到宿主机上。只读挂载有助于避免容器意外改动宿主文件。
 
-> **Synchronized File Share**
+> **同步文件共享（Synchronized File Share）**
 >
-> As your codebase grows larger, traditional methods of file sharing like bind mounts may become inefficient or slow, especially in development environments where frequent access to files is necessary. [Synchronized file shares](/manuals/desktop/features/synchronized-file-sharing.md) improve bind mount performance by leveraging synchronized filesystem caches. This optimization ensures that file access between the host and virtual machine (VM) is fast and efficient.
+> 随着代码库规模增长，传统绑定挂载在频繁文件访问的开发环境中可能变慢。[同步文件共享](/manuals/desktop/features/synchronized-file-sharing.md) 通过同步文件系统缓存加速绑定挂载，在宿主机与虚拟机之间提供更快的访问体验。
 
-## Try it out
+## 动手试试
 
-In this hands-on guide, you’ll practice how to create and use a bind mount to share files between a host and a container.
+本实践将演示如何创建并使用绑定挂载在主机与容器之间共享文件。
 
-### Run a container
+### 运行容器
 
-1. [Download and install](/get-started/get-docker/) Docker Desktop.
+1. [下载并安装](/get-started/get-docker/) Docker Desktop。
 
-2. Start a container using the [httpd](https://hub.docker.com/_/httpd) image with the following command:
+2. 使用 [httpd](https://hub.docker.com/_/httpd) 镜像启动容器：
 
    ```console
    $ docker run -d -p 8080:80 --name my_site httpd:2.4
    ```
 
-   This will start the `httpd` service in the background, and publish the webpage to port `8080` on the host.
+   该命令会在后台启动 `httpd` 服务，并将网页发布到宿主机的 `8080` 端口。
 
-3. Open the browser and access [http://localhost:8080](http://localhost:8080) or use the curl command to verify if it's working fine or not.
+3. 打开浏览器访问 [http://localhost:8080](http://localhost:8080)，或使用 curl 验证服务是否正常：
 
     ```console
     $ curl localhost:8080
     ```
 
+### 使用绑定挂载
 
-### Use a bind mount
+通过绑定挂载，你可以把宿主机上的配置或站点文件映射到容器内指定位置。下面通过替换网页的方式演示其效果：
 
-Using a bind mount, you can map the configuration file on your host computer to a specific location within the container. In this example, you’ll see how to change the look and feel of the webpage by using bind mount:
+1. 在 Docker Desktop 控制面板删除现有容器：
 
-1. Delete the existing container by using the Docker Desktop Dashboard:
+   ![Docker Desktop Dashboard 截图，展示如何删除 httpd 容器](images/delete-httpd-container.webp?border=true)
 
-   ![A screenshot of Docker Desktop Dashboard showing how to delete the httpd container](images/delete-httpd-container.webp?border=true)
-
-
-2. Create a new directory called `public_html` on your host system.
+2. 在宿主机上创建目录 `public_html`：
 
     ```console
     $ mkdir public_html
     ```
 
-3. Navigate into the newly created directory `public_html` and create a file called `index.html` with the following content. This is a basic HTML document that creates a simple webpage that welcomes you with a friendly whale.
+3. 进入 `public_html` 目录，并创建 `index.html` 文件，内容如下（一个包含友好鲸鱼问候的小网页）：
 
     ```html
     <!DOCTYPE html>
@@ -117,7 +115,7 @@ Using a bind mount, you can map the configuration file on your host computer to 
        ##         .
       ## ## ##        ==
      ## ## ## ## ##    ===
-     /"""""""""""""""""\___/ ===
+     /""""""""""""""\___/ ===
    {                       /  ===-
    \______ O           __/
     \    \         __/
@@ -129,7 +127,7 @@ Using a bind mount, you can map the configuration file on your host computer to 
     </html>
     ```
 
-4. It's time to run the container. The `--mount` and `-v` examples produce the same result. You can't run them both unless you remove the `my_site` container after running the first one.
+4. 重新运行容器。`--mount` 与 `-v` 两种方式效果等同，不要同时执行（若已运行其一，需要先删除 `my_site` 再执行另一种）。
 
    {{< tabs >}}
    {{< tab name="`-v`" >}}
@@ -148,58 +146,46 @@ Using a bind mount, you can map the configuration file on your host computer to 
    {{< /tab >}}
    {{< /tabs >}}
 
+   > [!TIP]
+   > 在 Windows PowerShell 中使用 `-v` 或 `--mount` 时，请提供目录的绝对路径，而不是 `./`。这是因为 PowerShell 处理相对路径的方式与 macOS/Linux 上常见的 bash 不同。
 
-   > [!TIP]  
-   > When using the `-v` or `--mount` flag in Windows PowerShell, you need to provide the absolute path to your directory instead of just `./`. This is because PowerShell handles relative paths differently from bash (commonly used in Mac and Linux environments).    
+   一切就绪后，访问 [http://localhost:8080](http://localhost:8080)，你会看到带有友好鲸鱼问候的新网页。
 
+### 在 Docker Desktop 中查看文件
 
+1. 在容器的 **Files** 标签页中，浏览 `/usr/local/apache2/htdocs/` 下的已挂载文件，点击 **Open file editor** 可在线查看与编辑。
 
-   With everything now up and running, you should be able to access the site via [http://localhost:8080](http://localhost:8080) and find a new webpage that welcomes you with a friendly whale.
+   ![Docker Desktop Dashboard 截图，展示容器内的已挂载文件](images/mounted-files.webp?border=true)
 
+2. 在宿主机上删除该文件，回到 **Files** 视图可见该文件也已消失。
 
-### Access the file on the Docker Desktop Dashboard
+   ![Docker Desktop Dashboard 截图，展示容器内已被删除的文件](images/deleted-files.webp?border=true)
 
-1. You can view the mounted files inside a container by selecting the container's **Files** tab and then selecting a file inside the `/usr/local/apache2/htdocs/` directory. Then, select **Open file editor**.
+3. 在宿主机上重新创建该 HTML 文件，容器 **Files** 视图会重新出现该文件，同时网页也可再次访问。
 
+### 停止容器
 
-   ![A screenshot of Docker Desktop Dashboard showing the mounted files inside the a container](images/mounted-files.webp?border=true)
+容器会持续运行直到你将其停止。
 
-2. Delete the file on the host and verify the file is also deleted in the container. You will find that the files no longer exist under **Files** in the Docker Desktop Dashboard.
+1. 打开 Docker Desktop 控制面板的 **Containers** 视图。
+2. 找到需要停止的容器。
+3. 在操作列中选择 **Delete**。
 
+![Docker Desktop Dashboard 截图，展示如何删除容器](images/delete-the-container.webp?border=true)
 
-   ![A screenshot of Docker Desktop Dashboard showing the deleted files inside the a container](images/deleted-files.webp?border=true)
+## 延伸阅读
 
+以下资源将帮助你进一步了解绑定挂载：
 
-3. Recreate the HTML file on the host system and see that file re-appears under the **Files** tab under **Containers** on the Docker Desktop Dashboard. By now, you will be able to access the site too.
+* [在 Docker 中管理数据](/storage/)
+* [卷](/storage/volumes/)
+* [绑定挂载](/storage/bind-mounts/)
+* [运行容器](/reference/run/)
+* [存储问题排查](/storage/troubleshooting_volume_errors/)
+* [持久化容器数据](/get-started/docker-concepts/running-containers/persisting-container-data/)
 
+## 下一步
 
+既然你已经学会与容器共享本地文件，接下来可以学习多容器应用。
 
-### Stop your container
-
-The container continues to run until you stop it.
-
-1. Go to the **Containers** view in the Docker Desktop Dashboard.
-
-2. Locate the container you'd like to stop.
-
-3. Select the **Delete** action in the Actions column.
-
-![A screenshot of Docker Desktop Dashboard showing how to delete the container](images/delete-the-container.webp?border=true)
-
-
-## Additional resources
-
-The following resources will help you learn more about bind mounts:
-
-* [Manage data in Docker](/storage/)
-* [Volumes](/storage/volumes/)
-* [Bind mounts](/storage/bind-mounts/)
-* [Running containers](/reference/run/)
-* [Troubleshoot storage errors](/storage/troubleshooting_volume_errors/)
-* [Persisting container data](/get-started/docker-concepts/running-containers/persisting-container-data/)
-
-## Next steps
-
-Now that you have learned about sharing local files with containers, it’s time to learn about multi-container applications.
-
-{{< button text="Multi-container applications" url="Multi-container applications" >}}
+{{< button text="多容器应用" url="Multi-container applications" >}}

@@ -1,7 +1,7 @@
 ---
-title: Publishing and exposing ports
+title: 发布与暴露端口
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you the significance of publishing and exposing ports in Docker 
+description: 本文将介绍在 Docker 中发布（publish）与暴露（expose）端口的重要性。
 weight: 1
 aliases: 
  - /guides/docker-concepts/running-containers/publishing-ports/
@@ -9,46 +9,46 @@ aliases:
 
 {{< youtube-embed 9JnqOmJ96ds >}}
 
-## Explanation
+## 概念解析
 
-If you've been following the guides so far, you understand that containers provide isolated processes for each component of your application. Each component - a React frontend, a Python API, and a Postgres database - runs in its own sandbox environment, completely isolated from everything else on your host machine. This isolation is great for security and managing dependencies, but it also means you can’t access them directly. For example, you can’t access the web app in your browser.
+如果你一直跟随本系列进行练习，你已经了解容器会为应用的每个组件提供隔离的进程环境。每个组件——例如 React 前端、Python API 与 Postgres 数据库——都在各自的沙箱环境中运行，与宿主机上的其他一切完全隔离。这种隔离有利于安全与依赖治理，但也意味着你无法直接访问它们，例如无法直接在浏览器里访问 Web 应用。
 
-That’s where port publishing comes in.
+这时就需要“端口发布”。
 
-### Publishing ports
+### 发布端口（Publishing ports）
 
-Publishing a port provides the ability to break through a little bit of networking isolation by setting up a forwarding rule. As an example, you can indicate that requests on your host’s port `8080` should be forwarded to the container’s port `80`. Publishing ports happens during container creation using the `-p` (or `--publish`) flag with `docker run`. The syntax is:
+发布端口允许你在一定程度上突破网络隔离，通过建立转发规则，将宿主机收到的请求转发到容器内部。例如，你可以指定把宿主机的 `8080` 端口转发到容器的 `80` 端口。发布端口发生在创建容器时，通过 `docker run` 的 `-p`（或 `--publish`）参数实现。其语法为：
 
 ```console
 $ docker run -d -p HOST_PORT:CONTAINER_PORT nginx
 ```
 
-- `HOST_PORT`: The port number on your host machine where you want to receive traffic
-- `CONTAINER_PORT`: The port number within the container that's listening for connections
+- `HOST_PORT`：宿主机上用于接收流量的端口号
+- `CONTAINER_PORT`：容器内部用于监听连接的端口号
 
-For example, to publish the container's port `80` to host port `8080`:
+例如，将容器的 `80` 端口发布到宿主机的 `8080`：
 
 ```console
 $ docker run -d -p 8080:80 nginx
 ```
 
-Now, any traffic sent to port `8080` on your host machine will be forwarded to port `80` within the container.
+现在，发往宿主机 `8080` 端口的任何流量都会被转发到容器内的 `80` 端口。
 
 > [!IMPORTANT]
 >
-> When a port is published, it's published to all network interfaces by default. This means any traffic that reaches your machine can access the published application. Be mindful of publishing databases or any sensitive information. [Learn more about published ports here](/engine/network/#published-ports).
+> 端口一旦发布，默认会绑定到所有网络接口。这意味着任何能访问到你机器的流量都可以访问已发布的应用。请谨慎发布数据库等敏感服务。[在此了解更多已发布端口的细节](/engine/network/#published-ports)。
 
-### Publishing to ephemeral ports
+### 发布到临时端口（Ephemeral ports）
 
-At times, you may want to simply publish the port but don’t care which host port is used. In these cases, you can let Docker pick the port for you. To do so, simply omit the `HOST_PORT` configuration. 
+有时你只想发布端口，但并不关心具体映射到宿主机的哪个端口。这种情况下，可以让 Docker 自动选择端口。只需省略 `HOST_PORT` 即可。
 
-For example, the following command will publish the container’s port `80` onto an ephemeral port on the host:
+例如，以下命令会把容器的 `80` 端口发布到宿主机的一个临时端口：
 
 ```console
 $ docker run -p 80 nginx
 ```
  
-Once the container is running, using `docker ps` will show you the port that was chosen:
+容器启动后，使用 `docker ps` 可查看被分配的端口：
 
 ```console
 docker ps
@@ -56,52 +56,51 @@ CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS   
 a527355c9c53   nginx         "/docker-entrypoint.…"   4 seconds ago    Up 3 seconds    0.0.0.0:54772->80/tcp    romantic_williamson
 ```
 
-In this example, the app is exposed on the host at port `54772`.
+在这个示例中，应用通过宿主机的 `54772` 端口对外提供服务。
 
-### Publishing all ports
+### 发布所有暴露的端口
 
-When creating a container image, the `EXPOSE` instruction is used to indicate the packaged application will use the specified port. These ports aren't published by default. 
+创建镜像时，可以使用 `EXPOSE` 指令声明镜像内的应用将使用某些端口。这些端口默认不会被发布。
 
-With the `-P` or `--publish-all` flag, you can automatically publish all exposed ports to ephemeral ports. This is quite useful when you’re trying to avoid port conflicts in development or testing environments.
+使用 `-P` 或 `--publish-all` 参数，可以将镜像中所有通过 `EXPOSE` 声明的端口，自动发布到宿主机的临时端口。这对于在开发或测试环境中避免端口冲突非常有用。
 
-For example, the following command will publish all of the exposed ports configured by the image:
+例如，以下命令会发布镜像配置中声明的所有端口：
 
 ```console
 $ docker run -P nginx
 ```
 
-## Try it out
+## 动手试试
 
-In this hands-on guide, you'll learn how to publish container ports using both the CLI and Docker Compose for deploying a web application.
+本实践将演示如何使用 CLI 与 Docker Compose 发布容器端口来部署一个 Web 应用。
 
-### Use the Docker CLI
+### 使用 Docker CLI
 
-In this step, you will run a container and publish its port using the Docker CLI.
+本步骤中，你将使用 Docker CLI 运行一个容器并发布其端口。
 
-1. [Download and install](/get-started/get-docker/) Docker Desktop.
+1. [下载并安装](/get-started/get-docker/) Docker Desktop。
 
-2. In a terminal, run the following command to start a new container:
+2. 在终端中运行以下命令启动一个新容器：
 
     ```console
     $ docker run -d -p 8080:80 docker/welcome-to-docker
     ```
 
-    The first `8080` refers to the host port. This is the port on your local machine that will be used to access the application running inside the container. The second `80` refers to the container port. This is the port that the application inside the container listens on for incoming connections. Hence, the command binds to port `8080` of the host to port `80` on the container system.
+    其中，第一个 `8080` 指宿主机端口，即你本机用于访问容器内应用的端口；第二个 `80` 指容器端口，即容器内应用对外监听的端口。因此，该命令将宿主机的 `8080` 绑定到容器的 `80`。
 
-3. Verify the published port by going to the **Containers** view of the Docker Desktop Dashboard.
+3. 打开 Docker Desktop 控制面板的 **Containers** 视图，验证端口是否已发布。
 
-   ![A screenshot of Docker Desktop Dashboard showing the published port](images/published-ports.webp?w=5000&border=true)
+   ![Docker Desktop Dashboard 截图，显示已发布端口](images/published-ports.webp?w=5000&border=true)
 
-4. Open the website by either selecting the link in the **Port(s)** column of your container or visiting [http://localhost:8080](http://localhost:8080) in your browser.
+4. 通过点击容器 **Port(s)** 列的链接，或在浏览器访问 [http://localhost:8080](http://localhost:8080) 打开站点。
 
-   ![A screenshot of the landing page of the Nginx web server running in a container](/get-started/docker-concepts/the-basics/images/access-the-frontend.webp?border=true)
+   ![在容器中运行的 Nginx 首页截图](/get-started/docker-concepts/the-basics/images/access-the-frontend.webp?border=true)
 
+### 使用 Docker Compose
 
-### Use Docker Compose
+下面用 Docker Compose 启动同一个应用：
 
-This example will launch the same application using Docker Compose:
-
-1. Create a new directory and inside that directory, create a `compose.yaml` file with the following contents:
+1. 新建一个目录，并在其中创建 `compose.yaml` 文件，内容如下：
 
     ```yaml
     services:
@@ -111,24 +110,24 @@ This example will launch the same application using Docker Compose:
           - 8080:80
     ```
 
-    The `ports` configuration accepts a few different forms of syntax for the port definition. In this case, you’re using the same `HOST_PORT:CONTAINER_PORT` used in the `docker run` command.
+    `ports` 支持多种语法形式，这里使用和 `docker run` 一致的 `HOST_PORT:CONTAINER_PORT` 格式。
 
-2. Open a terminal and navigate to the directory you created in the previous step.
+2. 打开终端，进入上一步创建的目录。
 
-3. Use the `docker compose up` command to start the application. 
+3. 使用 `docker compose up` 启动应用。
 
-4. Open your browser to [http://localhost:8080](http://localhost:8080).
+4. 打开浏览器访问 [http://localhost:8080](http://localhost:8080)。
 
-## Additional resources
+## 延伸阅读
 
-If you’d like to dive in deeper on this topic, be sure to check out the following resources:
+如果你想更深入了解相关主题，请参考：
 
-* [`docker container port` CLI reference](/reference/cli/docker/container/port/)
-* [Published ports](/engine/network/#published-ports)
+* [`docker container port` 命令参考](/reference/cli/docker/container/port/)
+* [已发布端口](/engine/network/#published-ports)
 
-## Next steps
+## 下一步
 
-Now that you understand how to publish and expose ports, you're ready to learn how to override the container defaults using the `docker run` command.
+现在你已经理解如何发布与暴露端口，接下来学习如何使用 `docker run` 覆盖容器默认设置。
 
-{{< button text="Overriding container defaults" url="overriding-container-defaults" >}}
+{{< button text="覆盖容器默认值" url="overriding-container-defaults" >}}
 

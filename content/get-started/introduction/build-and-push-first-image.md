@@ -1,12 +1,11 @@
 ---
-title: Build and push your first image
+title: 构建并推送你的第一个镜像
 keywords: concepts, container, docker desktop
-description: This concept page will teach you how to build and push your first image
+description: 本页将教你如何构建并推送你的第一个镜像。
 summary: |
-  Learn how to build your first Docker image, a key step in containerizing your
-  application. We'll guide you through the process of creating an image
-  repository and building and pushing your image to Docker Hub. This enables
-  you to share your image easily within your team.
+  学习如何构建你的第一个 Docker 镜像，这是让应用走向容器化的关键一步。
+  我们将引导你创建镜像仓库，并将镜像构建并推送到 Docker Hub，
+  让你可以在团队内轻松共享镜像。
 weight: 3
 aliases: 
  - /guides/getting-started/build-and-push-first-image/
@@ -14,118 +13,117 @@ aliases:
 
 {{< youtube-embed 7ge1s5nAa34 >}}
 
-## Explanation
+## 说明
 
-Now that you've updated the [to-do list app](develop-with-containers.md), you’re ready to create a container image for the application and share it on Docker Hub. To do so, you will need to do the following:
+现在你已经更新了[待办应用](develop-with-containers.md)，可以为该应用创建一个容器镜像并将其分享至 Docker Hub。为此，你需要完成以下步骤：
 
-1. Sign in with your Docker account
-2. Create an image repository on Docker Hub
-3. Build the container image
-4. Push the image to Docker Hub
+1. 使用你的 Docker 账号登录
+2. 在 Docker Hub 上创建镜像仓库
+3. 构建容器镜像
+4. 将镜像推送到 Docker Hub
 
-Before you dive into the hands-on guide, the following are a few core concepts that you should be aware of.
+在开始动手之前，先了解几个核心概念。
 
-### Container images
+### 容器镜像
 
-If you’re new to container images, think of them as a standardized package that contains everything needed to run an application, including its files, configuration, and dependencies. These packages can then be distributed and shared with others.
+如果你刚接触容器镜像，可以把它看作一个标准化的软件包，包含运行应用所需的一切：文件、配置与依赖。镜像可以被分发并与他人共享。
 
 ### Docker Hub
 
-To share your Docker images, you need a place to store them. This is where registries come in. While there are many registries, Docker Hub is the default and go-to registry for images. Docker Hub provides both a place for you to store your own images and to find images from others to either run or use as the bases for your own images.
+要分享你的 Docker 镜像，你需要一个存放它们的地方，即“仓库”（registry）。虽然有许多可用的仓库，但 Docker Hub 是默认且最常用的镜像仓库。Docker Hub 既是你存放自有镜像的地方，也可以在其中查找他人的镜像，用来直接运行或作为你的镜像基础。
 
-In [Develop with containers](develop-with-containers.md), you used the following images that came from Docker Hub, each of which are [Docker Official Images](/manuals/docker-hub/image-library/trusted-content.md#docker-official-images):
+在[使用容器进行开发](develop-with-containers.md)中，你使用了来自 Docker Hub 的以下镜像，它们均为[Docker 官方镜像](/manuals/docker-hub/image-library/trusted-content.md#docker-official-images)：
 
-- [node](https://hub.docker.com/_/node) - provides a Node environment and is used as the base of your development efforts. This image is also used as the base for the final application image.
-- [mysql](https://hub.docker.com/_/mysql) - provides a MySQL database to store the to-do list items
-- [phpmyadmin](https://hub.docker.com/_/phpmyadmin) - provides phpMyAdmin, a web-based interface to the MySQL database
-- [traefik](https://hub.docker.com/_/traefik) - provides Traefik, a modern HTTP reverse proxy and load balancer that routes requests to the appropriate container based on routing rules
+- [node](https://hub.docker.com/_/node) - 提供 Node 运行环境，作为开发阶段的基础镜像，同时也作为最终应用镜像的基础。
+- [mysql](https://hub.docker.com/_/mysql) - 提供用于存放待办事项的 MySQL 数据库
+- [phpmyadmin](https://hub.docker.com/_/phpmyadmin) - 提供 phpMyAdmin，一个基于 Web 的 MySQL 数据库管理界面
+- [traefik](https://hub.docker.com/_/traefik) - 提供 Traefik，一款现代化的 HTTP 反向代理与负载均衡器，可基于路由规则将请求转发至目标容器
 
-Explore the full catalog of [Docker Official Images](https://hub.docker.com/search?image_filter=official&q=), [Docker Verified Publishers](https://hub.docker.com/search?q=&image_filter=store), and [Docker Sponsored Open Source Software](https://hub.docker.com/search?q=&image_filter=open_source) images to see more of what there is to run and build on.
+前往查看完整目录：[Docker 官方镜像](https://hub.docker.com/search?image_filter=official&q=)、[Docker 验证发布者](https://hub.docker.com/search?q=&image_filter=store)与 [Docker 赞助的开源软件](https://hub.docker.com/search?q=&image_filter=open_source)，探索更多可运行与可构建的内容。
 
-## Try it out
+## 试一试
 
-In this hands-on guide, you'll learn how to sign in to Docker Hub and push images to Docker Hub repository.
+在这个动手指南中，你将学习如何登录 Docker Hub，并将镜像推送到 Docker Hub 仓库。
 
-## Sign in with your Docker account
+## 使用 Docker 账号登录
 
-To push images to Docker Hub, you will need to sign in with a Docker account.
+要将镜像推送到 Docker Hub，你需要先使用 Docker 账号登录。
 
-1. Open the Docker Dashboard.
+1. 打开 Docker Dashboard。
 
-2. Select **Sign in** at the top-right corner.
+2. 点击右上角的 **Sign in**。
 
-3. If needed, create an account and then complete the sign-in flow.
+3. 如有需要，先创建账号，再完成登录流程。
 
-Once you're done, you should see the **Sign in** button turn into a profile picture.
+完成后，你将看到 **Sign in** 按钮变为头像。
 
-## Create an image repository
+## 创建镜像仓库
 
-Now that you have an account, you can create an image repository. Just as a Git repository holds source code, an image repository stores container images.
+现在你已有账号，可以创建镜像仓库。就像 Git 仓库存放源代码一样，镜像仓库存放容器镜像。
 
-1. Go to [Docker Hub](https://hub.docker.com).
+1. 访问 [Docker Hub](https://hub.docker.com)。
 
-2. Select **Create repository**.
+2. 点击 **Create repository**。
 
-3. On the **Create repository** page, enter the following information:
+3. 在 **Create repository** 页面填写以下信息：
 
     - **Repository name** - `getting-started-todo-app`
-    - **Short description** - feel free to enter a description if you'd like
-    - **Visibility** - select **Public** to allow others to pull your customized to-do app
+    - **Short description** - 可按需填写描述
+    - **Visibility** - 选择 **Public** 允许他人拉取你定制的待办应用镜像
 
-4. Select **Create** to create the repository.
+4. 点击 **Create** 创建仓库。
 
 
-## Build and push the image
+## 构建并推送镜像
 
-Now that you have a repository, you are ready to build and push your image. An important note is that the image you are building extends the Node image, meaning you don't need to install or configure Node, yarn, etc. You can simply focus on what makes your application unique.
+有了仓库之后，就可以构建并推送镜像了。需要注意的是，你要构建的镜像基于 Node 镜像，这意味着你无需手动安装或配置 Node、Yarn 等依赖，可将精力集中在应用本身。
 
-> **What is an image/Dockerfile?**
+> **什么是镜像 / Dockerfile？**
 >
-> Without going too deep yet, think of a container image as a single package that contains
-> everything needed to run a process. In this case, it will contain a Node environment,
-> the backend code, and the compiled React code. 
+> 简单来说，一个容器镜像就是包含运行某个进程所需一切内容的单一软件包。
+> 在此示例中，它包含 Node 运行环境、后端代码以及编译后的 React 代码。
 >
-> Any machine that runs a container using the image, will then be able to run the application as 
-> it was built without needing anything else pre-installed on the machine. 
+> 任何使用该镜像运行容器的机器，都可以按构建时的方式运行应用，
+> 而无需在宿主机上预先安装其他组件。
 >
-> A `Dockerfile` is a text-based script that provides the instruction set on how to build
-> the image. For this quick start, the repository already contains the Dockerfile.
+> `Dockerfile` 是一个文本脚本，提供构建镜像所需的指令集合。
+> 在本快速入门示例中，仓库已包含该 Dockerfile。
 
 
 {{< tabs group="cli-or-vs-code" persist=true >}}
 {{< tab name="CLI" >}}
 
-1. To get started, either clone or [download the project as a ZIP file](https://github.com/docker/getting-started-todo-app/archive/refs/heads/main.zip) to your local machine.
+1. 首先，将项目克隆到本地，或[下载 ZIP 包](https://github.com/docker/getting-started-todo-app/archive/refs/heads/main.zip)。
 
    ```console
    $ git clone https://github.com/docker/getting-started-todo-app
    ```
 
-   And after the project is cloned, navigate into the new directory created by the clone:
+   克隆完成后，进入项目目录：
 
    ```console
    $ cd getting-started-todo-app
    ```
 
-2. Build the project by running the following command, swapping out `DOCKER_USERNAME` with your username.
+2. 运行如下命令构建项目，将 `DOCKER_USERNAME` 替换为你的用户名。
 
     ```console
     $ docker build -t <DOCKER_USERNAME>/getting-started-todo-app .
     ```
 
-    For example, if your Docker username was `mobydock`, you would run the following:
+    例如，若你的 Docker 用户名为 `mobydock`，则运行：
 
     ```console
     $ docker build -t mobydock/getting-started-todo-app .
     ```
 
-3. To verify the image exists locally, you can use the `docker image ls` command:
+3. 使用 `docker image ls` 命令验证镜像是否已存在于本地：
 
     ```console
     $ docker image ls
     ```
 
-    You will see output similar to the following:
+    你将看到类似如下输出：
 
     ```console
     REPOSITORY                          TAG       IMAGE ID       CREATED          SIZE
@@ -133,78 +131,77 @@ Now that you have a repository, you are ready to build and push your image. An i
     ...
     ```
 
-4. To push the image, use the `docker push` command. Be sure to replace `DOCKER_USERNAME` with your username:
+4. 使用 `docker push` 推送镜像。请将 `DOCKER_USERNAME` 替换为你的用户名：
 
     ```console
     $ docker push <DOCKER_USERNAME>/getting-started-todo-app
     ```
 
-    Depending on your upload speeds, this may take a moment to push.
+    推送时间取决于你的上传带宽，可能需要片刻。
 
 {{< /tab >}}
 {{< tab name="VS Code" >}}
 
-1. Open Visual Studio Code. Ensure you have the **Docker extension for VS Code** installed from [Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker).
+1. 打开 Visual Studio Code。请从[扩展市场](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)安装 **Docker 扩展**。
 
    ![Screenshot of VS code extension marketplace](images/install-docker-extension.webp)
 
-2. In the **File** menu, select **Open Folder**. Choose **Clone Git Repository** and paste this URL: [https://github.com/docker/getting-started-todo-app](https://github.com/docker/getting-started-todo-app)
+2. 在 **File** 菜单中选择 **Open Folder**。选择 **Clone Git Repository** 并粘贴以下 URL： [https://github.com/docker/getting-started-todo-app](https://github.com/docker/getting-started-todo-app)
 
     ![Screenshot of VS code showing how to clone a repository](images/clone-the-repo.webp?border=true)
 
 
 
-3. Right-click the `Dockerfile` and select the **Build Image...** menu item.
+3. 右键点击 `Dockerfile`，选择 **Build Image...**。
 
 
     ![Screenshot of VS Code showing the right-click menu and "Build Image" menu item](images/build-vscode-menu-item.webp?border=true)
 
-4. In the dialog that appears, enter a name of `DOCKER_USERNAME/getting-started-todo-app`, replacing `DOCKER_USERNAME` with your Docker username. 
+4. 在弹出的对话框中，输入名称 `DOCKER_USERNAME/getting-started-todo-app`，将 `DOCKER_USERNAME` 替换为你的 Docker 用户名。 
 
-5. After pressing **Enter**, you'll see a terminal appear where the build will occur. Once it's completed, feel free to close the terminal.
+5. 按下 **Enter** 后，将出现一个终端用于执行构建。构建完成后可关闭该终端。
 
-6. Open the Docker Extension for VS Code by selecting the Docker logo in the left nav menu.
+6. 点击左侧导航栏中的 Docker 图标，打开 VS Code 的 Docker 扩展。
 
-7. Find the image you created. It'll have a name of `docker.io/DOCKER_USERNAME/getting-started-todo-app`. 
+7. 找到你刚构建的镜像，名称为 `docker.io/DOCKER_USERNAME/getting-started-todo-app`。 
 
-8. Expand the image to view the tags (or different versions) of the image. You should see a tag named `latest`, which is the default tag given to an image.
+8. 展开该镜像以查看标签（不同版本）。你应能看到名为 `latest` 的标签，它是镜像的默认标签。
 
-9. Right-click on the **latest** item and select the **Push...** option.
+9. 右键点击 **latest** 条目，选择 **Push...**。
 
     ![Screenshot of the Docker Extension and the right-click menu to push an image](images/build-vscode-push-image.webp)
 
-10. Press **Enter** to confirm and then watch as your image is pushed to Docker Hub. Depending on your upload speeds, it might take a moment to push the image.
+10. 按 **Enter** 确认，观察镜像被推送至 Docker Hub。推送时间取决于你的上传带宽。
 
-    Once the upload is finished, feel free to close the terminal.
+    上传完成后，可关闭终端。
 
 {{< /tab >}}
 {{< /tabs >}}
 
 
-## Recap
+## 回顾
 
-Before you move on, take a moment and reflect on what happened here. Within a few moments, you were able to build a container image that packages your application and push it to Docker Hub.
+在继续之前，花点时间回顾一下你完成了什么：短时间内，你已经构建了打包应用的容器镜像，并将其推送到了 Docker Hub。
 
-Going forward, you’ll want to remember that:
+接下来，请记住：
 
-- Docker Hub is the go-to registry for finding trusted content. Docker provides a collection of trusted content, composed of Docker Official Images, Docker Verified Publishers, and Docker Sponsored Open Source Software, to use directly or as bases for your own images.
+- Docker Hub 是查找可信内容的首选仓库。Docker 提供了由 Docker 官方镜像、Docker 验证发布者以及 Docker 赞助开源软件构成的可信内容集合，可直接使用，或作为你自有镜像的基础。
 
-- Docker Hub provides a marketplace to distribute your own applications. Anyone can create an account and distribute images. While you are publicly distributing the image you created, private repositories can ensure your images are accessible to only authorized users.
+- Docker Hub 也可作为分发你自有应用的“应用市场”。任何人都可以创建账号并分发镜像。除了公开分发之外，你也可以使用私有仓库来确保只有授权用户可以访问你的镜像。
 
-> **Usage of other registries**
+> **关于使用其他仓库**
 >
-> While Docker Hub is the default registry, registries are standardized and made 
-> interoperable through the [Open Container Initiative](https://opencontainers.org/). This allows companies and 
-> organizations to run their own private registries. Quite often, trusted content 
-> is mirrored (or copied) from Docker Hub into these private registries.
+> 虽然 Docker Hub 是默认仓库，但在 [Open Container Initiative](https://opencontainers.org/) 的推动下，
+> 各类仓库已实现标准化与互操作性。这使企业和组织可以运行各自的私有仓库。
+> 在很多情况下，可信内容会从 Docker Hub 镜像（或复制）到这些私有仓库中。
 >
 
 
 
-## Next steps
+## 下一步
 
-Now that you’ve built an image, it's time to discuss why you as a developer should learn more about Docker and how it will help you in your day-to-day tasks.
+现在你已经构建了一个镜像，接下来我们来讨论，作为开发者为何应当进一步学习 Docker，以及它如何帮助你完成日常工作。
 
-{{< button text="What's Next" url="whats-next" >}}
+{{< button text="下一步" url="whats-next" >}}
 
 

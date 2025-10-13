@@ -1,8 +1,8 @@
 ---
-title: What is an image?
+title: 什么是镜像？
 weight: 20
 keywords: concepts, build, images, container, docker desktop
-description: What is an image
+description: 镜像是什么
 aliases:
   - /guides/docker-concepts/the-basics/what-is-an-image/
   - /get-started/run-docker-hub-images/
@@ -10,101 +10,100 @@ aliases:
 
 {{< youtube-embed NyvT9REqLe4 >}}
 
-## Explanation
+## 概念解析
 
-Seeing as a [container](./what-is-a-container.md) is an isolated process, where does it get its files and configuration? How do you share those environments?
+既然[容器](./what-is-a-container.md)本质上是一个隔离的进程，它的文件与配置从哪里来？又该如何在不同环境之间共享这些运行环境？
 
-That's where container images come in. A container image is a standardized package that includes all of the files, binaries, libraries, and configurations to run a container.
+答案就是容器镜像。容器镜像是一个标准化的软件包，包含运行容器所需的全部文件、二进制、库以及配置。
 
-For a [PostgreSQL](https://hub.docker.com/_/postgres) image, that image will package the database binaries, config files, and other dependencies. For a Python web app, it'll include the Python runtime, your app code, and all of its dependencies.
+以 [PostgreSQL](https://hub.docker.com/_/postgres) 镜像为例，它会打包数据库二进制、配置文件和其他依赖。对于一个 Python Web 应用，镜像会包含 Python 运行时、你的应用代码以及其所有依赖。
 
-There are two important principles of images:
+镜像有两个重要原则：
 
-1. Images are immutable. Once an image is created, it can't be modified. You can only make a new image or add changes on top of it.
+1. 镜像是不可变的。一旦镜像创建完成，就不能被修改；你只能基于它创建一个新的镜像，或在其之上追加更改。
+2. 容器镜像由多层组成。每一层代表一组对文件系统的变更，用于新增、删除或修改文件。
 
-2. Container images are composed of layers. Each layer represents a set of file system changes that add, remove, or modify files.
+基于这两个原则，你可以方便地扩展或叠加现有镜像。例如构建一个 Python 应用时，可以从[Python 镜像](https://hub.docker.com/_/python)起步，添加额外的层来安装应用依赖并加入你的代码。这样你就能把精力集中在应用本身，而不是底层的 Python 运行时。
 
-These two principles let you to extend or add to existing images. For example, if you are building a Python app, you can start from the [Python image](https://hub.docker.com/_/python) and add additional layers to install your app's dependencies and add your code. This lets you focus on your app, rather than Python itself.
+### 查找镜像
 
-### Finding images
+[Docker Hub](https://hub.docker.com) 是默认的全球镜像存储与分发平台，拥有十万余个由开发者创建、可直接本地运行的镜像。你可以在 Docker Desktop 中搜索 Docker Hub 上的镜像并直接运行它们。
 
-[Docker Hub](https://hub.docker.com) is the default global marketplace for storing and distributing images. It has over 100,000 images created by developers that you can run locally. You can search for Docker Hub images and run them directly from Docker Desktop.
+Docker Hub 提供一系列由 Docker 支持或背书的镜像，统称为 Docker Trusted Content。它们要么提供完整托管服务，要么是构建自定义镜像的优质起点，包括：
 
-Docker Hub provides a variety of Docker-supported and endorsed images known as Docker Trusted Content. These provide fully managed services or great starters for your own images. These include:
+- [Docker Official Images](https://hub.docker.com/search?q=&type=image&image_filter=official) —— 经精心维护的官方镜像集合，常作为大多数用户的起点，也是 Docker Hub 上安全性较高的一类镜像。
+- [Docker Verified Publishers](https://hub.docker.com/search?q=&image_filter=store) —— 由 Docker 验证的商业发布者提供的高质量镜像。
+- [Docker-Sponsored Open Source](https://hub.docker.com/search?q=&image_filter=open_source) —— 由 Docker 开源赞助计划支持的开源项目发布并维护的镜像。
 
-- [Docker Official Images](https://hub.docker.com/search?q=&type=image&image_filter=official) - a curated set of Docker repositories, serve as the starting point for the majority of users, and are some of the most secure on Docker Hub
-- [Docker Verified Publishers](https://hub.docker.com/search?q=&image_filter=store) - high-quality images from commercial publishers verified by Docker
-- [Docker-Sponsored Open Source](https://hub.docker.com/search?q=&image_filter=open_source) - images published and maintained by open-source projects sponsored by Docker through Docker's open source program
+例如，[Redis](https://hub.docker.com/_/redis) 与 [Memcached](https://hub.docker.com/_/memcached) 都是流行、可即开即用的 Docker Official Images。你可以下载这些镜像，在数秒内启动服务。还有一些基础镜像，如 [Node.js](https://hub.docker.com/_/node) Docker 镜像，可作为起点在其之上添加你的文件与配置。
 
-For example, [Redis](https://hub.docker.com/_/redis) and [Memcached](https://hub.docker.com/_/memcached) are a few popular ready-to-go Docker Official Images. You can download these images and have these services up and running in a matter of seconds. There are also base images, like the [Node.js](https://hub.docker.com/_/node) Docker image, that you can use as a starting point and add your own files and configurations.
-
-## Try it out
+## 动手试试
 
 {{< tabs group=concept-usage persist=true >}}
-{{< tab name="Using the GUI" >}}
+{{< tab name="使用 GUI" >}}
 
-In this hands-on, you will learn how to search and pull a container image using the Docker Desktop GUI.
+本实践将演示如何使用 Docker Desktop GUI 搜索并拉取一个容器镜像。
 
-### Search for and download an image
+### 搜索并下载镜像
 
-1. Open the Docker Desktop Dashboard and select the **Images** view in the left-hand navigation menu.
+1. 打开 Docker Desktop 控制面板，在左侧导航中选择 **Images** 视图。
 
-   ![A screenshot of the Docker Desktop Dashboard showing the image view on the left sidebar](images/click-image.webp?border=true&w=1050&h=400)
+   ![Docker Desktop 控制面板截图，左侧栏选中 Images 视图](images/click-image.webp?border=true&w=1050&h=400)
 
-2. Select the **Search images to run** button. If you don't see it, select the _global search bar_ at the top of the screen.
+2. 选择 **Search images to run** 按钮；如果未看到该按钮，请点击顶部的_全局搜索栏_。
 
-   ![A screenshot of the Docker Desktop Dashboard showing the search ta](images/search-image.webp?border)
+   ![Docker Desktop 控制面板截图，展示搜索标签页](images/search-image.webp?border)
 
-3. In the **Search** field, enter "welcome-to-docker". Once the search has completed, select the `docker/welcome-to-docker` image.
+3. 在 **Search** 输入框中输入 "welcome-to-docker"。搜索完成后，选择 `docker/welcome-to-docker` 镜像。
 
-   ![A screenshot of the Docker Desktop Dashboard showing the search results for the docker/welcome-to-docker image](images/select-image.webp?border=true&w=1050&h=400)
+   ![Docker Desktop 控制面板截图，显示 docker/welcome-to-docker 的搜索结果](images/select-image.webp?border=true&w=1050&h=400)
 
-4. Select **Pull** to download the image.
+4. 选择 **Pull** 下载该镜像。
 
-### Learn about the image
+### 了解该镜像
 
-Once you have an image downloaded, you can learn quite a few details about the image either through the GUI or the CLI.
+镜像下载完成后，你可以通过 GUI 或 CLI 查看关于该镜像的诸多细节。
 
-1. In the Docker Desktop Dashboard, select the **Images** view.
+1. 在 Docker Desktop 控制面板中，进入 **Images** 视图。
 
-2. Select the **docker/welcome-to-docker** image to open details about the image.
+2. 选择 **docker/welcome-to-docker** 镜像以打开其详情。
 
-   ![A screenshot of the Docker Desktop Dashboard showing the images view with an arrow pointing to the docker/welcome-to-docker image](images/pulled-image.webp?border=true&w=1050&h=400)
+   ![镜像视图截图，箭头指向 docker/welcome-to-docker 镜像](images/pulled-image.webp?border=true&w=1050&h=400)
 
-3. The image details page presents you with information regarding the layers of the image, the packages and libraries installed in the image, and any discovered vulnerabilities.
+3. 镜像详情页会展示镜像的各层、镜像中安装的软件包和库，以及任何被发现的漏洞信息。
 
-   ![A screenshot of the image details view for the docker/welcome-to-docker image](images/image-layers.webp?border=true&w=1050&h=400)
+   ![docker/welcome-to-docker 的镜像详情视图截图](images/image-layers.webp?border=true&w=1050&h=400)
 
 {{< /tab >}}
 
-{{< tab name="Using the CLI" >}}
+{{< tab name="使用 CLI" >}}
 
-Follow the instructions to search and pull a Docker image using CLI to view its layers.
+按以下步骤使用 CLI 搜索并拉取 Docker 镜像，并查看其分层信息。
 
-### Search for and download an image
+### 搜索并下载镜像
 
-1. Open a terminal and search for images using the [`docker search`](/reference/cli/docker/search.md) command:
+1. 打开终端，使用 [`docker search`](/reference/cli/docker/search.md) 命令搜索镜像：
 
    ```console
    docker search docker/welcome-to-docker
    ```
 
-   You will see output like the following:
+   你将看到类似如下输出：
 
    ```console
    NAME                       DESCRIPTION                                     STARS     OFFICIAL
    docker/welcome-to-docker   Docker image for new users getting started w…   20
    ```
 
-   This output shows you information about relevant images available on Docker Hub.
+   上述输出展示了 Docker Hub 上可用的相关镜像信息。
 
-2. Pull the image using the [`docker pull`](/reference/cli/docker/image/pull.md) command.
+2. 使用 [`docker pull`](/reference/cli/docker/image/pull.md) 命令拉取镜像：
 
    ```console
    docker pull docker/welcome-to-docker
    ```
 
-   You will see output like the following:
+   你将看到类似如下输出：
 
    ```console
    Using default tag: latest
@@ -122,36 +121,36 @@ Follow the instructions to search and pull a Docker image using CLI to view its 
    docker.io/docker/welcome-to-docker:latest
    ```
 
-   Each of line represents a different downloaded layer of the image. Remember that each layer is a set of filesystem changes and provides functionality of the image.
+   以上每一行对应镜像中的一个已下载层。请记住，每一层都是一组文件系统变更，为镜像提供相应功能。
 
-### Learn about the image
+### 了解该镜像
 
-1. List your downloaded images using the [`docker image ls`](/reference/cli/docker/image/ls.md) command:
+1. 使用 [`docker image ls`](/reference/cli/docker/image/ls.md) 命令列出本地镜像：
 
    ```console
    docker image ls
    ```
 
-   You will see output like the following:
+   你将看到类似如下输出：
 
    ```console
    REPOSITORY                 TAG       IMAGE ID       CREATED        SIZE
    docker/welcome-to-docker   latest    eedaff45e3c7   4 months ago   29.7MB
    ```
 
-   The command shows a list of Docker images currently available on your system. The `docker/welcome-to-docker` has a total size of approximately 29.7MB.
+   该命令会显示当前系统中可用的 Docker 镜像列表。`docker/welcome-to-docker` 的总大小约为 29.7MB。
 
-   > **Image size**
+   > **关于镜像大小**
    >
-   > The image size represented here reflects the uncompressed size of the image, not the download size of the layers.
+   > 这里展示的是镜像的未压缩大小，并非各层的下载大小。
 
-2. List the image's layers using the [`docker image history`](/reference/cli/docker/image/history.md) command:
+2. 使用 [`docker image history`](/reference/cli/docker/image/history.md) 命令查看镜像的分层历史：
 
    ```console
    docker image history docker/welcome-to-docker
    ```
 
-   You will see output like the following:
+   你将看到类似如下输出：
 
    ```console
    IMAGE          CREATED        CREATED BY                                      SIZE      COMMENT
@@ -173,28 +172,28 @@ Follow the instructions to search and pull a Docker image using CLI to view its 
    <missing>      5 months ago   /bin/sh -c #(nop) ADD file:ff3112828967e8004…   7.66MB
    ```
 
-   This output shows you all of the layers, their sizes, and the command used to create the layer.
+   该输出展示了所有分层、各自的大小，以及创建每一层时所执行的命令。
 
-   > **Viewing the full command**
+   > **查看完整命令**
    >
-   > If you add the `--no-trunc` flag to the command, you will see the full command. Note that, since the output is in a table-like format, longer commands will cause the output to be very difficult to navigate.
+   > 添加 `--no-trunc` 参数可以显示完整命令。需要注意的是，输出为表格样式，命令过长时会降低可读性。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-In this walkthrough, you searched and pulled a Docker image. In addition to pulling a Docker image, you also learned about the layers of a Docker Image.
+通过本次演练，你已完成 Docker 镜像的搜索与拉取，并了解了镜像的分层结构。
 
-## Additional resources
+## 延伸阅读
 
-The following resources will help you learn more about exploring, finding, and building images:
+以下资源可帮助你进一步了解镜像的探索、查找与构建：
 
-- [Docker trusted content](/manuals/docker-hub/image-library/trusted-content.md)
-- [Explore the Image view in Docker Desktop](/manuals/desktop/use-desktop/images.md)
-- [Docker Build overview](/manuals/build/concepts/overview.md)
+- [Docker 可信内容](/manuals/docker-hub/image-library/trusted-content.md)
+- [探索 Docker Desktop 的镜像视图](/manuals/desktop/use-desktop/images.md)
+- [Docker 构建概览](/manuals/build/concepts/overview.md)
 - [Docker Hub](https://hub.docker.com)
 
-## Next steps
+## 下一步
 
-Now that you have learned the basics of images, it's time to learn about distributing images through registries.
+既然你已经掌握了镜像的基础知识，接下来可以学习如何通过仓库分发镜像。
 
-{{< button text="What is a registry?" url="what-is-a-registry" >}}
+{{< button text="什么是仓库？" url="what-is-a-registry" >}}

@@ -1,136 +1,133 @@
 ---
-title: Multi-container applications
+title: 多容器应用
 weight: 5
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you the significance of multi-container application and how it is different from single-container application
+description: 本文将介绍多容器应用的重要性，以及它与单容器应用的差异。
 aliases: 
  - /guides/docker-concepts/running-containers/multi-container-applications/
 ---
 
 {{< youtube-embed 1jUwR6F9hvM >}}
 
-## Explanation
+## 概念解析
 
-Starting up a single-container application is easy. For example, a Python script that performs a specific data processing task runs within a container with all its dependencies. Similarly, a Node.js application serving a static website with a small API endpoint can be effectively containerized with all its necessary libraries and dependencies. However, as applications grow in size, managing them as individual containers becomes more difficult.
+启动一个单容器应用很容易。比如，一个用于特定数据处理任务的 Python 脚本，可以在包含其依赖的容器中运行；又如，一个提供静态站点与少量 API 的 Node.js 应用，也可以将所需库与依赖一并打包到容器中。然而，随着应用规模增长，仅用单个容器来承载与管理所有职责会越来越困难。
 
-Imagine the data processing Python script needs to connect to a database. Suddenly, you're now managing not just the script but also a database server within the same container. If the script requires user logins, you'll need an authentication mechanism, further bloating the container size. 
+设想这个 Python 脚本需要连接数据库。你不再只需要管理脚本，还要在同一容器里管理数据库服务器。如果脚本还需要用户登录，你还得加入认证机制，容器会愈发臃肿。
 
-One best practice for containers is that each container should do one thing and do it well. While there are exceptions to this rule, avoid the tendency to have one container do multiple things.
+容器的一条最佳实践是：一个容器只做好一件事。虽然并非绝对，但应尽量避免让单个容器承担多种职责。
 
-Now you might ask, "Do I need to run these containers separately? If I run them separately, how shall I connect them all together?"
+这时你可能会问：“那我需要把它们拆成多个容器分别运行吗？如果分开运行，彼此如何连通？”
 
-While `docker run` is a convenient tool for launching containers, it becomes difficult to manage a growing application stack with it. Here's why:
+尽管 `docker run` 启动容器很方便，但用它来管理不断扩张的应用栈会变得吃力，原因包括：
 
-- Imagine running several `docker run` commands (frontend, backend, and database) with different configurations for development, testing, and production environments. It's error-prone and time-consuming.
-- Applications often rely on each other. Manually starting containers in a specific order and managing network connections become difficult as the stack expands.
-- Each application needs its `docker run` command, making it difficult to scale individual services. Scaling the entire application means potentially wasting resources on components that don't need a boost.
-- Persisting data for each application requires separate volume mounts or configurations within each `docker run` command. This creates a scattered data management approach.
-- Setting environment variables for each application through separate `docker run` commands is tedious and error-prone.
+- 需要在开发、测试、生产等环境下分别运行多个 `docker run` 命令（前端、后端、数据库），配置差异多且易出错、耗时长。
+- 应用之间存在依赖关系。手动按顺序启动容器并维护网络连接，随着栈的扩展将愈发复杂。
+- 每个应用都需要独立的 `docker run` 命令，难以对单个服务进行弹性伸缩；要扩容整个应用栈又可能造成不必要的资源浪费。
+- 每个应用都要单独配置卷挂载或数据持久化，数据管理分散且不易维护。
+- 需要为每个应用单独设置环境变量，繁琐且容易出错。
 
-That's where Docker Compose comes to the rescue.
+这正是 Docker Compose 大显身手的地方。
 
-Docker Compose defines your entire multi-container application in a single YAML file called `compose.yml`. This file specifies configurations for all your containers, their dependencies, environment variables, and even volumes and networks. With Docker Compose:
+Docker Compose 用一个名为 `compose.yml` 的 YAML 文件来定义整个多容器应用。该文件集中描述所有容器、它们的依赖、环境变量，以及卷与网络等。使用 Docker Compose：
 
-- You don't need to run multiple `docker run` commands. All you need to do is define your entire multi-container application in a single YAML file. This centralizes configuration and simplifies management.
-- You can run containers in a specific order and manage network connections easily.
-- You can simply scale individual services up or down within the multi-container setup. This allows for efficient allocation based on real-time needs.
-- You can implement persistent volumes with ease.
-- It's easy to set environment variables once in your Docker Compose file.
+- 无需运行多个 `docker run` 命令，只需在一个 YAML 中定义整套应用，配置集中、管理更简单。
+- 可以按特定顺序启动容器，网络连接配置也更直观。
+- 可针对单个服务进行横向扩缩，实现按需分配资源。
+- 易于配置持久化卷。
+- 可以在 Compose 文件中统一设置环境变量。
 
-By leveraging Docker Compose for running multi-container setups, you can build complex applications with modularity, scalability, and consistency at their core.
+借助 Docker Compose，你可以以模块化、可伸缩且一致性的方式构建复杂应用。
 
+## 动手试试
 
-## Try it out
+本实践先使用 `docker run` 基于 Node.js 计数服务、Nginx 反向代理与 Redis 数据库搭建一个 Web 应用，然后演示如何用 Docker Compose 简化整个部署过程。
 
-In this hands-on guide, you'll first see how to build and run a counter web application based on Node.js, an Nginx reverse proxy, and a Redis database using the `docker run` commands. You’ll also see how you can simplify the entire deployment process using Docker Compose.
+### 准备
 
-### Set up
-
-1. Get the sample application. If you have Git, you can clone the repository for the sample application. Otherwise, you can download the sample application. Choose one of the following options.
+1. 获取示例应用。若已安装 Git，可直接克隆示例仓库；否则可下载示例源码。任选其一：
 
    {{< tabs >}}
-   {{< tab name="Clone with git" >}}
+   {{< tab name="使用 git 克隆" >}}
 
-   Use the following command in a terminal to clone the sample application repository.
+   在终端执行以下命令克隆示例仓库：
 
    ```console
    $ git clone https://github.com/dockersamples/nginx-node-redis
    ```
    
-   Navigate into the `nginx-node-redis` directory:
+   进入 `nginx-node-redis` 目录：
 
    ```console
    $ cd nginx-node-redis
    ```
 
-   Inside this directory, you'll find two sub-directories - `nginx` and `web`.
+   该目录下包含两个子目录：`nginx` 与 `web`。
    
 
    {{< /tab >}}
-   {{< tab name="Download" >}}
+   {{< tab name="下载" >}}
 
-   Download the source and extract it.
+   下载源码并解压。
 
-   {{< button url="https://github.com/dockersamples/nginx-node-redis/archive/refs/heads/main.zip" text="Download the source" >}}
+   {{< button url="https://github.com/dockersamples/nginx-node-redis/archive/refs/heads/main.zip" text="下载源码" >}}
 
 
-   Navigate into the `nginx-node-redis-main` directory:
+   进入 `nginx-node-redis-main` 目录：
 
    ```console
    $ cd nginx-node-redis-main
    ```
 
-   Inside this directory, you'll find two sub-directories - `nginx` and `web`.
+   该目录下包含两个子目录：`nginx` 与 `web`。
 
    {{< /tab >}}
    {{< /tabs >}}
 
 
-2. [Download and install](/get-started/get-docker.md) Docker Desktop.
+2. [下载并安装](/get-started/get-docker.md) Docker Desktop。
 
-### Build the images
+### 构建镜像
 
-
-1. Navigate into the `nginx` directory to build the image by running the following command:
-
+1. 进入 `nginx` 目录并构建镜像：
 
     ```console
     $ docker build -t nginx .
     ```
 
-2. Navigate into the `web` directory and run the following command to build the first web image:
+2. 进入 `web` 目录并构建第一个 web 镜像：
     
     ```console
     $ docker build -t web .
     ```
 
-### Run the containers
+### 运行容器
 
-1. Before you can run a multi-container application, you need to create a network for them all to communicate through. You can do so using the `docker network create` command:
+1. 在运行多容器应用前，先创建一个供各容器通信的网络，使用 `docker network create`：
 
     ```console
     $ docker network create sample-app
     ```
 
-2. Start the Redis container by running the following command, which will attach it to the previously created network and create a network alias (useful for DNS lookups):
+2. 启动 Redis 容器，将其连接到上述网络并设置网络别名（用于 DNS 解析）：
 
     ```console
     $ docker run -d  --name redis --network sample-app --network-alias redis redis
     ```
 
-3. Start the first web container by running the following command:
+3. 启动第一个 web 容器：
 
     ```console
     $ docker run -d --name web1 -h web1 --network sample-app --network-alias web1 web
     ```
 
-4. Start the second web container by running the following:
+4. 启动第二个 web 容器：
 
     ```console
     $ docker run -d --name web2 -h web2 --network sample-app --network-alias web2 web
     ```
     
-5. Start the Nginx container by running the following command:
+5. 启动 Nginx 容器：
 
     ```console
     $ docker run -d --name nginx --network sample-app  -p 80:80 nginx
@@ -138,16 +135,15 @@ In this hands-on guide, you'll first see how to build and run a counter web appl
 
      > [!NOTE]
      >
-     > Nginx is typically used as a reverse proxy for web applications, routing traffic to backend servers. In this case, it routes to the Node.js backend containers (web1 or web2).
+     > Nginx 常作为 Web 应用的反向代理，用于把流量路由到后端服务。在本例中，它会转发到 Node.js 后端容器（web1 或 web2）。
 
-
-6.  Verify the containers are up by running the following command:
+6. 使用以下命令查看容器是否已启动：
 
     ```console
     $ docker ps
     ```
 
-    You will see output like the following: 
+    你将看到类似输出： 
 
     ```text
     CONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS              PORTS                NAMES
@@ -157,11 +153,11 @@ In this hands-on guide, you'll first see how to build and run a counter web appl
     008e0ecf4f36   redis     "docker-entrypoint.s…"   About a minute ago   Up About a minute   6379/tcp             redis
     ```
 
-7. If you look at the Docker Desktop Dashboard, you can see the containers and dive deeper into their configuration.
+7. 打开 Docker Desktop 控制面板，可以看到这些容器，并进一步查看它们的配置。
 
-   ![A screenshot of the Docker Desktop Dashboard showing multi-container applications](images/multi-container-apps.webp?w=5000&border=true)
+   ![Docker Desktop Dashboard 截图，展示多容器应用](images/multi-container-apps.webp?w=5000&border=true)
 
-8. With everything up and running, you can open [http://localhost](http://localhost) in your browser to see the site. Refresh the page several times to see the host that’s handling the request and the total number of requests:
+8. 一切启动就绪后，打开浏览器访问 [http://localhost](http://localhost) 查看站点。多次刷新页面，可看到处理请求的主机名和累计访问次数：
 
     ```console
     web2: Number of visits is: 9
@@ -172,28 +168,25 @@ In this hands-on guide, you'll first see how to build and run a counter web appl
 
     > [!NOTE]
     >
-    > You might have noticed that Nginx, acting as a reverse proxy, likely distributes incoming requests in a round-robin fashion between the two backend containers. This means each request might be directed to a different container (web1 and web2) on a rotating basis. The output shows consecutive increments for both the web1 and web2 containers and the actual counter value stored in Redis is updated only after the response is sent back to the client.
+    > 你可能注意到，作为反向代理的 Nginx 很可能以轮询（round-robin）的方式在两个后端容器之间分发请求。因此，每次请求可能被转发到不同的容器（web1 与 web2）。输出显示 web1 与 web2 的计数交替增长，而 Redis 中的实际计数是在响应返回客户端后才更新的。
 
-9. You can use the Docker Desktop Dashboard to remove the containers by selecting the containers and selecting the **Delete** button.
+9. 你可以在 Docker Desktop 控制面板中选中这些容器并点击 **Delete** 来删除它们。
 
-   ![A screenshot of Docker Desktop Dashboard showing how to delete the multi-container applications](images/delete-multi-container-apps.webp?border=true)
+   ![Docker Desktop Dashboard 截图，展示如何删除多容器应用](images/delete-multi-container-apps.webp?border=true)
  
-## Simplify the deployment using Docker Compose
+## 使用 Docker Compose 简化部署
 
+Docker Compose 为多容器部署提供了结构化、流程化的管理方式。正如上文所述，借助 Compose 无需运行多个 `docker run` 命令，只需在名为 `compose.yml` 的 YAML 文件中定义整个多容器应用。其工作方式如下。
 
-Docker Compose provides a structured and streamlined approach for managing multi-container deployments. As stated earlier, with Docker Compose, you don’t need to run multiple `docker run` commands. All you need to do is define your entire multi-container application in a single YAML file called `compose.yml`. Let’s see how it works.
+进入项目根目录。你会看到一个 `compose.yml` 文件。这个 YAML 文件定义了构成应用的所有服务及其配置：每个服务的镜像、端口、卷、网络以及运行所需的其他设置。
 
-
-Navigate to the root of the project directory. Inside this directory, you'll find a file named `compose.yml`. This YAML file is where all the magic happens. It defines all the services that make up your application, along with their configurations. Each service specifies its image, ports, volumes, networks, and any other settings necessary for its functionality.
-
-1. Use the `docker compose up` command to start the application:
+1. 使用 `docker compose up` 启动应用：
 
     ```console
     $ docker compose up -d --build
     ```
 
-    When you run this command, you should see output similar to the following:
-
+    你将看到类似如下输出：
 
     ```console
     Running 5/5
@@ -204,20 +197,18 @@ Navigate to the root of the project directory. Inside this directory, you'll fin
     ✔ Container nginx-nodejs-redis-nginx-1  Started
     ```
 
-2. If you look at the Docker Desktop Dashboard, you can see the containers and dive deeper into their configuration.
+2. 打开 Docker Desktop 控制面板，可以查看到该应用栈的各个容器并深入其配置。
 
+    ![Docker Desktop Dashboard 截图，展示通过 Docker Compose 部署的应用容器列表](images/list-containers.webp?border=true)
 
-    ![A screenshot of the Docker Desktop Dashboard showing the containers of the application stack deployed using Docker Compose](images/list-containers.webp?border=true)
+3. 也可以在 Docker Desktop 控制面板中选中该应用栈并点击 **Delete** 来移除通过 Docker Compose 部署的容器。
 
-3. Alternatively, you can use the Docker Desktop Dashboard to remove the containers by selecting the application stack and selecting the **Delete** button.
+   ![Docker Desktop Dashboard 截图，展示如何移除通过 Docker Compose 部署的容器](images/delete-containers.webp?border=true)
 
-   ![A screenshot of Docker Desktop Dashboard that shows how to remove the containers that you deployed using Docker Compose](images/delete-containers.webp?border=true)
+在本指南中，你学习了为何相较于易错且难以管理的 `docker run`，使用 Docker Compose 启停多容器应用更加轻松高效。
 
+## 延伸阅读
 
-In this guide, you learned how easy it is to use Docker Compose to start and stop a multi-container application compared to `docker run` which is error-prone and difficult to manage.
-
-## Additional resources
-
-* [`docker container run` CLI reference](reference/cli/docker/container/run/)
-* [What is Docker Compose](/get-started/docker-concepts/the-basics/what-is-docker-compose/)
+* [`docker container run` 命令参考](reference/cli/docker/container/run/)
+* [什么是 Docker Compose](/get-started/docker-concepts/the-basics/what-is-docker-compose/)
 

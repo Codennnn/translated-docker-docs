@@ -1,8 +1,8 @@
 ---
-title: Persisting container data
+title: 持久化容器数据
 weight: 3
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you the significance of data persistence in Docker
+description: 本文将介绍在 Docker 中进行数据持久化的重要性。
 aliases:
  - /guides/walkthroughs/persist-data/
  - /guides/docker-concepts/running-containers/persisting-container-data/
@@ -10,70 +10,67 @@ aliases:
 
 {{< youtube-embed 10_2BjqB_Ls >}}
 
-## Explanation
+## 概念解析
 
-When a container starts, it uses the files and configuration provided by the image. Each container is able to create, modify, and delete files and does so without affecting any other containers. When the container is deleted, these file changes are also deleted.
+容器启动时，会使用镜像中提供的文件与配置。每个容器都可以创建、修改、删除文件，且这些操作不会影响其他容器。但当容器被删除时，这些文件更改也会随之消失。
 
-While this ephemeral nature of containers is great, it poses a challenge when you want to persist the data. For example, if you restart a database container, you might not want to start with an empty database. So, how do you persist files?
+这种“短暂性”（ephemeral）对很多场景很有用，但当你需要持久化数据时就会遇到挑战。比如，重启数据库容器时，你通常不希望从一个空数据库开始。那么，该如何持久化文件呢？
 
-### Container volumes
+### 容器卷（Volumes）
 
-Volumes are a storage mechanism that provide the ability to persist data beyond the lifecycle of an individual container. Think of it like providing a shortcut or symlink from inside the container to outside the container. 
+卷是一种存储机制，能够让数据的生命周期超越单个容器。可以把它理解为：从容器内部到外部存储的一个“快捷方式/符号链接”。
 
-As an example, imagine you create a volume named `log-data`. 
+例如，先创建一个名为 `log-data` 的卷：
 
 ```console
 $ docker volume create log-data
 ```
 
-When starting a container with the following command, the volume will be mounted (or attached) into the container at `/logs`:
+然后使用以下命令启动容器，该卷会以挂载（或附加）的方式出现在容器的 `/logs` 目录：
 
 ```console
 $ docker run -d -p 80:80 -v log-data:/logs docker/welcome-to-docker
 ```
 
-If the volume `log-data` doesn't exist, Docker will automatically create it for you. 
+如果卷 `log-data` 不存在，Docker 会自动为你创建。
 
-When the container runs, all files it writes into the `/logs` folder will be saved in this volume, outside of the container. If you delete the container and start a new container using the same volume, the files will still be there.
+当容器运行时，写入 `/logs` 目录的所有文件都会保存到这个卷中（容器外部）。即使删除容器，再启动一个新容器并挂载同一个卷，文件仍然存在。
 
-> **Sharing files using volumes**
+> **通过卷共享文件**
 >
-> You can attach the same volume to multiple containers to share files between containers. This might be helpful in scenarios such as log aggregation, data pipelines, or other event-driven applications.
+> 你可以把同一个卷挂载到多个容器上，以在容器间共享文件。这在日志聚合、数据管道或事件驱动应用等场景中很有帮助。
 
+### 管理卷
 
-### Managing volumes
+卷的生命周期独立于容器本身。根据数据与应用类型不同，卷可能会变得很大。以下命令有助于管理卷：
 
-Volumes have their own lifecycle beyond that of containers and can grow quite large depending on the type of data and applications you’re using. The following commands will be helpful to manage volumes:
+- `docker volume ls` —— 列出所有卷
+- `docker volume rm <volume-name-or-id>` —— 删除卷（仅当该卷未被任何容器使用时生效）
+- `docker volume prune` —— 删除所有未使用（未附加）的卷
 
-- `docker volume ls` - list all volumes
-- `docker volume rm <volume-name-or-id>` - remove a volume (only works when the volume is not attached to any containers)
-- `docker volume prune` - remove all unused (unattached) volumes
+## 动手试试
 
+本指南将练习如何使用卷来持久化 Postgres 容器生成的数据。数据库运行时会把文件存储在 `/var/lib/postgresql/data` 目录。将卷挂载到这里，就能在多次重启容器时保留数据。
 
+### 使用卷
 
-## Try it out
+1. [下载并安装](/get-started/get-docker/) Docker Desktop。
 
-In this guide, you’ll practice creating and using volumes to persist data created by a Postgres container. When the database runs, it stores files into the `/var/lib/postgresql/data` directory. By attaching the volume here, you will be able to restart the container multiple times while keeping the data.
-
-### Use volumes
-
-1. [Download and install](/get-started/get-docker/) Docker Desktop.
-
-2. Start a container using the [Postgres image](https://hub.docker.com/_/postgres) with the following command:
+2. 使用 [Postgres 镜像](https://hub.docker.com/_/postgres) 启动一个容器：
 
     ```console
     $ docker run --name=db -e POSTGRES_PASSWORD=secret -d -v postgres_data:/var/lib/postgresql/data postgres
     ```
 
-    This will start the database in the background, configure it with a password, and attach a volume to the directory PostgreSQL will persist the database files.
+    该命令会在后台启动数据库、设置密码，并将卷挂载到 PostgreSQL 用于持久化数据库文件的目录。
 
-3. Connect to the database by using the following command:
+3. 使用以下命令连接数据库：
 
     ```console
     $ docker exec -ti db psql -U postgres
     ```
 
-4. In the PostgreSQL command line, run the following to create a database table and insert two records:
+4. 在 PostgreSQL 命令行中创建表并插入两条记录：
 
     ```text
     CREATE TABLE tasks (
@@ -83,13 +80,13 @@ In this guide, you’ll practice creating and using volumes to persist data crea
     INSERT INTO tasks (description) VALUES ('Finish work'), ('Have fun');
     ```
 
-5. Verify the data is in the database by running the following in the PostgreSQL command line:
+5. 在 PostgreSQL 命令行中验证数据：
 
     ```text
     SELECT * FROM tasks;
     ```
 
-    You should get output that looks like the following:
+    你应看到类似输出：
 
     ```text
      id | description
@@ -99,82 +96,76 @@ In this guide, you’ll practice creating and using volumes to persist data crea
     (2 rows)
     ```
 
-6. Exit out of the PostgreSQL shell by running the following command:
+6. 通过以下命令退出 PostgreSQL：
 
     ```console
     \q
     ```
 
-7. Stop and remove the database container. Remember that, even though the container has been deleted, the data is persisted in the `postgres_data` volume.
+7. 停止并删除数据库容器。请注意，尽管容器被删除，数据仍保留在 `postgres_data` 卷中。
 
     ```console
     $ docker stop db
     $ docker rm db
     ```
 
-8. Start a new container by running the following command, attaching the same volume with the persisted data:
+8. 重新启动一个新容器，并挂载同一个卷：
 
     ```console
     $ docker run --name=new-db -d -v postgres_data:/var/lib/postgresql/data postgres 
     ```
 
-    You might have noticed that the `POSTGRES_PASSWORD` environment variable has been omitted. That’s because that variable is only used when bootstrapping a new database.
+    你会注意到，这里没有再设置 `POSTGRES_PASSWORD` 环境变量。因为该变量仅在初始化新数据库时使用。
 
-9. Verify the database still has the records by running the following command:
+9. 验证数据库仍包含之前的记录：
 
     ```console
     $ docker exec -ti new-db psql -U postgres -c "SELECT * FROM tasks"
     ```
 
-### View volume contents
+### 查看卷内容
 
-The Docker Desktop Dashboard provides the ability to view the contents of any volume, as well as the ability to export, import, and clone volumes.
+Docker Desktop 控制面板支持查看任意卷的内容，并可对卷进行导出、导入与克隆。
 
-1. Open the Docker Desktop Dashboard and navigate to the **Volumes** view. In this view, you should see the **postgres_data** volume.
+1. 打开 Docker Desktop 控制面板，进入 **Volumes** 视图。你应能看到 **postgres_data** 卷。
+2. 点击 **postgres_data** 卷的名称。
+3. 在 **Data** 标签页中可以浏览卷中文件，双击文件可查看与修改其内容。
+4. 右键文件可保存或删除。
 
-2. Select the **postgres_data** volume’s name.
+### 删除卷
 
-3. The **Data** tab shows the contents of the volume and provides the ability to navigate the files. Double-clicking on a file will let you see the contents and make changes.
-
-4. Right-click on any file to save it or delete it.
-
-
-### Remove volumes
-
-Before removing a volume, it must not be attached to any containers. If you haven’t removed the previous container, do so with the following command (the `-f` will stop the container first and then remove it):
+删除卷之前，必须先确保它没有被任何容器附加。如仍有容器在使用，可用 `-f` 选项先停止再删除：
 
 ```console
 $ docker rm -f new-db
 ```
 
-There are a few methods to remove volumes, including the following:
+删除卷的几种方式：
 
-- Select the **Delete Volume** option on a volume in the Docker Desktop Dashboard.
-- Use the `docker volume rm` command:
+- 在 Docker Desktop 控制面板中，选择该卷并点击 **Delete Volume**。
+- 使用 `docker volume rm`：
 
     ```console
     $ docker volume rm postgres_data
     ```
-- Use the `docker volume prune` command to remove all unused volumes:
+- 使用 `docker volume prune` 删除所有未使用的卷：
 
     ```console
     $ docker volume prune
     ```
 
+## 延伸阅读
 
-## Additional resources
+以下资源可帮助你进一步了解卷：
 
-The following resources will help you learn more about volumes:
+- [在 Docker 中管理数据](/engine/storage)
+- [卷](/engine/storage/volumes)
+- [卷挂载](/engine/containers/run/#volume-mounts)
 
-- [Manage data in Docker](/engine/storage)
-- [Volumes](/engine/storage/volumes)
-- [Volume mounts](/engine/containers/run/#volume-mounts)
+## 下一步
 
+既然你已经掌握了容器数据持久化，接下来学习如何与容器共享本地文件。
 
-## Next steps
-
-Now that you have learned about persisting container data, it’s time to learn about sharing local files with containers.
-
-{{< button text="Sharing local files with containers" url="sharing-local-files" >}}
+{{< button text="与容器共享本地文件" url="sharing-local-files" >}}
 
 

@@ -1,13 +1,12 @@
 ---
-title: Writing a Dockerfile
+title: 编写 Dockerfile
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you how to create image using Dockerfile.
+description: 本文将介绍如何使用 Dockerfile 创建镜像。
 summary: |
-  Mastering Dockerfile practices is vital for leveraging container technology
-  effectively, enhancing application reliability and supporting DevOps and
-  CI/CD methodologies. In this guide, you’ll learn how to write a Dockerfile,
-  how to define a base image and setup instructions, including software
-  installation and copying necessary files.
+  掌握 Dockerfile 的编写实践对高效利用容器技术至关重要，
+  它能提升应用可靠性，并更好地支持 DevOps 与 CI/CD 流程。
+  在本指南中，你将学习如何编写一个 Dockerfile，如何选择基础镜像，
+  以及如何编写安装软件与复制必要文件等构建指令。
 weight: 2
 aliases: 
  - /guides/docker-concepts/building-images/writing-a-dockerfile/
@@ -15,119 +14,115 @@ aliases:
 
 {{< youtube-embed Jx8zoIhiP4c >}}
 
-## Explanation
+## 概念解析
 
-A Dockerfile is a text-based document that's used to create a container image. It provides instructions to the image builder on the commands to run, files to copy, startup command, and more.
+Dockerfile 是一个基于文本的文档，用于创建容器镜像。它向镜像构建器提供一系列指令，说明需要运行哪些命令、复制哪些文件、设置何种启动命令等。
 
-As an example, the following Dockerfile would produce a ready-to-run Python application:
+例如，下面这个 Dockerfile 可以构建一个开箱即用的 Python 应用：
 
 ```dockerfile
 FROM python:3.13
 WORKDIR /usr/local/app
 
-# Install the application dependencies
+# 安装应用依赖
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy in the source code
+# 拷贝源代码
 COPY src ./src
 EXPOSE 8080
 
-# Setup an app user so the container doesn't run as the root user
+# 创建应用用户，避免以 root 身份运行
 RUN useradd app
 USER app
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-### Common instructions
+### 常用指令
 
-Some of the most common instructions in a `Dockerfile` include:
+`Dockerfile` 中最常见的指令包括：
 
-- `FROM <image>` - this specifies the base image that the build will extend.
-- `WORKDIR <path>` - this instruction specifies the "working directory" or the path in the image where files will be copied and commands will be executed.
-- `COPY <host-path> <image-path>` - this instruction tells the builder to copy files from the host and put them into the container image.
-- `RUN <command>` - this instruction tells the builder to run the specified command.
-- `ENV <name> <value>` - this instruction sets an environment variable that a running container will use.
-- `EXPOSE <port-number>` - this instruction sets configuration on the image that indicates a port the image would like to expose.
-- `USER <user-or-uid>` - this instruction sets the default user for all subsequent instructions.
-- `CMD ["<command>", "<arg1>"]` - this instruction sets the default command a container using this image will run.
+- `FROM <image>` —— 指定要扩展的基础镜像。
+- `WORKDIR <path>` —— 指定工作目录，即镜像内后续复制文件与执行命令的路径。
+- `COPY <host-path> <image-path>` —— 从宿主机复制文件到容器镜像中。
+- `RUN <command>` —— 在构建期间执行命令。
+- `ENV <name> <value>` —— 设置环境变量，供运行中的容器使用。
+- `EXPOSE <port-number>` —— 为镜像声明一个希望暴露的端口（元数据）。
+- `USER <user-or-uid>` —— 设置后续指令的默认用户。
+- `CMD ["<command>", "<arg1>"]` —— 设置基于该镜像启动的容器默认执行的命令。
 
+若需了解全部指令与更深入的说明，请参阅 [Dockerfile 参考](https://docs.docker.com/engine/reference/builder/)。
 
-To read through all of the instructions or go into greater detail, check out the [Dockerfile reference](https://docs.docker.com/engine/reference/builder/).
+## 动手试试
 
-## Try it out
+与前述示例类似，一个 Dockerfile 通常遵循以下流程：
 
-Just as you saw with the previous example, a Dockerfile typically follows these steps:
+1. 选择基础镜像
+2. 安装应用依赖
+3. 复制相关源码与/或二进制文件
+4. 配置最终镜像
 
-1. Determine your base image
-2. Install application dependencies
-3. Copy in any relevant source code and/or binaries
-4. Configure the final image
+接下来，我们用一个简单的 Node.js 应用来演示如何编写 Dockerfile。即使你不熟悉 JavaScript，也不影响跟随本指南操作。
 
-In this quick hands-on guide, you'll write a Dockerfile that builds a simple Node.js application. If you're not familiar with JavaScript-based applications, don't worry. It isn't necessary for following along with this guide.
+### 准备环境
 
-### Set up
+[下载此 ZIP 包](https://github.com/docker/getting-started-todo-app/archive/refs/heads/build-image-from-scratch.zip) 并将内容解压到本地目录。
 
-[Download this ZIP file](https://github.com/docker/getting-started-todo-app/archive/refs/heads/build-image-from-scratch.zip) and extract the contents into a directory on your machine.
+如果不想下载 ZIP，可以克隆仓库 https://github.com/docker/getting-started-todo-app 并切换到 `build-image-from-scratch` 分支。
 
-If you'd rather not download a ZIP file, clone the https://github.com/docker/getting-started-todo-app project and checkout the `build-image-from-scratch` branch.
+### 创建 Dockerfile
 
-### Creating the Dockerfile
+现在你已获取项目代码，可以开始创建 `Dockerfile`。
 
-Now that you have the project, you’re ready to create the `Dockerfile`.
+1. [下载并安装](https://www.docker.com/products/docker-desktop/) Docker Desktop。
 
-1. [Download and install](https://www.docker.com/products/docker-desktop/) Docker Desktop.
+2. 浏览项目结构。
 
-2. Examine the project.
+   打开 `getting-started-todo-app/app/` 目录。你会注意到已有一个 `Dockerfile`。
+   它只是一个纯文本文件，可用任意文本或代码编辑器打开。
 
-   Explore the contents of `getting-started-todo-app/app/`. You'll notice that a
-   `Dockerfile` already exists. It is a simple text file that you can open in
-   any text or code editor.
+3. 删除现有的 `Dockerfile`。
 
-3. Delete the existing `Dockerfile`.
+   在本练习中，我们假设你从零开始，并会手动创建一个新的 `Dockerfile`。
 
-   For this exercise, you'll pretend you're starting from scratch and will
-   create a new `Dockerfile`.
+4. 在 `getting-started-todo-app/app/` 目录中新建名为 `Dockerfile` 的文件。
 
-4. Create a file named `Dockerfile` in the `getting-started-todo-app/app/` folder.
-
-    > **Dockerfile file extensions**
+    > **关于 Dockerfile 的扩展名**
     >
-    > It's important to note that the `Dockerfile` has _no_ file extension. Some editors
-    > will automatically add an extension to the file (or complain it doesn't have one).
+    > 请注意，`Dockerfile` 没有文件扩展名。有些编辑器可能会自动添加扩展名
+    > （或对没有扩展名发出警告）。
 
-5. In the `Dockerfile`, define your base image by adding the following line:
+5. 在 `Dockerfile` 中添加以下内容以指定基础镜像：
 
     ```dockerfile
     FROM node:22-alpine
     ```
 
-6. Now, define the working directory by using the `WORKDIR` instruction. This will specify where future commands will run and the directory files will be copied inside the container image.
+6. 使用 `WORKDIR` 指令设置工作目录。这会指定后续命令的执行位置，以及在容器镜像内复制文件的目标目录。
 
     ```dockerfile
     WORKDIR /app
     ```
 
-7. Copy all of the files from your project on your machine into the container image by using the `COPY` instruction:
+7. 使用 `COPY` 指令将你机器上的项目文件全部复制到容器镜像中：
 
     ```dockerfile
     COPY . .
     ```
 
-8. Install the app's dependencies by using the `yarn` CLI and package manager. To do so, run a command using the `RUN` instruction:
+8. 使用 `yarn` 包管理器安装应用依赖。通过 `RUN` 指令执行以下命令：
 
     ```dockerfile
     RUN yarn install --production
     ```
 
-9. Finally, specify the default command to run by using the `CMD` instruction:
+9. 使用 `CMD` 指令指定容器的默认启动命令：
 
     ```dockerfile
     CMD ["node", "./src/index.js"]
     ```
-    And with that, you should have the following Dockerfile:
-
+    至此，你应得到如下完整的 Dockerfile：
 
     ```dockerfile
     FROM node:22-alpine
@@ -137,35 +132,31 @@ Now that you have the project, you’re ready to create the `Dockerfile`.
     CMD ["node", "./src/index.js"]
     ```
 
-> **This Dockerfile isn't production-ready yet**
+> **该 Dockerfile 还未达到生产可用水准**
 >
-> It's important to note that this Dockerfile is _not_ following all
-> of the best practices yet (by design). It will build the app, but the
-> builds won't be as fast, or the images as secure, as they could be.
+> 需要说明的是，这个 Dockerfile（刻意）尚未遵循全部最佳实践。
+> 它可以完成构建，但构建速度与镜像安全性还有提升空间。
 >
-> Keep reading to learn more about how to make the image maximize the
-> build cache, run as a non-root user, and multi-stage builds.
+> 继续阅读，了解如何最大化构建缓存命中率、以非 root 用户运行、以及多阶段构建等实践。
 
-
-> **Containerize new projects quickly with `docker init`**
+> **用 `docker init` 快速容器化新项目**
 >
-> The `docker init` command will analyze your project and quickly create 
-> a Dockerfile, a `compose.yaml`, and a `.dockerignore`, helping you get
-> up and going. Since you're learning about Dockerfiles specifically here, 
-> you won't use it now. But, [learn more about it here](/engine/reference/commandline/init/).
+> `docker init` 会分析你的项目并快速生成 Dockerfile、`compose.yaml` 与 `.dockerignore`，
+> 帮助你快速上手。由于本文聚焦 Dockerfile 的学习，这里不直接使用它。
+> 但你可以在[此处了解更多](/engine/reference/commandline/init/)。
 
-## Additional resources
+## 延伸阅读
 
-To learn more about writing a Dockerfile, visit the following resources:
+想进一步了解如何编写 Dockerfile，可参考：
 
-* [Dockerfile reference](/reference/dockerfile/)
-* [Dockerfile best practices](/develop/develop-images/dockerfile_best-practices/)
-* [Base images](/build/building/base-images/)
-* [Getting started with Docker Init](/reference/cli/docker/init/)
+* [Dockerfile 参考](/reference/dockerfile/)
+* [Dockerfile 最佳实践](/develop/develop-images/dockerfile_best-practices/)
+* [基础镜像](/build/building/base-images/)
+* [Docker Init 入门](/reference/cli/docker/init/)
 
-## Next steps
+## 下一步
 
-Now that you have created a Dockerfile and learned the basics, it's time to learn about building, tagging, and pushing the images.
+现在你已经创建了一个 Dockerfile 并掌握了基础知识，下一步是学习如何构建、打标签并推送镜像。
 
-{{< button text="Build, tag and publish the Image" url="build-tag-and-publish-an-image" >}}
+{{< button text="构建、打标签并发布镜像" url="build-tag-and-publish-an-image" >}}
 

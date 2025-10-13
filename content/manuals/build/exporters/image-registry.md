@@ -1,46 +1,43 @@
 ---
-title: Image and registry exporters
+title: 镜像与仓库导出器
 description: |
-  The image and registry exporters create an image that can be loaded to your
-  local image store or pushed to a registry
+  镜像与仓库导出器会创建一个镜像，可加载到本地镜像存储，或推送到远端仓库。
 keywords: build, buildx, buildkit, exporter, image, registry
 aliases:
   - /build/building/exporters/image-registry/
 ---
 
-The `image` exporter outputs the build result into a container image format. The
-`registry` exporter is identical, but it automatically pushes the result by
-setting `push=true`.
+`image` 导出器会将构建结果输出为容器镜像格式；`registry` 导出器与其相同，
+但会通过设置 `push=true` 自动将结果推送到仓库。
 
-## Synopsis
+## 用法概览
 
-Build a container image using the `image` and `registry` exporters:
+使用 `image` 与 `registry` 导出器构建容器镜像：
 
 ```console
 $ docker buildx build --output type=image[,parameters] .
 $ docker buildx build --output type=registry[,parameters] .
 ```
 
-The following table describes the available parameters that you can pass to
-`--output` for `type=image`:
+下表说明了在 `type=image` 时可通过 `--output` 传入的参数：
 
-| Parameter              | Type                                   | Default | Description                                                                                                                                                                                                                         |
-| ---------------------- | -------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                 | String                                 |         | Specify image name(s)                                                                                                                                                                                                               |
-| `push`                 | `true`,`false`                         | `false` | Push after creating the image.                                                                                                                                                                                                      |
-| `push-by-digest`       | `true`,`false`                         | `false` | Push image without name.                                                                                                                                                                                                            |
-| `registry.insecure`    | `true`,`false`                         | `false` | Allow pushing to insecure registry.                                                                                                                                                                                                 |
-| `dangling-name-prefix` | `<value>`                              |         | Name image with `prefix@<digest>`, used for anonymous images                                                                                                                                                                        |
-| `name-canonical`       | `true`,`false`                         |         | Add additional canonical name `name@<digest>`                                                                                                                                                                                       |
-| `compression`          | `uncompressed`,`gzip`,`estargz`,`zstd` | `gzip`  | Compression type, see [compression][1]                                                                                                                                                                                              |
-| `compression-level`    | `0..22`                                |         | Compression level, see [compression][1]                                                                                                                                                                                             |
-| `force-compression`    | `true`,`false`                         | `false` | Forcefully apply compression, see [compression][1]                                                                                                                                                                                  |
-| `rewrite-timestamp`    | `true`,`false`                         | `false` | Rewrite the file timestamps to the `SOURCE_DATE_EPOCH` value. See [build reproducibility][4] for how to specify the `SOURCE_DATE_EPOCH` value.                                                                                      |
-| `oci-mediatypes`       | `true`,`false`                         | `false` | Use OCI media types in exporter manifests, see [OCI Media types][2]                                                                                                                                                                 |
-| `oci-artifact`         | `true`,`false`                         | `false` | Attestations are formatted as OCI artifacts, see [OCI Media types][2]                                                                                                                                                               |
-| `unpack`               | `true`,`false`                         | `false` | Unpack image after creation (for use with containerd)                                                                                                                                                                               |
-| `store`                | `true`,`false`                         | `true`  | Store the result images to the worker's (for example, containerd) image store, and ensures that the image has all blobs in the content store. Ignored if the worker doesn't have image store (when using OCI workers, for example). |
-| `annotation.<key>`     | String                                 |         | Attach an annotation with the respective `key` and `value` to the built image,see [annotations][3]                                                                                                                                  |
+| 参数                    | 类型                                   | 默认值  | 说明                                                                                                                                                                                                                               |
+| ---------------------- | -------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                 | String                                 |         | 指定镜像名称（可多个）。                                                                                                                                                                                                            |
+| `push`                 | `true`,`false`                         | `false` | 创建镜像后推送。                                                                                                                                                                                                                    |
+| `push-by-digest`       | `true`,`false`                         | `false` | 不带名称，仅按摘要（digest）推送镜像。                                                                                                                                                                                              |
+| `registry.insecure`    | `true`,`false`                         | `false` | 允许推送到不安全的仓库。                                                                                                                                                                                                            |
+| `dangling-name-prefix` | `<value>`                              |         | 以 `prefix@<digest>` 命名镜像，用于匿名镜像场景。                                                                                                                                                                                   |
+| `name-canonical`       | `true`,`false`                         |         | 追加规范化名称 `name@<digest>`。                                                                                                                                                                                                    |
+| `compression`          | `uncompressed`,`gzip`,`estargz`,`zstd` | `gzip`  | 压缩类型，参见[压缩][1]。                                                                                                                                                                                                           |
+| `compression-level`    | `0..22`                                |         | 压缩级别，参见[压缩][1]。                                                                                                                                                                                                           |
+| `force-compression`    | `true`,`false`                         | `false` | 强制应用压缩，参见[压缩][1]。                                                                                                                                                                                                       |
+| `rewrite-timestamp`    | `true`,`false`                         | `false` | 将文件时间戳重写为 `SOURCE_DATE_EPOCH` 值。如何指定该值，参见[构建可复现性][4]。                                                                                                                                                     |
+| `oci-mediatypes`       | `true`,`false`                         | `false` | 在导出器清单中使用 OCI 媒体类型，参见[OCI 媒体类型][2]。                                                                                                                                                                            |
+| `oci-artifact`         | `true`,`false`                         | `false` | 将证明（attestation）按 OCI Artifact 格式化，参见[OCI 媒体类型][2]。                                                                                                                                                                |
+| `unpack`               | `true`,`false`                         | `false` | 创建后解包镜像（用于 containerd）。                                                                                                                                                                                                 |
+| `store`                | `true`,`false`                         | `true`  | 将结果镜像存入 worker（例如 containerd）的镜像存储，并确保镜像的所有 blob 已在内容存储中可用。若 worker 没有镜像存储（如使用 OCI workers），则忽略。                                                                              |
+| `annotation.<key>`     | String                                 |         | 为已构建的镜像附加注解，对应 `key` 与 `value`，参见[注解][3]。                                                                                                                                                                      |
 
 [1]: _index.md#compression
 [2]: _index.md#oci-media-types
@@ -48,21 +45,20 @@ The following table describes the available parameters that you can pass to
 [4]: https://github.com/moby/buildkit/blob/master/docs/build-repro.md
 [5]: /manuals/build/metadata/attestations/_index.md#attestations-as-oci-artifacts
 
-## Annotations
+## 注解
 
-These exporters support adding OCI annotation using `annotation` parameter,
-followed by the annotation name using dot notation. The following example sets
-the `org.opencontainers.image.title` annotation:
+这些导出器支持通过 `annotation` 参数添加 OCI 注解，后接点号表示法的注解名称。
+如下示例设置了 `org.opencontainers.image.title` 注解：
 
 ```console
 $ docker buildx build \
     --output "type=<type>,name=<registry>/<image>,annotation.org.opencontainers.image.title=<title>" .
 ```
 
-For more information about annotations, see
-[BuildKit documentation](https://github.com/moby/buildkit/blob/master/docs/annotations.md).
+关于注解的更多信息，参见
+[BuildKit 文档](https://github.com/moby/buildkit/blob/master/docs/annotations.md)。
 
-## Further reading
+## 延伸阅读
 
-For more information on the `image` or `registry` exporters, see the
-[BuildKit README](https://github.com/moby/buildkit/blob/master/README.md#imageregistry).
+关于 `image` 与 `registry` 导出器的更多信息，参见
+[BuildKit README](https://github.com/moby/buildkit/blob/master/README.md#imageregistry)。

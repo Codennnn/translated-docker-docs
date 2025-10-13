@@ -2,15 +2,11 @@
 title: buildkitd.toml
 ---
 
-The TOML file used to configure the buildkitd daemon settings has a short
-list of global settings followed by a series of sections for specific areas
-of daemon configuration.
+用于配置 buildkitd 守护进程的 TOML 文件，前半部分为少量全局设置，随后按不同配置领域划分为多个小节。
 
-The file path is `/etc/buildkit/buildkitd.toml` for rootful mode,
-`~/.config/buildkit/buildkitd.toml` for rootless mode.
+在 rootful 模式下，文件路径为 `/etc/buildkit/buildkitd.toml`；在 rootless 模式下，路径为 `~/.config/buildkit/buildkitd.toml`。
 
-The following is a complete `buildkitd.toml` configuration example.
-Note that some configuration options are only useful in edge cases.
+下面是一个完整的 `buildkitd.toml` 配置示例。请注意，其中部分配置选项仅在边缘场景下才有用。
 
 ```toml
 # debug enables additional debug logging

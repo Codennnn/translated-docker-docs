@@ -1,13 +1,11 @@
 ---
-title: Multi-stage builds
+title: 多阶段构建
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you about the purpose of the multi-stage build and its benefits
+description: 本文将介绍多阶段构建的目的及其带来的收益。
 summary: |
-  By separating the build environment from the final runtime environment, you
-  can significantly reduce the image size and attack surface. In this guide,
-  you'll unlock the power of multi-stage builds to create lean and efficient
-  Docker images, essential for minimizing overhead and enhancing deployment in
-  production environments.
+  通过将构建环境与最终运行环境分离，你可以显著减少镜像体积并降低攻击面。
+  本指南将带你掌握多阶段构建的用法，构建精简高效的 Docker 镜像，
+  以便在生产环境中降低开销并提升部署效率。
 weight: 5
 aliases: 
  - /guides/docker-concepts/building-images/multi-stage-builds/
@@ -15,64 +13,55 @@ aliases:
 
 {{< youtube-embed vR185cjwxZ8 >}}
 
-## Explanation
+## 概念解析
 
-In a traditional build, all build instructions are executed in sequence, and in a single build container: downloading dependencies, compiling code, and packaging the application. All those layers end up in your final image. This approach works, but it leads to bulky images carrying unnecessary weight and increasing your security risks. This is where multi-stage builds come in.
+在传统构建中，所有构建指令会在同一个构建容器中按顺序执行：下载依赖、编译代码、打包应用……这些步骤产生的所有层最终都会进入你的镜像。此方式可行，但会导致镜像臃肿、携带不必要的内容，也会增加安全风险。多阶段构建正是为了解决这一问题。
 
-Multi-stage builds introduce multiple stages in your Dockerfile, each with a specific purpose. Think of it like the ability to run different parts of a build in multiple different environments, concurrently. By separating the build environment from the final runtime environment, you can significantly reduce the image size and attack surface. This is especially beneficial for applications with large build dependencies.
+多阶段构建允许你在一个 Dockerfile 中定义多个“阶段”，每个阶段都有明确的职责。可以理解为：在多个不同的环境中分别完成构建流程的不同部分，并在需要时进行协作。通过把“构建环境”和“运行环境”分离，你能够显著降低最终镜像体积与攻击面，尤其适用于依赖较多、构建体积较大的应用。
 
-Multi-stage builds are recommended for all types of applications.
+多阶段构建适用于各类应用：
 
-- For interpreted languages, like JavaScript or Ruby or Python, you can build and minify your code in one stage, and copy the production-ready files to a smaller runtime image. This optimizes your image for deployment.
-- For compiled languages, like C or Go or Rust, multi-stage builds let you compile in one stage and copy the compiled binaries into a final runtime image. No need to bundle the entire compiler in your final image.
+- 对解释型语言（如 JavaScript、Ruby、Python）：可在一个阶段完成构建与代码压缩/产物整理，再将产物拷贝到更小的运行时镜像中，优化用于部署的镜像。
+- 对编译型语言（如 C、Go、Rust）：可在一个阶段完成编译，再把编译好的二进制拷贝到最终运行镜像中，无需把编译器一并打包进最终镜像。
 
-
-Here's a simplified example of a multi-stage build structure using pseudo-code. Notice there are multiple `FROM` statements and a new `AS <stage-name>`. In addition, the `COPY` statement in the second stage is copying `--from` the previous stage.
-
+下面是一个多阶段构建的简化结构（伪代码）。注意包含多个 `FROM`，以及 `AS <stage-name>` 为阶段命名；第二个阶段中的 `COPY` 使用了 `--from` 从前一阶段拷贝产物。
 
 ```dockerfile
-# Stage 1: Build Environment
+# 阶段 1：构建环境
 FROM builder-image AS build-stage 
-# Install build tools (e.g., Maven, Gradle)
-# Copy source code
-# Build commands (e.g., compile, package)
+# 安装构建工具（例如 Maven、Gradle）
+# 拷贝源代码
+# 执行构建命令（例如编译、打包）
 
-# Stage 2: Runtime environment
+# 阶段 2：运行环境
 FROM runtime-image AS final-stage  
-#  Copy application artifacts from the build stage (e.g., JAR file)
+#  从构建阶段拷贝应用产物（例如 JAR 文件）
 COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage
-# Define runtime configuration (e.g., CMD, ENTRYPOINT) 
+# 定义运行时配置（例如 CMD、ENTRYPOINT） 
 ```
 
+该 Dockerfile 使用了两个阶段：
 
-This Dockerfile uses two stages:
+- 构建阶段：基于包含构建工具的镜像，用于编译应用；在此阶段安装工具、拷贝源码并执行构建命令。
+- 最终阶段：基于较小的运行时镜像，只用于运行应用；从构建阶段拷贝编译产物（例如 JAR 文件），并用 `CMD` 或 `ENTRYPOINT` 定义应用的启动方式。
 
-- The build stage uses a base image containing build tools needed to compile your application. It includes commands to install build tools, copy source code, and execute build commands.
-- The final stage uses a smaller base image suitable for running your application. It copies the compiled artifacts (a JAR file, for example) from the build stage. Finally, it defines the runtime configuration (using `CMD` or `ENTRYPOINT`) for starting your application.
+## 动手试试
 
+本实践将以一个基于 Spring Boot 和 Maven 的“Hello World”示例，演示如何使用多阶段构建创建精简高效的 Java 应用镜像。
 
-## Try it out
+1. [下载并安装](https://www.docker.com/products/docker-desktop/) Docker Desktop。
 
-In this hands-on guide, you'll unlock the power of multi-stage builds to create lean and efficient Docker images for a sample Java application. You'll use a simple “Hello World” Spring Boot-based application built with Maven as your example.
+2. 打开这个[预初始化项目](https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.4.0-M3&packaging=jar&jvmVersion=21&groupId=com.example&artifactId=spring-boot-docker&name=spring-boot-docker&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.spring-boot-docker&dependencies=web) 以生成一个 ZIP。如下所示：
 
-1. [Download and install](https://www.docker.com/products/docker-desktop/) Docker Desktop.
+    ![Spring Initializr 截图，选择了 Java 21、Spring Web 与 Spring Boot 3.4.0](images/multi-stage-builds-spring-initializer.webp?border=true)
 
+    [Spring Initializr](https://start.spring.io/) 是一个 Spring 项目脚手架生成器，提供可扩展的 API 来生成基于 JVM 的项目，内置 Java、Kotlin、Groovy 等语言的常见模板。
 
-2. Open this [pre-initialized project](https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.4.0-M3&packaging=jar&jvmVersion=21&groupId=com.example&artifactId=spring-boot-docker&name=spring-boot-docker&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.spring-boot-docker&dependencies=web) to generate a ZIP file. Here’s how that looks:
+    选择 **Generate** 生成并下载该项目的 ZIP。
 
+    在本示例中，我们选择了 Maven 作为构建工具，添加 Spring Web 依赖，并使用 Java 21。
 
-    ![A screenshot of Spring Initializr tool selected with Java 21, Spring Web and Spring Boot 3.4.0](images/multi-stage-builds-spring-initializer.webp?border=true)
-
-
-    [Spring Initializr](https://start.spring.io/) is a quickstart generator for Spring projects. It provides an extensible API to generate JVM-based projects with implementations for several common concepts — like basic language generation for Java, Kotlin, and Groovy. 
-
-    Select **Generate** to create and download the zip file for this project.
-
-    For this demonstration, you’ve paired Maven build automation with Java, a Spring Web dependency, and Java 21 for your metadata.
-
-
-3. Navigate the project directory. Once you unzip the file, you'll see the following project directory structure:
-
+3. 浏览项目结构。解压后，你将看到类似如下的目录：
 
     ```plaintext
     spring-boot-docker
@@ -101,19 +90,13 @@ In this hands-on guide, you'll unlock the power of multi-stage builds to create 
     15 directories, 7 files
     ```
 
-   The `src/main/java` directory contains your project's source code, the `src/test/java` directory   
-   contains the test source, and the `pom.xml` file is your project’s Project Object Model (POM).
+   `src/main/java` 用于存放源码，`src/test/java` 存放测试代码，`pom.xml` 是项目的 POM（Project Object Model）。
 
-   The `pom.xml` file is the core of a Maven project's configuration. It's a single configuration file that   
-   contains most of the information needed to build a customized project. The POM is huge and can seem    
-   daunting. Thankfully, you don't yet need to understand every intricacy to use it effectively. 
+   `pom.xml` 是 Maven 项目的核心配置文件，包含构建定制所需的大部分信息。它可能看起来很庞大，但你无需立刻掌握所有细节即可高效使用。
 
-4. Create a RESTful web service that displays "Hello World!". 
+4. 创建一个返回 “Hello World!” 的 RESTful Web 服务。
 
-    
-    Under the `src/main/java/com/example/spring_boot_docker/` directory, you can modify your  
-    `SpringBootDockerApplication.java` file with the following content:
-
+    在 `src/main/java/com/example/spring_boot_docker/` 目录下，将 `SpringBootDockerApplication.java` 修改为如下内容：
 
     ```java
     package com.example.spring_boot_docker;
@@ -140,54 +123,52 @@ In this hands-on guide, you'll unlock the power of multi-stage builds to create 
     }
     ```
 
-    The `SpringbootDockerApplication.java` file starts by declaring your `com.example.spring_boot_docker` package and importing necessary Spring frameworks. This Java file creates a simple Spring Boot web application that responds with "Hello World" when a user visits its homepage. 
+    该文件声明了 `com.example.spring_boot_docker` 包并导入必要的 Spring 组件，创建了一个简单的 Spring Boot Web 应用：当访问首页时返回 "Hello World"。
 
+### 创建 Dockerfile
 
-### Create the Dockerfile
+现在已有项目代码，可以创建 `Dockerfile`。
 
-Now that you have the project, you’re ready to create the `Dockerfile`.
+ 1. 在项目根目录（包含 src、pom.xml 等）创建名为 `Dockerfile` 的文件。
 
- 1. Create a file named `Dockerfile` in the same folder that contains all the other folders and files (like src, pom.xml, etc.).
-
- 2. In the `Dockerfile`, define your base image by adding the following line:
+ 2. 在 `Dockerfile` 中指定基础镜像：
 
      ```dockerfile
      FROM eclipse-temurin:21.0.8_9-jdk-jammy
      ```
 
- 3. Now, define the working directory by using the `WORKDIR` instruction. This will specify where future commands will run and the directory files will be copied inside the container image.
+  3. 使用 `WORKDIR` 指令设置工作目录，后续命令将在该目录下运行，同时文件也会复制到镜像内的此路径：
 
      ```dockerfile
      WORKDIR /app
      ```
 
- 4. Copy both the Maven wrapper script and your project's `pom.xml` file into the current working directory `/app` within the Docker container.
+  4. 将 Maven 包装器脚本与项目的 `pom.xml` 拷贝到容器内的 `/app`：
 
      ```dockerfile
      COPY .mvn/ .mvn
      COPY mvnw pom.xml ./
      ```
 
- 5. Execute a command within the container. It runs the `./mvnw dependency:go-offline` command, which uses the Maven wrapper (`./mvnw`) to download all dependencies for your project without building the final JAR file (useful for faster builds).
+  5. 在容器内执行命令，使用 Maven Wrapper 预拉取依赖（不构建最终 JAR），以便加速后续构建：
 
      ```dockerfile
      RUN ./mvnw dependency:go-offline
      ```
 
- 6. Copy the `src` directory from your project on the host machine to the `/app` directory within the container. 
+  6. 将宿主机项目的 `src` 目录拷贝到容器内 `/app`：
 
      ```dockerfile
      COPY src ./src
      ```
 
-
- 7. Set the default command to be executed when the container starts. This command instructs the container to run the Maven wrapper (`./mvnw`) with the `spring-boot:run` goal, which will build and execute your Spring Boot application.
+  7. 设置容器启动时的默认命令，运行 Maven Wrapper 执行 `spring-boot:run` 来启动应用：
 
      ```dockerfile
      CMD ["./mvnw", "spring-boot:run"]
      ```
 
-    And with that, you should have the following Dockerfile:
+    至此，你应得到如下 Dockerfile：
 
     ```dockerfile 
     FROM eclipse-temurin:21.0.8_9-jdk-jammy
@@ -199,42 +180,38 @@ Now that you have the project, you’re ready to create the `Dockerfile`.
     CMD ["./mvnw", "spring-boot:run"]
     ```
 
-### Build the container image
+### 构建容器镜像
 
-
- 1. Execute the following command to build the Docker image:
-
+ 1. 执行以下命令构建镜像：
 
     ```console
     $ docker build -t spring-helloworld .
     ```
 
- 2. Check the size of the Docker image by using the `docker images` command:
+ 2. 使用 `docker images` 查看镜像大小：
 
     ```console
     $ docker images
     ```
 
-    Doing so will produce output like the following:
+    例如：
 
     ```console
     REPOSITORY          TAG       IMAGE ID       CREATED          SIZE
     spring-helloworld   latest    ff708d5ee194   3 minutes ago    880MB
     ```
 
+    可见镜像约为 880MB，包含完整的 JDK、Maven 工具链等。在生产环境中，这些内容不必存在于最终镜像中。
 
-    This output shows that your image is 880MB in size. It contains the full JDK, Maven toolchain, and more. In production, you don’t need that in your final image.
+### 运行 Spring Boot 应用
 
-
-### Run the Spring Boot application
-
-1. Now that you have an image built, it's time to run the container.
+1. 既然镜像已构建完毕，运行容器：
 
     ```console
     $ docker run -p 8080:8080 spring-helloworld
     ```
 
-    You'll then see output similar to the following in the container log:
+    你将在容器日志中看到类似如下输出：
 
     ```plaintext
     [INFO] --- spring-boot:3.3.4:run (default-cli) @ spring-boot-docker ---
@@ -244,7 +221,7 @@ Now that you have the project, you’re ready to create the `Dockerfile`.
         /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
        ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
         \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-         '  |____| .__|_| |_|_| |_\__, | / / / /
+         '  |____| .__|_| |_|_| |_|\__, | / / / /
         =========|_|==============|___/=/_/_/_/
     
         :: Spring Boot ::                (v3.3.4)
@@ -255,17 +232,16 @@ Now that you have the project, you’re ready to create the `Dockerfile`.
      ….
      ```
 
-
-2. Access your “Hello World” page through your web browser at [http://localhost:8080](http://localhost:8080), or via this curl command:
+2. 通过浏览器访问 [http://localhost:8080](http://localhost:8080)，或使用 curl：
 
     ```console
     $ curl localhost:8080
     Hello World
     ```
 
-### Use multi-stage builds
+### 使用多阶段构建
 
-1. Consider the following Dockerfile:
+1. 考虑如下 Dockerfile：
 
     ```dockerfile
     FROM eclipse-temurin:21.0.8_9-jdk-jammy AS builder
@@ -283,54 +259,48 @@ Now that you have the project, you’re ready to create the `Dockerfile`.
     ENTRYPOINT ["java", "-jar", "/opt/app/*.jar"]
     ```
 
-    Notice that this Dockerfile has been split into two stages. 
+    可以看到该 Dockerfile 被拆分为两个阶段：
 
-    - The first stage remains the same as the previous Dockerfile, providing a Java Development Kit (JDK) environment for building the application. This stage is given the name of builder.
+    - 第一阶段与前文类似，提供 JDK 构建环境用于构建应用，此阶段命名为 `builder`。
+    - 第二阶段是新的 `final` 阶段，使用更精简的 `eclipse-temurin:21.0.2_13-jre-jammy` 运行时镜像，仅包含运行应用所需的 JRE。该镜像足以运行已编译的 JAR。
 
-    - The second stage is a new stage named `final`. It uses a slimmer `eclipse-temurin:21.0.2_13-jre-jammy` image, containing just the Java Runtime Environment (JRE) needed to run the application. This image provides a Java Runtime Environment (JRE) which is enough for running the compiled application (JAR file). 
+   > 生产环境建议使用 `jlink` 创建自定义的精简运行时。Eclipse Temurin 为各版本提供了 JRE 镜像，但借助 `jlink` 可以只包含应用所需的 Java 模块，从而进一步缩小体积并提升安全性。详见[此页面](https://hub.docker.com/_/eclipse-temurin)。
 
-    
-   > For production use, it's highly recommended that you produce a custom JRE-like runtime using jlink. JRE images are available for all versions of Eclipse Temurin, but `jlink` allows you to create a minimal runtime containing only the necessary Java modules for your application. This can significantly reduce the size and improve the security of your final image. [Refer to this page](https://hub.docker.com/_/eclipse-temurin) for more information.
+   借助多阶段构建，Docker 会使用一个基础镜像完成编译、打包与单元测试，再使用另一个更小的镜像承载应用的运行时。最终镜像不再包含开发或调试工具，因此体积更小、安全性更高。
 
-   With multi-stage builds, a Docker build uses one base image for compilation, packaging, and unit tests and then a separate image for the application runtime. As a result, the final image is smaller in size since it doesn’t contain any development or debugging tools. By separating the build environment from the final runtime environment, you can significantly reduce the image size and increase the security of your final images. 
-
-
-2. Now, rebuild your image and run your ready-to-use production build. 
+2. 重新构建镜像，获得可直接用于生产的构建产物：
 
     ```console
     $ docker build -t spring-helloworld-builder .
     ```
 
-    This command builds a Docker image named `spring-helloworld-builder` using the final stage from your `Dockerfile` file located in the current directory.
+    该命令会基于当前目录中的 `Dockerfile` 构建镜像，并以最终阶段生成名为 `spring-helloworld-builder` 的镜像。
 
+    > [!NOTE]
+    >
+    > 在多阶段 Dockerfile 中，最后一个阶段（此处为 `final`）是构建的默认目标。如果未显式通过 `--target` 指定阶段，`docker build` 会默认构建最后一个阶段。若只想构建含 JDK 的构建阶段，可使用：`docker build -t spring-helloworld-builder --target builder .`
 
-     > [!NOTE]
-     >
-     > In your multi-stage Dockerfile, the final stage (final) is the default target for building. This means that if you don't explicitly specify a target stage using the `--target` flag in the `docker build` command, Docker will automatically build the last stage by default. You could use `docker build -t spring-helloworld-builder --target builder .` to build only the builder stage with the JDK environment.
-
-
-3. Look at the image size difference by using the `docker images` command:
+3. 使用 `docker images` 对比镜像大小：
 
     ```console
     $ docker images
     ```
 
-    You'll get output similar to the following:
+    可能的输出如下：
 
     ```console
     spring-helloworld-builder latest    c5c76cb815c0   24 minutes ago      428MB
     spring-helloworld         latest    ff708d5ee194   About an hour ago   880MB
     ```
 
-    Your final image is just 428 MB, compared to the original build size of 880 MB.
+    可见最终镜像仅 428 MB，相比最初的 880 MB 明显更小。
 
+    通过对各阶段进行有针对性的优化、只保留必要内容，你在保证功能一致的前提下显著降低了镜像体积。这不仅提升性能，也让镜像更轻量、更安全、更易维护。
 
-    By optimizing each stage and only including what's necessary, you were able to significantly reduce the overall image size while still achieving the same functionality. This not only improves performance but also makes your Docker images more lightweight, more secure, and easier to manage.
+## 延伸阅读
 
-## Additional resources
-
-* [Multi-stage builds](/build/building/multi-stage/)
-* [Dockerfile best practices](/develop/develop-images/dockerfile_best-practices/)
-* [Base images](/build/building/base-images/)
+* [多阶段构建](/build/building/multi-stage/)
+* [Dockerfile 最佳实践](/develop/develop-images/dockerfile_best-practices/)
+* [基础镜像](/build/building/base-images/)
 * [Spring Boot Docker](https://spring.io/guides/topicals/spring-boot-docker)
 

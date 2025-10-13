@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Debugging
+title: 调试
 weight: 110
 ---

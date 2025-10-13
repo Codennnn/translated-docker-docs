@@ -1,33 +1,30 @@
 ---
-title: Building images
+title: 构建镜像
 weight: 20
 keywords: build images, Dockerfile, layers, tag, push, cache, multi-stage
 description: |
-  Learn how to build Docker images from a Dockerfile. You'll understand the
-  structure of a Dockerfile, how to build an image, and how to customize the
-  build process.
+  学习如何从 Dockerfile 构建 Docker 镜像。你将理解 Dockerfile 的结构、
+  如何构建镜像，以及如何定制构建过程。
 summary: |
-  Building container images is both technical and an art. You want to keep the
-  image small and focused to increase your security posture, but also need to
-  balance potential tradeoffs, such as caching impacts. In this series, you’ll
-  deep dive into the secrets of images, how they are built and best practices.
+  构建容器镜像既是技术活也是一门艺术。你既要让镜像足够小、足够聚焦，
+  以提升安全性与部署效率；也要在诸如缓存命中率等权衡中做出正确选择。
+  本系列将带你深入理解镜像的工作原理、构建方式与最佳实践。
 layout: series
 params:
-  skill: Beginner
-  time: 25 minutes
-  prereq: None
+  skill: 初学者
+  time: 25 分钟
+  prereq: 无
 ---
 
-## About this series
+## 关于本系列
 
-Learn how to build production-ready images that are lean and efficient Docker
-images, essential for minimizing overhead and enhancing deployment in
-production environments.
+学习如何构建面向生产环境的精简高效镜像，它们能显著降低开销、提升部署效率，
+是现代生产环境中不可或缺的基础能力。
 
-## What you'll learn
+## 你将学到什么
 
-- Understanding image layers
-- Writing a Dockerfile
-- Build, tag and publish an image
-- Using the build cache
-- Multi-stage builds
+- 理解镜像分层
+- 编写 Dockerfile
+- 构建、打标签并发布镜像
+- 使用构建缓存
+- 多阶段构建

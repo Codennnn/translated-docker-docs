@@ -1,8 +1,8 @@
 ---
-title: What is a container?
+title: 什么是容器？
 weight: 10
 keywords: concepts, build, images, container, docker desktop
-description: What is a container? This concept page will teach you about containers and provide a quick hands-on where you will run your first container.
+description: 什么是容器？本页将介绍容器的核心概念，并通过一个快速上手示例带你运行第一个容器。
 aliases:
 - /guides/walkthroughs/what-is-a-container/
 - /guides/walkthroughs/run-a-container/
@@ -14,157 +14,158 @@ aliases:
 
 {{< youtube-embed W1kWqFkiu7k >}}
 
-## Explanation
+## 说明
 
-Imagine you're developing a killer web app that has three main components - a React frontend, a Python API, and a PostgreSQL database. If you wanted to work on this project, you'd have to install Node, Python, and PostgreSQL. 
+想象你要开发一个出色的 Web 应用，它包含三个主要组件：React 前端、Python API 与 PostgreSQL 数据库。要在本机上开展该项目，你通常需要安装 Node、Python 与 PostgreSQL。
 
-How do you make sure you have the same versions as the other developers on your team? Or your CI/CD system? Or what's used in production?
+如何确保你与团队其他开发者、CI/CD 系统以及生产环境使用的是相同版本？
 
-How do you ensure the version of Python (or Node or the database) your app needs isn't affected by what's already on your machine? How do you manage potential conflicts?
+又如何保证应用所需的 Python（或 Node、数据库）版本不受本机既有环境影响？如何管理潜在冲突？
 
-Enter containers!
+容器应运而生！
 
-What is a container? Simply put, containers are isolated processes for each of your app's components. Each component - the frontend React app, the Python API engine, and the database - runs in its own isolated environment, completely isolated from everything else on your machine. 
+什么是容器？简单来说，容器是为应用各组件提供隔离的进程。每个组件——React 前端、Python API 引擎、数据库——都在独立环境中运行，与宿主机上的其他内容完全隔离。
 
-Here's what makes them awesome. Containers are:
+容器之所以强大，在于它们具备以下特性：
 
-- Self-contained. Each container has everything it needs to function with no reliance on any pre-installed dependencies on the host machine.
-- Isolated. Since containers are run in isolation, they have minimal influence on the host and other containers, increasing the security of your applications.
-- Independent. Each container is independently managed. Deleting one container won't affect any others.
-- Portable. Containers can run anywhere! The container that runs on your development machine will work the same way in a data center or anywhere in the cloud!
+- 自包含：每个容器都包含运行所需的一切，不依赖宿主机预装依赖。
+- 隔离性：容器彼此隔离，对宿主机与其他容器的影响最小，有助于提升应用安全性。
+- 独立性：每个容器独立管理，删除一个容器不会影响其他容器。
+- 可移植：容器可在任意环境运行！在你开发机上能运行的容器，在数据中心或云端也能以相同方式运行。
 
-### Containers versus virtual machines (VMs)
+### 容器与虚拟机（VM）的对比
 
-Without getting too deep, a VM is an entire operating system with its own kernel, hardware drivers, programs, and applications. Spinning up a VM only to isolate a single application is a lot of overhead.
+不做过多展开，虚拟机是一个完整的操作系统，包含自有内核、硬件驱动、程序与应用。仅为隔离单个应用而启动虚拟机，开销较大。
 
-A container is simply an isolated process with all of the files it needs to run. If you run multiple containers, they all share the same kernel, allowing you to run more applications on less infrastructure.
+容器本质上是一个带有运行所需文件的隔离进程。即使运行多个容器，它们也共享同一内核，从而在更少的基础设施上运行更多应用。
 
-> **Using VMs and containers together**
+> **同时使用 VM 与容器**
 >
-> Quite often, you will see containers and VMs used together. As an example, in a cloud environment, the provisioned machines are typically VMs. However, instead of provisioning one machine to run one application, a VM with a container runtime can run multiple containerized applications, increasing resource utilization and reducing costs.
+> 在许多场景中，容器与 VM 会结合使用。例如，在云环境中，所提供的计算实例通常是 VM。
+> 相比“一机一应用”，在 VM 中运行容器运行时（runtime）可以同时运行多个容器化应用，提升资源利用率并降低成本。
 
 
-## Try it out
+## 试一试
 
-In this hands-on, you will see how to run a Docker container using the Docker Desktop GUI.
+在本示例中，你将通过 Docker Desktop 图形界面运行一个 Docker 容器。
 
 {{< tabs group=concept-usage persist=true >}}
-{{< tab name="Using the GUI" >}}
+{{< tab name="使用图形界面（GUI）" >}}
 
-Use the following instructions to run a container.
+按照以下步骤运行一个容器：
 
-1. Open Docker Desktop and select the **Search** field on the top navigation bar.
+1. 打开 Docker Desktop，在顶部导航栏选择 **Search**。
 
-2. Specify `welcome-to-docker` in the search input and then select the **Pull** button.
+2. 在搜索框输入 `welcome-to-docker`，然后点击 **Pull**。
 
     ![A screenshot of the Docker Desktop Dashboard showing the search result for welcome-to-docker Docker image ](images/search-the-docker-image.webp?border=true&w=1000&h=700)
 
-3. Once the image is successfully pulled, select the **Run** button.
+3. 镜像拉取成功后，点击 **Run**。
 
-4. Expand the **Optional settings**.
+4. 展开 **Optional settings**。
 
-5. In the **Container name**, specify `welcome-to-docker`.
+5. 在 **Container name** 中填写 `welcome-to-docker`。
 
-6. In the **Host port**, specify `8080`.
+6. 在 **Host port** 中填写 `8080`。
 
     ![A screenshot of Docker Desktop Dashboard showing the container run dialog with welcome-to-docker typed in as the container name and 8080 specified as the port number](images/run-a-new-container.webp?border=true&w=550&h=400)
 
-7. Select **Run** to start your container.
+7. 点击 **Run** 启动容器。
 
-Congratulations! You just ran your first container! 🎉
+恭喜你！你已经运行了第一个容器！🎉
  
-### View your container
+### 查看你的容器
 
-You can view all of your containers by going to the **Containers** view of the Docker Desktop Dashboard.
+在 Docker Desktop 的 **Containers** 视图中，你可以查看所有容器。
 
 ![Screenshot of the container view of the Docker Desktop GUI showing the welcome-to-docker container running on the host port 8080](images/view-your-containers.webp?border=true&w=750&h=600)
 
-This container runs a web server that displays a simple website. When working with more complex projects, you'll run different parts in different containers. For example, you might run a different container for the frontend, backend, and database.
+该容器运行了一个 Web 服务器，用于展示一个简单的网站。在更复杂的项目中，你会将不同部分分别运行在不同的容器中，例如前端、后端与数据库使用不同容器。
 
-### Access the frontend
+### 访问前端
 
-When you launched the container, you exposed one of the container's ports onto your machine. Think of this as creating configuration to let you to connect through the isolated environment of the container. 
+在启动容器时，你将容器的某个端口映射到本机。可以把它理解为一项连通配置，让你能够穿透容器的隔离环境进行访问。
 
-For this container, the frontend is accessible on port `8080`. To open the website, select the link in the **Port(s)** column of your container or visit [http://localhost:8080](http://localhost:8080) in your browser.
+对于该容器，前端通过 `8080` 端口对外提供访问。打开方式：在容器的 **Port(s)** 列中点击链接，或在浏览器访问 [http://localhost:8080](http://localhost:8080)。
 
 ![Screenshot of the landing page coming from the running container](images/access-the-frontend.webp?border)
 
-### Explore your container
+### 探索你的容器
 
-Docker Desktop lets you explore and interact with different aspects of your container. Try it out yourself. 
+Docker Desktop 允许你探索并与容器的不同方面进行交互。你可以试试： 
 
-1. Go to the **Containers** view in the Docker Desktop Dashboard.
+1. 在 Docker Desktop 中打开 **Containers** 视图。
 
-2. Select your container.
+2. 选择你的容器。
 
-3. Select the **Files** tab to explore your container's isolated file system.
+3. 选择 **Files** 选项卡，浏览容器的隔离文件系统。
 
     ![Screenshot of the Docker Desktop Dashboard showing the files and directories inside a running container](images/explore-your-container.webp?border)
 
-### Stop your container
+### 停止容器
 
-The `docker/welcome-to-docker` container continues to run until you stop it. 
+`docker/welcome-to-docker` 容器会一直运行，直到你将其停止。 
 
 1. Go to the **Containers** view in the Docker Desktop Dashboard.
 
-2. Locate the container you'd like to stop.
+2. 找到你要停止的容器。
 
-3. Select the **Stop** action in the **Actions** column.
+3. 在 **Actions** 列选择 **Stop** 操作。
 
     ![Screenshot of the Docker Desktop Dashboard with the welcome container selected and being prepared to stop](images/stop-your-container.webp?border)
 
 {{< /tab >}}
-{{< tab name="Using the CLI" >}}
+{{< tab name="使用命令行（CLI）" >}}
 
-Follow the instructions to run a container using the CLI:
+按照以下步骤使用 CLI 运行容器：
 
-1. Open your CLI terminal and start a container by using the [`docker run`](/reference/cli/docker/container/run/) command:
+1. 打开命令行终端，使用 [`docker run`](/reference/cli/docker/container/run/) 命令启动容器：
 
     ```console
     $ docker run -d -p 8080:80 docker/welcome-to-docker
     ```
 
-    The output from this command is the full container ID. 
+    命令输出的是完整的容器 ID。 
 
-Congratulations! You just fired up your first container! 🎉
+恭喜你！你已经启动了第一个容器！🎉
 
-### View your running containers
+### 查看正在运行的容器
 
-You can verify if the container is up and running by using the [`docker ps`](/reference/cli/docker/container/ls/) command:
+使用 [`docker ps`](/reference/cli/docker/container/ls/) 命令验证容器是否正在运行：
 
 ```console
 docker ps
 ```
 
-You will see output like the following:
+你将看到类似如下输出：
 
 ```console
  CONTAINER ID   IMAGE                      COMMAND                  CREATED          STATUS          PORTS                      NAMES
  a1f7a4bb3a27   docker/welcome-to-docker   "/docker-entrypoint.…"   11 seconds ago   Up 11 seconds   0.0.0.0:8080->80/tcp       gracious_keldysh
 ```
 
-This container runs a web server that displays a simple website. When working with more complex projects, you'll run different parts in different containers. For example, a different container for the `frontend`, `backend`, and `database`.
+该容器运行了一个 Web 服务器，展示一个简单的网站。在更复杂的项目中，你会将不同部分分别运行在不同的容器中，例如 `frontend`、`backend` 与 `database` 各用一个容器。
 
 > [!TIP]
 >
-> The `docker ps` command will show you _only_ running containers. To view stopped containers, add the `-a` flag to list all containers: `docker ps -a`
+> `docker ps` 只会显示正在运行的容器。若需查看已停止的容器，请添加 `-a` 参数列出全部容器：`docker ps -a`
 
 
-### Access the frontend
+### 访问前端
 
-When you launched the container, you exposed one of the container's ports onto your machine. Think of this as creating configuration to let you to connect through the isolated environment of the container. 
+在启动容器时，你将容器的某个端口映射到本机。可以把它理解为一项连通配置，让你能够穿透容器的隔离环境进行访问。
 
-For this container, the frontend is accessible on port `8080`. To open the website, select the link in the **Port(s)** column of your container or visit [http://localhost:8080](http://localhost:8080) in your browser.
+对于该容器，前端通过 `8080` 端口对外提供访问。打开方式：在容器的 **Port(s)** 列中点击链接，或在浏览器访问 [http://localhost:8080](http://localhost:8080)。
 
 ![Screenshot of the landing page of the Nginx web server, coming from the running container](images/access-the-frontend.webp?border)
 
-### Stop your container
+### 停止容器
 
-The `docker/welcome-to-docker` container continues to run until you stop it. You can stop a container using the `docker stop` command.
+`docker/welcome-to-docker` 容器会一直运行，直到你停止它。你可以使用 `docker stop` 命令停止容器。
 
-1. Run `docker ps` to get the ID of the container
+1. 运行 `docker ps` 获取容器 ID
 
-2. Provide the container ID or name to the [`docker stop`](/reference/cli/docker/container/stop/) command:
+2. 将容器 ID 或名称传给 [`docker stop`](/reference/cli/docker/container/stop/) 命令：
 
     ```console
     docker stop <the-container-id>
@@ -172,7 +173,7 @@ The `docker/welcome-to-docker` container continues to run until you stop it. You
 
 > [!TIP]
 >
-> When referencing containers by ID, you don't need to provide the full ID. You only need to provide enough of the ID to make it unique. As an example, the previous container could be stopped by running the following command:
+> 通过 ID 引用容器时，无需提供完整 ID，只需提供足以唯一标识的前缀。例如，上述容器可以通过以下命令停止：
 >
 > ```console
 > docker stop a1f
@@ -181,16 +182,16 @@ The `docker/welcome-to-docker` container continues to run until you stop it. You
 {{< /tab >}}
 {{< /tabs >}}
 
-## Additional resources
+## 进一步阅读
 
-The following links provide additional guidance into containers:
+以下链接提供关于容器的更多参考资料：
 
-- [Running a container](/engine/containers/run/)
-- [Overview of container](https://www.docker.com/resources/what-container/)
-- [Why Docker?](https://www.docker.com/why-docker/)
+- [运行容器](/engine/containers/run/)
+- [容器概览](https://www.docker.com/resources/what-container/)
+- [为什么选择 Docker？](https://www.docker.com/why-docker/)
 
-## Next steps
+## 下一步
 
-Now that you have learned the basics of a Docker container, it's time to learn about Docker images.
+既然你已经了解了 Docker 容器的基础知识，接下来是学习 Docker 镜像的时候了。
 
-{{< button text="What is an image?" url="what-is-an-image" >}}
+{{< button text="什么是镜像？" url="what-is-an-image" >}}

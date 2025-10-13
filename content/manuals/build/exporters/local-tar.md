@@ -1,36 +1,35 @@
 ---
-title: Local and tar exporters
+title: 本地与 tar 导出器
 keywords: build, buildx, buildkit, exporter, local, tar
 description: >
-  The local and tar exporters save the build result to the local filesystem
+  本地与 tar 导出器会将构建结果保存到本地文件系统
 aliases:
   - /build/building/exporters/local-tar/
 ---
 
-The `local` and `tar` exporters output the root filesystem of the build result
-into a local directory. They're useful for producing artifacts that aren't
-container images.
+`local` 与 `tar` 导出器会将构建结果的根文件系统输出到本地目录。
+它们适合用于生成不是容器镜像的构建产物。
 
-- `local` exports files and directories.
-- `tar` exports the same, but bundles the export into a tarball.
+- `local` 会导出文件与目录。
+- `tar` 导出相同的内容，但会将导出物封装为一个 tar 包。
 
-## Synopsis
+## 用法概览
 
-Build a container image using the `local` exporter:
+使用 `local` 与 `tar` 导出器构建：
 
 ```console
 $ docker buildx build --output type=local[,parameters] .
 $ docker buildx build --output type=tar[,parameters] .
 ```
 
-The following table describes the available parameters:
+下表描述了可用参数：
 
-| Parameter        | Type    | Default | Description                                                                                                                                                                                                                            |
+| 参数              | 类型    | 默认值  | 说明                                                                                                                                                                                                                                   |
 |------------------|---------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `dest`           | String  |         | Path to copy files to                                                                                                                                                                                                                  |
-| `platform-split` | Boolean | `true`  | When using the local exporter with a multi-platform build, by default, a subfolder matching each target platform is created in the destination directory. Set it to `false` to merge files from all platforms into the same directory. |
+| `dest`           | String  |         | 要复制文件到的目标路径。                                                                                                                                                                                                               |
+| `platform-split` | Boolean | `true`  | 当在多平台构建中使用本地导出器时，默认会在目标目录下为每个目标平台创建一个同名子目录。将其设为 `false` 可将所有平台的文件合并到同一目录。                                                                                               |
 
-## Further reading
+## 延伸阅读
 
-For more information on the `local` or `tar` exporters, see the
-[BuildKit README](https://github.com/moby/buildkit/blob/master/README.md#local-directory).
+关于 `local` 与 `tar` 导出器的更多信息，参见
+[BuildKit README](https://github.com/moby/buildkit/blob/master/README.md#local-directory)。

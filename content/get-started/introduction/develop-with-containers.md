@@ -1,12 +1,11 @@
 ---
-title: Develop with containers
+title: 使用容器进行开发
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you how to develop with containers
+description: 本页将教你如何使用容器进行开发。
 summary: |
-  Learn how to run your first container, gaining hands-on experience with
-  Docker's powerful features. We'll cover making real-time changes to both
-  backend and frontend code within the containerized environment, ensuring
-  seamless integration and testing.
+  学习如何运行你的第一个容器，亲身体验 Docker 的强大能力。
+  本文将展示如何在容器化环境中对后端与前端代码进行实时修改，
+  实现顺畅的一体化开发与测试体验。
 weight: 2
 aliases:
  - /guides/getting-started/develop-with-containers/
@@ -14,74 +13,74 @@ aliases:
 
 {{< youtube-embed D0SDBrS3t9I >}}
 
-## Explanation
+## 说明
 
-Now that you have Docker Desktop installed, you are ready to do some application development. Specifically, you will do the following:
+现在你已经安装了 Docker Desktop，可以开始进行应用开发了。你将完成以下任务：
 
-1. Clone and start a development project
-2. Make changes to the backend and frontend
-3. See the changes immediately
+1. 克隆并启动一个开发项目
+2. 修改后端与前端代码
+3. 立即看到变更效果
 
-## Try it out
+## 试一试
 
-In this hands-on guide, you'll learn how to develop with containers.
+在这个动手指南中，你将学习如何使用容器进行开发。
 
 
-## Start the project
+## 启动项目
 
-1. To get started, either clone or [download the project as a ZIP file](https://github.com/docker/getting-started-todo-app/archive/refs/heads/main.zip) to your local machine.
+1. 首先，将项目克隆到本地，或[下载 ZIP 包](https://github.com/docker/getting-started-todo-app/archive/refs/heads/main.zip)。
 
     ```console
     $ git clone https://github.com/docker/getting-started-todo-app
     ```
 
-    And after the project is cloned, navigate into the new directory created by the clone:
+    克隆完成后，进入项目目录：
 
     ```console
     $ cd getting-started-todo-app
     ```
 
-2. Once you have the project, start the development environment using Docker Compose.
+2. 获取项目后，使用 Docker Compose 启动开发环境。
 
 
-    To start the project using the CLI, run the following command:
+    使用 CLI 启动项目，运行以下命令：
 
    ```console
    $ docker compose watch
    ```
 
-   You will see an output that shows container images being pulled down, containers starting, and more. Don't worry if you don't understand it all at this point. But, within a moment or two, things should stabilize and finish.
+   你将看到镜像拉取、容器启动等输出。此时不必完全理解所有内容，稍等片刻，环境就会稳定并启动完成。
 
 
-3. Open your browser to [http://localhost](http://localhost) to see the application up and running. It may take a few minutes for the app to run. The app is a simple to-do application, so feel free to add an item or two, mark some as done, or even delete an item.
+3. 打开浏览器访问 [http://localhost](http://localhost) 即可查看正在运行的应用。应用启动可能需要几分钟。该应用是一个简单的待办应用，你可以添加条目、标记完成或删除条目。
 
     ![Screenshot of the getting started to-do app after its first launch](images/develop-getting-started-app-first-launch.webp)
 
 
-### What's in the environment?
+### 环境中包含什么？
 
-Now that the environment is up and running, what's actually in it? At a high-level, there are several containers (or processes) that each serve a specific need for the application:
+环境已经运行起来了，它实际包含哪些内容？从高层看，它由多个容器（或进程）组成，为应用提供不同的能力：
 
-- React frontend - a Node container that's running the React dev server, using [Vite](https://vitejs.dev/).
-- Node backend - the backend provides an API that provides the ability to retrieve, create, and delete to-do items.
-- MySQL database - a database to store the list of the items.
-- phpMyAdmin - a web-based interface to interact with the database that is accessible at [http://db.localhost](http://db.localhost).
-- Traefik proxy - [Traefik](https://traefik.io/traefik/) is an application proxy that routes requests to the right service. It sends all requests for `localhost/api/*` to the backend, requests for `localhost/*` to the frontend, and then requests for `db.localhost` to phpMyAdmin. This provides the ability to access all applications using port 80 (instead of different ports for each service).
+- React 前端——一个运行 React 开发服务器的 Node 容器，使用 [Vite](https://vitejs.dev/)。
+- Node 后端——提供获取、创建与删除待办项的 API。
+- MySQL 数据库——用于存储待办项列表。
+- phpMyAdmin——用于与数据库交互的 Web 界面，可通过 [http://db.localhost](http://db.localhost) 访问。
+- Traefik 代理——[Traefik](https://traefik.io/traefik/) 是一个应用代理，将请求路由到正确的服务：把对 `localhost/api/*` 的请求发往后端，把对 `localhost/*` 的请求发往前端，把对 `db.localhost` 的请求发往 phpMyAdmin。这样你即可通过 80 端口访问所有应用（而无需为每个服务使用不同端口）。
 
-With this environment, you as the developer don’t need to install or configure any services, populate a database schema, configure database credentials, or anything. You only need Docker Desktop. The rest just works.
+在这个环境中，作为开发者的你无需安装或配置任何服务、初始化数据库结构或配置数据库凭据。你只需要 Docker Desktop，其余的一切都能正常工作。
 
 
-## Make changes to the app
+## 修改应用
 
-With this environment up and running, you’re ready to make a few changes to the application and see how Docker helps provide a fast feedback loop.
+环境运行后，你可以开始修改应用，体验 Docker 如何提供快速的反馈循环。
 
-### Change the greeting
+### 修改欢迎语
 
-The greeting at the top of the page is populated by an API call at `/api/greeting`. Currently, it always returns "Hello world!". You’ll now modify it to return one of three randomized messages (that you'll get to choose).
+页面顶部的欢迎语由 `/api/greeting` 接口返回。目前它总是返回 "Hello world!"。现在我们将其修改为在三条可自定义的消息中随机返回一条。
 
-1. Open the `backend/src/routes/getGreeting.js` file in a text editor. This file provides the handler for the API endpoint.
+1. 在文本编辑器中打开 `backend/src/routes/getGreeting.js` 文件。该文件提供该 API 端点的处理函数。
 
-2. Modify the variable at the top to an array of greetings. Feel free to use the following modifications or customize it to your own liking. Also, update the endpoint to send a random greeting from this list.
+2. 将文件顶部的变量改为一个欢迎语数组。可以使用以下示例或自定义。并更新端点逻辑，从该列表中随机返回一条。
 
     ```js {linenos=table,hl_lines=["1-5",9],linenostart=1}
     const GREETINGS = [
@@ -97,18 +96,18 @@ The greeting at the top of the page is populated by an API call at `/api/greetin
     };
     ```
 
-3. If you haven't done so yet, save the file. If you refresh your browser, you should see a new greeting. If you keep refreshing, you should see all of the messages appear.
+3. 保存文件。刷新浏览器即可看到新的欢迎语。多次刷新可以看到列表中的不同消息。
 
     ![Screenshot of the to-do app with a new greeting](images/develop-app-with-greetings.webp)
 
 
-### Change the placeholder text
+### 修改占位文本
 
-When you look at the app, you'll see the placeholder text is simply "New Item". You’ll now make that a little more descriptive and fun. You’ll also make a few changes to the styling of the app too.
+应用中的输入框占位文本目前是 "New Item"。我们将其改得更具描述性、更有趣一点。同时也会对样式做一些调整。
 
-1. Open the `client/src/components/AddNewItemForm.jsx` file. This provides the component to add a new item to the to-do list.
+1. 打开 `client/src/components/AddNewItemForm.jsx` 文件。该组件用于在待办清单中新增条目。
 
-2. Modify the `placeholder` attribute of the `Form.Control` element to whatever you'd like to display.
+2. 修改 `Form.Control` 元素的 `placeholder` 属性为你希望展示的文字。
 
     ```js {linenos=table,hl_lines=[5],linenostart=33}
     <Form.Control
@@ -120,20 +119,20 @@ When you look at the app, you'll see the placeholder text is simply "New Item". 
     />
     ```
 
-3. Save the file and go back to your browser. You should see the change already hot-reloaded into your browser. If you don't like it, feel free to tweak it until it looks just right.
+3. 保存文件并回到浏览器。你会看到改动已经通过热更新生效。如需微调，可反复修改直至满意。
 
 ![Screenshot of the to-do app with an updated placeholder in the add item text field"](images/develop-app-with-updated-placeholder.webp)
 
 
-### Change the background color
+### 修改背景色
 
-Before you consider the application finalized, you need to make the colors better.
+在认为应用已定稿之前，我们先优化一下配色。
 
-1. Open the `client/src/index.scss` file.
+1. 打开 `client/src/index.scss` 文件。
 
-2. Adjust the `background-color` attribute to any color you'd like. The provided snippet is a soft blue to go along with Docker's nautical theme.
+2. 将 `background-color` 修改为你喜欢的颜色。示例代码使用了与 Docker 航海主题相配的柔和蓝色。
 
-    If you're using an IDE, you can pick a color using the integrated color pickers. Otherwise, feel free to use an online [Color Picker](https://www.w3schools.com/colors/colors_picker.asp).
+    如果你使用 IDE，可通过内置取色器选择颜色；也可以使用在线[取色器](https://www.w3schools.com/colors/colors_picker.asp)。
 
     ```css {linenos=table,hl_lines=2,linenostart=3}
     body {
@@ -143,27 +142,27 @@ Before you consider the application finalized, you need to make the colors bette
     }
     ```
 
-    Each save should let you see the change immediately in the browser. Keep adjusting it until it's the perfect setup for you.
+    每次保存后都能在浏览器中立即看到效果。不断调整直到你满意为止。
 
 
     ![Screenshot of the to-do app with a new placeholder and background color"](images/develop-app-with-updated-client.webp)
 
-And with that, you're done. Congrats on updating your website. 
+到这里就完成了，恭喜你更新了网站。
 
 
-## Recap
+## 回顾
 
-Before you move on, take a moment and reflect on what happened here. Within a few moments, you were able to:
+在继续之前，先回顾一下你完成了哪些事情：
 
-- Start a complete development project with zero installation effort. The containerized environment provided the development environment, ensuring you have everything you need. You didn't have to install Node, MySQL, or any of the other dependencies directly on your machine. All you needed was Docker Desktop and a code editor.
+- 以零安装成本启动了一个完整的开发项目。容器化环境提供了所需的一切，无需在本机安装 Node、MySQL 或其他依赖。你只需要 Docker Desktop 与代码编辑器。
 
-- Make changes and see them immediately. This was made possible because 1) the processes running in each container are watching and responding to file changes and 2) the files are shared with the containerized environment.
+- 修改代码后即可立即看到效果。这得益于：1）各容器内的进程会监听并响应文件变更；2）代码文件与容器化环境共享。
 
-Docker Desktop enables all of this and so much more. Once you start thinking with containers, you can create almost any environment and easily share it with your team.
+Docker Desktop 让这一切成为可能，且不止于此。一旦以容器化思维进行开发，你几乎可以创建任意环境，并轻松与团队共享。
 
-## Next steps
+## 下一步
 
-Now that the application has been updated, you’re ready to learn about packaging it as a container image and pushing it to a registry, specifically Docker Hub.
+应用已更新完毕，接下来你将学习如何将其打包为容器镜像并推送到仓库，具体来说是 Docker Hub。
 
-{{< button text="Build and push your first image" url="build-and-push-first-image" >}}
+{{< button text="构建并推送你的第一个镜像" url="build-and-push-first-image" >}}
 

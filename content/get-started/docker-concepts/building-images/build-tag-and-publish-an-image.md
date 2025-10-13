@@ -1,12 +1,11 @@
 ---
-title: Build, tag, and publish an image
+title: 构建、打标签并发布镜像
 keywords: concepts, build, images, container, docker desktop
-description: This concept page will teach you how to build, tag, and publish an image to Docker Hub or any other registry 
+description: 本文将介绍如何构建、打标签并将镜像发布到 Docker Hub 或其他任意仓库。
 summary: |
-  Building, tagging, and publishing Docker images are key steps in the
-  containerization workflow. In this guide, you’ll learn how to create Docker
-  images, how to tag those images with a unique identifier, and how to publish
-  your image to a public registry.
+  构建、打标签与发布 Docker 镜像是容器化工作流中的关键步骤。
+  本指南将带你学习如何创建 Docker 镜像、如何为镜像添加可识别的标签，
+  以及如何将镜像发布到公共仓库。
 weight: 3
 aliases: 
  - /guides/docker-concepts/building-images/build-tag-and-publish-an-image/
@@ -14,27 +13,27 @@ aliases:
 
 {{< youtube-embed chiiGLlYRlY >}}
 
-## Explanation
+## 概念解析
 
-In this guide, you will learn the following:
+在本指南中，你将学习：
 
-- Building images - the process of building an image based on a `Dockerfile`
-- Tagging images - the process of giving an image a name, which also determines where the image can be distributed
-- Publishing images - the process to distribute or share the newly created image using a container registry
+- 构建镜像：基于 `Dockerfile` 构建镜像的流程
+- 为镜像打标签：给镜像一个可读的名称，并决定镜像的分发位置
+- 发布镜像：使用容器仓库分发或共享新创建的镜像
 
-### Building images
+### 构建镜像
 
-Most often, images are built using a Dockerfile. The most basic `docker build` command might look like the following:
+大多数情况下，镜像通过 Dockerfile 构建。最基础的 `docker build` 命令如下：
 
 ```bash
 docker build .
 ```
 
-The final `.` in the command provides the path or URL to the [build context](https://docs.docker.com/build/concepts/context/#what-is-a-build-context). At this location, the builder will find the `Dockerfile` and other referenced files.
+命令末尾的 `.` 指定了[构建上下文](https://docs.docker.com/build/concepts/context/#what-is-a-build-context) 的路径或 URL。构建器会在该位置找到 `Dockerfile` 以及其他被引用的文件。
 
-When you run a build, the builder pulls the base image, if needed, and then runs the instructions specified in the Dockerfile.
+运行构建时，构建器会在需要时拉取基础镜像，然后按 Dockerfile 中的指令逐步执行。
 
-With the previous command, the image will have no name, but the output will provide the ID of the image. As an example, the previous command might produce the following output:
+使用上面的命令构建出的镜像默认没有名称，但输出会包含镜像的 ID。例如，可能会看到如下输出：
 
 ```console
 $ docker build .
@@ -57,132 +56,130 @@ $ docker build .
  => => writing image sha256:9924dfd9350407b3df01d1a0e1033b1e543523ce7d5d5e2c83a724480ebe8f00    0.0s
 ```
 
-With the previous output, you could start a container by using the referenced image:
+根据上述输出，你可以通过引用镜像 ID 来启动容器：
 
 ```console
 docker run sha256:9924dfd9350407b3df01d1a0e1033b1e543523ce7d5d5e2c83a724480ebe8f00
 ```
 
-That name certainly isn't memorable, which is where tagging becomes useful.
+这个名称显然不利于记忆，这正是“打标签”的用武之地。
 
+### 为镜像打标签
 
-### Tagging images
-
-Tagging images is the method to provide an image with a memorable name. However, there is a structure to the name of an image. A full image name has the following structure:
+给镜像打标签的方式可以为其赋予一个可记忆的名称。需要注意的是，镜像名称有其结构。完整的镜像名称由以下部分构成：
 
 ```text
 [HOST[:PORT_NUMBER]/]PATH[:TAG]
 ```
 
-- `HOST`: The optional registry hostname where the image is located. If no host is specified, Docker's public registry at `docker.io` is used by default.
-- `PORT_NUMBER`: The registry port number if a hostname is provided
-- `PATH`: The path of the image, consisting of slash-separated components. For Docker Hub, the format follows `[NAMESPACE/]REPOSITORY`, where namespace is either a user's or organization's name. If no namespace is specified, `library` is used, which is the namespace for Docker Official Images.
-- `TAG`: A custom, human-readable identifier that's typically used to identify different versions or variants of an image. If no tag is specified, `latest` is used by default.
+- `HOST`：可选，镜像所在的仓库主机名。如果未指定，默认使用 Docker 公共仓库 `docker.io`。
+- `PORT_NUMBER`：当提供主机名时的仓库端口号。
+- `PATH`：镜像路径，由斜杠分隔的多个部分构成。对 Docker Hub 而言，格式为 `[NAMESPACE/]REPOSITORY`，其中 `NAMESPACE` 是用户或组织名。如未指定 `NAMESPACE`，将使用 `library`，即 Docker 官方镜像的命名空间。
+- `TAG`：自定义、便于识别的人类可读标识，常用于区分镜像的版本或变体。如未指定，默认使用 `latest`。
 
-Some examples of image names include:
+示例镜像名：
 
-- `nginx`, equivalent to `docker.io/library/nginx:latest`: this pulls an image from the `docker.io` registry, the `library` namespace, the `nginx` image repository, and the `latest` tag.
-- `docker/welcome-to-docker`, equivalent to `docker.io/docker/welcome-to-docker:latest`: this pulls an image from the `docker.io` registry, the `docker` namespace, the `welcome-to-docker` image repository, and the `latest` tag
-- `ghcr.io/dockersamples/example-voting-app-vote:pr-311`: this pulls an image from the GitHub Container Registry, the `dockersamples` namespace, the `example-voting-app-vote` image repository, and the `pr-311` tag
+- `nginx` 等价于 `docker.io/library/nginx:latest`：从 `docker.io` 仓库的 `library` 命名空间拉取 `nginx` 仓库的 `latest` 标签。
+- `docker/welcome-to-docker` 等价于 `docker.io/docker/welcome-to-docker:latest`：从 `docker.io` 仓库的 `docker` 命名空间拉取 `welcome-to-docker` 仓库的 `latest` 标签。
+- `ghcr.io/dockersamples/example-voting-app-vote:pr-311`：从 GitHub Container Registry 的 `dockersamples` 命名空间拉取 `example-voting-app-vote` 仓库的 `pr-311` 标签。
 
-To tag an image during a build, add the `-t` or `--tag` flag:
+在构建时为镜像打标签，使用 `-t` 或 `--tag` 参数：
 
 ```console
 docker build -t my-username/my-image .
 ```
 
-If you've already built an image, you can add another tag to the image by using the [`docker image tag`](https://docs.docker.com/engine/reference/commandline/image_tag/) command:
+如果镜像已构建完成，你也可以使用 [`docker image tag`](https://docs.docker.com/engine/reference/commandline/image_tag/) 命令为其添加另一个标签：
 
 ```console
 docker image tag my-username/my-image another-username/another-image:v1
 ```
 
-### Publishing images
+### 发布镜像
 
-Once you have an image built and tagged, you're ready to push it to a registry. To do so, use the [`docker push`](https://docs.docker.com/engine/reference/commandline/image_push/) command:
+当镜像已构建并打好标签，就可以将其推送到仓库。使用 [`docker push`](https://docs.docker.com/engine/reference/commandline/image_push/) 命令：
 
 ```console
 docker push my-username/my-image
 ```
 
-Within a few seconds, all of the layers for your image will be pushed to the registry.
+几秒钟后，镜像的所有层就会被推送到仓库中。
 
-> **Requiring authentication**
+> **需要认证**
 >
-> Before you're able to push an image to a repository, you will need to be authenticated.
-> To do so, simply use the [docker login](https://docs.docker.com/engine/reference/commandline/login/) command.
+> 在将镜像推送到某个仓库之前，需要先完成认证。
+> 可使用 [docker login](https://docs.docker.com/engine/reference/commandline/login/) 命令登录。
 { .information }
 
-## Try it out
+## 动手试试
 
-In this hands-on guide, you will build a simple image using a provided Dockerfile and push it to Docker Hub.
+本实践将使用给定的 Dockerfile 构建一个简单镜像，并将其推送到 Docker Hub。
 
-### Set up
+### 准备环境
 
-1. Get the sample application.
+1. 获取示例应用。
 
-   If you have Git, you can clone the repository for the sample application. Otherwise, you can download the sample application. Choose one of the following options.
+   如果你安装了 Git，可以直接克隆示例应用仓库；否则也可以下载示例应用。选择以下任一方式。
 
    {{< tabs >}}
-   {{< tab name="Clone with git" >}}
+   {{< tab name="使用 git 克隆" >}}
 
-   Use the following command in a terminal to clone the sample application repository.
+   在终端中执行以下命令克隆示例应用仓库：
 
    ```console
    $ git clone https://github.com/docker/getting-started-todo-app
    ```
    {{< /tab >}}
-   {{< tab name="Download" >}}
+   {{< tab name="下载" >}}
 
-   Download the source and extract it.
+   下载源码并解压。
 
-   {{< button url="https://github.com/docker/getting-started-todo-app/raw/cd61f824da7a614a8298db503eed6630eeee33a3/app.zip" text="Download the source" >}}
+   {{< button url="https://github.com/docker/getting-started-todo-app/raw/cd61f824da7a614a8298db503eed6630eeee33a3/app.zip" text="下载源码" >}}
 
    {{< /tab >}}
    {{< /tabs >}}
 
 
-2. [Download and install](https://www.docker.com/products/docker-desktop/) Docker Desktop.
+2. [下载并安装](https://www.docker.com/products/docker-desktop/) Docker Desktop。
 
-3. If you don't have a Docker account yet, [create one now](https://hub.docker.com/). Once you've done that, sign in to Docker Desktop using that account.
+3. 如果你还没有 Docker 账号，请先[创建一个](https://hub.docker.com/)。创建后，使用该账号登录 Docker Desktop。
 
+### 构建镜像
 
-### Build an image
+现在你已经在 Docker Hub 上拥有一个仓库，可以开始构建镜像并推送到该仓库。
 
-Now that you have a repository on Docker Hub, it's time for you to build an image and push it to the repository.
-
-1. Using a terminal in the root of the sample app repository, run the following command. Replace `YOUR_DOCKER_USERNAME` with your Docker Hub username:
+1. 在示例应用仓库根目录打开终端，运行以下命令。将 `YOUR_DOCKER_USERNAME` 替换为你的 Docker Hub 用户名：
 
     ```console
     $ docker build -t <YOUR_DOCKER_USERNAME>/concepts-build-image-demo .
     ```
 
-    As an example, if your username is `mobywhale`, you would run the command:
+    例如，如果你的用户名是 `mobywhale`，则运行：
 
     ```console
     $ docker build -t mobywhale/concepts-build-image-demo .
     ```
 
-2. Once the build has completed, you can view the image by using the following command:
+2. 构建完成后，使用以下命令查看镜像：
 
     ```console
     $ docker image ls
     ```
 
-    The command will produce output similar to the following:
+    该命令会输出类似如下内容：
 
     ```plaintext
     REPOSITORY                             TAG       IMAGE ID       CREATED          SIZE
     mobywhale/concepts-build-image-demo    latest    746c7e06537f   24 seconds ago   354MB
     ```
 
-3. You can actually view the history (or how the image was created) by using the [docker image history](/reference/cli/docker/image/history/) command:
+3. 你还可以使用 [docker image history](/reference/cli/docker/image/history/) 查看镜像历史（即镜像是如何被构建的）：
 
     ```console
     $ docker image history mobywhale/concepts-build-image-demo
     ```
 
-    You'll then see output similar to the following:
+    输出类似如下：
 
     ```plaintext
     IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
@@ -200,36 +197,36 @@ Now that you have a repository on Docker Hub, it's time for you to build an imag
     <missing>      2 months ago    /bin/sh -c #(nop) ADD file:d0764a717d1e9d0af…   8.42MB
     ```
 
-    This output shows the layers of the image, highlighting the layers you added and those that were inherited from your base image.
+    该输出展示了镜像的各个层，既包括你添加的层，也包括从基础镜像继承的层。
 
-### Push the image
+### 推送镜像
 
-Now that you have an image built, it's time to push the image to a registry.
+镜像构建完成后，接下来将镜像推送到仓库。
 
-1. Push the image using the [docker push](/reference/cli/docker/image/push/) command:
+1. 使用 [docker push](/reference/cli/docker/image/push/) 命令推送镜像：
 
     ```console
     $ docker push <YOUR_DOCKER_USERNAME>/concepts-build-image-demo
     ```
 
-    If you receive a `requested access to the resource is denied`, make sure you are both logged in and that your Docker username is correct in the image tag.
+    如果看到 `requested access to the resource is denied` 错误，请确认你已登录，且镜像标签中的用户名填写正确。
 
-    After a moment, your image should be pushed to Docker Hub.
+    片刻之后，你的镜像就会被推送到 Docker Hub。
 
-## Additional resources
+## 延伸阅读
 
-To learn more about building, tagging, and publishing images, visit the following resources:
+想进一步了解构建、打标签与发布镜像，请参考：
 
-* [What is a build context?](/build/concepts/context/#what-is-a-build-context)
-* [docker build reference](/engine/reference/commandline/image_build/)
-* [docker image tag reference](/engine/reference/commandline/image_tag/)
-* [docker push reference](/engine/reference/commandline/image_push/)
-* [What is a registry?](/get-started/docker-concepts/the-basics/what-is-a-registry/)
+* [什么是构建上下文？](/build/concepts/context/#what-is-a-build-context)
+* [docker build 参考](/engine/reference/commandline/image_build/)
+* [docker image tag 参考](/engine/reference/commandline/image_tag/)
+* [docker push 参考](/engine/reference/commandline/image_push/)
+* [什么是仓库？](/get-started/docker-concepts/the-basics/what-is-a-registry/)
 
-## Next steps
+## 下一步
 
-Now that you have learned about building and publishing images, it's time to learn how to speed up the build process using the Docker build cache.
+现在你已经了解了如何构建并发布镜像，接下来学习如何使用 Docker 构建缓存来加速构建过程。
 
-{{< button text="Using the build cache" url="using-the-build-cache" >}}
+{{< button text="使用构建缓存" url="using-the-build-cache" >}}
 
 

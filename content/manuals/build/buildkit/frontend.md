@@ -1,24 +1,23 @@
 ---
-title: Custom Dockerfile syntax
-description: Dive deep into the Dockerfile frontend, and learn about custom frontends
+title: 自定义 Dockerfile 语法
+description: 深入理解 Dockerfile 前端，并了解如何使用自定义前端
 keywords: build, buildkit, dockerfile, frontend
 aliases:
   - /build/buildkit/dockerfile-frontend/
   - /build/dockerfile/frontend/
 ---
 
-## Dockerfile frontend
+## Dockerfile 前端（frontend）
 
-BuildKit supports loading frontends dynamically from container images. To use
-an external Dockerfile frontend, the first line of your [Dockerfile](/reference/dockerfile.md)
-needs to set the [`syntax` directive](/reference/dockerfile.md#syntax)
-pointing to the specific image you want to use:
+BuildKit 支持从容器镜像中动态加载前端。要使用外部的 Dockerfile 前端，
+请在你的 [Dockerfile](/reference/dockerfile.md) 第一行设置指向特定镜像的
+[`syntax` 指令](/reference/dockerfile.md#syntax)：
 
 ```dockerfile
 # syntax=[remote image reference]
 ```
 
-For example:
+例如：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -26,88 +25,68 @@ For example:
 # syntax=example.com/user/repo:tag@sha256:abcdef...
 ```
 
-You can also use the predefined `BUILDKIT_SYNTAX` build argument to set the
-frontend image reference on the command line:
+你也可以使用预定义的构建参数 `BUILDKIT_SYNTAX`，在命令行设置前端镜像引用：
 
 ```console
 $ docker build --build-arg BUILDKIT_SYNTAX=docker/dockerfile:1 .
 ```
 
-This defines the location of the Dockerfile syntax that is used to build the
-Dockerfile. The BuildKit backend allows seamlessly using external
-implementations that are distributed as Docker images and execute inside a
-container sandbox environment.
+这行语句用于指定用于解析与构建该 Dockerfile 的语法实现位置。
+BuildKit 后端可无缝使用以 Docker 镜像分发的外部实现，这些实现会在容器沙箱环境中执行。
 
-Custom Dockerfile implementations allow you to:
+自定义 Dockerfile 实现可以让你：
 
-- Automatically get bug fixes without updating the Docker daemon
-- Make sure all users are using the same implementation to build your Dockerfile
-- Use the latest features without updating the Docker daemon
-- Try out new features or third-party features before they are integrated in the Docker daemon
-- Use [alternative build definitions, or create your own](https://github.com/moby/buildkit#exploring-llb)
-- Build your own Dockerfile frontend with custom features
+- 无需更新 Docker 守护进程即可自动获得缺陷修复
+- 确保所有用户使用相同的实现来构建你的 Dockerfile
+- 在无需更新 Docker 守护进程的情况下使用最新特性
+- 在集成进 Docker 守护进程之前，尝试新特性或第三方特性
+- 使用[替代的构建定义，或自行创建](https://github.com/moby/buildkit#exploring-llb)
+- 构建你自己的、带自定义特性的 Dockerfile 前端
 
 > [!NOTE]
 >
-> BuildKit ships with a built-in Dockerfile frontend, but it's recommended
-> to use an external image to make sure that all users use the same version on
-> the builder and to pick up bug fixes automatically without waiting for a new
-> version of BuildKit or Docker Engine.
+> BuildKit 自带一个内置的 Dockerfile 前端，但推荐使用外部镜像，
+> 以确保 builder 与用户端使用相同版本，并能在无需等待 BuildKit 或 Docker Engine 发布新版本的情况下自动获得修复。
 
-## Official releases
+## 官方发布
 
-Docker distributes official versions of the images that can be used for building
-Dockerfiles under `docker/dockerfile` repository on Docker Hub. There are two
-channels where new images are released: `stable` and `labs`.
+Docker 在 Docker Hub 的 `docker/dockerfile` 仓库下分发可用于构建 Dockerfile 的官方镜像。
+新镜像通过两个渠道发布：`stable` 与 `labs`。
 
-### Stable channel
+### 稳定（Stable）渠道
 
-The `stable` channel follows [semantic versioning](https://semver.org).
-For example:
+`stable` 渠道遵循[语义化版本](https://semver.org)。例如：
 
-- `docker/dockerfile:1` - kept updated with the latest `1.x.x` minor _and_ patch
-  release.
-- `docker/dockerfile:1.2` - kept updated with the latest `1.2.x` patch release,
-  and stops receiving updates once version `1.3.0` is released.
-- `docker/dockerfile:1.2.1` - immutable: never updated.
+- `docker/dockerfile:1`：始终跟随最新的 `1.x.x` 次版本与补丁版本。
+- `docker/dockerfile:1.2`：始终跟随最新的 `1.2.x` 补丁版本；当 `1.3.0` 发布后停止更新。
+- `docker/dockerfile:1.2.1`：不可变；永不更新。
 
-We recommend using `docker/dockerfile:1`, which always points to the latest
-stable release of the version 1 syntax, and receives both "minor" and "patch"
-updates for the version 1 release cycle. BuildKit automatically checks for
-updates of the syntax when performing a build, making sure you are using the
-most current version.
+我们推荐使用 `docker/dockerfile:1`，它始终指向语法版本 1 的最新稳定版，
+并在该大版本周期内同时接收“次版本”和“补丁版本”的更新。
+BuildKit 在构建时会自动检查语法更新，确保你始终使用最新版本。
 
-If a specific version is used, such as `1.2` or `1.2.1`, the Dockerfile needs
-to be updated manually to continue receiving bugfixes and new features. Old
-versions of the Dockerfile remain compatible with the new versions of the
-builder.
+如果使用了 `1.2` 或 `1.2.1` 这样的特定版本，要继续接收缺陷修复与新特性，
+则需要手动更新 Dockerfile。旧版本 Dockerfile 与新版本 builder 依然兼容。
 
-### Labs channel
+### Labs 渠道
 
-The `labs` channel provides early access to Dockerfile features that are not yet
-available in the `stable` channel. `labs` images are released at the same time
-as stable releases, and follow the same version pattern, but use the `-labs`
-suffix, for example:
+`labs` 渠道提供尚未进入 `stable` 渠道的 Dockerfile 特性的抢先体验。
+`labs` 镜像与稳定版同时发布，遵循相同的版本模式，但带有 `-labs` 后缀，例如：
 
-- `docker/dockerfile:labs` - latest release on `labs` channel.
-- `docker/dockerfile:1-labs` - same as `dockerfile:1`, with experimental
-  features enabled.
-- `docker/dockerfile:1.2-labs` - same as `dockerfile:1.2`, with experimental
-  features enabled.
-- `docker/dockerfile:1.2.1-labs` - immutable: never updated. Same as
-  `dockerfile:1.2.1`, with experimental features enabled.
+- `docker/dockerfile:labs`：`labs` 渠道的最新发布。
+- `docker/dockerfile:1-labs`：等同于 `dockerfile:1`，但启用了实验性特性。
+- `docker/dockerfile:1.2-labs`：等同于 `dockerfile:1.2`，但启用了实验性特性。
+- `docker/dockerfile:1.2.1-labs`：不可变；永不更新。等同于 `dockerfile:1.2.1`，但启用了实验性特性。
 
-Choose a channel that best fits your needs. If you want to benefit from
-new features, use the `labs` channel. Images in the `labs` channel contain
-all the features in the `stable` channel, plus early access features.
-Stable features in the `labs` channel follow [semantic versioning](https://semver.org),
-but early access features don't, and newer releases may not be backwards
-compatible. Pin the version to avoid having to deal with breaking changes.
+请选择适合你需求的渠道。如果你希望尽早使用新特性，请选择 `labs` 渠道。
+`labs` 渠道包含 `stable` 的全部特性，并额外提供抢先体验的功能。
+其中稳定特性遵循[语义化版本](https://semver.org)，但抢先体验特性不遵循；
+新版本可能不向后兼容。建议固定版本以避免破坏性变更带来的影响。
 
-## Other resources
+## 其他资源
 
-For documentation on `labs` features, master builds, and nightly feature
-releases, refer to the description in [the BuildKit source repository on GitHub](https://github.com/moby/buildkit/blob/master/README.md).
-For a full list of available images, visit the [`docker/dockerfile` repository on Docker Hub](https://hub.docker.com/r/docker/dockerfile),
-and the [`docker/dockerfile-upstream` repository on Docker Hub](https://hub.docker.com/r/docker/dockerfile-upstream)
-for development builds.
+关于 `labs` 特性、master 构建与 nightly 特性发布的文档，参见
+[BuildKit 源码仓库的说明](https://github.com/moby/buildkit/blob/master/README.md)。
+完整的可用镜像列表，参见 Docker Hub 上的
+[`docker/dockerfile` 仓库](https://hub.docker.com/r/docker/dockerfile)，
+以及用于开发构建的 [`docker/dockerfile-upstream` 仓库](https://hub.docker.com/r/docker/dockerfile-upstream)。
