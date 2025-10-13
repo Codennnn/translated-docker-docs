@@ -1,13 +1,13 @@
 ---
-title: cagent examples
-description: Get inspiration from agent examples
+title: cagent 示例
+description: 从这些代理示例中获取灵感
 keywords: [ai, agent, cagent]
 weight: 10
 ---
 
-Get inspiration from the following agent examples.
+从以下代理示例中获取灵感。
 
-## Agentic development team
+## 代理驱动的开发团队（Agentic development team）
 
 ```yaml {title="dev-team.yaml"}
 agents:
@@ -60,7 +60,7 @@ models:
     max_tokens: 64000
 ```
 
-## Research assistant
+## 研究助理（Research assistant）
 
 ```yaml {title="research-assistant.yaml"}
 agents:
@@ -85,7 +85,7 @@ models:
     max_tokens: 64000
 ```
 
-## Technical blog writer
+## 技术博客作者（Technical blog writer）
 
 ```yaml {title="tech-blog-writer.yaml"}
 #!/usr/bin/env cagent run
@@ -163,4 +163,4 @@ models:
     model: claude-3-5-sonnet-latest
 ```
 
-See more examples in the [repository](https://github.com/docker/cagent/tree/main/examples).
+更多示例参见[仓库](https://github.com/docker/cagent/tree/main/examples)。

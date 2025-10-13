@@ -1,25 +1,25 @@
 ---
-title: Environment variables in Compose
-linkTitle: Use environment variables
+title: 在 Compose 中使用环境变量
+linkTitle: 使用环境变量
 weight: 40
-description: Explains how to set, use, and manage environment variables in Docker Compose.
+description: 说明如何在 Docker Compose 中设置、使用与管理环境变量。
 keywords: compose, orchestration, environment, env file
 aliases:
 - /compose/environment-variables/
 ---
 
-Environment variables and interpolation in Docker Compose help you create reusable, flexible configurations. This makes Dockerized applications easier to manage and deploy across environments.
+在 Docker Compose 中，环境变量与变量插值可帮助你创建可复用且灵活的配置，使基于 Docker 的应用能够更轻松地在不同环境中管理与部署。
 
 > [!TIP]
 >
-> Before using environment variables, read through all of the information first to get a full picture of environment variables in Docker Compose.
+> 在使用环境变量之前，建议先通读本文，全面了解 Docker Compose 中的环境变量。
 
-This section covers:
+本节包括：
 
-- [How to set environment variables within your container's environment](set-environment-variables.md).
-- [How environment variable precedence works within your container's environment](envvars-precedence.md).
-- [Pre-defined environment variables](envvars.md).
+- [如何在容器环境中设置环境变量](set-environment-variables.md)。
+- [容器环境中环境变量的优先级如何生效](envvars-precedence.md)。
+- [预定义的环境变量](envvars.md)。
 
-It also covers: 
-- How [interpolation](variable-interpolation.md) can be used to set variables within your Compose file and how it relates to a container's environment.
-- Some [best practices](best-practices.md).
+还包括： 
+- 如何在 Compose 文件中使用[插值](variable-interpolation.md)来设置变量，以及它与容器环境的关系。
+- 一些[最佳实践](best-practices.md)。

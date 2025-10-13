@@ -1,8 +1,7 @@
 ---
-title: Best practices for working with environment variables in Docker Compose
-linkTitle: Best practices
-description: Explainer on the best ways to set, use, and manage environment variables in
-  Compose
+title: 在 Docker Compose 中使用环境变量的最佳实践
+linkTitle: 最佳实践
+description: 说明在 Compose 中设置、使用与管理环境变量的最佳方式
 keywords: compose, orchestration, environment, env file, environment variables
 tags: [Best practices]
 weight: 50
@@ -10,23 +9,23 @@ aliases:
 - /compose/environment-variables/best-practices/
 ---
 
-#### Handle sensitive information securely
+#### 安全处理敏感信息
 
-Be cautious about including sensitive data in environment variables. Consider using [Secrets](../use-secrets.md) for managing sensitive information.
+在环境变量中包含敏感数据需格外谨慎。建议使用 [Secrets](../use-secrets.md) 来管理敏感信息。
 
-#### Understand environment variable precedence
+#### 理解环境变量的优先级
 
-Be aware of how Docker Compose handles the [precedence of environment variables](envvars-precedence.md) from different sources (`.env` files, shell variables, Dockerfiles).
+了解 Docker Compose 如何处理来自不同来源（`.env` 文件、Shell 变量、Dockerfile）的[环境变量优先级](envvars-precedence.md)。
 
-#### Use specific environment files
+#### 按环境划分使用专用的环境文件
 
-Consider how your application adapts to different environments. For example development, testing, production, and use different `.env` files as needed.
+根据应用在不同环境（开发、测试、生产）中的差异进行适配，按需使用不同的 `.env` 文件。
 
-#### Know interpolation
+#### 熟悉插值（Interpolation）
    
-Understand how [interpolation](variable-interpolation.md) works within compose files for dynamic configurations.
+了解如何在 Compose 文件中使用[插值](variable-interpolation.md)实现动态配置。
 
-#### Command line overrides
+#### 使用命令行覆盖
     
-Be aware that you can [override environment variables](set-environment-variables.md#cli) from the command line when starting containers. This is useful for testing or when you have temporary changes.
+在启动容器时，你可以通过命令行[覆盖环境变量](set-environment-variables.md#cli)。这对测试或临时变更非常有用。
 

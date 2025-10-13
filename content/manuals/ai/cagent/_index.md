@@ -1,6 +1,6 @@
 ---
 title: cagent
-description: cagent lets you build, orchestrate, and share AI agents that work together as a team.
+description: cagent 让你构建、编排并共享协同工作的 AI 代理（agents）。
 weight: 60
 params:
   sidebar:
@@ -10,88 +10,85 @@ keywords: [ai, agent, cagent]
 
 {{< summary-bar feature_name="cagent" >}}
 
-[cagent](https://github.com/docker/cagent) lets you build, orchestrate, and share
-AI agents. You can use it to define AI agents that work as a team.
+[cagent](https://github.com/docker/cagent) 让你可以构建、编排并共享 AI 代理。
+你可以用它来定义协同工作的 AI 代理团队。
 
-cagent relies on the concept of a _root agent_ that acts as a team lead and
-delegates tasks to the sub-agents you define.
-Each agent:
-- uses the model of your choice, with the parameters of your choice.
-- has access to the [built-in tools](#built-in-tools) and MCP servers
-  configured in the [Docker MCP gateway](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md).
-- works in its own context. They do not share knowledge.
+cagent 基于“_root agent_（根代理）”的概念运作：它充当团队负责人，
+并把任务分派给你定义的子代理。
+每个代理：
+- 使用你选择的模型，并采用你设置的参数。
+- 可访问[内置工具](#built-in-tools)与在
+  [Docker MCP 网关](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md)中配置的 MCP 服务器。
+- 在各自独立的上下文中工作，彼此不共享知识。
 
-The root agent is your main contact point. Each agent has its own context,
-they don't share knowledge.
+根代理是你的主要交互入口。每个代理都有自己的上下文，
+它们不会共享知识。
 
-## Key features
+## 关键特性
 
-- ️Multi-tenant architecture with client isolation and session management.
-- Rich tool ecosystem via Model Context Protocol (MCP) integration.
-- Hierarchical agent system with intelligent task delegation.
-- Multiple interfaces including CLI, TUI, API server, and MCP server.
-- Agent distribution via Docker registry integration.
-- Security-first design with proper client scoping and resource isolation.
-- Event-driven streaming for real-time interactions.
-- Multi-model support (OpenAI, Anthropic, Gemini, DMR, Docker AI Gateway).
+- 多租户架构：支持客户端隔离与会话管理。
+- 通过 MCP（Model Context Protocol）集成的丰富工具生态。
+- 分层式代理系统，支持智能任务分派。
+- 多种接口形态：CLI、TUI、API 服务器与 MCP 服务器。
+- 通过集成 Docker 仓库进行代理分发。
+- 安全优先的设计：合理的客户端作用域与资源隔离。
+- 事件驱动的流式传输，支持实时交互。
+- 多模型支持（OpenAI、Anthropic、Gemini、DMR、Docker AI Gateway）。
 
-## Get started with cagent
+## 快速上手 cagent
 
-1. Download the [latest release](https://github.com/docker/cagent/releases)
-   for your operating system.
+1. 下载适用于你操作系统的[最新发行版](https://github.com/docker/cagent/releases)。
 
    > [!NOTE]
-   > You might need to give the binary executable permissions.
-   > On macOS and Linux, run:
+   > 你可能需要为该二进制文件赋予可执行权限。
+   > 在 macOS 与 Linux 上，运行：
 
      ```console
      chmod +x /path/to/downloads/cagent-linux-<arm/amd>64
      ```
 
    > [!NOTE]
-   > You can also build cagent from the source. See the [repository](https://github.com/docker/cagent?tab=readme-ov-file#build-from-source).
+   > 你也可以从源码构建 cagent。参见[仓库说明](https://github.com/docker/cagent?tab=readme-ov-file#build-from-source)。
 
-1. Optional: Rename the binary as needed and update your PATH to include
-   cagent's executable.
+1. 可选：按需重命名二进制文件，并更新 PATH 以包含 cagent 可执行文件。
 
-1. Set the following environment variables:
+1. 设置以下环境变量：
 
    ```bash
-   # If using the Docker AI Gateway, set this environment variable or use
-   # the `--models-gateway <url_to_docker_ai_gateway>` CLI flag
+   # 如果使用 Docker AI Gateway，请设置此环境变量，或使用
+   # `--models-gateway <url_to_docker_ai_gateway>` CLI 标志
 
    export CAGENT_MODELS_GATEWAY=<url_to_docker_ai_gateway>
 
-   # Alternatively, set keys for remote inference services.
-   # These are not needed if you are using Docker AI Gateway.
+   # 或者，为远程推理服务设置密钥。
+   # 如果使用 Docker AI Gateway，则不需要这些。
 
-   export OPENAI_API_KEY=<your_api_key_here>    # For OpenAI models
-   export ANTHROPIC_API_KEY=<your_api_key_here> # For Anthropic models
-   export GOOGLE_API_KEY=<your_api_key_here>    # For Gemini models
+   export OPENAI_API_KEY=<your_api_key_here>    # 用于 OpenAI 模型
+   export ANTHROPIC_API_KEY=<your_api_key_here> # 用于 Anthropic 模型
+   export GOOGLE_API_KEY=<your_api_key_here>    # 用于 Gemini 模型
    ```
 
-1. Create an agent by saving this sample as `assistant.yaml`:
+1. 通过将以下示例保存为 `assistant.yaml` 创建一个代理：
 
    ```yaml {title="assistant.yaml"}
    agents:
      root:
        model: openai/gpt-5-mini
-       description: A helpful AI assistant
+       description: 一个乐于助人的 AI 助手
        instruction: |
-         You are a knowledgeable assistant that helps users with various tasks.
-         Be helpful, accurate, and concise in your responses.
+         你是一名知识渊博的助手，帮助用户完成各类任务。
+         回答需有帮助、准确且简明。
    ```
 
-1. Start your prompt with your agent:
+1. 使用你的代理开始对话：
 
    ```bash
    cagent run assistant.yaml
    ```
 
-## Create an agentic team
+## 创建一个“代理团队”（agentic team）
 
-You can use AI prompting to generate a team of agents with the `cagent new`
-command:
+你可以使用 `cagent new` 命令，通过 AI 提示（prompting）生成一组代理：
 
 ```console
 $ cagent new
@@ -108,36 +105,36 @@ What should your agent/agent team do? (describe its purpose):
   short, clear, and focused on how this team delivers value to users and the business.
 ```
 
-Alternatively, you can write your configuration file manually. For example:
+或者，你也可以手动编写配置文件。例如：
 
 ```yaml {title="agentic-team.yaml"}
 agents:
   root:
     model: claude
-    description: "Main coordinator agent that delegates tasks and manages workflow"
+    description: "负责分派任务并管理工作流的主协调代理"
     instruction: |
       You are the root coordinator agent. Your job is to:
-      1. Understand user requests and break them down into manageable tasks.
-      2. Delegate appropriate tasks to your helper agent.
-      3. Coordinate responses and ensure tasks are completed properly.
-      4. Provide final responses to the user.
-      When you receive a request, analyze what needs to be done and decide whether to:
-      - Handle it yourself if it's simple.
-      - Delegate to the helper agent if it requires specific assistance.
-      - Break complex requests into multiple sub-tasks.
+      1. 理解用户请求并将其拆解为可管理的任务。
+      2. 将合适的任务分派给辅助代理。
+      3. 协调结果，确保任务顺利完成。
+      4. 向用户提供最终回应。
+      当你收到请求时，分析需要完成的事项，并决定：
+      - 如果任务简单，则自行处理；
+      - 如果需要特定帮助，则交给辅助代理；
+      - 将复杂请求拆分为多个子任务。
     sub_agents: ["helper"]
 
   helper:
     model: claude
-    description: "Assistant agent that helps with various tasks as directed by the root agent"
+    description: "在根代理的指示下完成各类任务的辅助代理"
     instruction: |
       You are a helpful assistant agent. Your role is to:
-      1. Complete specific tasks assigned by the root agent.
-      2. Provide detailed and accurate responses.
-      3. Ask for clarification if tasks are unclear.
-      4. Report back to the root agent with your results.
+      1. 完成根代理分配的具体任务；
+      2. 提供详尽且准确的结果；
+      3. 若任务不清楚，请主动澄清；
+      4. 将结果反馈给根代理。
 
-      Focus on being thorough and helpful in whatever task you're given.
+      请在任何被分配的任务中尽可能充分且有帮助。
 
 models:
   claude:
@@ -148,10 +145,10 @@ models:
 
 [See the reference documentation](https://github.com/docker/cagent?tab=readme-ov-file#-configuration-reference).
 
-## Built-in tools
+## 内置工具（Built-in tools）
 
-cagent includes a set of built-in tools that enhance your agents' capabilities.
-You don't need to configure any external MCP tools to use them.
+cagent 提供一组内置工具，用于增强代理能力。
+使用这些工具无需配置任何外部 MCP 工具。
 
 ```yaml
 agents:
@@ -162,9 +159,9 @@ agents:
       - type: transfer_task
 ```
 
-### Think tool
+### Think 工具
 
-The think tool allows agents to reason through problems step by step:
+Think 工具允许代理按步骤推理问题：
 
 ```yaml
 agents:
@@ -174,9 +171,9 @@ agents:
       - type: think
 ```
 
-### Todo tool
+### Todo 工具
 
-The todo tool helps agents manage task lists:
+Todo 工具有助于代理管理任务清单：
 
 ```yaml
 agents:
@@ -186,9 +183,9 @@ agents:
       - type: todo
 ```
 
-### Memory tool
+### Memory 工具
 
-The memory tool provides persistent storage:
+Memory 工具提供持久化存储：
 
 ```yaml
 agents:
@@ -199,20 +196,16 @@ agents:
         path: "./agent_memory.db"
 ```
 
-### Task transfer tool
+### 任务转移工具（Task transfer）
 
-The task transfer tool is an internal tool that allows an agent to delegate a task
-to sub-agents. To prevent an agent from delegating work, make sure it doesn't have
-sub-agents defined in its configuration.
+任务转移工具是一个内部工具，允许某代理将任务分派给子代理。若要阻止代理分派任务，请确保其配置中未定义子代理。
 
-### Using tools via the Docker MCP Gateway
+### 通过 Docker MCP 网关使用工具
 
-If you use the [Docker MCP gateway](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md),
-you can configure your agent to interact with the
-gateway and use the MCP servers configured in it. See [docker mcp
-gateway run](/reference/cli/docker/mcp/gateway/gateway_run.md).
+如果你使用 [Docker MCP 网关](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md)，
+可以配置你的代理与该网关交互，并使用其中配置的 MCP 服务器。参见 [docker mcp gateway run](/reference/cli/docker/mcp/gateway/gateway_run.md)。
 
-For example, to enable an agent to use Duckduckgo via the MCP Gateway:
+例如，启用代理通过 MCP 网关使用 Duckduckgo：
 
 ```yaml
 toolsets:
@@ -221,40 +214,38 @@ toolsets:
     args: ["mcp", "gateway", "run", "--servers=duckduckgo"]
 ```
 
-## CLI interactive commands
+## CLI 交互命令
 
-You can use the following CLI commands, during
-CLI sessions with your agents:
+在与代理的 CLI 会话中，你可以使用以下命令：
 
 | Command  | Description                              |
 |----------|------------------------------------------|
-| /exit    | Exit the program                         |
-| /reset   | Clear conversation history               |
-| /eval    | Save current conversation for evaluation |
-| /compact | Compact the current session              |
+| /exit    | 退出程序                                  |
+| /reset   | 清空会话历史                               |
+| /eval    | 保存当前会话以供评估                       |
+| /compact | 压缩当前会话                               |
 
-## Share your agents
+## 分享你的代理
 
-Agent configurations can be packaged and shared via Docker Hub.
-Before you start, make sure you have a [Docker repository](/manuals/docker-hub/repos/create.md).
+你可以将代理配置打包并通过 Docker Hub 进行共享。
+开始之前，请确保你已有一个[Docker 仓库](/manuals/docker-hub/repos/create.md)。
 
-To push an agent:
+推送代理：
 
 ```bash
 cagent push ./<agent-file>.yaml <namespace>/<reponame>
 ```
 
-To pull an agent to the current directory:
+拉取代理到当前目录：
 
 ```bash
 cagent pull <namespace>/<reponame>
 ```
 
-The agent's configuration file is named `<namespace>_<reponame>.yaml`. Run
-it with the `cagent run <filename>` command.
+代理的配置文件名为 `<namespace>_<reponame>.yaml`。通过 `cagent run <filename>` 运行。
 
-## Related pages
+## 相关页面
 
-- For more information about cagent, see the
-[GitHub repository](https://github.com/docker/cagent).
-- [Docker MCP Gateway](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md)
+- 更多关于 cagent 的信息，见
+[GitHub 仓库](https://github.com/docker/cagent)。
+- [Docker MCP 网关](/manuals/ai/mcp-catalog-and-toolkit/mcp-gateway.md)

@@ -6,7 +6,7 @@ description: 了解如何使用 Docker Compose 的生命周期钩子（post_star
 keywords: docker compose lifecycle hooks, post_start, pre_stop, docker compose entrypoint, docker container stop hooks, compose hook commands
 ---
 
-{{< summary-bar feature_name="Compose 生命周期钩子" >}}
+{{< summary-bar feature_name="Compose lifecycle hooks" >}}
 
 ## 服务的生命周期钩子
 
