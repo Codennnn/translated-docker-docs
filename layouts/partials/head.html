@@ -3,6 +3,9 @@
 {{ partial "meta.html" . }}
 {{ partial "utils/css.html" "-" }}
 {{- if hugo.IsProduction -}}
+  {{/* OneTrust Cookie 同意弹框已禁用 - 仅适用于个人部署 */}}
+  {{/* 如需启用,请取消注释以下代码并配置自己的 OneTrust Domain ID */}}
+  {{/*
   <script
     src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"
     type="text/javascript"
@@ -12,11 +15,20 @@
   <script type="text/javascript">
     function OptanonWrapper() {}
   </script>
+  */}}
+
+  {{/* Google Tag Manager - 已禁用 */}}
+  {{/*
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','{{ site.Params.analytics.google }}');</script>  <script>
+  })(window,document,'script','dataLayer','{{ site.Params.analytics.google }}');</script>
+  */}}
+
+  {{/* Hotjar - 已禁用 */}}
+  {{/*
+  <script>
   (function(h,o,t,j,a,r){
     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
     h._hjSettings={hjid:{{ site.Params.analytics.hotjar.prod | safeJS }},hjsv:6};
@@ -26,6 +38,7 @@
     a.appendChild(r);
   })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
   </script>
+  */}}
 {{- else if (eq hugo.Environment "staging") -}}
   <!-- Start VWO Async SmartCode -->
   <link rel="preconnect" href="https://dev.visualwebsiteoptimizer.com" />
