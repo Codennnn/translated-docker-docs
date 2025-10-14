@@ -1,5 +1,5 @@
 title: Docker Docs
-baseURL: https://docs.docker.com
+baseURL: https://docker-docs.leoku.dev
 refLinksErrorLevel: ERROR
 enableGitInfo: true
 disablePathToLower: true
@@ -125,7 +125,7 @@ params:
     vwo: 723167
 
   # Docs repository URL
-  repo: https://github.com/docker/docs
+  repo: https://github.com/leoku/translated-docker-docs
 
   # === Example versions ===
   # The following parameters are used in various ways in content and templates.

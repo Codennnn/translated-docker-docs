@@ -1,6 +1,18 @@
 [build]
 publish = "public"
 
+# 生产环境配置
+[context.production.environment]
+NODE_VERSION = "22"
+NODE_ENV = "production"
+HUGO_VERSION = "0.141.0"
+HUGO_ENABLEGITINFO = "true"
+HUGO_ENVIRONMENT = "production"
+
+[context.production]
+command = "hugo --gc --minify && npx pagefind@v1.3.0"
+
+# 预览环境配置
 [context.deploy-preview.environment]
 NODE_VERSION = "22"
 NODE_ENV = "production"
