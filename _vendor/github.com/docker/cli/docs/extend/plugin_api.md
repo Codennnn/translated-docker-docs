@@ -1,64 +1,49 @@
 ---
-title: Docker Plugin API
-description: "How to write Docker plugins extensions "
+title: Docker 插件 API
+description: "如何编写 Docker 插件扩展"
 keywords: "API, Usage, plugins, documentation, developer"
 ---
 
-Docker plugins are out-of-process extensions which add capabilities to the
-Docker Engine.
+Docker 插件是运行在进程外（out-of-process）的扩展，用于为 Docker Engine 增加功能。
 
-This document describes the Docker Engine plugin API. To view information on
-plugins managed by Docker Engine, refer to [Docker Engine plugin system](_index.md).
+本文描述 Docker Engine 的插件 API。若需了解由 Docker Engine 托管的插件，请参阅《[Docker Engine 插件系统](_index.md)》。
 
-This page is intended for people who want to develop their own Docker plugin.
-If you just want to learn about or use Docker plugins, look
-[here](legacy_plugins.md).
+本页面向希望开发自定义 Docker 插件的读者。若你只是想了解或使用插件，请查看[这里](legacy_plugins.md)。
 
-## What plugins are
+## 什么是插件
 
-A plugin is a process running on the same or a different host as the Docker daemon,
-which registers itself by placing a file on the daemon host in one of the plugin
-directories described in [Plugin discovery](#plugin-discovery).
+插件是与 Docker 守护进程（Docker daemon）运行在同一主机或不同主机上的一个进程。它通过在守护进程主机的插件目录中放置文件来完成自注册，插件目录见[插件发现](#plugin-discovery)。
 
-Plugins have human-readable names, which are short, lowercase strings. For
-example, `flocker` or `weave`.
+插件名称具有可读性，通常是简短的小写字符串，例如 `flocker` 或 `weave`。
 
-Plugins can run inside or outside containers. Currently running them outside
-containers is recommended.
+插件既可以在容器内运行，也可以在容器外运行；目前推荐在容器外运行。
 
-## Plugin discovery
+## 插件发现 {#plugin-discovery}
 
-Docker discovers plugins by looking for them in the plugin directory whenever a
-user or container tries to use one by name.
+当用户或容器按名称尝试使用某个插件时，Docker 会在插件目录中查找该插件以进行发现。
 
-There are three types of files which can be put in the plugin directory.
+插件目录中可以放置三类文件：
 
-* `.sock` files are Unix domain sockets.
-* `.spec` files are text files containing a URL, such as `unix:///other.sock` or `tcp://localhost:8080`.
-* `.json` files are text files containing a full json specification for the plugin.
+- `.sock` 文件：Unix 域套接字。
+- `.spec` 文件：包含 URL 的文本文件，例如 `unix:///other.sock` 或 `tcp://localhost:8080`。
+- `.json` 文件：包含插件完整 JSON 规范的文本文件。
 
-Plugins with Unix domain socket files must run on the same host as the Docker daemon.
-Plugins with `.spec` or `.json` files can run on a different host if you specify a remote URL.
+带 Unix 域套接字（`.sock`）的插件必须与 Docker 守护进程运行在同一主机上。
+若使用 `.spec` 或 `.json`，在指定远程 URL 的情况下，插件可以运行在其他主机上。
 
-Unix domain socket files must be located under `/run/docker/plugins`, whereas
-spec files can be located either under `/etc/docker/plugins` or `/usr/lib/docker/plugins`.
+Unix 域套接字文件必须位于 `/run/docker/plugins` 下；而 spec 文件可以位于 `/etc/docker/plugins` 或 `/usr/lib/docker/plugins`。
 
-The name of the file (excluding the extension) determines the plugin name.
+插件名称由文件名（不含扩展名）决定。
 
-For example, the `flocker` plugin might create a Unix socket at
-`/run/docker/plugins/flocker.sock`.
+例如，`flocker` 插件可能会创建一个 Unix 套接字：`/run/docker/plugins/flocker.sock`。
 
-You can define each plugin into a separated subdirectory if you want to isolate definitions from each other.
-For example, you can create the `flocker` socket under `/run/docker/plugins/flocker/flocker.sock` and only
-mount `/run/docker/plugins/flocker` inside the `flocker` container.
+如果希望相互隔离定义，也可以为每个插件放在独立子目录中。例如，可将 `flocker` 的套接字放在 `/run/docker/plugins/flocker/flocker.sock`，并仅将 `/run/docker/plugins/flocker` 挂载到 `flocker` 容器内。
 
-Docker always searches for Unix sockets in `/run/docker/plugins` first. It checks for spec or json files under
-`/etc/docker/plugins` and `/usr/lib/docker/plugins` if the socket doesn't exist. The directory scan stops as
-soon as it finds the first plugin definition with the given name.
+Docker 总是首先在 `/run/docker/plugins` 下查找 Unix 套接字；若未找到对应套接字，才会去 `/etc/docker/plugins` 与 `/usr/lib/docker/plugins` 下查找 spec 或 json 文件。一旦找到给定名称的第一个插件定义，即停止继续扫描。
 
-### JSON specification
+### JSON 规范
 
-This is the JSON format for a plugin:
+以下是插件 JSON 规范示例：
 
 ```json
 {
@@ -73,36 +58,25 @@ This is the JSON format for a plugin:
 }
 ```
 
-The `TLSConfig` field is optional and TLS will only be verified if this configuration is present.
+`TLSConfig` 字段是可选的，仅当该配置存在时才启用 TLS 校验。
 
-## Plugin lifecycle
+## 插件生命周期
 
-Plugins should be started before Docker, and stopped after Docker. For
-example, when packaging a plugin for a platform which supports `systemd`, you
-might use [`systemd` dependencies](
-https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Before=) to
-manage startup and shutdown order.
+插件应在 Docker 启动之前启动，并在 Docker 停止之后再停止。例如，在支持 `systemd` 的平台上打包插件时，可以使用[`systemd` 的依赖关系](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Before=)来管理启动与停止的先后顺序。
 
-When upgrading a plugin, you should first stop the Docker daemon, upgrade the
-plugin, then start Docker again.
+升级插件时，应先停止 Docker 守护进程，升级插件后再重新启动 Docker。
 
-## Plugin activation
+## 插件激活
 
-When a plugin is first referred to -- either by a user referring to it by name
-(e.g.  `docker run --volume-driver=foo`) or a container already configured to
-use a plugin being started -- Docker looks for the named plugin in the plugin
-directory and activates it with a handshake. See Handshake API below.
+当首次引用某个插件时——无论是用户按名称引用（例如 `docker run --volume-driver=foo`），还是启动了一个已配置为使用该插件的容器——Docker 会在插件目录中查找该插件，并通过一次“握手”进行激活。参见下文“握手 API”。
 
-Plugins are not activated automatically at Docker daemon startup. Rather,
-they are activated only lazily, or on-demand, when they are needed.
+插件不会在 Docker 守护进程启动时自动激活，而是按需（惰性）激活，仅在需要时才会激活。
 
-## Systemd socket activation
+## systemd 套接字激活
 
-Plugins may also be socket activated by `systemd`. The official [Plugins helpers](https://github.com/docker/go-plugins-helpers)
-natively supports socket activation. In order for a plugin to be socket activated it needs
-a `service` file and a `socket` file.
+插件也可以通过 `systemd` 的套接字进行激活。官方的[插件辅助库](https://github.com/docker/go-plugins-helpers)原生支持套接字激活。要启用套接字激活，需要提供一个 `service` 文件和一个 `socket` 文件。
 
-The `service` file (for example `/lib/systemd/system/your-plugin.service`):
+`service` 文件（例如 `/lib/systemd/system/your-plugin.service`）：
 
 ```systemd
 [Unit]
@@ -118,7 +92,7 @@ ExecStart=/usr/lib/docker/your-plugin
 WantedBy=multi-user.target
 ```
 
-The `socket` file (for example `/lib/systemd/system/your-plugin.socket`):
+`socket` 文件（例如 `/lib/systemd/system/your-plugin.socket`）：
 
 ```systemd
 [Unit]
@@ -131,32 +105,27 @@ ListenStream=/run/docker/plugins/your-plugin.sock
 WantedBy=sockets.target
 ```
 
-This will allow plugins to be actually started when the Docker daemon connects to
-the sockets they're listening on (for instance the first time the daemon uses them
-or if one of the plugin goes down accidentally).
+借此，当 Docker 守护进程连接到插件监听的套接字时（例如守护进程首次使用该插件，或插件意外退出后），插件才会被实际启动。
 
-## API design
+## API 设计
 
-The Plugin API is RPC-style JSON over HTTP, much like webhooks.
+插件 API 采用基于 HTTP 的 RPC 风格 JSON，类似于 webhooks。
 
-Requests flow from the Docker daemon to the plugin. The plugin needs to
-implement an HTTP server and bind this to the Unix socket mentioned in the
-"plugin discovery" section.
+请求从 Docker 守护进程发往插件。插件需要实现一个 HTTP 服务器，并将其绑定到“插件发现”一节所述的 Unix 套接字上。
 
-All requests are HTTP `POST` requests.
+所有请求均为 HTTP `POST` 请求。
 
-The API is versioned via an Accept header, which currently is always set to
-`application/vnd.docker.plugins.v1+json`.
+API 的版本通过 Accept 头进行约定，目前固定为 `application/vnd.docker.plugins.v1+json`。
 
-## Handshake API
+## 握手 API
 
-Plugins are activated via the following "handshake" API call.
+插件通过以下“握手” API 调用完成激活。
 
 ### /Plugin.Activate
 
-Request: empty body
+请求：空请求体
 
-Response:
+响应：
 
 ```json
 {
@@ -164,23 +133,18 @@ Response:
 }
 ```
 
-Responds with a list of Docker subsystems which this plugin implements.
-After activation, the plugin will then be sent events from this subsystem.
+响应为该插件所实现的 Docker 子系统列表。激活完成后，插件会接收来自这些子系统的事件。
 
-Possible values are:
+可能的取值包括：
 
-* [`authz`](plugins_authorization.md)
-* [`NetworkDriver`](plugins_network.md)
-* [`VolumeDriver`](plugins_volume.md)
+- [`authz`](plugins_authorization.md)
+- [`NetworkDriver`](plugins_network.md)
+- [`VolumeDriver`](plugins_volume.md)
 
-## Plugin retries
+## 插件调用重试
 
-Attempts to call a method on a plugin are retried with an exponential backoff
-for up to 30 seconds. This may help when packaging plugins as containers, since
-it gives plugin containers a chance to start up before failing any user
-containers which depend on them.
+当调用插件的方法失败时，Docker 会以指数退避方式重试，最长持续 30 秒。这对于将插件打包为容器的场景很有帮助，因为它为插件容器提供了在失败前完成启动的时间，从而避免影响依赖它们的用户容器。
 
-## Plugins helpers
+## 插件辅助库
 
-To ease plugins development, we're providing an `sdk` for each kind of plugins
-currently supported by Docker at [docker/go-plugins-helpers](https://github.com/docker/go-plugins-helpers).
+为简化插件开发，Docker 为当前支持的各类插件提供了 `SDK`：参见 [docker/go-plugins-helpers](https://github.com/docker/go-plugins-helpers)。

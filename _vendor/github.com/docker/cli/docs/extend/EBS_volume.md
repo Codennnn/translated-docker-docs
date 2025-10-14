@@ -1,31 +1,26 @@
 ---
-description: Volume plugin for Amazon EBS
+description: 适用于 Amazon EBS 的卷插件
 keywords: "API, Usage, plugins, documentation, developer, amazon, ebs, rexray, volume"
 ---
 
-<!-- This file is maintained within the docker/cli GitHub
-     repository at https://github.com/docker/cli/. Make all
-     pull requests against that repo. If you see this file in
-     another repository, consider it read-only there, as it will
-     periodically be overwritten by the definitive file. Pull
-     requests which include edits to this file in other repositories
-     will be rejected.
--->
+<!-- 本文件在 docker/cli GitHub 仓库维护：
+     https://github.com/docker/cli/ 。请将所有 Pull Request 提交到该仓库。
+     如果你在其他仓库看到本文件，请将其视为只读文件，因为它会被
+     权威版本定期覆盖。在其他仓库中提交对此文件的修改将被拒绝。 -->
 
-# Volume plugin for Amazon EBS
+# 适用于 Amazon EBS 的卷插件
 
-## A proof-of-concept Rexray plugin
+## Rexray 概念验证（PoC）插件
 
-In this example, a simple Rexray plugin will be created for the purposes of using
-it on an Amazon EC2 instance with EBS. It is not meant to be a complete Rexray plugin.
+本示例将创建一个简易的 Rexray 插件，用于在带有 EBS 的 Amazon EC2 实例上使用。它并非完整的 Rexray 插件实现，仅供演示之用。
 
-The example source is available at [https://github.com/tiborvass/rexray-plugin](https://github.com/tiborvass/rexray-plugin).
+示例源码： [https://github.com/tiborvass/rexray-plugin](https://github.com/tiborvass/rexray-plugin)
 
-To learn more about Rexray: [https://github.com/codedellemc/rexray](https://github.com/codedellemc/rexray)
+了解更多 Rexray： [https://github.com/codedellemc/rexray](https://github.com/codedellemc/rexray)
 
-## 1. Make a Docker image
+## 1. 制作 Docker 镜像
 
-The following is the Dockerfile used to containerize rexray.
+下面是将 rexray 容器化所使用的 Dockerfile：
 
 ```dockerfile
 FROM debian:jessie
@@ -36,24 +31,23 @@ ENTRYPOINT ["rexray"]
 CMD ["--help"]
 ```
 
-To build it you can run `image=$(cat Dockerfile | docker build -q -)` and `$image`
-will reference the containerized rexray image.
+构建镜像可运行：`image=$(cat Dockerfile | docker build -q -)`，此时变量 `$image` 引用的是容器化后的 rexray 镜像。
 
-## 2. Extract rootfs
+## 2. 提取 rootfs
 
 ```sh
-$ TMPDIR=/tmp/rexray  # for the purpose of this example
-$  # create container without running it, to extract the rootfs from image
+$ TMPDIR=/tmp/rexray  # 本示例的临时目录
+$  # 创建容器但不运行它，从镜像中提取 rootfs
 $ docker create --name rexray "$image"
-$  # save the rootfs to a tar archive
+$  # 将 rootfs 保存为 tar 包
 $ docker export -o $TMPDIR/rexray.tar rexray
-$  # extract rootfs from tar archive to a rootfs folder
+$  # 从 tar 包解压 rootfs 到目标目录
 $ ( mkdir -p $TMPDIR/rootfs; cd $TMPDIR/rootfs; tar xf ../rexray.tar )
 ```
 
-## 3. Add plugin configuration
+## 3. 添加插件配置
 
-We have to put the following JSON to `$TMPDIR/config.json`:
+将以下 JSON 写入 `$TMPDIR/config.json`：
 
 ```json
 {
@@ -122,20 +116,14 @@ We have to put the following JSON to `$TMPDIR/config.json`:
 }
 ```
 
-Note a couple of points:
-- `PropagatedMount` is needed so that the docker daemon can see mounts done by the
-rexray plugin from within the container, otherwise the docker daemon is not able
-to mount a docker volume.
-- The rexray plugin needs dynamic access to host devices. For that reason, we
-have to give it access to all devices under `/dev` and set `AllowAllDevices` to
-true for proper access.
-- The user of this simple plugin can change only 3 settings: `REXRAY_SERVICE`,
-`EBS_ACCESSKEY` and `EBS_SECRETKEY`. This is because of the reduced scope of this
-plugin. Ideally other rexray parameters could also be set.
+注意事项：
+- 需要 `PropagatedMount`，以便 Docker 守护进程能看到插件在容器内执行的挂载操作；否则守护进程无法挂载 Docker 卷。
+- Rexray 插件需要对宿主机设备的动态访问。因此需要授予其对 `/dev` 下所有设备的访问权限，并将 `AllowAllDevices` 设为 true 才能正常工作。
+- 该简化插件的用户仅能更改 3 个设置：`REXRAY_SERVICE`、`EBS_ACCESSKEY` 与 `EBS_SECRETKEY`。这是因为示例范围有限。理想情况下，还可开放更多 Rexray 参数。
 
-## 4. Create plugin
+## 4. 创建插件
 
-`docker plugin create tiborvass/rexray-plugin "$TMPDIR"` will create the plugin.
+运行 `docker plugin create tiborvass/rexray-plugin "$TMPDIR"` 创建插件。
 
 ```sh
 $ docker plugin ls
@@ -143,10 +131,10 @@ ID                  NAME                             DESCRIPTION                
 2475a4bd0ca5        tiborvass/rexray-plugin:latest   A rexray volume plugin for Docker   false
 ```
 
-## 5. Test plugin
+## 5. 测试插件
 
 ```sh
-$ docker plugin set tiborvass/rexray-plugin EBS_ACCESSKEY=$AWS_ACCESSKEY EBS_SECRETKEY=$AWS_SECRETKEY`
+$ docker plugin set tiborvass/rexray-plugin EBS_ACCESSKEY=$AWS_ACCESSKEY EBS_SECRETKEY=$AWS_SECRETKEY
 $ docker plugin enable tiborvass/rexray-plugin
 $ docker volume create -d tiborvass/rexray-plugin my-ebs-volume
 $ docker volume ls
@@ -157,9 +145,7 @@ $ docker run --rm -v my-ebs-volume:/volume busybox cat /volume/hi
 bye
 ```
 
-## 6. Push plugin
+## 6. 推送插件
 
-First, ensure you are logged in with `docker login`. Then you can run:
-`docker plugin push tiborvass/rexray-plugin` to push it like a regular docker
-image to a registry, to make it available for others to install via
-`docker plugin install tiborvass/rexray-plugin EBS_ACCESSKEY=$AWS_ACCESSKEY EBS_SECRETKEY=$AWS_SECRETKEY`.
+首先确保你已通过 `docker login` 登录。然后使用 `docker plugin push tiborvass/rexray-plugin` 将其像常规 Docker 镜像一样推送到仓库，便于他人通过如下方式安装：
+`docker plugin install tiborvass/rexray-plugin EBS_ACCESSKEY=$AWS_ACCESSKEY EBS_SECRETKEY=$AWS_SECRETKEY`。

@@ -1,40 +1,39 @@
 ---
-description: "How to develop and use a plugin with the managed plugin system"
+description: "如何使用托管插件系统开发与使用插件"
 keywords: "API, Usage, plugins, documentation, developer"
-title: Plugin Config Version 1 of Plugin V2
+title: 插件 V2 的配置 V1 版本
 ---
 
-This document outlines the format of the V0 plugin configuration.
+本文概述了 V0 插件配置的格式。
 
-Plugin configs describe the various constituents of a Docker engine plugin.
-Plugin configs can be serialized to JSON format with the following media types:
+插件配置描述了 Docker Engine 插件的各个组成部分。
+插件配置可使用以下媒体类型序列化为 JSON 格式：
 
-| Config Type | Media Type                              |
-|-------------|-----------------------------------------|
-| config      | `application/vnd.docker.plugin.v1+json` |
+| 配置类型 | 媒体类型                                 |
+|------------|------------------------------------------|
+| config     | `application/vnd.docker.plugin.v1+json`  |
 
-## Config Field Descriptions
+## 配置字段说明
 
-Config provides the base accessible fields for working with V0 plugin format in
-the registry.
+Config 提供了在注册表中使用 V0 插件格式时可访问的基础字段。
 
 - `description` string
 
-  Description of the plugin
+  插件的描述
 
 - `documentation` string
 
-  Link to the documentation about the plugin
+  指向插件文档的链接
 
 - `interface` PluginInterface
 
-  Interface implemented by the plugins, struct consisting of the following fields:
+  插件实现的接口，结构体包含以下字段：
 
   - `types` string array
 
-    Types indicate what interface(s) the plugin currently implements.
+    `types` 表示插件当前实现了哪些接口。
 
-    Supported types:
+    支持的类型：
 
     - `docker.volumedriver/1.0`
 
@@ -50,26 +49,25 @@ the registry.
 
   - `socket` string
 
-    Socket is the name of the socket the engine should use to communicate with the plugins.
-    the socket will be created in `/run/docker/plugins`.
+    与插件通信所用套接字的名称。该套接字会在 `/run/docker/plugins` 下创建。
 
 - `entrypoint` string array
 
-   Entrypoint of the plugin, see [`ENTRYPOINT`](https://docs.docker.com/reference/dockerfile/#entrypoint)
+   插件入口点，参见 [`ENTRYPOINT`](https://docs.docker.com/reference/dockerfile/#entrypoint)
 
 - `workdir` string
 
-   Working directory of the plugin, see [`WORKDIR`](https://docs.docker.com/reference/dockerfile/#workdir)
+   插件工作目录，参见 [`WORKDIR`](https://docs.docker.com/reference/dockerfile/#workdir)
 
 - `network` PluginNetwork
 
-  Network of the plugin, struct consisting of the following fields:
+  插件的网络配置，结构体包含以下字段：
 
   - `type` string
 
-    Network type.
+    网络类型。
 
-    Supported types:
+    支持的类型：
 
     - `bridge`
     - `host`
@@ -77,109 +75,107 @@ the registry.
 
 - `mounts` PluginMount array
 
-  Mount of the plugin, struct consisting of the following fields.
-  See [`MOUNTS`](https://github.com/opencontainers/runtime-spec/blob/master/config.md#mounts).
+  插件的挂载配置，结构体包含以下字段。
+  参见 [`MOUNTS`](https://github.com/opencontainers/runtime-spec/blob/master/config.md#mounts)。
 
   - `name` string
 
-    Name of the mount.
+    挂载名称。
 
   - `description` string
 
-    Description of the mount.
+    挂载描述。
 
   - `source` string
 
-    Source of the mount.
+    挂载源。
 
   - `destination` string
 
-    Destination of the mount.
+    挂载目标。
 
   - `type` string
 
-    Mount type.
+    挂载类型。
 
   - `options` string array
 
-    Options of the mount.
+    挂载选项。
 
 - `ipchost` Boolean
 
-   Access to host ipc namespace.
+   访问宿主机 IPC 命名空间。
 
 - `pidhost` Boolean
 
-   Access to host PID namespace.
+   访问宿主机 PID 命名空间。
 
 - `propagatedMount` string
 
-   Path to be mounted as rshared, so that mounts under that path are visible to
-   Docker. This is useful for volume plugins. This path will be bind-mounted
-   outside of the plugin rootfs so it's contents are preserved on upgrade.
+   以 rshared 方式挂载的路径，使其子挂载对 Docker 可见。对卷插件很有用。该路径会绑定挂载到插件 rootfs 之外，以便升级时保留其内容。
 
 - `env` PluginEnv array
 
-  Environment variables of the plugin, struct consisting of the following fields:
+  插件的环境变量，结构体包含以下字段：
 
   - `name` string
 
-    Name of the environment variable.
+    环境变量名。
 
   - `description` string
 
-    Description of the environment variable.
+    环境变量描述。
 
   - `value` string
 
-    Value of the environment variable.
+    环境变量值。
 
 - `args` PluginArgs
 
-  Arguments of the plugin, struct consisting of the following fields:
+  插件的参数配置，结构体包含以下字段：
 
   - `name` string
 
-    Name of the arguments.
+    参数名。
 
   - `description` string
 
-    Description of the arguments.
+    参数描述。
 
   - `value` string array
 
-    Values of the arguments.
+    参数的取值。
 
 - `linux` PluginLinux
 
   - `capabilities` string array
 
-    Capabilities of the plugin (Linux only), see list [`here`](https://github.com/opencontainers/runc/blob/master/libcontainer/SPEC.md#security)
+    插件的能力（仅 Linux）。参见[`此处`](https://github.com/opencontainers/runc/blob/master/libcontainer/SPEC.md#security)的列表。
 
   - `allowAllDevices` Boolean
 
-    If `/dev` is bind mounted from the host, and allowAllDevices is set to true, the plugin will have `rwm` access to all devices on the host.
+    若从宿主机绑定挂载 `/dev`，且 allowAllDevices 为 true，则插件将拥有对宿主机所有设备的 `rwm` 访问。
 
   - `devices` PluginDevice array
 
-    Device of the plugin, (Linux only), struct consisting of the following fields.
-    See [`DEVICES`](https://github.com/opencontainers/runtime-spec/blob/master/config-linux.md#devices).
+    插件的设备（仅 Linux），结构体包含以下字段。
+    参见 [`DEVICES`](https://github.com/opencontainers/runtime-spec/blob/master/config-linux.md#devices)。
 
     - `name` string
 
-      Name of the device.
+      设备名称。
 
     - `description` string
 
-      Description of the device.
+      设备描述。
 
     - `path` string
 
-      Path of the device.
+      设备路径。
 
-## Example Config
+## 配置示例
 
-The following example shows the 'tiborvass/sample-volume-plugin' plugin config.
+以下示例展示了 'tiborvass/sample-volume-plugin' 的插件配置：
 
 ```json
 {

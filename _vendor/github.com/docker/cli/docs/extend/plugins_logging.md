@@ -1,42 +1,30 @@
 ---
-title: Docker log driver plugins
-description: "Log driver plugins."
+title: Docker 日志驱动插件
+description: "日志驱动插件。"
 keywords: "Examples, Usage, plugins, docker, documentation, user guide, logging"
 ---
 
-This document describes logging driver plugins for Docker.
+本文介绍 Docker 的日志驱动（logging driver）插件。
 
-Logging drivers enables users to forward container logs to another service for
-processing. Docker includes several logging drivers as built-ins, however can
-never hope to support all use-cases with built-in drivers. Plugins allow Docker
-to support a wide range of logging services without requiring to embed client
-libraries for these services in the main Docker codebase. See the
-[plugin documentation](legacy_plugins.md) for more information.
+日志驱动允许用户将容器日志转发到其他服务进行处理。Docker 提供了若干内置日志驱动，但内置驱动不可能覆盖所有用例。通过插件机制，Docker 无需在主代码库中内置各类服务的客户端库，也能支持更广泛的日志服务。更多信息参见[插件文档](legacy_plugins.md)。
 
-## Create a logging plugin
+## 创建日志插件
 
-The main interface for logging plugins uses the same JSON+HTTP RPC protocol used
-by other plugin types. See the
-[example](https://github.com/cpuguy83/docker-log-driver-test) plugin for a
-reference implementation of a logging plugin. The example wraps the built-in
-`jsonfilelog` log driver.
+日志插件的主接口与其他插件类型相同，均使用 JSON+HTTP 的 RPC 协议。可参考这个[示例](https://github.com/cpuguy83/docker-log-driver-test)插件，作为日志插件的参考实现。该示例封装了内置的 `jsonfilelog` 日志驱动。
 
-## LogDriver protocol
+## LogDriver 协议
 
-Logging plugins must register as a `LogDriver` during plugin activation. Once
-activated users can specify the plugin as a log driver.
+日志插件必须在插件激活时注册为 `LogDriver`。激活后，用户即可将该插件指定为日志驱动。
 
-There are two HTTP endpoints that logging plugins must implement:
+日志插件必须实现两个 HTTP 端点：
 
 ### `/LogDriver.StartLogging`
 
-Signals to the plugin that a container is starting that the plugin should start
-receiving logs for.
+通知插件：某个容器即将启动，插件应开始接收该容器的日志。
 
-Logs will be streamed over the defined file in the request. On Linux this file
-is a FIFO. Logging plugins are not currently supported on Windows.
+日志将通过请求中指定的文件进行流式传输。在 Linux 上，该文件是一个 FIFO。当前 Windows 不支持日志插件。
 
-Request:
+请求：
 
 ```json
 {
@@ -47,13 +35,9 @@ Request:
 }
 ```
 
-`File` is the path to the log stream that needs to be consumed. Each call to
-`StartLogging` should provide a different file path, even if it's a container
-that the plugin has already received logs for prior. The file is created by
-Docker with a randomly generated name.
+`File` 是需要被消费的日志流路径。每次调用 `StartLogging` 都应提供不同的文件路径，即便该容器此前已被该插件记录过日志。该文件由 Docker 创建，名称为随机生成。
 
-`Info` is details about the container that's being logged. This is fairly
-free-form, but is defined by the following struct definition:
+`Info` 是被记录容器的详情。其定义较为宽松，但由以下结构体定义：
 
 ```go
 type Info struct {
@@ -72,10 +56,9 @@ type Info struct {
 }
 ```
 
-`ContainerID` will always be supplied with this struct, but other fields may be
-empty or missing.
+`ContainerID` 在该结构体中一定会提供，但其它字段可能为空或缺失。
 
-Response:
+响应：
 
 ```json
 {
@@ -83,42 +66,30 @@ Response:
 }
 ```
 
-If an error occurred during this request, add an error message to the `Err` field
-in the response. If no error then you can either send an empty response (`{}`)
-or an empty value for the `Err` field.
+如果本次请求发生错误，请在响应的 `Err` 字段中填入错误消息；若没有错误，可以返回空对象（`{}`）或让 `Err` 为空字符串。
 
-The driver should at this point be consuming log messages from the passed in file.
-If messages are unconsumed, it may cause the container to block while trying to
-write to its stdio streams.
+此时驱动应开始从传入的文件中消费日志消息。如果消息未被及时消费，容器在写入其标准 IO 流时可能会发生阻塞。
 
-Log stream messages are encoded as protocol buffers. The protobuf definitions are
-in the
-[moby repository](https://github.com/moby/moby/blob/master/api/types/plugins/logdriver/entry.proto).
+日志流消息以 Protocol Buffers 编码。其 protobuf 定义位于
+[moby 仓库](https://github.com/moby/moby/blob/master/api/types/plugins/logdriver/entry.proto)。
 
-Since protocol buffers are not self-delimited you must decode them from the stream
-using the following stream format:
+由于 Protocol Buffers 本身不包含自分隔能力，你需要按如下流格式从字节流中解码：
 
 ```text
 [size][message]
 ```
 
-Where `size` is a 4-byte big endian binary encoded uint32. `size` in this case
-defines the size of the next message. `message` is the actual log entry.
+其中 `size` 为 4 字节大端（big endian）的无符号 32 位整数，表示下一条消息的大小；`message` 是实际的日志条目。
 
-A reference golang implementation of a stream encoder/decoder can be found
-[here](https://github.com/docker/docker/blob/master/api/types/plugins/logdriver/io.go)
+参考的 Go 语言编码/解码实现见[此处](https://github.com/docker/docker/blob/master/api/types/plugins/logdriver/io.go)。
 
 ### `/LogDriver.StopLogging`
 
-Signals to the plugin to stop collecting logs from the defined file.
-Once a response is received, the file will be removed by Docker. You must make
-sure to collect all logs on the stream before responding to this request or risk
-losing log data.
+通知插件：停止从指定文件收集日志。收到响应后，Docker 会删除该文件。你必须确保在响应本请求前已消费完该流中的所有日志，否则可能导致日志丢失。
 
-Requests on this endpoint does not mean that the container has been removed
-only that it has stopped.
+注意：对该端点的请求并不意味着容器已被删除，仅表示容器已停止。
 
-Request:
+请求：
 
 ```json
 {
@@ -126,7 +97,7 @@ Request:
 }
 ```
 
-Response:
+响应：
 
 ```json
 {
@@ -134,26 +105,23 @@ Response:
 }
 ```
 
-If an error occurred during this request, add an error message to the `Err` field
-in the response. If no error then you can either send an empty response (`{}`)
-or an empty value for the `Err` field.
+如果本次请求发生错误，请在响应的 `Err` 字段中填入错误消息；若没有错误，可以返回空对象（`{}`）或让 `Err` 为空字符串。
 
-## Optional endpoints
+## 可选端点
 
-Logging plugins can implement two extra logging endpoints:
+日志插件可以实现两个额外的日志端点：
 
 ### `/LogDriver.Capabilities`
 
-Defines the capabilities of the log driver. You must implement this endpoint for
-Docker to be able to take advantage of any of the defined capabilities.
+定义日志驱动的能力。若希望 Docker 利用这些能力，你必须实现该端点。
 
-Request:
+请求：
 
 ```json
 {}
 ```
 
-Response:
+响应：
 
 ```json
 {
@@ -161,21 +129,17 @@ Response:
 }
 ```
 
-Supported capabilities:
+支持的能力：
 
-- `ReadLogs` - this tells Docker that the plugin is capable of reading back logs
-to clients. Plugins that report that they support `ReadLogs` must implement the
-`/LogDriver.ReadLogs` endpoint
+- `ReadLogs`：告知 Docker 此插件支持向客户端回读日志。声明支持 `ReadLogs` 的插件必须实现 `/LogDriver.ReadLogs` 端点。
 
 ### `/LogDriver.ReadLogs`
 
-Reads back logs to the client. This is used when `docker logs <container>` is
-called.
+向客户端回读日志。在用户执行 `docker logs <container>` 时会用到该端点。
 
-In order for Docker to use this endpoint, the plugin must specify as much when
-`/LogDriver.Capabilities` is called.
+要让 Docker 使用此端点，插件必须在调用 `/LogDriver.Capabilities` 时声明相应能力。
 
-Request:
+请求：
 
 ```json
 {
@@ -186,8 +150,7 @@ Request:
 }
 ```
 
-`ReadConfig` is the list of options for reading, it is defined with the following
-golang struct:
+`ReadConfig` 为读取选项，其 Go 结构体定义如下：
 
 ```go
 type ReadConfig struct {
@@ -197,19 +160,16 @@ type ReadConfig struct {
 }
 ```
 
-- `Since` defines the oldest log that should be sent.
-- `Tail` defines the number of lines to read (e.g. like the command `tail -n 10`)
-- `Follow` signals that the client wants to stay attached to receive new log messages
-as they come in once the existing logs have been read.
+- `Since`：最早应返回的日志时间。
+- `Tail`：读取的行数（类似命令 `tail -n 10`）。
+- `Follow`：在现有日志读取完后，是否继续跟随输出新日志。
 
-`Info` is the same type defined in `/LogDriver.StartLogging`. It should be used
-to determine what set of logs to read.
+`Info` 与 `/LogDriver.StartLogging` 中定义的类型相同，用于确定要读取的日志集合。
 
-Response:
+响应：
 
 ```text
 {{ log stream }}
 ```
 
-The response should be the encoded log message using the same format as the
-messages that the plugin consumed from Docker.
+响应应返回按与插件从 Docker 接收日志相同的格式编码的日志流。

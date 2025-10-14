@@ -1,40 +1,29 @@
 ---
 keywords: "API, Usage, plugins, documentation, developer"
-title: Plugins and Services
+title: 插件与服务
 ---
 
-<!-- This file is maintained within the docker/cli GitHub
-     repository at https://github.com/docker/cli/. Make all
-     pull requests against that repo. If you see this file in
-     another repository, consider it read-only there, as it will
-     periodically be overwritten by the definitive file. Pull
-     requests which include edits to this file in other repositories
-     will be rejected.
--->
+<!-- 本文件在 docker/cli GitHub 仓库维护：
+     https://github.com/docker/cli/ 。请将所有 Pull Request 提交到该仓库。
+     如果你在其他仓库看到本文件，请将其视为只读文件，因为它会被
+     权威版本定期覆盖。在其他仓库中提交对此文件的修改将被拒绝。 -->
 
-# Using Volume and Network plugins in Docker services
+# 在 Docker 服务中使用卷与网络插件
 
-In swarm mode, it is possible to create a service that allows for attaching
-to networks or mounting volumes that are backed by plugins. Swarm schedules
-services based on plugin availability on a node.
+在 Swarm 模式下，你可以创建允许附加由插件提供的网络或挂载由插件提供的数据卷的服务。Swarm 会根据节点上插件的可用性来调度服务。
 
+### 卷插件
 
-### Volume plugins
+以下示例展示：在一个工作节点上安装卷插件并用该插件创建数据卷；随后在管理节点上创建服务并配置相应的挂载选项。你会看到该服务被调度到安装了该卷插件与数据卷的工作节点上运行。注意：node1 为管理节点，node2 为工作节点。
 
-In this example, a volume plugin is installed on a swarm worker and a volume
-is created using the plugin. In the manager, a service is created with the
-relevant mount options. It can be observed that the service is scheduled to
-run on the worker node with the said volume plugin and volume. Note that,
-node1 is the manager and node2 is the worker.
-
-1.  Prepare manager. In node 1:
+1. 准备管理节点（node1）：
 
     ```console
     $ docker swarm init
     Swarm initialized: current node (dxn1zf6l61qsb1josjja83ngz) is now a manager.
     ```
 
-2. Join swarm, install plugin and create volume on worker. In node 2:
+2. 在工作节点（node2）加入 Swarm、安装插件并创建数据卷：
 
     ```console
     $ docker swarm join \
@@ -55,7 +44,7 @@ node1 is the manager and node2 is the worker.
     $ docker volume create -d tiborvass/sample-volume-plugin --name pluginVol
     ```
 
-3. Create a service using the plugin and volume. In node1:
+3. 在管理节点（node1）使用该插件与数据卷创建服务：
 
     ```console
     $ docker service create --name my-service --mount type=volume,volume-driver=tiborvass/sample-volume-plugin,source=pluginVol,destination=/tmp busybox top
@@ -64,27 +53,22 @@ node1 is the manager and node2 is the worker.
     z1sj8bb8jnfn  my-service   replicated  1/1       busybox:latest
     ```
 
-    `docker service ls` shows service 1 instance of service running.
+    `docker service ls` 显示该服务有 1 个副本正在运行。
 
-4. Observe the task getting scheduled in node 2:
+4. 在节点 2 上查看任务被调度的情况：
 
     ```console
     $ docker ps --format '{{.ID}}\t {{.Status}} {{.Names}} {{.Command}}'
     83fc1e842599     Up 2 days my-service.1.9jn59qzn7nbc3m0zt1hij12xs "top"
     ```
 
-### Network plugins
+### 网络插件
 
-In this example, a global scope network plugin is installed on both the
-swarm manager and worker. A service is created with replicated instances
-using the installed plugin. We will observe how the availability of the
-plugin determines network creation and container scheduling.
+本示例在管理节点与工作节点上都安装了一个全局作用域（global scope）的网络插件，并创建了一个具有多个副本的服务来使用该插件。我们将观察插件的可用性如何影响网络创建与容器调度。
 
-Note that node1 is the manager and node2 is the worker.
+注意：node1 为管理节点，node2 为工作节点。
 
-
-1. Install a global scoped network plugin on both manager and worker. On node1
-   and node2:
+1. 在管理节点与工作节点（node1 与 node2）上都安装一个全局作用域的网络插件：
 
     ```console
     $ docker plugin install bboreham/weave2
@@ -99,7 +83,7 @@ Note that node1 is the manager and node2 is the worker.
     Installed plugin bboreham/weave2
     ```
 
-2. Create a network using plugin on manager. On node1:
+2. 在管理节点（node1）上使用该插件创建网络：
 
     ```console
     $ docker network create --driver=bboreham/weave2:latest globalnet
@@ -109,10 +93,9 @@ Note that node1 is the manager and node2 is the worker.
     qlj7ueteg6ly        globalnet           bboreham/weave2:latest   swarm
     ```
 
-3. Create a service on the manager and have replicas set to 8. Observe that
-containers get scheduled on both manager and worker.
+3. 在管理节点上创建一个具有 8 个副本的服务。可以观察到容器被调度到管理节点与工作节点上：
 
-    On node 1:
+    在节点 1：
 
     ```console
     $ docker service create --network globalnet --name myservice --replicas=8 mrjana/simpleweb simpleweb
@@ -128,7 +111,7 @@ w90drnfzw85nygbie9kb89vpa
     2e8e4b2c5c08        mrjana/simpleweb@sha256:317d7f221d68c86d503119b0ea12c29de42af0a22ca087d522646ad1069a47a4   "simpleweb"         5 seconds ago       Up 4 seconds                            myservice.8.2z29zowsghx66u2velublwmrh
     ```
 
-    On node 2:
+    在节点 2：
 
     ```console
     $ docker ps
@@ -139,24 +122,23 @@ w90drnfzw85nygbie9kb89vpa
     478c0d395bd7        mrjana/simpleweb@sha256:317d7f221d68c86d503119b0ea12c29de42af0a22ca087d522646ad1069a47a4   "simpleweb"         2 seconds ago       Up Less than a second                       myservice.3.yr7nkffa48lff1vrl2r1m1ucs
     ```
 
-4. Scale down the number of instances. On node1:
+4. 缩容：在节点 1 上将副本数缩为 0：
 
     ```console
     $ docker service scale myservice=0
     myservice scaled to 0
     ```
 
-5. Disable and uninstall the plugin on the worker. On node2:
+5. 在工作节点（node2）上禁用并卸载插件：
 
     ```console
     $ docker plugin rm -f bboreham/weave2
     bboreham/weave2
     ```
 
-6. Scale up the number of instances again. Observe that all containers are
-scheduled on the master and not on the worker, because the plugin is not available on the worker anymore.
+6. 再次扩容。可以观察到，所有容器都被调度到管理节点上，而不会调度到工作节点，因为该插件在工作节点上已不可用。
 
-    On node 1:
+    在节点 1：
 
     ```console
     $ docker service scale myservice=8
@@ -176,7 +158,7 @@ scheduled on the master and not on the worker, because the plugin is not availab
     e2ec01efcd8a        mrjana/simpleweb@sha256:317d7f221d68c86d503119b0ea12c29de42af0a22ca087d522646ad1069a47a4   "simpleweb"         39 seconds ago      Up 38 seconds                           myservice.1.8w7c4ttzr6zcb9sjsqyhwp3yl
     ```
 
-    On node 2:
+    在节点 2：
 
     ```console
     $ docker ps
