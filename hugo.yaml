@@ -1,5 +1,5 @@
 title: Docker Docs
-baseURL: https://docker-docs.leoku.dev
+baseURL: https://docker-docs-cn.netlify.app/
 refLinksErrorLevel: ERROR
 enableGitInfo: true
 disablePathToLower: true
