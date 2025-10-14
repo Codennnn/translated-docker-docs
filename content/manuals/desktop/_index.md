@@ -1,38 +1,38 @@
 ---
-title: Docker Desktop
 weight: 10
-description: Explore Docker Desktop, what it has to offer, and its key features. Take the next step by downloading or find additional resources
-keywords: how to use docker desktop, what is docker desktop used for, what does docker
-  desktop do, using docker desktop
+title: Docker Desktop
+description: 了解 Docker Desktop 的功能与优势及其关键特性。你可以直接下载开始使用，或浏览更多相关资源。
+keywords: 如何使用 docker desktop, docker desktop 用来做什么, docker desktop 能做什么,
+  使用 docker desktop
 params:
   sidebar:
     group: Products
 grid:
-- title: Install Docker Desktop
+- title: 安装 Docker Desktop
   description: |
-    Install Docker Desktop on
-    [Mac](/desktop/setup/install/mac-install/),
-    [Windows](/desktop/setup/install/windows-install/), or
-    [Linux](/desktop/setup/install/linux/).
+    在以下平台安装 Docker Desktop：
+    [Mac](/desktop/setup/install/mac-install/)、
+    [Windows](/desktop/setup/install/windows-install/) 或
+    [Linux](/desktop/setup/install/linux/)。
   icon: download
-- title: Learn about Docker Desktop
-  description: Navigate Docker Desktop.
+- title: 了解 Docker Desktop
+  description: 浏览并使用 Docker Desktop。
   icon: feature_search
   link: /desktop/use-desktop/
-- title: Explore its key features
+- title: 探索核心功能
   description: |
-    Find information about [Docker VMM](/desktop/features/vmm/), [WSL](/desktop/features/wsl/), [deploying on Kubernetes](/desktop/features/kubernetes/), and more.
+    查阅 [Docker VMM](/desktop/features/vmm/)、[WSL](/desktop/features/wsl/)、[在 Kubernetes 上部署](/desktop/features/kubernetes/) 等内容。
   icon: category
-- title: View the release notes
-  description: Find out about new features, improvements, and bug fixes.
+- title: 查看发行说明
+  description: 了解新功能、改进与缺陷修复。
   icon: note_add
   link: /desktop/release-notes/
-- title: Browse common FAQs
-  description: Explore general FAQs or FAQs for specific platforms.
+- title: 浏览常见问题
+  description: 查看通用 FAQ 或各平台专属 FAQ。
   icon: help
   link: /desktop/troubleshoot-and-support/faqs/general/
-- title: Give feedback
-  description: Provide feedback on Docker Desktop or Docker Desktop features.
+- title: 提交反馈
+  description: 为 Docker Desktop 或其功能提交反馈。
   icon: sms
   link: /desktop/troubleshoot-and-support/feedback/
 aliases:
@@ -43,26 +43,26 @@ aliases:
 - /docker-for-windows/opensource/
 ---
 
-Docker Desktop is a one-click-install application for your Mac, Linux, or Windows environment
-that lets you build, share, and run containerized applications and microservices. 
+Docker Desktop 是一款一键安装的桌面应用，适用于 Mac、Linux 与 Windows 环境，
+帮助你构建、分享并运行容器化应用与微服务。
 
-It provides a straightforward GUI (Graphical User Interface) that lets you manage your containers, applications, and images directly from your machine. 
+它提供直观的图形界面（GUI），使你可以在本机直接管理容器、应用与镜像。
 
-Docker Desktop reduces the time spent on complex setups so you can focus on writing code. It takes care of port mappings, file system concerns, and other default settings, and is regularly updated with bug fixes and security updates.
+Docker Desktop 简化复杂的环境配置，帮助你把精力放在编码上。它为你处理端口映射、文件系统等默认配置，并定期发布缺陷修复与安全更新。
 
-Docker Desktop integrates with your preferred development tools and languages, and gives you access to a vast ecosystem of trusted images and templates via Docker Hub. This empowers teams to accelerate development, automate builds, enable CI/CD workflows, and collaborate securely through shared repositories.
+Docker Desktop 可与常用的开发工具与编程语言集成，并通过 Docker Hub 提供大量可信镜像与模板。借此，团队能够加速开发、自动化构建、启用 CI/CD 流程，并通过共享仓库实现安全协作。
 
-## Key features
+## 关键特性
 
-* Ability to containerize and share any application on any cloud platform, in multiple languages and frameworks.
-* Quick installation and setup of a complete Docker development environment.
-* Includes the latest version of Kubernetes.
-* On Windows, the ability to toggle between Linux and Windows containers to build applications.
-* Fast and reliable performance with native Windows Hyper-V virtualization.
-* Ability to work natively on Linux through WSL 2 on Windows machines.
-* Volume mounting for code and data, including file change notifications and easy access to running containers on the localhost network.
+* 将任意应用容器化并在任意云平台上共享，兼容多种语言与框架。
+* 一键安装，快速搭建完整的 Docker 开发环境。
+* 内置最新版本的 Kubernetes。
+* 在 Windows 上可在 Linux 与 Windows 容器间切换以构建应用。
+* 依托原生 Windows Hyper-V 虚拟化，提供快速且稳定的性能。
+* 通过 WSL 2 在 Windows 设备上原生运行 Linux。
+* 支持代码与数据的卷挂载，包含文件变更通知，并可通过 localhost 网络便捷访问正在运行的容器。
 
-## Products inside Docker Desktop
+## Docker Desktop 内包含的产品
 
 - [Docker MCP Toolkit and Catalog](/manuals/ai/mcp-catalog-and-toolkit/_index.md)
 - [Docker Model Runner](/manuals/ai/model-runner/_index.md)
@@ -75,6 +75,6 @@ Docker Desktop integrates with your preferred development tools and languages, a
 - [Docker Scout](../scout/_index.md)
 - [Kubernetes](https://github.com/kubernetes/kubernetes/)
 
-## Next steps
+## 下一步
 
 {{< grid >}}

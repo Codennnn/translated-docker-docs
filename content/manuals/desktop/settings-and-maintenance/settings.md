@@ -1,9 +1,9 @@
 ---
-description: Learn about and change Docker Desktop's settings
+description: 了解并更改 Docker Desktop 的设置
 keywords: settings, preferences, proxy, file sharing, resources, kubernetes, Docker
   Desktop, Linux, Mac, Windows
-title: Change your Docker Desktop settings
-linkTitle: Change settings
+title: 更改 Docker Desktop 设置
+linkTitle: 更改设置
 aliases:
  - /desktop/settings/mac/
  - /desktop/settings/windows/
@@ -12,324 +12,249 @@ aliases:
 weight: 10
 ---
 
-To navigate to **Settings** either:
+进入 **Settings（设置）** 的方式：
 
-- Select the Docker menu {{< inline-image src="../images/whale-x.svg" alt="whale menu" >}} and then **Settings**
-- Select the **Settings** icon from the Docker Desktop Dashboard.
+- 在 Docker 菜单 {{< inline-image src="../images/whale-x.svg" alt="whale menu" >}} 中选择 **Settings**
+- 在 Docker Desktop 仪表板中选择 **Settings** 图标
 
-You can also locate the `settings-store.json` file (or `settings.json` for Docker Desktop versions 4.34 and earlier) at:
+你也可以在以下位置找到 `settings-store.json` 文件（Docker Desktop 4.34 及更早版本为 `settings.json`）：
  - Mac: `~/Library/Group\ Containers/group.com.docker/settings-store.json`
  - Windows: `C:\Users\[USERNAME]\AppData\Roaming\Docker\settings-store.json`
  - Linux: `~/.docker/desktop/settings-store.json`
 
-## General
+## 常规
 
-On the **General** tab, you can configure when to start Docker and specify other settings:
+在 **General** 选项卡中，你可以设置 Docker 的启动时机并配置其他常用选项：
 
-- **Start Docker Desktop when you sign in to your computer**. Select to automatically start Docker
-  Desktop when you sign in to your machine.
+- **Start Docker Desktop when you sign in to your computer**：登录电脑时自动启动 Docker Desktop。
 
-- **Open Docker Dashboard when Docker Desktop starts**. Select to automatically open the
-  dashboard when starting Docker Desktop.
+- **Open Docker Dashboard when Docker Desktop starts**：启动 Docker Desktop 时自动打开仪表板（Dashboard）。
 
-- **Choose theme for Docker Desktop**. Choose whether you want to apply a **Light** or **Dark** theme to Docker Desktop. Alternatively you can set Docker Desktop to **Use system settings**.
+- **Choose theme for Docker Desktop**：选择 **Light** 或 **Dark** 主题，或设置为 **Use system settings**（跟随系统）。
 
-- **Configure shell completions**. Automatically edits your shell configuration and gives you word completion for commands, flags, and Docker objects (such as container and volume names) when you hit `<Tab>` as you type into your terminal. For more information, see [Completion](/manuals/engine/cli/completion.md).
+- **Configure shell completions**：自动修改你的 shell 配置，提供命令、参数和 Docker 对象（如容器与卷名）的 Tab 补全。详见 [Completion](/manuals/engine/cli/completion.md)。
 
-- **Choose container terminal**. Determines which terminal is launched when opening the terminal from a container.
-If you choose the integrated terminal, you can run commands in a running container straight from the Docker Desktop Dashboard. For more information, see [Explore containers](/manuals/desktop/use-desktop/container.md).
+- **Choose container terminal**：选择从容器打开终端时启动的终端类型。若选择集成终端，可直接在 Docker Desktop 仪表板中对运行中的容器执行命令。详见 [探索容器](/manuals/desktop/use-desktop/container.md)。
 
-- **Enable Docker terminal**. Interact with your host machine and execute commands directly from Docker Desktop.
+- **Enable Docker terminal**：在 Docker Desktop 中直接与宿主机交互并执行命令。
 
-- **Enable Docker Debug by default**. Check this option to use Docker Debug by default when accessing the integrated terminal. For more information, see [Explore containers](/manuals/desktop/use-desktop/container.md#integrated-terminal).
+- **Enable Docker Debug by default**：默认在集成终端中启用 Docker Debug。详见[探索容器](/manuals/desktop/use-desktop/container.md#integrated-terminal)。
 
-- {{< badge color=blue text="Mac only" >}}**Include VM in Time Machine backups**. Select to back up the Docker Desktop
-  virtual machine. This option is turned off by default.
+- {{< badge color=blue text="Mac only" >}}**Include VM in Time Machine backups**：将 Docker Desktop 虚拟机纳入 Time Machine 备份（默认关闭）。
 
-- **Use containerd for pulling and storing images**.
-  Turns on the containerd image store.
-  This brings new features like faster container startup performance by lazy-pulling images,
-  and the ability to run Wasm applications with Docker.
-  For more information, see [containerd image store](/manuals/desktop/features/containerd.md).
+- **Use containerd for pulling and storing images**：启用 containerd 镜像存储。可通过懒加载加速容器启动，并支持在 Docker 中运行 Wasm 应用。详见 [containerd 镜像存储](/manuals/desktop/features/containerd.md)。
 
-- {{< badge color=blue text="Windows only" >}}**Expose daemon on tcp://localhost:2375 without TLS**. Check this option to
-  enable legacy clients to connect to the Docker daemon. You must use this option
-  with caution as exposing the daemon without TLS can result in remote code
-  execution attacks.
+- {{< badge color=blue text="Windows only" >}}**Expose daemon on tcp://localhost:2375 without TLS**：在无 TLS 的情况下暴露 Docker 守护进程，便于旧版客户端连接。请谨慎使用，此设置可能带来远程代码执行风险。
 
-- {{< badge color=blue text="Windows only" >}}**Use the WSL 2 based engine**. WSL 2 provides better performance than the
-  Hyper-V backend. For more information, see [Docker Desktop WSL 2 backend](/manuals/desktop/features/wsl/_index.md).
+- {{< badge color=blue text="Windows only" >}}**Use the WSL 2 based engine**：使用 WSL 2 引擎，性能优于 Hyper-V。详见 [WSL 2 后端](/manuals/desktop/features/wsl/_index.md)。
 
-- {{< badge color=blue text="Windows only" >}}**Add the `*.docker.internal` names to the host's `/etc/hosts` file (Password required)**. Lets you resolve `*.docker.internal` DNS names from both the host and your containers.
+- {{< badge color=blue text="Windows only" >}}**Add the `*.docker.internal` names to the host's `/etc/hosts` file (Password required)**：将 `*.docker.internal` 名称写入宿主机 `/etc/hosts`，便于宿主机与容器解析这些 DNS 名称。
 
-- {{< badge color=blue text="Mac only" >}} **Choose Virtual Machine Manager (VMM)**. Choose the Virtual Machine Manager for creating and managing the Docker Desktop Linux VM.
-  - Select **Docker VMM** for the latest and most performant Hypervisor/Virtual Machine Manager. This option is available only on Apple Silicon Macs running macOS 12.5 or later and is currently in Beta.
+- {{< badge color=blue text="Mac only" >}} **Choose Virtual Machine Manager (VMM)**：选择用于创建与管理 Docker Desktop Linux VM 的虚拟机管理器。
+  - 选择 **Docker VMM** 可获得最新且性能最佳的管理器（仅适用于运行 macOS 12.5 及以上版本的 Apple 芯片 Mac，当前为 Beta）。
     > [!TIP]
     >
-    > Turn this setting on to make Docker Desktop run faster.
-  - Alternatively, you can choose **Apple Virtualization framework**, **QEMU** (for Apple Silicon  in Docker Desktop version 4.43 and earlier), or **HyperKit** (for Intel Macs). For macOS 12.5 and later, Apple Virtualization framework is the default setting.
+    > 开启该设置可使 Docker Desktop 跑得更快。
+  - 也可选择 **Apple Virtualization framework**、**QEMU**（Apple 芯片，Docker Desktop 4.43 及更早版本）或 **HyperKit**（Intel Mac）。在 macOS 12.5 及以上，默认使用 Apple Virtualization framework。
 
-   For more information, see [Virtual Machine Manager](/manuals/desktop/features/vmm.md).
+   详情参见 [Virtual Machine Manager](/manuals/desktop/features/vmm.md)。
 
-- {{< badge color=blue text="Mac only" >}}**Choose file sharing implementation for your containers**. Choose whether you want to share files using **VirtioFS**, **gRPC FUSE**, or **osxfs (Legacy)**. VirtioFS is only available for macOS 12.5 and later, and is turned on by default.
+- {{< badge color=blue text="Mac only" >}}**Choose file sharing implementation for your containers**：选择文件共享实现（**VirtioFS**、**gRPC FUSE** 或 **osxfs（Legacy）**）。VirtioFS 仅适用于 macOS 12.5 及以上，且默认启用。
     > [!TIP]
     >
-    > Use VirtioFS for speedy file sharing. VirtioFS has reduced the time taken to complete filesystem operations by [up to 98%](https://github.com/docker/roadmap/issues/7#issuecomment-1044452206). It is the only file sharing implementation supported by Docker VMM.
+    > 优先使用 VirtioFS 以加速文件共享。它可将文件系统操作时间缩短[最高达 98%](https://github.com/docker/roadmap/issues/7#issuecomment-1044452206)。同时，它是 Docker VMM 唯一支持的文件共享实现。
 
-- {{< badge color=blue text="Mac only" >}}**Use Rosetta for x86_64/amd64 emulation on Apple Silicon**. Turns on Rosetta to accelerate x86/AMD64 binary emulation on Apple Silicon. This option is only available if you have selected **Apple Virtualization framework** as the Virtual Machine Manager. You must also be on macOS 13 or later.
+- {{< badge color=blue text="Mac only" >}}**Use Rosetta for x86_64/amd64 emulation on Apple Silicon**：在 Apple 芯片上启用 Rosetta 加速 x86/AMD64 二进制仿真。仅当 VMM 选择 **Apple Virtualization framework** 且系统为 macOS 13 或更高时可用。
 
-- **Send usage statistics**. Select so Docker Desktop sends diagnostics,
-  crash reports, and usage data. This information helps Docker improve and
-  troubleshoot the application. Clear the checkbox to opt out. Docker may
-  periodically prompt you for more information.
+- **Send usage statistics**：允许 Docker Desktop 发送诊断、崩溃报告与使用数据，用于改进和故障排查。取消勾选即可退出。Docker 可能会不定期请求更多信息。
 
-- **Use Enhanced Container Isolation**. Select to enhance security by preventing containers from breaching the Linux VM. For more information, see [Enhanced Container Isolation](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md).
+- **Use Enhanced Container Isolation**：启用增强容器隔离，防止容器突破 Linux VM 边界以提升安全性。详见[增强容器隔离](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md)。
     > [!NOTE]
     >
-    > This setting is only available if you are signed in to Docker Desktop and have a Docker Business subscription.
+    > 仅当你已登录 Docker Desktop 且订阅了 Docker Business 时可用。
 
-- **Show CLI hints**. Displays CLI hints and tips when running Docker commands in the CLI. This is turned on by default. To turn CLI hints on or off from the CLI, set `DOCKER_CLI_HINTS` to `true` or `false` respectively.
+- **Show CLI hints**：在命令行运行 Docker 命令时显示提示（默认开启）。也可通过设置环境变量 `DOCKER_CLI_HINTS=true|false` 开关。
 
-- **Enable Scout image analysis**. When this option is enabled, inspecting an image in Docker Desktop shows a **Start analysis** button that, when selected, analyzes the image with Docker Scout.
+- **Enable Scout image analysis**：开启后，在 Docker Desktop 中查看镜像时会显示 **Start analysis** 按钮，点击即可用 Docker Scout 分析镜像。
 
-- **Enable background SBOM indexing**. When this option is enabled, Docker Scout automatically analyzes images that you build or pull.
+- **Enable background SBOM indexing**：开启后，Docker Scout 会自动分析你构建或拉取的镜像。
 
-- {{< badge color=blue text="Mac only" >}}**Automatically check configuration**. Regularly checks your configuration to ensure no unexpected changes have been made by another application.
+- {{< badge color=blue text="Mac only" >}}**Automatically check configuration**：定期检查你的配置，避免被其他应用意外修改。
 
-  Docker Desktop checks if your setup, configured during installation, has been altered by external apps like Orbstack. Docker Desktop checks:
-    - The symlinks of Docker binaries to `/usr/local/bin`.
-    - The symlink of the default Docker socket. 
-  Additionally, Docker Desktop ensures that the context is switched to `desktop-linux` on startup.
+  Docker Desktop 会检测安装时的配置是否被诸如 Orbstack 等外部应用更改，包括：
+    - Docker 二进制到 `/usr/local/bin` 的符号链接
+    - 默认 Docker 套接字的符号链接 
+  另外，Docker Desktop 会在启动时确保上下文切换到 `desktop-linux`。
   
-  You are notified if changes are found and are able to restore the configuration directly from the notification. For more information, see the [FAQs](/manuals/desktop/troubleshoot-and-support/faqs/macfaqs.md#why-do-i-keep-getting-a-notification-telling-me-an-application-has-changed-my-desktop-configurations).
+  如果检测到变更，你会收到通知并可一键恢复配置。详见 [常见问题](/manuals/desktop/troubleshoot-and-support/faqs/macfaqs.md#why-do-i-keep-getting-a-notification-telling-me-an-application-has-changed-my-desktop-configurations)。
 
-## Resources
+## 资源
 
-The **Resources** tab allows you to configure CPU, memory, disk, proxies,
-network, and other resources.
+在 **Resources** 选项卡中，你可以配置 CPU、内存、磁盘、代理、网络等资源。
 
-### Advanced
+### 高级
 
 > [!NOTE]
 >
-> On Windows, the **Resource allocation** options in the **Advanced** tab are only available in Hyper-V mode, because Windows manages
-> the resources in WSL 2 mode and Windows container mode. In WSL 2
-> mode, you can configure limits on the memory, CPU, and swap size allocated
-> to the [WSL 2 utility VM](https://docs.microsoft.com/en-us/windows/wsl/wsl-config#configure-global-options-with-wslconfig).
+> 在 Windows 上，**Advanced** 里的 **Resource allocation**（资源分配）仅在 Hyper-V 模式可用，因为在 WSL 2 模式和 Windows 容器模式下，资源由 Windows 管理。在 WSL 2 模式下，你可以为 [WSL 2 实用 VM](https://docs.microsoft.com/en-us/windows/wsl/wsl-config#configure-global-options-with-wslconfig) 配置内存、CPU 与交换空间上限。
 
-On the **Advanced** tab, you can limit resources available to the Docker Linux VM.
+在 **Advanced** 中，你可以限制分配给 Docker Linux VM 的资源。
 
-Advanced settings are:
+可配置项包括：
 
-- **CPU limit**. Specify the maximum number of CPUs to be used by Docker Desktop.
-  By default, Docker Desktop is set to use all the processors available on the host machine.
+- **CPU limit**：设定 Docker Desktop 可用的 CPU 最大数量。默认使用宿主机的全部可用处理器。
 
-- **Memory limit**. By default, Docker Desktop is set to use up to 50% of your host's
-  memory. To increase the RAM, set this to a higher number; to decrease it,
-  lower the number.
+- **Memory limit**：默认最多使用宿主机内存的 50%。调大即增加可用内存，调小则减少。
 
-- **Swap**. Configure swap file size as needed. The default is 1 GB.
+- **Swap**：根据需要配置交换文件大小，默认 1 GB。
 
-- **Disk usage limit**. Specify the maximum amount of disk space the engine can use.
+- **Disk usage limit**：限制引擎可用的磁盘空间上限。
 
-- **Disk image location**. Specify the location of the Linux volume where containers and images are stored.
+- **Disk image location**：指定用于存放容器与镜像的 Linux 卷位置。
 
-  You can also move the disk image to a different location. If you attempt to
-  move a disk image to a location that already has one, you are asked if you
-  want to use the existing image or replace it.
+  你也可以将磁盘镜像移动到其他位置。若目标位置已有镜像，系统会提示你选择使用现有镜像或进行替换。
 
 >[!TIP]
 >
-> If you feel Docker Desktop starting to get slow or you're running
-> multi-container workloads, increase the memory and disk image space allocation
+> 如果你感觉 Docker Desktop 变慢，或需要运行多容器工作负载，可适当增加内存与磁盘镜像空间配额。
 
-- **Resource Saver**. Enable or disable [Resource Saver mode](/manuals/desktop/use-desktop/resource-saver.md),
-  which significantly reduces CPU and memory utilization on the host by
-  automatically turning off the Linux VM when Docker Desktop is idle (i.e., no
-  containers are running).
+- **Resource Saver**：启用或禁用[资源节省模式](/manuals/desktop/use-desktop/resource-saver.md)。该模式在 Docker Desktop 空闲（即无容器运行）时自动关闭 Linux VM，从而显著降低宿主机的 CPU 与内存占用。
 
-  You can also configure the Resource Saver timeout which indicates how long
-  should Docker Desktop be idle before Resource Saver mode kicks in. Default is
-  5 minutes.
+  你可以配置资源节省模式的超时时间，即 Docker Desktop 空闲多久开始生效。默认 5 分钟。
 
   > [!NOTE]
   >
-  > Exit from Resource Saver mode occurs automatically when containers run. Exit
-  > may take a few seconds (~3 to 10 secs) as Docker Desktop restarts the Linux VM.
+  > 当有容器运行时会自动退出资源节省模式。退出过程可能需要几秒（约 3–10 秒），因为 Docker Desktop 需要重启 Linux VM。
 
 
-### File sharing
+### 文件共享
 
 > [!NOTE]
 >
-> On Windows, the **File sharing** tab is only available in Hyper-V mode because the files
-> are automatically shared in WSL 2 mode and Windows container mode.
+> 在 Windows 上，**File sharing** 仅在 Hyper-V 模式可用；在 WSL 2 与 Windows 容器模式下，文件会自动共享。
 
-Use File sharing to allow local directories on your machine to be shared with
-Linux containers. This is especially useful for editing source code in an IDE on
-the host while running and testing the code in a container.
+通过文件共享，你可以将本机目录共享给 Linux 容器。这对“在宿主机 IDE 中编辑源码、并在容器中运行与测试”尤为有用。
 
-#### Synchronized file shares 
+#### 同步文件共享 
 
-Synchronized file shares is an alternative file sharing mechanism that provides fast and flexible host-to-VM file sharing, enhancing bind mount performance through the use of synchronized filesystem caches. Available with Pro, Team, and Business subscriptions.
+同步文件共享是一种替代的文件共享机制，通过同步的文件系统缓存提升主机到 VM 的文件共享与绑定挂载性能。该功能适用于 Pro、Team 与 Business 订阅。
 
-To learn more, see [Synchronized file share](/manuals/desktop/features/synchronized-file-sharing.md).
+了解更多，参见 [Synchronized file share](/manuals/desktop/features/synchronized-file-sharing.md)。
 
-#### Virtual file shares
+#### 虚拟文件共享
 
-By default the `/Users`, `/Volumes`, `/private`, `/tmp` and `/var/folders` directory are shared.
-If your project is outside this directory then it must be added to the list,
-otherwise you may get `Mounts denied` or `cannot start service` errors at runtime.
+默认会共享 `/Users`、`/Volumes`、`/private`、`/tmp` 与 `/var/folders` 目录。
+若项目不在上述目录内，需要手动添加到共享列表；否则运行时可能出现 `Mounts denied` 或 `cannot start service` 错误。
 
-File share settings are:
+文件共享相关设置包括：
 
-- **Add a Directory**. Select `+` and navigate to the directory you want to add.
+- **Add a Directory**：点击 `+` 并选择要添加的目录。
 
-- **Remove a Directory**. Select `-` next to the directory you want to remove
+- **Remove a Directory**：点击要移除目录旁的 `-`。
 
-- **Apply** makes the directory available to containers using Docker's
-  bind mount (`-v`) feature.
+- **Apply**：应用后，该目录即可通过 Docker 绑定挂载（`-v`）供容器使用。
 
 > [!TIP]
 >
-> * Share only the directories that you need with the container. File sharing
->   introduces overhead as any changes to the files on the host need to be notified
->   to the Linux VM. Sharing too many files can lead to high CPU load and slow
->   filesystem performance.
-> * Shared folders are designed to allow application code to be edited
->   on the host while being executed in containers. For non-code items
->   such as cache directories or databases, the performance will be much
->   better if they are stored in the Linux VM, using a [data volume](/manuals/engine/storage/volumes.md)
->   (named volume) or [data container](/manuals/engine/storage/volumes.md).
-> * If you share the whole of your home directory into a container, MacOS may
->   prompt you to give Docker access to personal areas of your home directory such as
->   your Reminders or Downloads.
-> * By default, Mac file systems are case-insensitive while Linux is case-sensitive.
->   On Linux, it is possible to create two separate files: `test` and `Test`,
->   while on Mac these filenames would actually refer to the same underlying
->   file. This can lead to problems where an app works correctly on a developer's
->   machine (where the file contents are shared) but fails when run in Linux in
->   production (where the file contents are distinct). To avoid this, Docker Desktop
->   insists that all shared files are accessed as their original case. Therefore,
->   if a file is created called `test`, it must be opened as `test`. Attempts to
->   open `Test` will fail with the error "No such file or directory". Similarly,
->   once a file called `test` is created, attempts to create a second file called
->   `Test` will fail.
+> * 仅共享容器所需目录。文件共享会带来额外开销：宿主机文件的每次变更都需同步到 Linux VM。共享过多文件可能导致高 CPU 占用与文件系统性能下降。
+> * 共享文件夹旨在支持“在宿主机编辑应用代码，在容器中运行”。对于缓存目录、数据库等非代码数据，建议存放在 Linux VM 中，并使用[数据卷](/manuals/engine/storage/volumes.md)（命名卷）或[数据容器](/manuals/engine/storage/volumes.md)以获得更佳性能。
+> * 若将整个用户主目录共享进容器，macOS 可能会提示授予对提醒事项、下载等个人区域的访问权限。
+> * 默认情况下，Mac 文件系统不区分大小写，而 Linux 区分。在 Linux 中可以存在 `test` 与 `Test` 两个文件，但在 Mac 上它们会指向同一底层文件。这可能导致应用在开发者机器（共享文件内容）上正常，而在 Linux 生产环境（文件内容区分）失败。为避免此问题，Docker Desktop 要求以原始大小写访问共享文件。例如创建了 `test`，必须以 `test` 打开；以 `Test` 打开会报 “No such file or directory”。同理，已有 `test` 时创建 `Test` 也会失败。
 >
-> For more information, see [Volume mounting requires file sharing for any project directories outside of `/Users`](/manuals/desktop/troubleshoot-and-support/troubleshoot/topics.md)
+> 详见[将项目目录挂载为卷时，如位于 `/Users` 之外需开启文件共享](/manuals/desktop/troubleshoot-and-support/troubleshoot/topics.md)
 
-#### Shared folders on demand
+#### 按需共享文件夹
 
-On Windows, you can share a folder "on demand" the first time a particular folder is used by a container.
+在 Windows 上，当某个容器首次使用特定文件夹时，你可以“按需”共享该文件夹。
 
-If you run a Docker command from a shell with a volume mount (as shown in the
-example below) or kick off a Compose file that includes volume mounts, you get a
-popup asking if you want to share the specified folder.
+当你在 Shell 中执行带卷挂载的 Docker 命令（如下例）或启动包含卷挂载的 Compose 文件时，系统会弹窗询问是否共享该文件夹。
 
-You can select to **Share it**, in which case it is added to your Docker Desktop Shared Folders list and available to
-containers. Alternatively, you can opt not to share it by selecting **Cancel**.
+选择 **Share it** 后，该文件夹会加入 Docker Desktop 的共享列表并供容器使用。也可以选择 **Cancel** 拒绝共享。
 
 ![Shared folder on demand](../images/shared-folder-on-demand.png)
 
-### Proxies
+### 代理
 
-Docker Desktop supports the use of HTTP/HTTPS and [SOCKS5 proxies](/manuals/desktop/features/networking.md#socks5-proxy-support).
+Docker Desktop 支持使用 HTTP/HTTPS 与 [SOCKS5 代理](/manuals/desktop/features/networking.md#socks5-proxy-support)。
 
-HTTP/HTTPS proxies can be used when:
+HTTP/HTTPS 代理适用于：
 
-- Signing in to Docker
-- Pulling or pushing images
-- Fetching artifacts during image builds
-- Containers interact with the external network
-- Scanning images
+- 登录 Docker
+- 拉取或推送镜像
+- 构建镜像期间获取制品
+- 容器访问外部网络
+- 扫描镜像
 
-If the host uses a HTTP/HTTPS proxy configuration (static or via Proxy Auto-Configuration (PAC)), Docker Desktop reads
-this configuration
-and automatically uses these settings for signing in to Docker, for pulling and pushing images, and for
-container Internet access. If the proxy requires authorization then Docker Desktop dynamically asks
-the developer for a username and password. All passwords are stored securely in the OS credential store.
-Note that only the `Basic` proxy authentication method is supported so we recommend using an `https://`
-URL of your HTTP/HTTPS proxies to protect passwords while in transit on the network. Docker Desktop
-supports TLS 1.3 when communicating with proxies.
+若宿主机已配置 HTTP/HTTPS 代理（静态配置或 PAC），Docker Desktop 会自动读取并用于登录、拉取/推送镜像以及容器联网。若代理需要认证，Docker Desktop 会动态提示输入用户名和密码，且将密码安全保存在操作系统的凭据存储中。当前仅支持 `Basic` 认证方式，建议使用 `https://` 代理地址以保护传输中的密码。Docker Desktop 在与代理通信时支持 TLS 1.3。
 
-To set a different proxy for Docker Desktop, turn on **Manual proxy configuration** and enter a single
-upstream proxy URL of the form `http://proxy:port` or `https://proxy:port`.
+如需为 Docker Desktop 设置不同代理，开启 **Manual proxy configuration**，并填写一个上游代理 URL，格式为 `http://proxy:port` 或 `https://proxy:port`。
 
-To prevent developers from accidentally changing the proxy settings, see
-[Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md#what-features-can-i-configure-with-settings-management).
+为防止代理设置被意外修改，参见[设置管理](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md#what-features-can-i-configure-with-settings-management)。
 
-The HTTPS proxy settings used for scanning images are set using the `HTTPS_PROXY` environment variable.
+镜像扫描使用的 HTTPS 代理可通过环境变量 `HTTPS_PROXY` 配置。
 
 > [!NOTE]
 >
-> If you are using a PAC file hosted on a web server, make sure to add the MIME type `application/x-ns-proxy-autoconfig` for the `.pac` file extension on the server or website. Without this configuration, the PAC file may not be parsed correctly. For more details on PAC files and Docker Desktop, see [Hardened Docker Desktop](/manuals/enterprise/security/hardened-desktop/air-gapped-containers.md#proxy-auto-configuration-files)
+> 若使用托管在 Web 服务器上的 PAC 文件，请确保为 `.pac` 扩展名配置 MIME 类型 `application/x-ns-proxy-autoconfig`，否则可能无法正确解析。关于 PAC 与 Docker Desktop 的更多细节，参见 [Hardened Docker Desktop](/manuals/enterprise/security/hardened-desktop/air-gapped-containers.md#proxy-auto-configuration-files)。
 
 > [!IMPORTANT]
-> You cannot configure the proxy settings using the Docker daemon configuration
-> file (`daemon.json`), and we recommend you do not configure the proxy
-> settings via the Docker CLI configuration file (`config.json`).
+> 不能通过 Docker 守护进程配置文件（`daemon.json`）配置代理，也不建议通过 Docker CLI 配置文件（`config.json`）配置代理。
 >
-> To manage proxy configurations for Docker Desktop, configure the settings in
-> the Docker Desktop app or use [Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md).
+> 如需管理 Docker Desktop 的代理配置，请在应用中设置，或使用[设置管理](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md)。
 
-#### Proxy authentication
+#### 代理认证
 
-##### Basic authentication
+##### 基本认证
 
-If your proxy uses Basic authentication, Docker Desktop prompts developers for a username and password and caches the credentials. All passwords are stored securely in the OS credential store. It will request re-authentication if that cache is removed.
+如果代理使用 Basic 认证，Docker Desktop 会提示输入用户名和密码，并缓存凭据。密码会安全地存储在操作系统的凭据存储中；若缓存被清除，系统会再次请求认证。
 
-It's recommended that you use an `https://` URL of HTTP/HTTPS proxies to protect passwords during network transit. Docker Desktop also supports TLS 1.3 for communication with proxies.
+建议使用 `https://` 代理地址以保护密码在网络传输过程中的安全。Docker Desktop 与代理通信时也支持 TLS 1.3。
 
-##### Kerberos and NTLM authentication
+##### Kerberos 与 NTLM 认证
 
 > [!NOTE]
 >
-> Available for Docker Business subscribers with Docker Desktop for Windows version 4.30 and later.
+> 适用于 Docker Business 订阅用户，且需 Windows 版 Docker Desktop 4.30 及以上。
 
-Developers are no longer interrupted by prompts for proxy credentials as authentication is centralized. This also reduces the risk of account lockouts due to incorrect sign in attempts.
+由于认证集中化，开发者不再被代理凭据弹窗打断；这也降低了因错误登录尝试导致账号被锁的风险。
 
-If your proxy offers multiple authentication schemes in 407 (Proxy Authentication Required) response, Docker Desktop by default selects the Basic authentication scheme.
+如果代理在 407（Proxy Authentication Required）响应中提供多种认证方案，Docker Desktop 默认选择 Basic 方案。
 
-For Docker Desktop version 4.30 to 4.31: 
+适用于 Docker Desktop 4.30–4.31：
 
-To enable Kerberos or NTLM proxy authentication, no additional configuration is needed beyond specifying the proxy IP address and port.
+启用 Kerberos 或 NTLM 代理认证除指定代理 IP 与端口外，无需额外配置。
 
-For Docker Desktop version 4.32 and later: 
+适用于 Docker Desktop 4.32 及以上：
 
-To enable Kerberos or NTLM proxy authentication you must pass the `--proxy-enable-kerberosntlm` installer flag during installation via the command line, and ensure your proxy server is properly configured for Kerberos or NTLM authentication.
+需在命令行安装时传入安装器参数 `--proxy-enable-kerberosntlm`，并确保代理服务器已正确配置 Kerberos 或 NTLM 认证。
 
-### Network
+### 网络
 
 > [!NOTE]
 >
-> On Windows, the **Network** tab isn't available in the Windows container mode because
-> Windows manages networking.
+> 在 Windows 容器模式下，**Network** 不可用，因为网络由 Windows 管理。
 
-Docker Desktop uses a private IPv4 network for internal services such as a DNS server and an HTTP proxy. In case Docker Desktop's choice of subnet clashes with IPs in your environment, you can specify a custom subnet using the **Network** setting.
+Docker Desktop 为内部服务（如 DNS 与 HTTP 代理）使用私有 IPv4 网络。若默认子网与环境中的 IP 冲突，你可以在 **Network** 中自定义子网。
 
-On Windows and Mac, you can also set the default networking mode and DNS resolution behavior. For more information, see [Networking](/manuals/desktop/features/networking.md#networking-mode-and-dns-behaviour-for-mac-and-windows).
+在 Windows 与 Mac 上，你还可以设置默认网络模式与 DNS 解析行为。详见[网络](/manuals/desktop/features/networking.md#networking-mode-and-dns-behaviour-for-mac-and-windows)。
 
-On Mac, you can also select the **Use kernel networking for UDP** setting. This lets you use a more efficient kernel networking path for UDP. This may not be compatible with your VPN software.
+在 Mac 上，你可以启用 **Use kernel networking for UDP**，以使用更高效的 UDP 内核网络路径；但可能与部分 VPN 软件不兼容。
 
-### WSL Integration
+### WSL 集成
 
-On Windows in WSL 2 mode, you can configure which WSL 2 distributions will have the Docker
-WSL integration.
+在 Windows 的 WSL 2 模式下，你可以选择为哪些 WSL 2 发行版启用 Docker 集成。
 
-By default, the integration is enabled on your default WSL distribution.
-To change your default WSL distribution, run `wsl --set-default <distribution name>`. (For example,
-to set Ubuntu as your default WSL distribution, run `wsl --set-default ubuntu`).
+默认会对当前默认的 WSL 发行版启用集成。要更改默认发行版，运行 `wsl --set-default <distribution name>`（例如：`wsl --set-default ubuntu`）。
 
-You can also select any additional distributions you would like to enable the WSL 2 integration on.
+你也可以为其他发行版单独开启 WSL 2 集成。
 
-For more details on configuring Docker Desktop to use WSL 2, see
-[Docker Desktop WSL 2 backend](/manuals/desktop/features/wsl/_index.md).
+有关在 Docker Desktop 中使用 WSL 2 的更多信息，参见 [WSL 2 后端](/manuals/desktop/features/wsl/_index.md)。
 
-## Docker Engine
+## Docker 引擎
 
-The **Docker Engine** tab allows you to configure the Docker daemon used to run containers with Docker Desktop.
+**Docker Engine** 选项卡用于配置 Docker Desktop 运行容器所使用的 Docker 守护进程。
 
-You configure the daemon using a JSON configuration file. Here's what the file might look like:
+通过 JSON 配置文件来配置守护进程。示例如下：
 
 ```json
 {
@@ -343,27 +268,21 @@ You configure the daemon using a JSON configuration file. Here's what the file m
 }
 ```
 
-You can find this file at `$HOME/.docker/daemon.json`. To change the configuration, either
-edit the JSON configuration directly from the dashboard in Docker Desktop, or open and
-edit the file using your favorite text editor.
+该文件位于 `$HOME/.docker/daemon.json`。你可以直接在 Docker Desktop 的仪表板中编辑该 JSON，或使用文本编辑器打开并修改。
 
-To see the full list of possible configuration options, see the
-[dockerd command reference](/reference/cli/dockerd/).
+完整配置项请参考 [dockerd 命令参考](/reference/cli/dockerd/)。
 
-Select **Apply** to save your settings.
+选择 **Apply** 以保存更改。
 
-## Builders
+## 构建器
 
-If you have turned on the
-[Docker Desktop Builds view](/manuals/desktop/use-desktop/builds.md), you can use the
-**Builders** tab to inspect and manage builders in the Docker Desktop settings.
+如果你开启了 [Docker Desktop 构建视图](/manuals/desktop/use-desktop/builds.md)，即可在 **Builders** 选项卡中查看并管理构建器。
 
-### Inspect
+### 查看
 
-To inspect builders, find the builder that you want to inspect and select the
-expand icon. You can only inspect active builders.
+要查看构建器，找到目标构建器并点击展开图标。仅可查看处于活动状态的构建器。
 
-Inspecting an active builder shows:
+查看结果包括：
 
 - BuildKit version
 - Status
@@ -372,150 +291,128 @@ Inspecting an active builder shows:
 - Disk usage
 - Endpoint address
 
-### Select a different builder
+### 选择其他构建器
 
-The **Selected builder** section displays the selected builder.
-To select a different builder:
+**Selected builder** 区域显示当前选中的构建器。若要切换：
 
-1. Find the builder that you want to use under **Available builders**
-2. Open the drop-down menu next to the builder's name.
-3. Select **Use** to switch to this builder.
+1. 在 **Available builders** 中找到目标构建器
+2. 打开其名称旁的下拉菜单
+3. 选择 **Use** 切换至该构建器
 
-Your build commands now use the selected builder by default.
+之后构建命令将默认使用该构建器。
 
-### Create a builder
+### 创建构建器
 
-To create a builder, use the Docker CLI. See
-[Create a new builder](/build/builders/manage/#create-a-new-builder)
+使用 Docker CLI 创建构建器。参见[创建新构建器](/build/builders/manage/#create-a-new-builder)。
 
-### Remove a builder
+### 移除构建器
 
-You can remove a builder if:
+满足以下条件时可移除构建器：
 
-- The builder isn't your [selected builder](/build/builders/#selected-builder)
-- The builder isn't [associated with a Docker context](/build/builders/#default-builder).
+- 该构建器不是当前的[已选构建器](/build/builders/#selected-builder)
+- 该构建器未[关联到 Docker 上下文](/build/builders/#default-builder)
 
-  To remove builders associated with a Docker context, remove the context using
-  the `docker context rm` command.
+  如需移除与上下文关联的构建器，先使用 `docker context rm` 删除相关上下文。
 
-To remove a builder:
+移除步骤：
 
-1. Find the builder that you want to remove under **Available builders**
-2. Open the drop-down menu.
-3. Select **Remove** to remove this builder.
+1. 在 **Available builders** 中找到目标构建器
+2. 打开下拉菜单
+3. 选择 **Remove**
 
-If the builder uses the `docker-container` or `kubernetes` driver,
-the build cache is also removed, along with the builder.
+如果该构建器使用 `docker-container` 或 `kubernetes` 驱动，将连同构建器一并删除其构建缓存。
 
-### Stop and start a builder
+### 停止与启动构建器
 
-Builders that use the
-[`docker-container` driver](/build/builders/drivers/docker-container/)
-run the BuildKit daemon in a container.
-You can start and stop the BuildKit container using the drop-down menu.
+使用 [`docker-container` 驱动](/build/builders/drivers/docker-container/) 的构建器会在容器中运行 BuildKit 守护进程。你可以通过下拉菜单启动或停止该容器。
 
-Running a build automatically starts the container if it's stopped.
+若容器已停止，运行构建会自动将其拉起。
 
-You can only start and stop builders using the `docker-container` driver.
+仅 `docker-container` 驱动的构建器支持启动/停止操作。
 
 ## Kubernetes
 
 > [!NOTE]
 >
-> On Windows the **Kubernetes** tab is not available in Windows container mode.
+> 在 Windows 容器模式下，**Kubernetes** 选项卡不可用。
 
-Docker Desktop includes a standalone Kubernetes server, so that you can test
-deploying your Docker workloads on Kubernetes. To turn on Kubernetes support and
-install a standalone instance of Kubernetes running as a Docker container,
-select **Enable Kubernetes**.
+Docker Desktop 内置独立的 Kubernetes 服务器，便于测试将 Docker 工作负载部署到 Kubernetes。要启用 Kubernetes 支持，并以 Docker 容器形式安装独立 Kubernetes 实例，请勾选 **Enable Kubernetes**。
 
-With Docker Desktop version 4.38 and later, you can choose your cluster provisioning method:
- - **Kubeadm** creates a single-node cluster and the version is set by Docker Desktop.
- - **kind** creates a multi-node cluster and you can set the version and number of nodes. 
+从 Docker Desktop 4.38 起，你可以选择集群的初始化方式：
+ - **Kubeadm**：创建单节点集群，版本由 Docker Desktop 设定
+ - **kind**：创建多节点集群，你可自行设定版本与节点数量 
 
-Select **Show system containers (advanced)** to view internal containers when
-using Docker commands.
+选择 **Show system containers (advanced)** 可在使用 Docker 命令时查看内部容器。
 
-Select **Reset Kubernetes cluster** to delete all stacks and Kubernetes resources.
+选择 **Reset Kubernetes cluster** 可删除所有 Stack 与 Kubernetes 资源。
 
-For more information about using the Kubernetes integration with Docker Desktop,
-see [Deploy on Kubernetes](/manuals/desktop/features/kubernetes.md).
+关于在 Docker Desktop 中使用 Kubernetes 集成，参见[在 Kubernetes 上部署](/manuals/desktop/features/kubernetes.md)。
 
-## Software updates
+## 软件更新
 
-The **Software updates** tab lets you manage your Docker Desktop updates. 
-When there's a new update, you can choose to download the update right away, or
-select the **Release Notes** option to learn what's included in the updated version.
+在 **Software updates** 中可管理 Docker Desktop 的版本更新。当有新版本时，你可以立即下载，或点击 **Release Notes** 查看更新内容。
 
-The **Automatically check for updates** setting notifies you of any updates available to Docker Desktop in the Docker menu and the footer of the Docker Desktop Dashboard. This is turned on by default. 
+**Automatically check for updates** 会在 Docker 菜单与仪表板底部提示可用更新（默认开启）。 
 
-To allow Docker Desktop to automatically download new updates in the background,
-select **Always download updates**. This downloads newer versions of Docker Desktop
-when an update becomes available. After downloading the update, select
-**Apply and restart** to install the update. You can do this either through the
-Docker menu or in the **Updates** section in the Docker Desktop Dashboard.
+如需在后台自动下载更新，开启 **Always download updates**。下载完成后，选择 **Apply and restart** 安装更新。可在 Docker 菜单或仪表板的 **Updates** 区域执行。
 
-The **Automatically update components** setting checks whether components of Docker Desktop, such as Docker Compose, Docker Scout, and the Docker CLI, can be updated independently without the need for a full restart. This is turned on by default. 
+**Automatically update components** 会检测 Docker Desktop 组件（如 Docker Compose、Docker Scout、Docker CLI）是否可独立更新而无需完整重启（默认开启）。 
 
-## Extensions
+## 扩展
 
-Use the **Extensions** tab to:
+在 **Extensions** 中可以：
 
 - **Enable Docker Extensions**
 - **Allow only extensions distributed through the Docker Marketplace**
 - **Show Docker Extensions system containers**
 
-For more information about Docker extensions, see [Extensions](/manuals/extensions/_index.md).
+关于扩展的更多信息，参见 [Extensions](/manuals/extensions/_index.md)。
 
-## Beta features
+## Beta 功能
 
-Beta features provide access to future product functionality.
-These features are intended for testing and feedback only as they may change
-between releases without warning or remove them entirely from a future
-release. Beta features must not be used in production environments.
-Docker doesn't offer support for beta features.
+Beta 功能用于抢先体验后续版本可能提供的能力，仅供测试与反馈之用；它们可能在版本间发生变化或被移除。请勿在生产环境使用，Docker 不为 Beta 功能提供支持。
 
-You can also sign up to the [Developer Preview program](https://www.docker.com/community/get-involved/developer-preview/) from the **Beta features** tab.
+你也可以在 **Beta features** 中加入 [Developer Preview 计划](https://www.docker.com/community/get-involved/developer-preview/)。
 
-For a list of current experimental features in the Docker CLI, see [Docker CLI Experimental features](https://github.com/docker/cli/blob/master/experimental/README.md).
+Docker CLI 当前实验特性的列表，参见 [Docker CLI Experimental features](https://github.com/docker/cli/blob/master/experimental/README.md)。
 
 > [!IMPORTANT]
 >
-> For Docker Desktop versions 4.41 and earlier, there is also an **Experimental features** tab under the **Features in development** page.
+> 在 Docker Desktop 4.41 及更早版本，**Features in development** 页面下还有 **Experimental features**。
 >
-> As with beta features, experimental features must not be used in production environments. Docker does not offer support for experimental features.
+> 与 Beta 功能一致，实验功能也不应在生产环境中使用，Docker 不提供支持。
 
-## Notifications
+## 通知
 
-Use the **Notifications** tab to turn on or turn off notifications for the following events:
+在 **Notifications** 中可以开启或关闭以下事件的通知：
 
 - **Status updates on tasks and processes**
 - **Recommendations from Docker**
 - **Docker announcements**
 - **Docker surveys**
 
-By default, all general notifications are turned on. You'll always receive error notifications and notifications about new Docker Desktop releases and updates.
+默认情况下，通用通知均为开启。无论设置如何，你始终会收到错误通知与新版本/更新通知。
 
-You can also [configure notification settings for Docker Scout-related issues](/manuals/scout/explore/dashboard.md#notification-settings). 
+你也可以[配置与 Docker Scout 相关问题的通知设置](/manuals/scout/explore/dashboard.md#notification-settings)。 
 
-Notifications momentarily appear in the lower-right of the Docker Desktop Dashboard and then move to the **Notifications** drawer which can be accessed from the top-right of the Docker Desktop Dashboard.
+通知会短暂显示在 Docker Desktop 仪表板的右下角，随后进入右上角可访问的 **Notifications** 抽屉。
 
-## Advanced
+## 高级
 
-On Mac, you can reconfigure your initial installation settings  on the **Advanced** tab:
+在 Mac 上，你可以在 **Advanced** 中重新配置初始安装设置：
 
-- **Choose how to configure the installation of Docker's CLI tools**.
-  - **System**: Docker CLI tools are installed in the system directory under `/usr/local/bin`
-  - **User**: Docker CLI tools are installed in the user directory under `$HOME/.docker/bin`. You must then add `$HOME/.docker/bin` to your PATH. To add `$HOME/.docker/bin` to your path:
-      1. Open your shell configuration file. This is `~/.bashrc` if you're using a bash shell, or `~/.zshrc` if you're using a zsh shell.
-      2. Copy and paste the following:
+- **Choose how to configure the installation of Docker's CLI tools**：
+  - **System**：将 Docker CLI 工具安装到系统目录 `/usr/local/bin`
+  - **User**：将 Docker CLI 工具安装到用户目录 `$HOME/.docker/bin`，并将 `$HOME/.docker/bin` 加入 PATH。操作步骤：
+      1. 打开你的 shell 配置文件：bash 为 `~/.bashrc`，zsh 为 `~/.zshrc`
+      2. 复制并粘贴：
             ```console
             $ export PATH=$PATH:~/.docker/bin
             ```
-     3. Save and the close the file. Restart your shell to apply the changes to the PATH variable.
+     3. 保存并关闭文件；重启终端使 PATH 变更生效。
 
-- **Allow the default Docker socket to be used (Requires password)**. Creates `/var/run/docker.sock` which some third party clients may use to communicate with Docker Desktop. For more information, see [permission requirements for macOS](/manuals/desktop/setup/install/mac-permission-requirements.md#installing-symlinks).
+- **Allow the default Docker socket to be used (Requires password)**：创建 `/var/run/docker.sock`，供部分第三方客户端与 Docker Desktop 通信。详见 [macOS 权限要求](/manuals/desktop/setup/install/mac-permission-requirements.md#installing-symlinks)。
 
-- **Allow privileged port mapping (Requires password)**. Starts the privileged helper process which binds the ports that are between 1 and 1024. For more information, see [permission requirements for macOS](/manuals/desktop/setup/install/mac-permission-requirements.md#binding-privileged-ports).
+- **Allow privileged port mapping (Requires password)**：启动特权助手进程，用于绑定 1–1024 端口。详见 [macOS 权限要求](/manuals/desktop/setup/install/mac-permission-requirements.md#binding-privileged-ports)。
 
-For more information on each configuration and use case, see [Permission requirements](/manuals/desktop/setup/install/mac-permission-requirements.md).
+关于各项配置与使用场景，参见[权限要求](/manuals/desktop/setup/install/mac-permission-requirements.md)。

@@ -1,76 +1,46 @@
 ---
-description: Understand what Docker Desktop Resource Saver mode is and how to configure it
-keywords: Docker Dashboard, resource saver, manage, containers, gui, dashboard, user manual
-title: Docker Desktop's Resource Saver mode
-linkTitle: Resource Saver mode
+description: 了解 Docker Desktop 的 Resource Saver（资源节能）模式以及如何进行配置
+keywords: Docker 仪表板, 资源节能, 管理, 容器, 图形界面, 仪表板, 用户手册
+title: Docker Desktop 的 Resource Saver 模式
+linkTitle: Resource Saver 模式
 weight: 50
 ---
 
-Resource Saver mode significantly reduces Docker
-Desktop's CPU and memory utilization on the host by 2 GBs or more, by
-automatically stopping the Docker Desktop Linux VM when no containers are
-running for a period of time. The default time is set to 5 minutes, but this can be adjusted to suit your needs.
+Resource Saver 模式会在一段时间内没有容器运行时自动停止 Docker Desktop 的 Linux 虚拟机，从而显著降低宿主机上的 CPU 与内存占用（通常可减少 2 GB 及以上）。默认超时时间为 5 分钟，你可以按需调整。
 
-With Resource Saver mode, Docker Desktop uses minimal system resources when it's idle, thereby
-allowing you to save battery life on your laptop and improve your multi-tasking
-experience.
+启用 Resource Saver 模式后，Docker Desktop 在空闲时仅占用极少系统资源，这有助于延长笔记本电池续航并改善多任务体验。
 
-## Configure Resource Saver 
+## 配置 Resource Saver 
 
-Resource Saver is enabled by default but can be disabled by navigating to the **Resources** tab, in **Settings**. You can also configure the idle
-timer as shown below.
+Resource Saver 默认开启，你也可以在 **Settings** 的 **Resources** 选项卡中将其关闭。你还可以按下图配置空闲计时器。
 
 ![Resource Saver Settings](../images/resource-saver-settings.png)
 
-If the values available aren't sufficient for your
-needs, you can reconfigure it to any value, as long as the value is larger than 30 seconds, by
-changing `autoPauseTimeoutSeconds` in the Docker Desktop `settings-store.json` file (or `settings.json` for Docker Desktop versions 4.34 and earlier): 
+如果界面提供的可选值无法满足需求，你可以在 Docker Desktop 的 `settings-store.json`（4.34 及更早版本为 `settings.json`）中修改 `autoPauseTimeoutSeconds`，将其设置为任意大于 30 秒的数值： 
 
-  - Mac: `~/Library/Group Containers/group.com.docker/settings-store.json`
-  - Windows: `C:\Users\[USERNAME]\AppData\Roaming\Docker\settings-store.json`
-  - Linux: `~/.docker/desktop/settings-store.json`
+  - Mac：`~/Library/Group Containers/group.com.docker/settings-store.json`
+  - Windows：`C:\Users\[USERNAME]\AppData\Roaming\Docker\settings-store.json`
+  - Linux：`~/.docker/desktop/settings-store.json`
 
-There's no need to restart Docker Desktop after reconfiguring. 
+修改后无需重启 Docker Desktop。 
 
-When Docker Desktop enters Resource Saver mode: 
-- A leaf icon displays on the
-Docker Desktop status bar as well as on the Docker icon in
-the system tray. The following image shows the Linux VM CPU and memory utilization reduced
-to zero when Resource Saver mode is on. 
+当 Docker Desktop 进入 Resource Saver 模式时： 
+- 状态栏以及系统托盘中的 Docker 图标会显示叶子图标。下图展示了在 Resource Saver 模式开启时，Linux VM 的 CPU 与内存占用降至 0。 
 
    ![Resource Saver Status Bar](../images/resource-saver-status-bar.png)
 
-- Docker commands that don't run containers, for example listing container images or volumes, don't necessarily trigger an exit from Resource Saver mode as Docker Desktop can serve such commands without unnecessarily waking up the Linux VM.
+- 不会运行容器的 Docker 命令（例如列出镜像或卷）通常不会触发退出 Resource Saver 模式，因为 Docker Desktop 可以在不唤醒 Linux VM 的情况下处理这些命令。
 
 > [!NOTE]
 >
-> Docker Desktop exits the Resource Saver mode automatically when it needs to.
-> Commands that cause an exit from Resource Saver take a little longer to execute
-> (about 3 to 10 seconds) as Docker Desktop restarts the Linux VM.
-> It's generally faster on Mac and Linux, and slower on Windows with Hyper-V.
-> Once the Linux VM is restarted, subsequent container runs occur immediately as usual.
+> Docker Desktop 会在需要时自动退出 Resource Saver 模式。触发退出的命令执行时间会稍长（约 3 至 10 秒），因为 Docker Desktop 需要重启 Linux VM。在 Mac 与 Linux 上通常更快，而在启用 Hyper‑V 的 Windows 上相对较慢。Linux VM 重启完成后，后续的容器运行会立即恢复正常。
 
-## Resource Saver mode versus Pause
+## Resource Saver 与 Pause 的区别
 
-Resource Saver has higher precedence than the older [Pause](pause.md) feature,
-meaning that while Docker Desktop is in Resource Saver mode, manually pausing
-Docker Desktop is not possible (nor does it make sense since Resource Saver
-actually stops the Docker Desktop Linux VM). In general, we recommend keeping
-Resource Saver enabled as opposed to disabling it and using the manual Pause
-feature, as it results in much better CPU and memory savings.
+Resource Saver 的优先级高于较早的 [Pause](pause.md) 功能。这意味着当 Docker Desktop 处于 Resource Saver 模式时，无法手动暂停（实际上也没有必要，因为 Resource Saver 会停止 Docker Desktop 的 Linux VM）。总体建议保持 Resource Saver 启用，而不是关闭它并使用手动 Pause，因为前者能带来更好的 CPU 与内存节省效果。
 
-## Resource Saver mode on Windows
+## Windows 上的 Resource Saver 模式
 
-Resource Saver works a bit differently on Windows with WSL. Instead of
-stopping the WSL VM, it only pauses the Docker Engine inside the
-`docker-desktop` WSL distribution. That's because in WSL there's a single Linux VM
-shared by all WSL distributions, so Docker Desktop can't stop the Linux VM (i.e.,
-the WSL Linux VM is not owned by Docker Desktop). As a result, Resource Saver
-reduces CPU utilization on WSL, but it does not reduce Docker's memory
-utilization. 
+在启用 WSL 的 Windows 上，Resource Saver 的工作方式有所不同。它不会停止 WSL 的 VM，而是仅暂停 `docker-desktop` WSL 发行版内的 Docker 引擎。这是因为 WSL 中所有发行版共享同一个 Linux VM，Docker Desktop 无法停止该 Linux VM（WSL 的 Linux VM 并不归 Docker Desktop 管理）。因此，Resource Saver 在 WSL 上可降低 CPU 占用，但不会降低 Docker 的内存占用。 
 
-To reduce memory utilization on WSL, we instead recommend that
-users enable WSL's `autoMemoryReclaim` feature as described in the
-[Docker  Desktop WSL docs](/manuals/desktop/features/wsl/_index.md). Finally, since Docker Desktop does not
-stop the Linux VM on WSL, exit from Resource Saver mode is immediate (there's
-no exit delay).
+若要降低 WSL 中的内存占用，建议启用 WSL 的 `autoMemoryReclaim` 功能，详见[Docker Desktop 的 WSL 文档](/manuals/desktop/features/wsl/_index.md)。最后，由于 Docker Desktop 不会在 WSL 上停止 Linux VM，退出 Resource Saver 模式是即时的（无退出延迟）。

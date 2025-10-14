@@ -1,10 +1,9 @@
 ---
-description: Explore the Learning center and understand the benefits of signing in
-  to Docker Desktop
-keywords: Docker Dashboard, manage, containers, gui, dashboard, images, user manual,
-  learning center, guide, sign in
-title: Sign in to Docker Desktop
-linkTitle: Sign in
+description: 了解学习中心，并理解登录 Docker Desktop 的好处
+keywords: Docker 仪表板, 管理, 容器, 图形界面, 仪表板, 镜像, 用户手册,
+  学习中心, 指南, 登录
+title: 登录 Docker Desktop
+linkTitle: 登录
 weight: 40
 aliases:
 - /desktop/linux/
@@ -30,40 +29,40 @@ aliases:
 - /desktop/get-started/
 ---
 
-Docker recommends signing in with the **Sign in** option in the top-right corner of the Docker Dashboard. 
+Docker 建议你通过 Docker 仪表板右上角的 **Sign in** 选项进行登录。
 
-In large enterprises where admin access is restricted, administrators can [enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md). 
+在限制管理员访问权限的大型企业环境中，管理员可以[强制启用登录](/manuals/enterprise/security/enforce-sign-in/_index.md)。
 
 > [!TIP]
 >
-> Explore [Docker's core subscriptions](https://www.docker.com/pricing/) to see what else Docker can offer you. 
+> 了解 [Docker 的核心订阅方案](https://www.docker.com/pricing/)，看看还能为你提供哪些能力。
 
-## Benefits of signing in
+## 登录的好处
 
-- Access your Docker Hub repositories directly from Docker Desktop.
+- 可直接通过 Docker Desktop 访问你的 Docker Hub 仓库。
 
-- Increase your pull rate limit compared to anonymous users. See [Usage and limits](/manuals/docker-hub/usage/_index.md).
+- 相比匿名用户，提升你的镜像拉取速率限制。参见[使用与限制](/manuals/docker-hub/usage/_index.md)。
 
-- Enhance your organization’s security posture for containerized development with [Hardened Desktop](/manuals/enterprise/security/hardened-desktop/_index.md).
+- 使用 [Hardened Desktop](/manuals/enterprise/security/hardened-desktop/_index.md) 增强组织在容器化开发中的安全态势。
 
 > [!NOTE]
 >
-> Docker Desktop automatically signs you out after 90 days, or after 30 days of inactivity. 
+> Docker Desktop 会在 90 天后或连续 30 天未使用后自动将你登出。
 
-## Signing in with Docker Desktop for Linux
+## 在 Linux 版 Docker Desktop 上登录
 
-Docker Desktop for Linux relies on [`pass`](https://www.passwordstore.org/) to store credentials in GPG-encrypted files.
-Before signing in to Docker Desktop with your [Docker ID](/accounts/create-account/), you must initialize `pass`.
-Docker Desktop displays a warning if `pass` is not configured.
+Linux 版 Docker Desktop 依赖 [`pass`](https://www.passwordstore.org/) 将凭据保存在 GPG 加密文件中。
+在使用你的 [Docker ID](/accounts/create-account/) 登录 Docker Desktop 之前，你必须先初始化 `pass`。
+如果未正确配置 `pass`，Docker Desktop 会显示警告。
 
-1. Generate a GPG key. You can initialize pass by using a gpg key. To generate a gpg key, run:
+1. 生成 GPG 密钥。你可以使用 GPG 密钥来初始化 pass。生成 GPG 密钥，运行：
 
    ``` console
    $ gpg --generate-key
    ``` 
-2. Enter your name and email once prompted. 
+2. 按提示输入你的姓名与邮箱。
 
-   Once confirmed, GPG creates a key pair. Look for the `pub` line that contains your GPG ID, for example:
+   确认后，GPG 会创建一对密钥。查找包含你 GPG ID 的 `pub` 行，例如：
 
    ```text
    ...
@@ -71,21 +70,21 @@ Docker Desktop displays a warning if `pass` is not configured.
     3ABCD1234EF56G78
    uid          Molly <molly@example.com>
    ```
-3. Copy the GPG ID and use it to initialize `pass`
+3. 复制该 GPG ID，并用它初始化 `pass`：
 
    ```console
    $ pass init <your_generated_gpg-id_public_key>
    ``` 
 
-   You should see output similar to: 
+   你将看到类似如下的输出：
 
    ```text
    mkdir: created directory '/home/molly/.password-store/'
    Password store initialized for <generated_gpg-id_public_key>
    ```
 
-Once you initialize `pass`, you can sign in and pull your private images.
-When Docker CLI or Docker Desktop use credentials, a user prompt may pop up for the password you set during the GPG key generation.
+初始化 `pass` 后，你即可登录并拉取你的私有镜像。
+当 Docker CLI 或 Docker Desktop 使用凭据时，可能会弹出提示，要求输入你在生成 GPG 密钥时设置的密码。
 
 ```console
 $ docker pull molly/privateimage
@@ -97,8 +96,8 @@ Status: Downloaded newer image for molly/privateimage:latest
 docker.io/molly/privateimage:latest
 ```
 
-## What's next?
+## 进一步阅读
 
-- [Explore Docker Desktop](/manuals/desktop/use-desktop/_index.md) and its features. 
-- Change your [Docker Desktop settings](/manuals/desktop/settings-and-maintenance/settings.md).
-- [Browse common FAQs](/manuals/desktop/troubleshoot-and-support/faqs/general.md).
+- [探索 Docker Desktop](/manuals/desktop/use-desktop/_index.md) 及其功能。
+- 更改你的 [Docker Desktop 设置](/manuals/desktop/settings-and-maintenance/settings.md)。
+- [浏览常见问题](/manuals/desktop/troubleshoot-and-support/faqs/general.md)。

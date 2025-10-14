@@ -1,8 +1,8 @@
 ---
-description: See how you can deploy to Kubernetes on Docker Desktop
+description: 了解如何在 Docker Desktop 上部署到 Kubernetes
 keywords: deploy, kubernetes, kubectl, orchestration, Docker Desktop
-title: Deploy on Kubernetes with Docker Desktop
-linkTitle: Deploy on Kubernetes
+title: 使用 Docker Desktop 在 Kubernetes 上部署
+linkTitle: 在 Kubernetes 上部署
 aliases:
 - /docker-for-windows/kubernetes/
 - /docker-for-mac/kubernetes/
@@ -10,86 +10,72 @@ aliases:
 weight: 60
 ---
 
-Docker Desktop includes a standalone Kubernetes server and client, as well as Docker CLI integration, enabling local Kubernetes development and testing directly on your machine.
+Docker Desktop 内置独立的 Kubernetes 服务器与客户端，并与 Docker CLI 集成，使你可以在本机直接进行 Kubernetes 的本地开发与测试。
 
-The Kubernetes server runs as a single or multi-node cluster, within Docker container(s). This lightweight setup helps you explore Kubernetes features, test workloads, and work with container orchestration in parallel with other Docker functionalities.
+Kubernetes 服务器以单节点或多节点集群的形式在 Docker 容器中运行。该轻量化方案便于你探索 Kubernetes 功能、测试工作负载，并可与其他 Docker 能力并行使用。
 
-Kubernetes on Docker Desktop runs alongside other workloads, including Swarm services and standalone containers.
+Docker Desktop 上的 Kubernetes 可与其他工作负载并行运行，包括 Swarm 服务与独立容器。
 
 ![k8s settings](../images/k8s-settings.png)
 
-## What happens when I enable Kubernetes in Docker Desktop?
+## 在 Docker Desktop 中启用 Kubernetes 会发生什么？
 
-The following actions are triggered in the Docker Desktop backend and VM:
+在 Docker Desktop 的后端与虚拟机中会触发以下操作：
 
-- Generation of certificates and cluster configuration
-- Download and installation of Kubernetes internal components
-- Cluster bootup
-- Installation of additional controllers for networking and storage
+- 生成证书与集群配置
+- 下载并安装 Kubernetes 的内部组件
+- 启动集群
+- 安装用于网络与存储的额外控制器
 
-Turning the Kubernetes server on or off in Docker Desktop does not affect your other workloads.
+在 Docker Desktop 中开启或关闭 Kubernetes 服务器，不会影响其他工作负载。
 
-## Install and turn on Kubernetes
+## 安装并开启 Kubernetes
 
-1. Open the Docker Desktop Dashboard and navigate to **Settings**.
-2. Select the **Kubernetes** tab.
-3. Toggle on **Enable Kubernetes**.
-4. Choose your [cluster provisioning method](#cluster-provisioning-method).
-5. Select **Apply** to save the settings.
+1. 打开 Docker Desktop 仪表板并进入 **Settings**。
+2. 选择 **Kubernetes** 选项卡。
+3. 打开 **Enable Kubernetes** 开关。
+4. 选择你的[集群初始化方式](#cluster-provisioning-method)。
+5. 点击 **Apply** 保存设置。
 
-This sets up the images required to run the Kubernetes server as containers, and installs the `kubectl` command-line tool on your system at `/usr/local/bin/kubectl` (Mac) or `C:\Program Files\Docker\Docker\resources\bin\kubectl.exe` (Windows).
+此操作会准备以容器形式运行 Kubernetes 服务器所需的镜像，并在你的系统中安装 `kubectl` 命令行工具：Mac 安装到 `/usr/local/bin/kubectl`，Windows 安装到 `C:\Program Files\Docker\Docker\resources\bin\kubectl.exe`。
 
    > [!NOTE]
    >
-   > Docker Desktop for Linux does not include `kubectl` by default. You can install it separately by following the [Kubernetes installation guide](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/). Ensure the `kubectl` binary is installed at `/usr/local/bin/kubectl`.
+   > Linux 版 Docker Desktop 默认不包含 `kubectl`。你可以按照 [Kubernetes 安装指南](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) 单独安装。请确保 `kubectl` 可执行文件位于 `/usr/local/bin/kubectl`。
 
-When Kubernetes is enabled, its status is displayed in the Docker Desktop Dashboard footer and the Docker menu.
+启用 Kubernetes 后，其状态会显示在 Docker Desktop 仪表板页脚与 Docker 菜单中。
 
-You can check which version of Kubernetes you're on with:
+你可以使用以下命令查看当前 Kubernetes 版本：
 
 ```console
 $ kubectl version
 ```
 
-### Cluster provisioning method
+### 集群初始化方式
 
-Docker Desktop Kubernetes can be provisioned with either the `kubeadm` or `kind`
-provisioners.
+Docker Desktop 的 Kubernetes 可通过 `kubeadm` 或 `kind` 进行集群初始化。
 
-`kubeadm` is the older provisioner. It supports a single-node cluster, you can't select the kubernetes
-version, it's slower to provision than `kind`, and it's not supported by [Enhanced Container Isolation](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/index.md) (ECI),
-meaning that if ECI is enabled the cluster works but it's not protected by ECI.
+`kubeadm` 是较早的初始化方式。它仅支持单节点集群，无法选择 Kubernetes 版本，初始化速度慢于 `kind`，且不受 [增强容器隔离](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/index.md)（ECI）保护（即开启 ECI 时集群可以工作，但不受 ECI 保护）。
 
-`kind` is the newer provisioner, and it's available if you are signed in and are
-using Docker Desktop version 4.38 or later. It supports multi-node clusters (for
-a more realistic Kubernetes setup), you can choose the Kubernetes version, it's
-faster to provision than `kubeadm`, and it's supported by ECI (i.e., when ECI is
-enabled, the Kubernetes cluster runs in unprivileged Docker containers, thus
-making it more secure). Note however that `kind` requires that Docker Desktop be
-configured to use the [containerd image store](containerd.md) (the default image
-store in Docker Desktop 4.34 and later).
+`kind` 是较新的初始化方式，登录账户并使用 Docker Desktop 4.38 或更高版本即可使用。它支持多节点集群（更贴近真实环境），可选择 Kubernetes 版本，初始化速度快于 `kubeadm`，并受 ECI 保护（即开启 ECI 后，Kubernetes 集群运行在非特权 Docker 容器中，更加安全）。注意：`kind` 要求 Docker Desktop 配置为使用 [containerd 镜像存储](containerd.md)（在 4.34 及更高版本中为默认）。
 
-The following table summarizes this comparison.
+下表总结了两者的对比：
 
-| Feature | `kubeadm` | `kind` |
+| 特性 | `kubeadm` | `kind` |
 | :------ | :-----: | :--: |
-| Availability | Docker Desktop 4.0+ | Docker Desktop 4.38+ (requires sign in) |
-| Multi-node cluster support | No | Yes |
-| Kubernetes version selector | No | Yes |
-| Speed to provision | ~1 min | ~30 seconds |
-| Supported by ECI | No | Yes |
-| Works with containerd image store | Yes | Yes |
-| Works with Docker image store | Yes | No |
+| 可用性 | Docker Desktop 4.0+ | Docker Desktop 4.38+（需登录） |
+| 多节点集群支持 | 否 | 是 |
+| 可选择 Kubernetes 版本 | 否 | 是 |
+| 初始化速度 | 约 1 分钟 | 约 30 秒 |
+| 支持 ECI | 否 | 是 |
+| 兼容 containerd 镜像存储 | 是 | 是 |
+| 兼容 Docker 镜像存储 | 是 | 否 |
 
-## Using the kubectl command
+## 使用 kubectl 命令
 
-Kubernetes integration automatically installs the Kubernetes CLI command
-at `/usr/local/bin/kubectl` on Mac and at `C:\Program Files\Docker\Docker\Resources\bin\kubectl.exe` on Windows. This location may not be in your shell's `PATH`
-variable, so you may need to type the full path of the command or add it to
-the `PATH`.
+Kubernetes 集成会自动安装 Kubernetes CLI：在 Mac 上位于 `/usr/local/bin/kubectl`，在 Windows 上位于 `C:\Program Files\Docker\Docker\Resources\bin\kubectl.exe`。该路径可能不在你的 shell `PATH` 变量中，你可能需要输入完整路径或将其加入 `PATH`。
 
-If you have already installed `kubectl` and it is
-pointing to some other environment, such as `minikube` or a Google Kubernetes Engine cluster, ensure you change the context so that `kubectl` is pointing to `docker-desktop`:
+如果你已安装过 `kubectl`，并且其当前指向其他环境（如 `minikube` 或 Google Kubernetes Engine 集群），请切换上下文，使其指向 `docker-desktop`：
 
 ```console
 $ kubectl config get-contexts
@@ -98,14 +84,14 @@ $ kubectl config use-context docker-desktop
 
 > [!TIP]
 >
-> If the `kubectl` config get-contexts command returns an empty result, try:
+> 如果 `kubectl` config get-contexts 返回空结果，尝试：
 >
-> - Running the command in the Command Prompt or PowerShell.
-> - Setting the `KUBECONFIG` environment variable to point to your `.kube/config` file.
+> - 在命令提示符或 PowerShell 中执行命令。
+> - 设置 `KUBECONFIG` 环境变量，指向你的 `.kube/config` 文件。
 
-### Verify installation
+### 验证安装
 
-To confirm that Kubernetes is running, list the available nodes:
+要确认 Kubernetes 正在运行，可列出可用节点：
 
 ```console
 $ kubectl get nodes
@@ -113,30 +99,28 @@ NAME                 STATUS    ROLES            AGE       VERSION
 docker-desktop       Ready     control-plane    3h        v1.29.1
 ```
 
-If you installed `kubectl` using Homebrew, or by some other method, and
-experience conflicts, remove `/usr/local/bin/kubectl`.
+如果你通过 Homebrew 或其他方式安装了 `kubectl` 并发生冲突，请删除 `/usr/local/bin/kubectl`。
 
-For more information about `kubectl`, see the
-[`kubectl` documentation](https://kubernetes.io/docs/reference/kubectl/overview/).
+关于 `kubectl` 的更多信息，请参阅
+[`kubectl` 文档](https://kubernetes.io/docs/reference/kubectl/overview/)。
 
-## Upgrade your cluster
+## 升级集群
 
-Kubernetes clusters are not automatically upgraded with Docker Desktop updates. To upgrade the cluster, you must manually select **Reset Kubernetes Cluster** in settings.
+Kubernetes 集群不会随 Docker Desktop 升级而自动更新。若需升级集群，请在设置中手动选择 **Reset Kubernetes Cluster**。
 
-## Additional settings
+## 其他设置
 
-### Viewing system containers
+### 查看系统容器
 
-By default, Kubernetes system containers are hidden. To inspect these containers, enable **Show system containers (advanced)**.
+默认情况下，Kubernetes 系统容器处于隐藏状态。若需查看这些容器，请启用 **Show system containers (advanced)**。
 
-You can now view the running Kubernetes containers with `docker ps` or in the Docker Desktop Dashboard.
+此后，你可以通过 `docker ps` 或在 Docker Desktop 仪表板中查看正在运行的 Kubernetes 容器。
 
-### Configuring a custom image registry for Kubernetes control plane images
+### 为 Kubernetes 控制平面镜像配置自定义镜像仓库
 
-Docker Desktop uses containers to run the Kubernetes control plane. By default, Docker Desktop pulls
-the associated container images from Docker Hub. The images pulled depend on the [cluster provisioning mode](#cluster-provisioning-method).
+Docker Desktop 通过容器运行 Kubernetes 控制平面。默认情况下，Docker Desktop 会从 Docker Hub 拉取相关的容器镜像。具体拉取哪些镜像取决于[集群初始化方式](#cluster-provisioning-method)。
 
-For example, in `kind` mode it requires the following images:
+例如，在 `kind` 模式下需要以下镜像：
 
 ```console
 docker.io/kindest/node:<tag>
@@ -145,7 +129,7 @@ docker.io/docker/desktop-cloud-provider-kind:<tag>
 docker.io/docker/desktop-containerd-registry-mirror:<tag>
 ```
 
-In `kubeadm` mode it requires the following images:
+在 `kubeadm` 模式下需要以下镜像：
 
 ```console
 docker.io/registry.k8s.io/kube-controller-manager:<tag>
@@ -160,20 +144,14 @@ docker.io/docker/desktop-vpnkit-controller:<tag>
 docker.io/docker/desktop-kubernetes:<tag>
 ```
 
-The image tags are automatically selected by Docker Desktop based on several
-factors, including the version of Kubernetes being used. The tags vary for each image.
+镜像的标签由 Docker Desktop 根据多种因素自动选择，包括所使用的 Kubernetes 版本。不同镜像的标签并不相同。
 
-To accommodate scenarios where access to Docker Hub is not allowed, admins can
-configure Docker Desktop to pull the above listed images from a different registry (e.g., a mirror)
-using the [KubernetesImagesRepository](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md#kubernetes) setting as follows.
+对于无法访问 Docker Hub 的场景，管理员可以通过 [KubernetesImagesRepository](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md#kubernetes) 设置，将上述镜像改为从其他镜像仓库（例如镜像站）拉取。
 
-An image name can be broken into `[registry[:port]/][namespace/]repository[:tag]` components.
-The `KubernetesImagesRepository` setting allows users to override the `[registry[:port]/][namespace]`
-portion of the image's name.
+镜像名称可拆分为 `[registry[:port]/][namespace/]repository[:tag]` 组成部分。
+`KubernetesImagesRepository` 允许你覆盖镜像名称中的 `[registry[:port]/][namespace]` 部分。
 
-For example, if Docker Desktop Kubernetes is configured in `kind` mode and
-`KubernetesImagesRepository` is set to `my-registry:5000/kind-images`, then
-Docker Desktop will pull the images from:
+例如，若 Docker Desktop Kubernetes 处于 `kind` 模式，并将 `KubernetesImagesRepository` 设置为 `my-registry:5000/kind-images`，则 Docker Desktop 将从以下地址拉取镜像：
 
 ```console
 my-registry:5000/kind-images/node:<tag>
@@ -182,62 +160,58 @@ my-registry:5000/kind-images/desktop-cloud-provider-kind:<tag>
 my-registry:5000/kind-images/desktop-containerd-registry-mirror:<tag>
 ```
 
-These images should be cloned/mirrored from their respective images in Docker Hub. The tags must
-also match what Docker Desktop expects.
+这些镜像应从 Docker Hub 上相应的镜像进行克隆或镜像，且标签必须与 Docker Desktop 的期望一致。
 
-The recommended approach to set this up is the following:
+推荐的配置步骤如下：
 
-1) Start Docker Desktop.
+1) 启动 Docker Desktop。
 
-2) In Settings > Kubernetes, enable the *Show system containers* setting.
+2) 在 Settings > Kubernetes 中启用 *Show system containers* 设置。
 
-3) In Settings > Kubernetes, start Kubernetes using the desired cluster provisioning method: `kubeadm` or `kind`.
+3) 在 Settings > Kubernetes 中，使用所需的集群初始化方式启动 Kubernetes：`kubeadm` 或 `kind`。
 
-4) Wait for Kubernetes to start.
+4) 等待 Kubernetes 启动完成。
 
-5) Use `docker ps` to view the container images used by Docker Desktop for the Kubernetes control plane.
+5) 使用 `docker ps` 查看 Docker Desktop 的 Kubernetes 控制平面所使用的容器镜像。
 
-6) Clone or mirror those images (with matching tags) to your custom registry.
+6) 将这些镜像（包含匹配的标签）克隆/镜像到你的自定义镜像仓库。
 
-7) Stop the Kubernetes cluster.
+7) 停止 Kubernetes 集群。
 
-8) Configure the `KubernetesImagesRepository` setting to point to your custom registry.
+8) 配置 `KubernetesImagesRepository`，指向你的自定义仓库。
 
-9) Restart Docker Desktop.
+9) 重启 Docker Desktop。
 
-10) Verify that the Kubernetes cluster is using the custom registry images using the `docker ps` command.
-
-> [!NOTE]
->
-> The `KubernetesImagesRepository` setting only applies to control plane images used by Docker Desktop
-> to set up the Kubernetes cluster. It has no effect on other Kubernetes pods.
+10) 使用 `docker ps` 验证 Kubernetes 集群是否使用了自定义仓库镜像。
 
 > [!NOTE]
 >
-> In Docker Desktop versions 4.43 or earlier, when using `KubernetesImagesRepository` and [Enhanced Container Isolation (ECI)](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md)
-> is enabled, add the following images to the [ECI Docker socket mount image list](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md#enhanced-container-isolation):
+> `KubernetesImagesRepository` 仅适用于 Docker Desktop 用于搭建 Kubernetes 集群的控制平面镜像，对其他 Kubernetes Pod 无影响。
+
+> [!NOTE]
+>
+> 在 Docker Desktop 4.43 或更早版本中，若使用了 `KubernetesImagesRepository` 且启用了 [增强容器隔离（ECI）](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md)，需要将以下镜像加入[ECI Docker 套接字挂载镜像列表](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md#enhanced-container-isolation)：
 >
 > `[imagesRepository]/desktop-cloud-provider-kind:`
 > `[imagesRepository]/desktop-containerd-registry-mirror:`
 >
-> These containers mount the Docker socket, so you must add the images to the ECI images list. If not,
-> ECI will block the mount and Kubernetes won't start.
+> 这些容器会挂载 Docker 套接字，因此必须将镜像加入 ECI 镜像列表。否则，ECI 将阻止挂载，Kubernetes 将无法启动。
 
-## Troubleshooting
+## 故障排查
 
-- If Kubernetes fails to start, make sure Docker Desktop is running with enough allocated resources. Check **Settings** > **Resources**.
-- If the `kubectl` commands return errors, confirm the context is set to `docker-desktop`
+- 如果 Kubernetes 启动失败，请确保 Docker Desktop 分配了足够的资源。检查 **Settings** > **Resources**。
+- 如果 `kubectl` 命令报错，确认上下文是否设置为 `docker-desktop`
    ```console
    $ kubectl config use-context docker-desktop
    ```
-   You can then try checking the logs of the [Kubernetes system containers](#viewing-system-containers) if you have enabled that setting.
-- If you're experiencing cluster issues after updating, reset your Kubernetes cluster. Resetting a Kubernetes cluster can help resolve issues by essentially reverting the cluster to a clean state, and clearing out misconfigurations, corrupted data, or stuck resources that may be causing problems. If the issue still persists, you may need to clean and purge data, and then restart Docker Desktop.
+   若已启用相关设置，可尝试查看[系统容器日志](#viewing-system-containers)。
+- 如果升级后遇到集群问题，请重置 Kubernetes 集群。重置可将集群还原到干净状态，清除可能导致问题的错误配置、损坏数据或卡住的资源。若问题仍存，在清理数据后重启 Docker Desktop。
 
-## Turn off and uninstall Kubernetes
+## 关闭并卸载 Kubernetes
 
-To turn off Kubernetes in Docker Desktop:
+在 Docker Desktop 中关闭 Kubernetes：
 
-1. From the Docker Desktop Dashboard, select the **Settings** icon.
-2. Select the **Kubernetes** tab.
-3. Deselect the **Enable Kubernetes** checkbox.
-4. Select **Apply** to save the settings. This stops and removes Kubernetes containers, and also removes the `/usr/local/bin/kubectl` command.
+1. 在 Docker Desktop 仪表板中，选择 **Settings** 图标。
+2. 选择 **Kubernetes** 选项卡。
+3. 取消勾选 **Enable Kubernetes**。
+4. 点击 **Apply** 保存设置。此操作会停止并移除 Kubernetes 容器，同时移除 `/usr/local/bin/kubectl` 命令。

@@ -1,85 +1,81 @@
 ---
-description: Learn how to use the Docker Desktop Dashboard within Docker Desktop, including Quick search, the Docker menu, and more
-keywords: Docker Desktop Dashboard, manage, containers, gui, dashboard, images, user manual,
-  whale menu
-title: Explore Docker Desktop
+description: 了解如何使用 Docker Desktop 内的仪表板，包括快速搜索、Docker 菜单等功能
+keywords: Docker Desktop 仪表板, 管理, 容器, 图形界面, 仪表板, 镜像, 用户手册,
+  whale 菜单
+title: 浏览 Docker Desktop
 weight: 30
 aliases:
 - /desktop/dashboard/
 ---
 
-When you open Docker Desktop, the Docker Desktop Dashboard displays.
+当你打开 Docker Desktop 时，会显示 Docker Desktop 仪表板。
 
 ![Docker Desktop Dashboard on Containers view](../images/dashboard.png)
 
-It provides a centralized interface to manage your [containers](container.md), [images](images.md), [volumes](volumes.md), and [builds](builds.md).
+它提供一个集中式界面，帮助你管理[容器](container.md)、[镜像](images.md)、[卷](volumes.md)与[构建](builds.md)。
 
-In addition, the Docker Desktop Dashboard lets you:
+此外，Docker Desktop 仪表板还能让你：
 
-- Use [Ask Gordon](/manuals/ai/gordon/_index.md), a personal AI assistant embedded in Docker Desktop and the Docker CLI. It's designed to streamline your workflow and help you make the most of the Docker ecosystem.
-- Navigate to the **Settings** menu to configure your Docker Desktop settings. Select the **Settings** icon in the Dashboard header.
-- Access the **Troubleshoot** menu to debug and perform restart operations. Select the **Troubleshoot** icon in the Dashboard header.
-- Be notified of new releases, installation progress updates, and more in the **Notifications center**. Select the bell icon in the bottom-right corner of the Docker Desktop Dashboard to access the notification center.
-- Access the **Learning center** from the Dashboard header. It helps you get started with quick in-app walkthroughs and provides other resources for learning about Docker. 
+- 使用 [Ask Gordon](/manuals/ai/gordon/_index.md)，这是嵌入在 Docker Desktop 和 Docker CLI 中的个人人工智能助手，可帮助你简化工作流并充分利用 Docker 生态。
+- 打开 **Settings**（设置）菜单配置 Docker Desktop。在仪表板页眉选择 **Settings** 图标。
+- 进入 **Troubleshoot**（疑难解答）菜单进行调试与重启操作。在仪表板页眉选择 **Troubleshoot** 图标。
+- 在 **Notifications center**（通知中心）中查看新版本提示、安装进度更新等。在仪表板右下角选择铃铛图标进入通知中心。
+- 从仪表板页眉进入 **Learning center**（学习中心）。它提供内置的新手引导与其他学习资源，帮助你快速上手。
 
-  For a more detailed guide about getting started, see [Get started](/get-started/introduction/_index.md).
-- Access [Docker Hub](/manuals/docker-hub/_index.md) to search, browse, pull, run, or view details
-  of images.
-- Get to the [Docker Scout](../../scout/_index.md) dashboard.
-- Navigate to [Docker Extensions](/manuals/extensions/_index.md).
+  如需更完整的新手指南，请参阅[快速开始](/get-started/introduction/_index.md)。
+- 访问 [Docker Hub](/manuals/docker-hub/_index.md)，以搜索、浏览、拉取、运行或查看镜像详情。
+- 进入 [Docker Scout](../../scout/_index.md) 仪表板。
+- 导航到 [Docker Extensions](/manuals/extensions/_index.md)。
 
-## Docker terminal
+## Docker 终端
 
-From the Docker Dashboard footer, you can use the integrated terminal directly within Docker Desktop. 
+你可以在 Docker 仪表板页脚直接使用内置终端。
 
-The integrated terminal:
+该内置终端：
 
-- Persists your session if you navigate to another
-  part of the Docker Desktop Dashboard and then return.
-- Supports copy, paste, search, and clearing your session.
+- 即使你在仪表板内跳转到其他页面再返回，也能保留你的会话。
+- 支持复制、粘贴、搜索以及清空会话。
 
-#### Open the integrated terminal
+#### 打开内置终端
 
-To open the integrated terminal, either:
+要打开内置终端，你可以：
 
-- Hover over your running container and under the **Actions** column, select the **Show container actions**
-  menu. From the drop-down menu, select **Open in terminal**.
-- Or, select the **Terminal** icon located in the bottom-right corner, next to the version number.
+- 将鼠标悬停在正在运行的容器上，在 **Actions**（操作）列选择 **Show container actions** 菜单，并在下拉菜单中选择 **Open in terminal**。
+- 或者，点击右下角版本号旁的 **Terminal** 图标。
 
-To use your external terminal, navigate to the **General** tab in **Settings**
-and select the **System default** option under **Choose your terminal**.
+若要使用外部终端，请前往 **Settings** > **General**，在 **Choose your terminal** 下选择 **System default**。
 
-## Quick search
+## 快速搜索
 
-Use Quick Search, which is located in the Docker Dashboard header, to search for:
+使用位于仪表板页眉的快速搜索，可查找：
 
-- Any container or Compose application on your local system. You can see an overview of associated environment variables or perform quick actions, such as start, stop, or delete.
+- 本地系统上的任意容器或 Compose 应用。你可以查看关联环境变量的概览，或执行启动、停止、删除等快捷操作。
 
-- Public Docker Hub images, local images, and images from remote repositories (private repositories from organizations you're a part of in Hub). Depending on the type of image you select, you can either pull the image by tag, view documentation, go to Docker Hub for more details, or run a new container using the image.
+- 公共 Docker Hub 镜像、本地镜像以及远程仓库中的镜像（你所在组织在 Hub 上的私有仓库）。根据所选镜像类型，你可以按标签拉取、查看文档、跳转至 Docker Hub 获取详情，或基于该镜像运行新容器。
 
-- Extensions. From here, you can learn more about the extension and install it with a single click. Or, if you already have an extension installed, you can open it straight from the search results.
+- 扩展。从这里可以进一步了解扩展，并一键安装；如果已安装扩展，也可直接从搜索结果中打开。
 
-- Any volume. From here you can view the associated container.
+- 任意卷。可查看其关联的容器。
 
-- Docs. Find help from Docker's official documentation straight from Docker Desktop. 
+- 文档。在 Docker Desktop 内直接查找 Docker 官方文档的帮助信息。
 
-## The Docker menu
+## Docker 菜单
 
-Docker Desktop also includes a tray icon, referred to as the Docker menu {{< inline-image src="../../assets/images/whale-x.svg" alt="whale menu" >}} for quick access.
+Docker Desktop 还包含一个托盘图标，即 Docker 菜单 {{< inline-image src="../../assets/images/whale-x.svg" alt="whale menu" >}}，便于快速访问。
 
-Select the {{< inline-image src="../../assets/images/whale-x.svg" alt="whale menu" >}} icon in your taskbar to open options such as:
+在任务栏选择 {{< inline-image src="../../assets/images/whale-x.svg" alt="whale menu" >}} 图标，可打开以下选项：
 
-- **Dashboard**. This takes you to the Docker Desktop Dashboard.
-- **Sign in/Sign up**
-- **Settings**
-- **Check for updates**
-- **Troubleshoot**
-- **Give feedback**
-- **Switch to Windows containers** (if you're on Windows)
-- **About Docker Desktop**. Contains information on the versions you are running, and links to the Subscription Service Agreement for example.
+- **Dashboard**：跳转至 Docker Desktop 仪表板。
+- **Sign in/Sign up**（登录/注册）
+- **Settings**（设置）
+- **Check for updates**（检查更新）
+- **Troubleshoot**（疑难解答）
+- **Give feedback**（提交反馈）
+- **Switch to Windows containers**（切换到 Windows 容器，适用于 Windows）
+- **About Docker Desktop**（关于）：包含当前版本信息及订阅服务协议等链接。
 - **Docker Hub**
-- **Documentation**
-- **Extensions**
+- **Documentation**（文档）
+- **Extensions**（扩展）
 - **Kubernetes**
-- **Restart**
-- **Quit Docker Desktop**
+- **Restart**（重启）
+- **Quit Docker Desktop**（退出 Docker Desktop）

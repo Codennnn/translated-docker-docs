@@ -1,7 +1,7 @@
 ---
-title: Wasm workloads 
+title: Wasm 工作负载 
 weight: 90
-description: How to run Wasm workloads with Docker Desktop
+description: 如何在 Docker Desktop 上运行 Wasm 工作负载
 keywords: Docker, WebAssembly, wasm, containerd, engine
 toc_max: 3
 aliases: 
@@ -15,29 +15,25 @@ params:
 
 {{< summary-bar feature_name="Wasm workloads" >}}
 
-WebAssembly (Wasm) is a fast, light alternative to Linux and
-Windows containers.  With Docker Desktop, you can now run Wasm workloads side by side with traditional containers.
+WebAssembly（Wasm）是一种快速、轻量的运行时选择，可作为 Linux 与 Windows 容器的替代或补充。在 Docker Desktop 中，你可以让 Wasm 工作负载与传统容器并行运行。
 
-This page provides information about the ability to run Wasm applications
-alongside your Linux containers in Docker.
+本文介绍如何在 Docker 中与 Linux 容器并行运行 Wasm 应用。
 
 > [!TIP]
 >
-> Learn more about Wasm use cases and tradeoffs in the [Docker Wasm technical preview blog post](https://www.docker.com/blog/docker-wasm-technical-preview/).
+> 想进一步了解 Wasm 的使用场景与取舍，请参阅 [Docker Wasm 技术预览博文](https://www.docker.com/blog/docker-wasm-technical-preview/)。
 
-## Turn on Wasm workloads
+## 启用 Wasm 工作负载
 
-Wasm workloads require the [containerd image store](containerd.md)
-feature to be turned on. If you’re not already using the containerd image store,
-then pre-existing images and containers will be inaccessible.
+运行 Wasm 工作负载需要启用 [containerd 镜像存储](containerd.md)。如果你当前未使用 containerd 镜像存储，现有镜像与容器将暂不可见。
 
-1. Navigate to **Settings** in Docker Desktop.
-2. In the **General** tab, check **Use containerd for pulling and storing images**.
-3. Go to **Features in development** and check the **Enable Wasm** option.
-4. Select **Apply** to save the settings.
-5. In the confirmation dialog, select **Install** to install the Wasm runtimes.
+1. 打开 Docker Desktop 的 **Settings**。
+2. 在 **General** 选项卡勾选 **Use containerd for pulling and storing images**。
+3. 前往 **Features in development**，勾选 **Enable Wasm**。
+4. 点击 **Apply** 保存设置。
+5. 在确认对话框中选择 **Install** 以安装 Wasm 运行时。
 
-Docker Desktop downloads and installs the following runtimes: 
+Docker Desktop 将下载并安装以下运行时： 
 - `io.containerd.slight.v1`
 - `io.containerd.spin.v2`
 - `io.containerd.wasmedge.v1`
@@ -46,11 +42,11 @@ Docker Desktop downloads and installs the following runtimes:
 - `io.containerd.wws.v1`
 - `io.containerd.wasmer.v1`
 
-## Usage examples
+## 使用示例
 
-### Running a Wasm application with `docker run`
+### 使用 `docker run` 运行 Wasm 应用
 
-The following `docker run` command starts a Wasm container on your system:
+以下 `docker run` 命令会在你的系统上启动一个 Wasm 容器：
 
 ```console
 $ docker run \
@@ -59,23 +55,18 @@ $ docker run \
   secondstate/rust-example-hello
 ```
 
-After running this command, you can visit [http://localhost:8080/](http://localhost:8080/) to see the "Hello world" output from this example module.
+运行后，可访问 [http://localhost:8080/](http://localhost:8080/) 查看示例模块输出的 "Hello world"。
 
-If you are receiving an error message, see the [troubleshooting section](#troubleshooting) for help.
+若遇到错误信息，请参见[故障排查](#troubleshooting)。
 
-Note the `--runtime` and `--platform` flags used in this command:
+注意该命令中使用了 `--runtime` 与 `--platform` 标志：
 
-- `--runtime=io.containerd.wasmedge.v1`: Informs the Docker engine that you want
-  to use the Wasm containerd shim instead of the standard Linux container
-  runtime
-- `--platform=wasi/wasm`: Specifies the architecture of the image you want to
-  use. By leveraging a Wasm architecture, you don’t need to build separate
-  images for the different machine architectures. The Wasm runtime takes care of
-  the final step of converting the Wasm binary to machine instructions.
+- `--runtime=io.containerd.wasmedge.v1`：告诉 Docker 引擎使用 Wasm 的 containerd shim，而不是标准的 Linux 容器运行时
+- `--platform=wasi/wasm`：指定要使用的镜像架构。借助 Wasm 架构，你无需为不同硬件架构分别构建镜像；Wasm 运行时会完成将 Wasm 二进制转换为机器指令的最后一步。
 
-### Running a Wasm application with Docker Compose
+### 使用 Docker Compose 运行 Wasm 应用
 
-The same application can be run using the following Docker Compose file:
+可使用以下 Docker Compose 文件运行同样的应用：
 
 ```yaml
 services:
@@ -85,20 +76,17 @@ services:
     runtime: io.containerd.wasmedge.v1
 ```
 
-Start the application using the normal Docker Compose commands:
+使用常规的 Docker Compose 命令启动应用：
 
    ```console
    $ docker compose up
    ```
 
-### Running a multi-service application with Wasm
+### 运行包含 Wasm 的多服务应用
 
-Networking works the same as you'd expect with Linux containers, giving you the
-flexibility to combine Wasm applications with other containerized workloads,
-such as a database, in a single application stack.
+网络工作方式与 Linux 容器一致，你可以灵活地将 Wasm 应用与其他容器化工作负载（如数据库）组合到同一应用栈中。
 
-In the following example, the Wasm application leverages a MariaDB database
-running in a container.
+以下示例中，Wasm 应用依赖于在容器中运行的 MariaDB 数据库。
 
 1. Clone the repository.
 
@@ -113,7 +101,7 @@ running in a container.
    Resolving deltas: 100% (29/29), done.
    ```
 
-2. Navigate into the cloned project and start the project using Docker Compose.
+2. 进入克隆的项目目录，并使用 Docker Compose 启动项目。
 
    ```console
    $ cd microservice-rust-mysql
@@ -135,8 +123,7 @@ running in a container.
    server       latest    2c798ddecfa1   2 minutes ago   3MB
    ```
 
-   Inspecting the image shows the image has a `wasi/wasm` platform, a
-   combination of OS and architecture:
+   查看镜像可见其平台为 `wasi/wasm`，即一组操作系统与架构的组合：
 
    ```console
    $ docker image inspect server | grep -A 3 "Architecture"
@@ -146,17 +133,15 @@ running in a container.
            "VirtualSize": 3001146,
    ```
 
-3. Open the URL `http://localhost:8090` in a browser and create a few sample
-   orders. All of these are interacting with the Wasm server.
+3. 在浏览器打开 `http://localhost:8090`，创建一些示例订单。上述操作均与 Wasm 服务交互。
 
-4. When you're all done, tear everything down by hitting `Ctrl+C` in the
-   terminal you launched the application.
+4. 完成后，在启动应用的终端按 `Ctrl+C` 结束所有进程。
 
-### Building and pushing a Wasm module
+### 构建并推送 Wasm 模块
 
 1. Create a Dockerfile that builds your Wasm application.
 
-   Exactly how to do this varies depending on the programming language you use.
+   具体步骤因使用的编程语言而异。
 
 2. In a separate stage in your `Dockerfile`, extract the module and set it as
    the `ENTRYPOINT`.
@@ -168,8 +153,7 @@ running in a container.
    ENTRYPOINT [ "/hello_world.wasm" ]
    ```
 
-3. Build and push the image specifying the `wasi/wasm` architecture. Buildx
-   makes this easy to do in a single command.
+3. 指定 `wasi/wasm` 架构进行构建与推送。借助 Buildx，可通过单条命令完成：
 
    ```console
    $ docker buildx build --platform wasi/wasm -t username/hello-world .
@@ -183,34 +167,31 @@ running in a container.
    $ docker push username/hello-world
    ```
 
-## Troubleshooting
+## 故障排查
 
-This section contains instructions on how to resolve common issues.
+本节包含常见问题的解决方法。
 
 ### Unknown runtime specified
 
-If you try to run a Wasm container without the [containerd image
-store](./containerd.md), an error similar to the following displays:
+如果在未启用[containerd 镜像存储](./containerd.md)的情况下运行 Wasm 容器，会出现类似如下错误：
 
 ```text
 docker: Error response from daemon: Unknown runtime specified io.containerd.wasmedge.v1.
 ```
 
-[Turn on the containerd feature](./containerd.md#enable-the-containerd-image-store)
-in Docker Desktop settings and try again.
+请在 Docker Desktop 设置中[启用 containerd 功能](./containerd.md#enable-the-containerd-image-store)后重试。
 
 ### Failed to start shim: failed to resolve runtime path
 
-If you use an older version of Docker Desktop that doesn't support running Wasm
-workloads, you will see an error message similar to the following:
+如果使用的 Docker Desktop 版本较旧且不支持运行 Wasm 工作负载，会看到如下错误：
 
 ```text
 docker: Error response from daemon: failed to start shim: failed to resolve runtime path: runtime "io.containerd.wasmedge.v1" binary not installed "containerd-shim-wasmedge-v1": file does not exist: unknown.
 ```
 
-Update your Docker Desktop to the latest version and try again.
+请将 Docker Desktop 更新到最新版本后重试。
 
 ## Known issues
 
-- Docker Compose may not exit cleanly when interrupted. As a workaround, clean up `docker-compose` processes by sending them a SIGKILL (`killall -9 docker-compose`).
-- Pushes to Docker Hub might give an error stating `server message: insufficient_scope: authorization failed`, even after signing in through Docker Desktop. As a workaround, run `docker login` in the CLI
+- 中断时 Docker Compose 可能不会完全退出。可临时通过向 `docker-compose` 进程发送 SIGKILL（`killall -9 docker-compose`）进行清理。
+- 即便通过 Docker Desktop 登录，推送到 Docker Hub 仍可能报错 `server message: insufficient_scope: authorization failed`。可在 CLI 中运行 `docker login` 作为临时解决方案。

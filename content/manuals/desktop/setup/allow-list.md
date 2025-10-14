@@ -1,7 +1,7 @@
 ---
-description: A list of domain URLs required for Docker Desktop to function correctly within an organization.
-keywords: Docker Desktop, allowlist, allow list, firewall, authentication URLs, analytics
-title: Allowlist for Docker Desktop
+description: 在组织环境中，为确保 Docker Desktop 正常工作所需放行的域名列表。
+keywords: Docker Desktop, allowlist, 允许列表, 防火墙, 鉴权 URL, 分析
+title: Docker Desktop 允许列表（Allowlist）
 tags: [admin]
 linkTitle: Allowlist
 weight: 100
@@ -11,25 +11,25 @@ aliases:
 
 {{< summary-bar feature_name="Allow list" >}}
 
-This page contains the domain URLs that you need to add to a firewall allowlist to ensure Docker Desktop works properly within your organization.
+本页列出了需要加入防火墙允许列表（allowlist）的域名 URL，以确保 Docker Desktop 在你所在组织内可以正常工作。
 
-## Domain URLs to allow
+## 需要放行的域名 URL
 
-| Domains                                                                              | Description                                  |
+| Domains                                                                              | 描述                                         |
 | ------------------------------------------------------------------------------------ | -------------------------------------------- |
-| https://api.segment.io                                                               | Analytics                                    |
-| https://cdn.segment.com                                                              | Analytics                                    |
-| https://notify.bugsnag.com                                                           | Error reports                                |
-| https://sessions.bugsnag.com                                                         | Error reports                                |
-| https://auth.docker.io                                                               | Authentication                               |
-| https://cdn.auth0.com                                                                | Authentication                               |
-| https://login.docker.com                                                             | Authentication                               |
-| https://auth.docker.com                                                              | Authentication                               |
-| https://desktop.docker.com                                                           | Update                                       |
+| https://api.segment.io                                                               | 分析                                         |
+| https://cdn.segment.com                                                              | 分析                                         |
+| https://notify.bugsnag.com                                                           | 错误上报                                     |
+| https://sessions.bugsnag.com                                                         | 错误上报                                     |
+| https://auth.docker.io                                                               | 身份验证                                     |
+| https://cdn.auth0.com                                                                | 身份验证                                     |
+| https://login.docker.com                                                             | 身份验证                                     |
+| https://auth.docker.com                                                              | 身份验证                                     |
+| https://desktop.docker.com                                                           | 更新                                         |
 | https://hub.docker.com                                                               | Docker Hub                                   |
-| https://registry-1.docker.io                                                         | Docker Pull/Push                             |
-| https://production.cloudflare.docker.com                                             | Docker Pull/Push (Paid plans)                |
-| https://docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com | Docker Pull/Push (Personal plan / Anonymous) |
-| https://docker-pinata-support.s3.amazonaws.com                                       | Troubleshooting                              |
-| https://api.dso.docker.com                                                           | Docker Scout service                         |
-| https://api.docker.com                                                               | New API                                      |
+| https://registry-1.docker.io                                                         | 镜像拉取/推送                                |
+| https://production.cloudflare.docker.com                                             | 镜像拉取/推送（付费方案）                    |
+| https://docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com | 镜像拉取/推送（个人/匿名）                   |
+| https://docker-pinata-support.s3.amazonaws.com                                       | 故障排查                                     |
+| https://api.dso.docker.com                                                           | Docker Scout 服务                            |
+| https://api.docker.com                                                               | 新版 API                                     |

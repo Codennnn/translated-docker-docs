@@ -1,199 +1,163 @@
 ---
-title: Explore the Builds view in Docker Desktop
-linkTitle: Builds
-description: Understand how to use the Builds view in Docker Desktop
-keywords: Docker Dashboard, manage, gui, dashboard, builders, builds
+title: 浏览 Docker Desktop 的 Builds 视图
+linkTitle: 构建（Builds）
+description: 了解如何使用 Docker Desktop 中的 Builds 视图
+keywords: Docker 仪表板, 管理, 图形界面, 仪表板, 构建器, 构建
 weight: 40
 ---
 
-The **Builds** view provides an interactive interface for inspecting build history, monitoring active builds, and managing builders directly in Docker Desktop.
+**Builds** 视图提供交互式界面，便于在 Docker Desktop 中直接查看构建历史、监控活跃构建并管理构建器（builders）。
 
-By default, the **Build history** tab displays a list of completed builds, sorted by date (newest first). Switch to the **Active builds** tab to view ongoing builds.
+默认情况下，**Build history** 选项卡会按时间（最新优先）显示已完成的构建列表。切换到 **Active builds** 选项卡可查看正在进行的构建。
 
-If you're connected to a cloud builder through [Docker Build Cloud](../../build-cloud/_index.md),
-the Builds view also lists any active or completed cloud builds by other team members
-connected to the same cloud builder.
+如果你通过 [Docker Build Cloud](../../build-cloud/_index.md) 连接了云端构建器，Builds 视图也会显示连接到同一云端构建器的团队成员所触发的活跃或已完成的云构建。
 
 > [!NOTE]
 >
-> When building Windows container images using the `docker build` command, the legacy builder is used which does not populate the **Builds** view. To switch to using BuildKit, you can either:
-> - Set `DOCKER_BUILDKIT=1` in the build command, such as `DOCKER_BUILDKIT=1 docker build .` or
-> - Use the `docker buildx build` command
+> 使用 `docker build` 构建 Windows 容器镜像时，会使用旧版 builder，无法在 **Builds** 视图中显示。
+> 如需切换到 BuildKit，可：
+> - 在构建命令中设置 `DOCKER_BUILDKIT=1`，如 `DOCKER_BUILDKIT=1 docker build .`；或
+> - 使用 `docker buildx build` 命令。
 
-## Show build list
+## 查看构建列表
 
-Open the **Builds** view from the Docker Dashboard to access:
+在 Docker 仪表板中打开 **Builds** 视图，你可以访问：
 
-- **Build history**: Completed builds with access to logs, dependencies, traces, and more
-- **Active builds**: Builds currently in progress
+- **Build history**：已完成的构建，可查看日志、依赖、跟踪等信息
+- **Active builds**：当前进行中的构建
 
-Only builds from active, running builders are listed. Builds from removed or stopped builders are not shown.
+仅会显示活跃、正在运行的构建器产生的构建；已移除或已停止的构建器产生的构建不会显示。
 
-### Builder settings
+### 构建器设置
 
-The top-right corner shows the name of your currently selected builder, and the
-**Builder settings** button lets you [manage builders](#manage-builders) in the
-Docker Desktop settings.
+右上角会显示当前选定的构建器名称；通过 **Builder settings** 按钮可在 Docker Desktop 设置中[管理构建器](#manage-builders)。
 
-### Import builds
+### 导入构建
 
 {{< summary-bar feature_name="Import builds" >}}
 
-The **Import builds** button lets you import build records for builds by other
-people, or builds in a CI environment. When you've imported a build record, it
-gives you full access to the logs, traces, and other data for that build,
-directly in Docker Desktop. 
+**Import builds** 按钮允许你导入他人或 CI 环境的构建记录。导入后，你可以在 Docker Desktop 内直接查看该构建的日志、跟踪与其他数据。
 
-The [build summary](/manuals/build/ci/github-actions/build-summary.md)
-for the `docker/build-push-action` and `docker/bake-action` GitHub Actions
-includes a link to download the build records, for inspecting CI jobs with
-Docker Desktop.
+`docker/build-push-action` 与 `docker/bake-action` 的 GitHub Actions [构建摘要](/manuals/build/ci/github-actions/build-summary.md)包含下载构建记录的链接，可用于在 Docker Desktop 中检查 CI 任务。
 
-## Inspect builds
+## 检查构建
 
-To inspect a build, select the build that you want to view in the list.
-The inspection view contains a number of tabs.
+在列表中选择目标构建即可检查。检查视图包含多个选项卡。
 
-The **Info** tab displays details about the build.
+**Info** 选项卡显示构建详情。
 
-If you're inspecting a multi-platform build, the drop-down menu in the
-top-right of this tab lets you filter the information down to a specific
-platform:
+如果你正在检查多平台构建，可通过该选项卡右上角的下拉菜单筛选到特定平台：
 
-The **Source details** section shows information about the frontend
-[frontend](/manuals/build/buildkit/frontend.md) and, if available,
-the source code repository used for the build.
+**Source details** 部分显示关于 [frontend](/manuals/build/buildkit/frontend.md) 的信息，以及（若可用）用于构建的源码仓库。
 
-### Build timing
+### 构建时序（Build timing）
 
-The **Build timing** section of the Info tab contains charts
-showing a breakdown of the build execution from various angles.
+Info 选项卡中的 **Build timing** 部分通过图表展示构建执行在多个维度的时间分布。
 
-- **Real time** refers to the wall-clock time that it took to complete the build.
-- **Accumulated time** shows the total CPU time for all steps.
-- **Cache usage** shows the extent to which build operations were cached.
-- **Parallel execution** shows how much of the build execution time was spent running steps in parallel.
+- **Real time**：完成构建所消耗的实际时间。
+- **Accumulated time**：所有步骤的 CPU 总时间。
+- **Cache usage**：构建操作被缓存的程度。
+- **Parallel execution**：并行执行步骤所占用的构建时间比例。
 
-The chart colors and legend keys describe the different build operations. Build
-operations are defined as follows:
+图表的颜色与图例代表不同的构建操作。构建操作定义如下：
 
-| Build operation      | Description                                                                                                                                                                     |
+| 构建操作              | 描述                                                                                                                                                                           |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Local file transfers | Time spent transferring local files from the client to the builder.                                                                                                             |
-| File operations      | Any operations that involve creating and copying files in the build. For example, the `COPY`, `WORKDIR`, `ADD` instructions in a Dockerfile frontend all incur file operations. |
-| Image pulls          | Time spent pulling images.                                                                                                                                                      |
-| Executions           | Container executions, for example commands defined as `RUN` instructions in a Dockerfile frontend.                                                                              |
-| HTTP                 | Remote artifact downloads using `ADD`.                                                                                                                                          |
-| Git                  | Same as **HTTP** but for Git URLs.                                                                                                                                              |
-| Result exports       | Time spent exporting the build results.                                                                                                                                         |
-| SBOM                 | Time spent generating the [SBOM attestation](/manuals/build/metadata/attestations/sbom.md).                                                                                                 |
-| Idle                 | Idle time for build workers, which can happen if you have configured a [max parallelism limit](/manuals/build/buildkit/configure.md#max-parallelism).                              |
+| Local file transfers | 将本地文件从客户端传输到构建器所花费的时间。                                                                                                                                    |
+| File operations      | 构建中涉及创建与复制文件的所有操作。例如，在 Dockerfile frontend 中，`COPY`、`WORKDIR`、`ADD` 指令都会产生文件操作。                                                               |
+| Image pulls          | 拉取镜像所花费的时间。                                                                                                                                                          |
+| Executions           | 容器执行操作，例如 Dockerfile frontend 中 `RUN` 指令定义的命令。                                                                                                                |
+| HTTP                 | 使用 `ADD` 下载远程制品所花费的时间。                                                                                                                                            |
+| Git                  | 与 **HTTP** 相同，但针对 Git URL。                                                                                                                                             |
+| Result exports       | 导出构建结果所花费的时间。                                                                                                                                                       |
+| SBOM                 | 生成[SBOM 证明](/manuals/build/metadata/attestations/sbom.md)所花费的时间。                                                                                                     |
+| Idle                 | 构建工作器的空闲时间，例如当你配置了[最大并行度限制](/manuals/build/buildkit/configure.md#max-parallelism)时可能出现。                                                               |
 
-### Build dependencies
+### 构建依赖（Build dependencies）
 
-The **Dependencies** section shows images and remote resources used during
-the build. Resources listed here include:
+**Dependencies** 部分显示构建过程中使用的镜像与远程资源，包括：
 
-- Container images used during the build
-- Git repositories included using the `ADD` Dockerfile instruction
-- Remote HTTPS resources included using the `ADD` Dockerfile instruction
+- 构建过程中使用的容器镜像
+- 通过 Dockerfile `ADD` 指令引入的 Git 仓库
+- 通过 Dockerfile `ADD` 指令引入的远程 HTTPS 资源
 
-### Arguments, secrets, and other parameters
+### 构建参数、机密与其他参数
 
-The **Configuration** section of the Info tab shows parameters passed to the build:
+Info 选项卡中的 **Configuration** 部分展示传递给构建的参数：
 
-- Build arguments, including the resolved value
-- Secrets, including their IDs (but not their values)
-- SSH sockets
-- Labels
-- [Additional contexts](/reference/cli/docker/buildx/build/#build-context)
+- 构建参数（包含解析后的值）
+- 机密（包含其 ID，但不包含其值）
+- SSH 套接字
+- 标签
+- [附加上下文](/reference/cli/docker/buildx/build/#build-context)
 
-### Outputs and artifacts
+### 输出与制品（artifacts）
 
-The **Build results** section shows a summary of the generated build artifacts,
-including image manifest details, attestations, and build traces.
+**Build results** 部分显示生成的构建制品摘要，包括镜像清单详情、证明（attestations）与构建跟踪。
 
-Attestations are metadata records attached to a container image.
-The metadata describes something about the image,
-for example how it was built or what packages it contains.
-For more information about attestations, see [Build attestations](/manuals/build/metadata/attestations/_index.md).
+证明（attestation）是附加到容器镜像的元数据记录，用于描述镜像的相关信息，例如它是如何构建的或包含哪些软件包。更多信息参见[构建证明](/manuals/build/metadata/attestations/_index.md)。
 
-Build traces capture information about the build execution steps in Buildx and
-BuildKit. The traces are available in two formats: OTLP and Jaeger. You can
-download build traces from Docker Desktop by opening the actions menu and
-selecting the format you want to download.
+构建跟踪记录了 Buildx 与 BuildKit 中构建执行步骤的信息。跟踪支持两种格式：OTLP 与 Jaeger。你可以在 Docker Desktop 的操作菜单中选择所需格式进行下载。
 
-#### Inspect build traces with Jaeger
+#### 使用 Jaeger 检查构建跟踪
 
-Using a Jaeger client, you can import and inspect build traces from Docker
-Desktop. The following steps show you how to export a trace from Docker Desktop
-and view it in [Jaeger](https://www.jaegertracing.io/):
+使用 Jaeger 客户端，你可以导入并检查来自 Docker Desktop 的构建跟踪。以下步骤展示如何在 Docker Desktop 中导出跟踪，并在 [Jaeger](https://www.jaegertracing.io/) 中查看：
 
-1. Start Jaeger UI:
+1. 启动 Jaeger UI：
 
    ```console
    $ docker run -d --name jaeger -p "16686:16686" jaegertracing/all-in-one
    ```
 
-2. Open the Builds view in Docker Desktop, and select a completed build.
+2. 在 Docker Desktop 中打开 Builds 视图，选择一个已完成的构建。
 
-3. Navigate to the **Build results** section, open the actions menu and select **Download as Jaeger format**.
+3. 前往 **Build results** 部分，打开操作菜单并选择 **Download as Jaeger format**。
 
    <video controls>
      <source src="/assets/video/build-jaeger-export.mp4" type="video/mp4" />
    </video>
 
-4. Go to <http://localhost:16686> in your browser to open Jaeger UI.
+4. 在浏览器访问 <http://localhost:16686> 打开 Jaeger UI。
 
-5. Select the **Upload** tab and open the Jaeger build trace you just exported.
+5. 选择 **Upload** 选项卡并打开刚导出的 Jaeger 构建跟踪。
 
-Now you can analyze the build trace using the Jaeger UI:
+现在你可以使用 Jaeger UI 分析构建跟踪：
 
 ![Jaeger UI screenshot](../images/build-ui-jaeger-screenshot.png "Screenshot of a build trace in the Jaeger UI")
 
-### Dockerfile source and errors
+### Dockerfile 源码与错误
 
-When inspecting a successful completed build or an ongoing active build,
-the **Source** tab shows the [frontend](/manuals/build/buildkit/frontend.md)
-used to create the build.
+当检查已成功完成的构建或正在进行的构建时，**Source** 选项卡会显示用于创建该构建的 [frontend](/manuals/build/buildkit/frontend.md)。
 
-If the build failed, an **Error** tab displays instead of the **Source** tab.
-The error message is inlined in the Dockerfile source,
-indicating where the failure happened and why.
+如果构建失败，会显示 **Error** 选项卡以替代 **Source**。错误信息会内联在 Dockerfile 源码中，指出失败位置与原因。
 
-### Build logs
+### 构建日志
 
-The **Logs** tab displays the build logs.
-For active builds, the logs are updated in real-time.
+**Logs** 选项卡用于展示构建日志。对于正在进行的构建，日志会实时更新。
 
-You can toggle between a **List view** and a **Plain-text view** of a build log.
+你可以在 **List view** 与 **Plain-text view** 两种日志视图间切换。
 
-- The **List view** presents all build steps in a collapsible format,
-  with a timeline for navigating the log along a time axis.
+- **List view**：以可折叠的格式展示所有构建步骤，并提供时间轴用于浏览日志。
 
-- The **Plain-text view** displays the log as plain text.
+- **Plain-text view**：以纯文本形式展示日志。
 
-The **Copy** button lets you copy the plain-text version of the log to your clipboard.
+通过 **Copy** 按钮可将纯文本版本的日志复制到剪贴板。
 
-### Build history
+### 构建历史
 
-The **History** tab displays statistics data about completed builds.
+**History** 选项卡展示关于已完成构建的统计数据。
 
-The time series chart illustrates trends in duration, build steps, and cache usage for related builds,
-helping you identify patterns and shifts in build operations over time.
-For instance, significant spikes in build duration or a high number of cache misses
-could signal opportunities for optimizing the Dockerfile.
+时间序列图展示相关构建在持续时间、构建步骤与缓存使用方面的趋势，帮助你识别随时间变化的模式与变化。例如，构建时长的显著增长或大量缓存未命中，可能意味着存在优化 Dockerfile 的机会。
 
-You can navigate to and inspect a related build by selecting it in the chart,
-or using the **Past builds** list below the chart.
+你可以在图表中选择某个相关构建进入检查，或在图表下方的 **Past builds** 列表中访问。
 
-## Manage builders
+## 管理构建器
 
-The **Builder** tab in **Settings** lets you:
+**Settings** 中的 **Builder** 选项卡可以：
 
-- Inspect the state and configuration of active builders
-- Start and stop a builder
-- Delete build history
-- Add or remove builders (or connect and disconnect, in the case of cloud builders)
+- 查看活跃构建器的状态与配置
+- 启动与停止构建器
+- 删除构建历史
+- 添加或移除构建器（云构建器则为连接与断开）
 
-For more information about managing builders, see [Change settings](/manuals/desktop/settings-and-maintenance/settings.md#builders)
+关于管理构建器的更多信息，参见[更改设置](/manuals/desktop/settings-and-maintenance/settings.md#builders)

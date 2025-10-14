@@ -1,125 +1,119 @@
 ---
-title: How to back up and restore your Docker Desktop data
-linkTitle: Backup and restore data
-keywords: Docker Desktop, backup, restore, migration, reinstall, containers, images,
-  volumes
+title: 如何备份与恢复 Docker Desktop 数据
+linkTitle: 备份与恢复数据
+keywords: Docker Desktop, 备份, 恢复, 迁移, 重装, 容器, 镜像,
+  卷
 weight: 20
 aliases:
  - /desktop/backup-and-restore/
 ---
 
-Use this procedure to back up and restore your images and container data. This is useful if you want to reset your VM disk or to move your Docker environment to a new computer, or recover from a failed Docker Desktop update or installation.
+使用以下步骤备份与恢复你的镜像和容器数据。以下场景尤其有用：重置 VM 磁盘、将 Docker 环境迁移到新电脑、或从失败的 Docker Desktop 更新/安装中恢复。
 
 > [!IMPORTANT]
 >
-> If you use volumes or bind-mounts to store your container data, backing up your containers may not be needed, but make sure to remember the options that were used when creating the container or use a [Docker Compose file](/reference/compose-file/_index.md) if you want to re-create your containers with the same configuration after re-installation.
+> 如果你使用卷或绑定挂载存储容器数据，可能无需备份容器本身。但请务必记录创建容器时使用的选项；或者使用 [Docker Compose 文件](/reference/compose-file/_index.md)，以便在重新安装后按相同配置重新创建容器。
 
-## If Docker Desktop is functioning normally
+## 如果 Docker Desktop 正常运行
 
-### Save your data
+### 备份你的数据
 
-1. Commit your containers to an image with [`docker container commit`](/reference/cli/docker/container/commit.md).
+1. 使用 [`docker container commit`](/reference/cli/docker/container/commit.md) 将容器提交为镜像。
 
-   Committing a container stores filesystem changes and some container configurations, such as labels and environment variables, as a local image. Be aware that environment variables may contain sensitive
-   information such as passwords or proxy-authentication, so take care when pushing the resulting image to a registry.
+   提交操作会将文件系统变更与部分容器配置（如标签、环境变量）保存为本地镜像。注意：环境变量可能包含敏感信息（如密码、代理认证），推送至仓库时请谨慎处理。
 
-   Also note that filesystem changes in a volume that are attached to the
-   container are not included in the image, and must be backed up separately.
+   同时，挂载到容器的卷中的文件系统变更不会包含在镜像中，需要单独备份。
 
-   If you used a [named volume](/manuals/engine/storage/_index.md#more-details-about-mount-types) to store container data, such as databases, refer to the [back up, restore, or migrate data volumes](/manuals/engine/storage/volumes.md#back-up-restore-or-migrate-data-volumes) page in the storage section.
+   如果你使用了[命名卷](/manuals/engine/storage/_index.md#more-details-about-mount-types)存储容器数据（如数据库），请参考存储章节的[备份、恢复或迁移数据卷](/manuals/engine/storage/volumes.md#back-up-restore-or-migrate-data-volumes)。
 
-2. Use [`docker push`](/reference/cli/docker/image/push.md) to push any
-   images you have built locally and want to keep to the [Docker Hub registry](/manuals/docker-hub/_index.md).
+2. 使用 [`docker push`](/reference/cli/docker/image/push.md) 将需要保留的本地构建镜像推送到 [Docker Hub 仓库](/manuals/docker-hub/_index.md)。
    
    > [!TIP]
    >
-   > [Set the repository visibility to private](/manuals/docker-hub/repos/_index.md) if your image includes sensitive content.
+   > 若镜像包含敏感内容，请[将仓库可见性设置为私有](/manuals/docker-hub/repos/_index.md)。
 
-   Alternatively, use [`docker image save -o images.tar image1 [image2 ...]`](/reference/cli/docker/image/save.md)
-   to save any images you want to keep to a local `.tar` file. 
+   或使用 [`docker image save -o images.tar image1 [image2 ...]`](/reference/cli/docker/image/save.md) 将镜像保存为本地 `.tar` 文件。 
 
-After backing up your data, you can uninstall the current version of Docker Desktop
-and [install a different version](/manuals/desktop/release-notes.md) or reset Docker Desktop to factory defaults.
+备份完成后，你可以卸载当前版本的 Docker Desktop，并[安装其他版本](/manuals/desktop/release-notes.md)，或将 Docker Desktop 重置为出厂设置。
 
-### Restore your data
+### 恢复你的数据
 
-1. Load your images.
+1. 加载你的镜像。
 
-   - If you pushed to Docker Hub:
+   - 如果你推送到了 Docker Hub：
    
       ```console
       $ docker pull <my-backup-image>
       ```
    
-   - If you saved a `.tar` file:
+   - 如果你保存为 `.tar` 文件：
    
       ```console
       $ docker image load -i images.tar
       ```
 
-2. Re-create your containers if needed, using [`docker run`](/reference/cli/docker/container/run.md),
-   or [Docker Compose](/manuals/compose/_index.md).
+2. 视需要重新创建容器，可使用 [`docker run`](/reference/cli/docker/container/run.md) 或 [Docker Compose](/manuals/compose/_index.md)。
 
-To restore volume data, refer to [backup, restore, or migrate data volumes](/manuals/engine/storage/volumes.md#back-up-restore-or-migrate-data-volumes). 
+要恢复卷中的数据，请参考[备份、恢复或迁移数据卷](/manuals/engine/storage/volumes.md#back-up-restore-or-migrate-data-volumes)。 
 
-## If Docker Desktop fails to start 
+## 如果 Docker Desktop 无法启动 
 
-If Docker Desktop cannot launch and must be reinstalled, you can back up its VM disk and image data directly from disk. Docker Desktop must be fully stopped before backing up these files.
+若 Docker Desktop 无法启动且需要重新安装，你可以直接从磁盘备份其 VM 磁盘与镜像数据。备份这些文件前必须完全停止 Docker Desktop。
 
 {{< tabs >}}
 {{< tab name="Windows" >}}
 
-1. Back up Docker containers/images.
+1. 备份 Docker 容器/镜像。
 
-   Backup the following file:
+   备份以下文件：
 
    ```console
    %LOCALAPPDATA%\Docker\wsl\data\docker_data.vhdx
    ```
 
-   Copy it to a safe location. 
+   将其复制到安全位置。 
 
-1. Back up WSL distributions.
+1. 备份 WSL 发行版。
 
-   If you're running any WSL Linux distributions (Ubuntu, Alpine, etc.), back them up using [Microsoft's guide](https://learn.microsoft.com/en-us/windows/wsl/faq#how-can-i-back-up-my-wsl-distributions-).
+   如果你运行了任意 WSL Linux 发行版（Ubuntu、Alpine 等），请按照 [Microsoft 的指南](https://learn.microsoft.com/en-us/windows/wsl/faq#how-can-i-back-up-my-wsl-distributions-) 进行备份。
 
-1. Restore. 
+1. 恢复。 
 
-   After reinstalling Docker Desktop, restore the `docker_data.vhdx` to the same location and re-import your WSL distributions if needed.
+   重新安装 Docker Desktop 后，将 `docker_data.vhdx` 还原到相同位置；如需，重新导入你的 WSL 发行版。
 
 {{< /tab >}}
 {{< tab name="Mac" >}}
 
-1. Back up Docker containers/images.
+1. 备份 Docker 容器/镜像。
 
-   Backup the following file:
+   备份以下文件：
 
    ```console
    ~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw
    ```
 
-   Copy it to a safe location. 
+   将其复制到安全位置。 
 
-1. Restore. 
+1. 恢复。 
 
-   After reinstalling Docker Desktop, restore the `Docker.raw` to the same location.
+   重新安装 Docker Desktop 后，将 `Docker.raw` 还原到相同位置。
 
 {{< /tab >}}
 {{< tab name="Linux" >}}
 
-1. Back up Docker containers/images:
+1. 备份 Docker 容器/镜像：
 
-   Backup the following file:
+   备份以下文件：
 
    ```console
    ~/.docker/desktop/vms/0/data/Docker.raw
    ```
 
-   Copy it to a safe location.
+   将其复制到安全位置。
 
-1. Restore. 
+1. 恢复。 
 
-   After reinstalling Docker Desktop, restore the `Docker.raw` to the same location.
+   重新安装 Docker Desktop 后，将 `Docker.raw` 还原到相同位置。
 
 {{< /tab >}}
 {{< /tabs >}}

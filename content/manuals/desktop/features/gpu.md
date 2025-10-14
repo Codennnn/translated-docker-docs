@@ -1,8 +1,8 @@
 ---
-title: GPU support in Docker Desktop for Windows
-linkTitle: GPU support
+title: Docker Desktop（Windows）中的 GPU 支持
+linkTitle: GPU 支持
 weight: 40
-description: How to use GPU in Docker Desktop
+description: 如何在 Docker Desktop 中使用 GPU
 keywords: gpu, gpu support, nvidia, wsl2, docker desktop, windows
 toc_max: 3
 aliases:
@@ -11,29 +11,29 @@ aliases:
 
 > [!NOTE]
 >
-> Currently GPU support in Docker Desktop is only available on Windows with the WSL2 backend.
+> 目前，Docker Desktop 的 GPU 支持仅在启用 WSL 2 后端的 Windows 上可用。
 
-Docker Desktop for Windows supports NVIDIA GPU Paravirtualization (GPU-PV) on NVIDIA GPUs, allowing containers to access GPU resources for compute-intensive workloads like AI, machine learning, or video processing.
+Windows 版 Docker Desktop 在 NVIDIA 显卡上支持 NVIDIA GPU Paravirtualization（GPU‑PV），允许容器访问 GPU 资源，用于 AI、机器学习或视频处理等计算密集型工作负载。
 
-## Prerequisites
+## 前提条件
 
-To enable WSL 2 GPU Paravirtualization, you need:
+要启用 WSL 2 的 GPU 虚拟化，你需要：
 
-- A Windows machine with an NVIDIA GPU
-- Up to date Windows 10 or Windows 11 installation
-- [Up to date drivers](https://developer.nvidia.com/cuda/wsl) from NVIDIA supporting WSL 2 GPU Paravirtualization
-- The latest version of the WSL 2 Linux kernel. Use `wsl --update` on the command line
-- To make sure the [WSL 2 backend is turned on](wsl/_index.md#turn-on-docker-desktop-wsl-2) in Docker Desktop
+- 一台配备 NVIDIA GPU 的 Windows 设备
+- 已更新到最新版本的 Windows 10 或 Windows 11
+- 支持 WSL 2 GPU 虚拟化的 NVIDIA [最新驱动](https://developer.nvidia.com/cuda/wsl)
+- 最新版 WSL 2 Linux 内核。请在命令行运行 `wsl --update`
+- 确保在 Docker Desktop 中已[开启 WSL 2 后端](wsl/_index.md#turn-on-docker-desktop-wsl-2)
 
-## Validate GPU support
+## 验证 GPU 支持
 
-To confirm GPU access is working inside Docker, run the following:
+要确认 Docker 内能够正常访问 GPU，请运行：
 
 ```console
 $ docker run --rm -it --gpus=all nvcr.io/nvidia/k8s/cuda-sample:nbody nbody -gpu -benchmark
 ```
 
-This runs an n-body simulation benchmark on the GPU. The output will be similar to:
+该命令会在 GPU 上运行 n‑body 模拟的基准测试。输出类似于：
 
 ```console
 Run "nbody -benchmark [-numbodies=<numBodies>]" to measure performance.
@@ -63,15 +63,15 @@ GPU Device 0: "GeForce RTX 2060 with Max-Q Design" with compute capability 7.5
 = 2724.379 single-precision GFLOP/s at 20 flops per interaction
 ```
 
-## Run a real-world model: Llama2 with Ollama
+## 运行真实模型：使用 Ollama 运行 Llama2
 
-Use the [official Ollama image](https://hub.docker.com/r/ollama/ollama) to run the Llama2 LLM with GPU acceleration:
+使用 [官方 Ollama 镜像](https://hub.docker.com/r/ollama/ollama) 在 GPU 加速下运行 Llama2 大语言模型：
 
 ```console
 $ docker run --gpus=all -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 ```
 
-Then start the model:
+然后启动模型：
 
 ```console
 $ docker exec -it ollama ollama run llama2

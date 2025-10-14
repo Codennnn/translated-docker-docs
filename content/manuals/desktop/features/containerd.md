@@ -1,73 +1,65 @@
 ---
-title: containerd image store
+title: containerd 镜像存储
 weight: 80
-description: How to activate the containerd integration feature in Docker Desktop
+description: 如何在 Docker Desktop 中启用 containerd 集成功能
 keywords: Docker, containerd, engine, image store, lazy-pull
 toc_max: 3
 aliases:
 - /desktop/containerd/
 ---
 
-Docker Desktop is transitioning to use containerd for image and filesystem management. This page outlines the benefits, setup process, and new capabilities enabled by the containerd image store.
+Docker Desktop 正在过渡为使用 containerd 管理镜像与文件系统。本文将介绍 containerd 镜像存储的优势、启用步骤，以及由其带来的新能力。
 
 > [!NOTE]
 > 
-> Docker Desktop maintains separate image stores for the classic and containerd image stores.
-> When switching between them, images and containers from the inactive store remain on disk but are hidden until you switch back.
+> Docker Desktop 为“经典镜像存储”和“containerd 镜像存储”分别维护独立的镜像存储。
+> 在两者之间切换时，未激活存储中的镜像与容器仍会保留在磁盘上，但会被隐藏，直到你切换回去。
 
-## What is `containerd`?
+## 什么是 `containerd`？
 
-`containerd` is a container runtime that provides a lightweight, consistent interface for container lifecycle management. It is already used under the hood by Docker Engine for creating, starting, and stopping containers.
+`containerd` 是一个容器运行时，为容器生命周期管理提供轻量且一致的接口。Docker Engine 在底层已经使用它来创建、启动与停止容器。
 
-Docker Desktop’s ongoing integration of containerd now extends to the image store, offering more flexibility and modern image support.
+Docker Desktop 对 containerd 的集成正在持续推进，并扩展到了镜像存储层，从而提供更高的灵活性与更现代的镜像类型支持。
 
-## What is the `containerd` image store?
+## 什么是 `containerd` 镜像存储？
 
-The image store is the component responsible for pushing, pulling,
-and storing images on the filesystem.
+镜像存储负责在文件系统中推送、拉取并保存镜像。
 
-The classic Docker image store is limited in the types of images that it supports.
-For example, it doesn't support image indices, containing manifest lists.
-When you create multi-platform images, for example,
-the image index resolves all the platform-specific variants of the image.
-An image index is also required when building images with attestations.
+经典的 Docker 镜像存储在支持的镜像类型上存在限制。
+例如，它不支持包含清单列表（manifest list）的镜像索引（image index）。
+当你创建多平台镜像时，镜像索引会汇总并解析该镜像在不同平台上的各个变体。
+在构建带有声明（attestations）的镜像时，也需要镜像索引的支持。
 
-The containerd image store extends the range of image types
-that the Docker Engine can natively interact with.
-While this is a low-level architectural change,
-it's a prerequisite for unlocking a range of new use cases, including:
+containerd 镜像存储扩展了 Docker Engine 可原生交互的镜像类型范围。
+虽然这是一项底层架构层面的变更，但它是解锁一系列新用例的前提条件，包括：
 
-- [Build multi-platform images](#build-multi-platform-images) and images with attestations
-- Support for using containerd snapshotters with unique characteristics,
-  such as [stargz][1] for lazy-pulling images on container startup,
-  or [nydus][2] and [dragonfly][3] for peer-to-peer image distribution.
-- Ability to run [Wasm](wasm.md) containers
+- [构建多平台镜像](#build-multi-platform-images)以及带有声明（attestations）的镜像
+- 支持使用具有独特特性的 containerd 快照器（snapshotter），
+  例如用于在容器启动时懒加载拉取镜像的 [stargz][1]，
+  或用于点对点镜像分发的 [nydus][2] 与 [dragonfly][3]
+- 运行 [Wasm](wasm.md) 容器的能力
 
 [1]: https://github.com/containerd/stargz-snapshotter
 [2]: https://github.com/containerd/nydus-snapshotter
 [3]: https://github.com/dragonflyoss/image-service
 
-## Enable the containerd image store
+## 启用 containerd 镜像存储
 
-The containerd image store is enabled by default in Docker Desktop version 4.34
-and later, but only for clean installs or if you perform a factory reset. If
-you upgrade from an earlier version of Docker Desktop, or if you use an older
-version of Docker Desktop you must manually switch to the containerd image
-store.
+自 Docker Desktop 4.34 起，默认启用 containerd 镜像存储，但仅适用于全新安装或执行过“恢复出厂设置”的环境。
+如果你是从更早版本升级而来，或仍在使用更旧版本，则需要手动切换到 containerd 镜像存储。
 
-To manually enable this feature in Docker Desktop:
+在 Docker Desktop 中手动启用该功能：
 
-1. Navigate to **Settings** in Docker Desktop.
-2. In the **General** tab, check **Use containerd for pulling and storing images**.
-3. Select **Apply**.
+1. 打开 Docker Desktop 的 **Settings**。
+2. 在 **General** 选项卡中，勾选 **Use containerd for pulling and storing images**。
+3. 选择 **Apply**。
 
-To disable the containerd image store,
-clear the **Use containerd for pulling and storing images** checkbox.
+如需禁用 containerd 镜像存储，取消勾选 **Use containerd for pulling and storing images**。
 
-## Build multi-platform images
+## 构建多平台镜像
 
-The term multi-platform image refers to a bundle of images for multiple different architectures.
-Out of the box, the default builder for Docker Desktop doesn't support building multi-platform images.
+“多平台镜像”指的是面向多种不同架构的一组镜像。
+开箱即用的默认构建器并不支持构建多平台镜像。
 
 ```console
 $ docker build --platform=linux/amd64,linux/arm64 .
@@ -77,8 +69,7 @@ Switch to a different driver, or turn on the containerd image store, and try aga
 Learn more at https://docs.docker.com/go/build-multi-platform/
 ```
 
-Enabling the containerd image store lets you build multi-platform images
-and load them to your local image store:
+启用 containerd 镜像存储后，你可以构建多平台镜像，并将其加载到本地镜像存储：
 
 <script async id="asciicast-ZSUI4Mi2foChLjbevl2dxt5GD" src="https://asciinema.org/a/ZSUI4Mi2foChLjbevl2dxt5GD.js"></script>
 

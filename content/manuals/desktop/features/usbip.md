@@ -1,8 +1,8 @@
 ---
-title: Using USB/IP with Docker Desktop
-linkTitle: USB/IP support
+title: 在 Docker Desktop 中使用 USB/IP
+linkTitle: USB/IP 支持
 weight: 50
-description: How to use USB/IP in Docker Desktop
+description: 如何在 Docker Desktop 中使用 USB/IP
 keywords: usb, usbip, docker desktop, macos, windows, linux
 toc_max: 3
 aliases:
@@ -11,17 +11,17 @@ aliases:
 
 {{< summary-bar feature_name="USB/IP support" >}}
 
-USB/IP enables you to share USB devices over the network, which can then be accessed from within Docker containers. This page focuses on sharing USB devices connected to the machine you run Docker Desktop on. You can repeat the following process to attach and use additional USB devices as needed.
+USB/IP 允许通过网络共享 USB 设备，并在 Docker 容器内进行访问。本文聚焦于共享连接在运行 Docker Desktop 的本机上的 USB 设备。你可以根据需要重复以下步骤，附加并使用更多的 USB 设备。
 
 > [!NOTE]
 >
-> Docker Desktop includes built-in drivers for many common USB devices but Docker can't guarantee every possible USB device works with this setup.
+> Docker Desktop 内置了许多常见 USB 设备的驱动，但无法保证所有 USB 设备都能在此方案下正常工作。
 
-## Setup and use
+## 设置与使用
 
-### Step one: Run a USB/IP server
+### 第一步：运行 USB/IP 服务器
 
-To use USB/IP, you need to run a USB/IP server. For this guide, the implementation provided by [jiegec/usbip](https://github.com/jiegec/usbip) will be used.
+要使用 USB/IP，需要运行一个 USB/IP 服务器。本文示例使用 [jiegec/usbip](https://github.com/jiegec/usbip) 提供的实现。
 
 1. Clone the repository.
 
@@ -30,43 +30,43 @@ To use USB/IP, you need to run a USB/IP server. For this guide, the implementati
     $ cd usbip
     ```
 
-2. Run the emulated Human Interface Device (HID) device example.
+2. 运行模拟的人机接口设备（HID）示例。
 
     ```console
     $ env RUST_LOG=info cargo run --example hid_keyboard
     ```
 
-### Step two: Start a privileged Docker container
+### 第二步：启动特权容器
 
-To attach the USB device, start a privileged Docker container with the PID namespace set to `host`:
+要附加 USB 设备，请启动一个特权容器，并将 PID 命名空间设置为 `host`：
 
 ```console
 $ docker run --rm -it --privileged --pid=host alpine
 ```
 
-`--privileged` gives the container full access to the host, and `--pid=host` allows it to share the host’s process namespace.
+`--privileged` 赋予容器对主机的完全访问权限，`--pid=host` 允许容器共享主机的进程命名空间。
 
-### Step three: Enter the mount namespace of PID 1
+### 第三步：进入 PID 1 的挂载命名空间
 
-Inside the container, enter the mount namespace of the `init` process to gain access to the pre-installed USB/IP tools:
+进入容器后，切换到 `init` 进程的挂载命名空间，以使用预装的 USB/IP 工具：
 
 ```console
 $ nsenter -t 1 -m
 ```
 
-### Step four: Use the USB/IP tools
+### 第四步：使用 USB/IP 工具
 
-Now you can use the USB/IP tools as you would on any other system:
+现在即可像在其他系统上一样使用 USB/IP 工具：
 
-#### List USB devices
+#### 列出 USB 设备
 
-To list exportable USB devices from the host:
+列出主机上可导出的 USB 设备：
 
 ```console
 $ usbip list -r host.docker.internal
 ```
 
-Expected output:
+预期输出：
 
 ```console
 Exportable USB devices
@@ -78,48 +78,48 @@ Exportable USB devices
            :  0 - unknown class / unknown subclass / unknown protocol (03/00/00)
 ```
 
-#### Attach a USB device
+#### 附加 USB 设备
 
-To attach a specific USB device, or the emulated keyboard in this case:
+附加指定的 USB 设备（此处为模拟的键盘）：
 
 ```console
 $ usbip attach -r host.docker.internal -d 0-0-0
 ```
 
-#### Verify device attachment
+#### 验证设备已附加
 
-After attaching the emulated keyboard, check the `/dev/input` directory for the device node:
+附加模拟键盘后，检查 `/dev/input` 目录中的设备节点：
 
 ```console
 $ ls /dev/input/
 ```
 
-Example output:
+示例输出：
 
 ```console
 event0  mice
 ```
 
-### Step five: Access the device from another container
+### 第五步：从其他容器访问该设备
 
-While the initial container remains running to keep the USB device operational, you can access the attached device from another container. For example:
+在保持初始容器运行以维持 USB 设备可用的同时，你可以在另一个容器中访问该设备。例如：
 
-1. Start a new container with the attached device.
+1. 启动一个包含该设备的新容器。
 
     ```console
     $ docker run --rm -it --device "/dev/input/event0" alpine
     ```
 
-2. Install a tool like `evtest` to test the emulated keyboard.
+2. 安装 `evtest` 等工具以测试模拟的键盘。
 
     ```console
     $ apk add evtest
     $ evtest /dev/input/event0
     ```
 
-3. Interact with the device, and observe the output.
+3. 与设备交互，并观察输出。
 
-    Example output:
+    示例输出：
 
     ```console
     Input driver version is 1.0.1
@@ -135,4 +135,4 @@ While the initial container remains running to keep the USB device operational, 
 
 > [!IMPORTANT]
 >
-> The initial container must remain running to maintain the connection to the USB device. Exiting the container will stop the device from working.
+> 初始容器必须保持运行，以维持与 USB 设备的连接。退出该容器会导致设备停止工作。

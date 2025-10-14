@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Features and capabilities
+title: 功能与特性
 weight: 30
 ---
