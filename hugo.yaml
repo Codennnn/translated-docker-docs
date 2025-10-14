@@ -152,16 +152,16 @@ params:
 menus:
   # Site header menu
   main:
-  - name: Get started
+  - name: 快速入门
     pageRef: /get-started/
     weight: 1
-  - name: Guides
+  - name: 教程
     pageRef: /guides/
     weight: 2
-  - name: Manuals
+  - name: 使用手册
     pageRef: /manuals/
     weight: 3
-  - name: Reference
+  - name: 参考文档
     pageRef: /reference/
     weight: 4
 

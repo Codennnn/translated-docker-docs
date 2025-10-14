@@ -1,7 +1,7 @@
 ---
-title: Manuals
-description: Learn how to install, set up, configure, and use Docker products with this collection of user guides
-keywords: docker, docs, manuals, products, user guides, how-to
+title: 使用手册
+description: 通过这一系列用户指南，学习如何安装、配置和使用 Docker 产品
+keywords: docker, 文档, 手册, 产品, 用户指南, 操作指南
 # hard-code the URL of this page
 url: /manuals/
 layout: wide
@@ -9,141 +9,139 @@ params:
   icon: description
   sidebar:
     groups:
-      - Open source
-      - AI
-      - Products
-      - Platform
-      - Enterprise
+      - 开源项目
+      - AI 工具
+      - 产品
+      - 平台
+      - 企业版
   notoc: true
   open-source:
   - title: Docker Build
-    description: Build and ship any application anywhere.
+    description: 随时随地构建和交付任何应用。
     icon: build
     link: /build/
   - title: Docker Engine
-    description: The industry-leading container runtime.
+    description: 业界领先的容器运行时引擎。
     icon: developer_board
     link: /engine/
   - title: Docker Compose
-    description: Define and run multi-container applications.
+    description: 定义并运行多容器应用。
     icon: /icons/Compose.svg
     link: /compose/
   - title: Testcontainers
-    description: Run containers programmatically in your preferred programming language.
+    description: 使用你熟悉的编程语言以编程方式运行容器。
     icon: /icons/Testcontainers.svg
     link: /testcontainers/
   - title: Cagent
-    description: The open-source multi-agent solution to assist you in your tasks.
+    description: 开源多智能体解决方案，协助你完成各类任务。
     icon: /icons/cagent.svg
     link: /ai/cagent
   ai:
   - title: Ask Gordon
-    description: Streamline your workflow and get the most out of the Docker ecosystem with your personal AI assistant.
+    description: 通过你的个人 AI 助手简化工作流程，充分发挥 Docker 生态系统的优势。
     icon: note_add
     link: /ai/gordon/
   - title: Docker Model Runner
-    description: View and manage your local models.
+    description: 查看和管理你的本地模型。
     icon: /icons/models.svg
     link: /ai/model-runner/
   - title: MCP Catalog and Toolkit
-    description: Augment your AI workflow with MCP servers.
+    description: 使用 MCP 服务器增强你的 AI 工作流。
     icon: /icons/toolkit.svg
     link: /ai/mcp-catalog-and-toolkit/
   products:
   - title: Docker Desktop
-    description: Your command center for container development.
+    description: 容器开发的指挥中心。
     icon: /icons/Whale.svg
     link: /desktop/
   - title: Docker Hardened Images
-    description: Secure, minimal images for trusted software delivery.
+    description: 安全、精简的镜像，确保可信的软件交付。
     icon: /icons/dhi.svg
     link: /dhi/
   - title: Docker Offload
-    description: Build and run containers in the cloud.
+    description: 在云端构建和运行容器。
     icon: cloud
     link: /offload/
   - title: Build Cloud
-    description: Build your images faster in the cloud.
+    description: 在云端更快速地构建镜像。
     icon: /icons/logo-build-cloud.svg
     link: /build-cloud/
   - title: Docker Hub
-    description: Discover, share, and integrate container images.
+    description: 发现、共享和集成容器镜像。
     icon: hub
     link: /docker-hub/
   - title: Docker Scout
-    description: Image analysis and policy evaluation.
+    description: 镜像分析与策略评估。
     icon: /icons/Scout.svg
     link: /scout/
   - title: Docker for GitHub Copilot
-    description: Integrate Docker's capabilities with GitHub Copilot.
+    description: 将 Docker 功能与 GitHub Copilot 集成。
     icon: chat
     link: /copilot/
   - title: Docker Extensions
-    description: Customize your Docker Desktop workflow.
+    description: 自定义你的 Docker Desktop 工作流。
     icon: extension
     link: /extensions/
   - title: Testcontainers Cloud
-    description: Run integration tests, with real dependencies, in the cloud.
+    description: 在云端运行集成测试，使用真实依赖。
     icon: package_2
     link: https://testcontainers.com/cloud/docs/
   platform:
-  - title: Administration
-    description: Centralized observability for companies and organizations.
+  - title: 管理中心
+    description: 为企业和组织提供集中化的可观测性。
     icon: admin_panel_settings
     link: /admin/
-  - title: Billing
-    description: Manage billing and payment methods.
+  - title: 账单管理
+    description: 管理账单和支付方式。
     icon: payments
     link: /billing/
-  - title: Accounts
-    description: Manage your Docker account.
+  - title: 账户管理
+    description: 管理你的 Docker 账户。
     icon: account_circle
     link: /accounts/
-  - title: Security
-    description: Security guardrails for both administrators and developers.
+  - title: 安全
+    description: 为管理员和开发者提供安全防护。
     icon: lock
     link: /security/
-  - title: Subscription
-    description: Commercial use licenses for Docker products.
+  - title: 订阅
+    description: Docker 产品的商业使用许可。
     icon: card_membership
     link: /subscription/
   enterprise:
-  - title: Deploy Docker Desktop
-    description: Deploy Docker Desktop at scale within your company
+  - title: 部署 Docker Desktop
+    description: 在企业内大规模部署 Docker Desktop
     icon: download
     link: /enterprise/enterprise-deployment/
 ---
 
-This section contains user guides on how to install, set up, configure, and use
-Docker products.
+本节包含关于如何安装、配置和使用 Docker 产品的用户指南。
 
-## Open source
+## 开源项目
 
-Open source development and containerization technologies.
+开源开发与容器化技术。
 
 {{< grid items=open-source >}}
 
-## AI
+## AI 工具
 
-All the Docker AI tools in one easy-to-access location.
+所有 Docker AI 工具，一站式访问。
 
 {{< grid items=ai >}}
 
-## Products
+## 产品
 
-End-to-end developer solutions for innovative teams.
+为创新团队打造的端到端开发解决方案。
 
 {{< grid items=products >}}
 
-## Platform
+## 平台
 
-Documentation related to the Docker platform, such as administration and
-subscription management.
+与 Docker 平台相关的文档，包括管理中心和订阅管理。
 
 {{< grid items=platform >}}
 
-## Enterprise
+## 企业版
 
-Targeted at IT administrators with help on deploying Docker Desktop at scale with configuration guidance on security related features.
+面向 IT 管理员，提供大规模部署 Docker Desktop 的帮助，以及安全相关功能的配置指导。
 
 {{< grid items=enterprise >}}
