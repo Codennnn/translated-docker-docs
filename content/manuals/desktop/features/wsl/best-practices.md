@@ -1,26 +1,26 @@
 ---
-title: Best practices
-description: Best practices for using Docker Desktop with WSL 2
+title: 最佳实践
+description: 将 Docker Desktop 与 WSL 2 搭配使用时的最佳实践
 keywords: wsl, docker desktop, best practices
 tags: [Best practices]
 aliases:
 - /desktop/wsl/best-practices/
 ---
 
-- Always use the latest version of WSL. At a minimum you must use WSL version 2.1.5, otherwise Docker Desktop may not work as expected. Testing, development, and documentation is based on the newest kernel versions. Older versions of WSL can cause:
-    - Docker Desktop to hang periodically or when upgrading
-    - Deployment via SCCM to fail
-    - The `vmmem.exe` to consume all memory 
-    - Network filter policies to be applied globally, not to specific objects
-    - GPU failures with containers
+- 始终使用最新版本的 WSL。至少需要 WSL 2.1.5；否则 Docker Desktop 可能无法正常工作。官方的测试、开发与文档均基于最新内核版本。较旧的 WSL 版本可能导致：
+    - Docker Desktop 间歇性卡顿或在升级时挂起
+    - 通过 SCCM 部署失败
+    - `vmmem.exe` 占用全部内存
+    - 网络过滤策略被全局应用，而非按对象生效
+    - 容器中的 GPU 使用失败
 
-- To get the best out of the file system performance when bind-mounting files, it's recommended that you store source code and other data that is bind-mounted into Linux containers. For instance, use `docker run -v <host-path>:<container-path>` in the Linux file system, rather than the Windows file system. You can also refer to the [recommendation](https://learn.microsoft.com/en-us/windows/wsl/compare-versions) from Microsoft.
-    - Linux containers only receive file change events, “inotify events”, if the original files are stored in the Linux filesystem. For example, some web development workflows rely on inotify events for automatic reloading when files have changed.
-    - Performance is much higher when files are bind-mounted from the Linux filesystem, rather than remoted from the Windows host. Therefore avoid `docker run -v /mnt/c/users:/users,` where `/mnt/c` is mounted from Windows.
-    - Instead, from a Linux shell use a command like `docker run -v ~/my-project:/sources <my-image>` where `~` is expanded by the Linux shell to `$HOME`.
+- 为获得更佳的绑定挂载（bind‑mount）文件系统性能，建议将源代码和需要挂载到 Linux 容器中的数据存放在 Linux 文件系统中。例如，应在 Linux 文件系统中执行形如 `docker run -v <host-path>:<container-path>` 的挂载，而非从 Windows 文件系统挂载。也可参考 Microsoft 的[官方建议](https://learn.microsoft.com/en-us/windows/wsl/compare-versions)。
+    - 仅当原始文件位于 Linux 文件系统中时，Linux 容器才能接收到文件更改事件（inotify 事件）。例如，一些 Web 开发流程依赖 inotify 事件在文件变更时自动重载。
+    - 与从 Windows 主机远程挂载相比，从 Linux 文件系统进行绑定挂载的性能更高。因此应避免 `docker run -v /mnt/c/users:/users` 这类路径（其中 `/mnt/c` 来自 Windows 挂载）。
+    - 更佳做法是在 Linux shell 中使用类似命令：`docker run -v ~/my-project:/sources <my-image>`，其中 `~` 会由 Linux shell 展开为 `$HOME`。
 
-- If you have concerns about the size of the `docker-desktop-data` distribution, take a look at the [WSL tooling built into Windows](https://learn.microsoft.com/en-us/windows/wsl/disk-space). 
-    - Installations of Docker Desktop version 4.30 and later no longer rely on the `docker-desktop-data` distribution; instead Docker Desktop creates and manages its own virtual hard disk (VHDX) for storage. (note, however, that Docker Desktop keeps using the `docker-desktop-data` distribution if it was already created by an earlier version of the software).
-    - Starting from version 4.34 and later, Docker Desktop automatically manages the size of the managed VHDX and returns unused space to the operating system.
+- 若担心 `docker-desktop-data` 发行版占用空间过大，可查看 Windows 内置的 [WSL 管理工具](https://learn.microsoft.com/en-us/windows/wsl/disk-space)。 
+    - 自 4.30 起，全新安装的 Docker Desktop 不再依赖 `docker-desktop-data` 发行版；Docker Desktop 会创建并管理自身的虚拟硬盘（VHDX）用于存储。（但如果早期版本已创建过 `docker-desktop-data`，且未全新安装或恢复出厂设置，仍将沿用该发行版。）
+    - 自 4.34 起，Docker Desktop 会自动管理该 VHDX 的大小，并将未使用空间回收并归还给操作系统。
 
-- If you have concerns about CPU or memory usage, you can configure limits on the memory, CPU, and swap size allocated to the [WSL 2 utility VM](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#global-configuration-options-with-wslconfig).
+- 若担心 CPU 或内存占用，可为 [WSL 2 实用 VM（utility VM）](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#global-configuration-options-with-wslconfig) 配置内存、CPU 与交换分区（swap）的限制。
