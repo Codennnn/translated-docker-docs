@@ -114,15 +114,16 @@ languages:
 # Can be accessed in content with {{% param "param_name" %}}
 # Or in layouts/partials with site.Params.param_name
 params:
-  kapa:
-    id: ba5c2cbc-6535-4334-a72e-050f7a681c8a
-  analytics:
-    hotjar:
-      prod: 3169877
-      stage: 3218181
-    google: GTM-WL2QLG5
-    onetrust: 65425fb0-7b36-4317-9f10-7b3e08039af0
-    vwo: 723167
+  # 禁用第三方分析工具，避免 cookie 提示问题
+  # kapa:
+  #   id: ba5c2cbc-6535-4334-a72e-050f7a681c8a
+  # analytics:
+  #   hotjar:
+  #     prod: 3169877
+  #     stage: 3218181
+  #   google: GTM-WL2QLG5
+  #   onetrust: 65425fb0-7b36-4317-9f10-7b3e08039af0
+  #   vwo: 723167
 
   # Docs repository URL
   repo: https://github.com/leoku/translated-docker-docs
