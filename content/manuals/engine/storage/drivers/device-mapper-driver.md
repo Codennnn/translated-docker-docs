@@ -22,14 +22,13 @@ Device Mapper 是 Linux 内核中的一个框架，为众多高级卷管理技�
 - 需要安装 `lvm2` 与 `device-mapper-persistent-data` 软件包。
 - 更换存储驱动会导致本机已创建的容器不可访问。请使用 `docker save` 备份容器，并将现有镜像推送到 Docker Hub 或私有仓库，以免之后需要重新创建。
 
-## Configure Docker with the `devicemapper` storage driver
+## 使用 `devicemapper` 存储驱动配置 Docker
 
-Before following these procedures, you must first meet all the
-[prerequisites](#prerequisites).
+在开始操作前，请先满足所有[先决条件](#先决条件)。
 
 ### 配置 `loop-lvm` 测试模式
 
-该配置仅适用于测试。`loop-lvm` 模式采用回环（loopback）机制，使本地磁盘上的文件可被当作真实的物理磁盘或块设备来读写。但回环机制与操作系统文件系统层的交互会让 IO 变慢且资源开销更大，并可能引入竞态。尽管如此，先配置 `loop-lvm` 有助于在启用更复杂的 `direct-lvm` 之前，提前发现基础问题（缺少用户态软件包、内核驱动等）。因此，`loop-lvm` 只应用于配置 `direct-lvm` 前的初步测试。
+该配置仅适用于测试。`loop-lvm` 模式采用回环（loopback）机制，使本地磁盘上的文件可被当作真实的物理磁盘或块设备来读写。但回环机制与操作系统文件系统层的交互会让 I/O 变慢且资源开销更大，并可能引入竞态。尽管如此，先配置 `loop-lvm` 有助于在启用更复杂的 `direct-lvm` 之前，提前发现基础问题（如缺少用户态软件包、内核驱动等）。因此，`loop-lvm` 只应用于配置 `direct-lvm` 前的初步测试。
 
 生产环境请参考[配置生产可用的 direct-lvm 模式](#configure-direct-lvm-mode-for-production)。
 
@@ -47,7 +46,7 @@ Before following these procedures, you must first meet all the
     }
     ```
 
-    各存储驱动支持的所有存储选项，参见[守护进程参考文档](/reference/cli/dockerd/#options-per-storage-driver)
+    各存储驱动支持的所有存储选项，参见[守护进程参考文档](/reference/cli/dockerd/#options-per-storage-driver)。
 
     如果 `daemon.json` 中 JSON 格式不正确，Docker 将无法启动。
 
@@ -102,23 +101,20 @@ Before following these procedures, you must first meet all the
 满足[先决条件](#先决条件)后，按以下步骤将 Docker 配置为在 `direct-lvm` 模式下使用 `devicemapper` 存储驱动。
 
 > [!WARNING]
-> Changing the storage driver makes any containers you have already
-> created inaccessible on the local system. Use `docker save` to save containers,
-> and push existing images to Docker Hub or a private repository, so you do not
-> need to recreate them later.
+> 更换存储驱动会使本机已创建的容器无法访问。请使用 `docker save` 保存容器，并将现有镜像推送到 Docker Hub 或私有仓库，以免之后需要重新创建。
 
 #### 允许 Docker 自动配置 direct-lvm 模式
 
 Docker 可以代你管理块设备，简化 `direct-lvm` 的配置。**仅适用于全新 Docker 环境。** 此方式只能使用单一块设备；若需多个块设备，请[手动配置 direct-lvm](#configure-direct-lvm-mode-manually)。可用的新配置项如下：
 
-| Option                          | Description                                                                                                                                                                        | Required? | Default | Example                            |
+| 选项                             | 说明                                                                                                                                                                                | 是否必需  | 默认值  | 示例                                |
 |:--------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|:--------|:-----------------------------------|
-| `dm.directlvm_device`           | The path to the block device to configure for `direct-lvm`.                                                                                                                        | Yes       |         | `dm.directlvm_device="/dev/xvdf"`  |
-| `dm.thinp_percent`              | The percentage of space to use for storage from the passed in block device.                                                                                                        | No        | 95      | `dm.thinp_percent=95`              |
-| `dm.thinp_metapercent`          | The percentage of space to use for metadata storage from the passed-in block device.                                                                                                   | No        | 1       | `dm.thinp_metapercent=1`           |
-| `dm.thinp_autoextend_threshold` | The threshold for when lvm should automatically extend the thin pool as a percentage of the total storage space.                                                                   | No        | 80      | `dm.thinp_autoextend_threshold=80` |
-| `dm.thinp_autoextend_percent`   | The percentage to increase the thin pool by when an autoextend is triggered.                                                                                                       | No        | 20      | `dm.thinp_autoextend_percent=20`   |
-| `dm.directlvm_device_force`     | Whether to format the block device even if a filesystem already exists on it. If set to `false` and a filesystem is present, an error is logged and the filesystem is left intact. | No        | false   | `dm.directlvm_device_force=true`   |
+| `dm.directlvm_device`           | 为 `direct-lvm` 配置所用块设备的路径。                                                                                                                                            | Yes       |         | `dm.directlvm_device="/dev/xvdf"`  |
+| `dm.thinp_percent`              | 从传入的块设备中划给数据存储的空间百分比。                                                                                                                                        | No        | 95      | `dm.thinp_percent=95`              |
+| `dm.thinp_metapercent`          | 从传入的块设备中划给元数据存储的空间百分比。                                                                                                                                      | No        | 1       | `dm.thinp_metapercent=1`           |
+| `dm.thinp_autoextend_threshold` | 当精简池使用率达到总空间的该百分比时，`lvm` 将自动触发扩展。                                                                                                                     | No        | 80      | `dm.thinp_autoextend_threshold=80` |
+| `dm.thinp_autoextend_percent`   | 发生自动扩展时，精简池增长的百分比。                                                                                                                                              | No        | 20      | `dm.thinp_autoextend_percent=20`   |
+| `dm.directlvm_device_force`     | 即使设备上已有文件系统，是否仍格式化该块设备。若为 `false` 且检测到文件系统，将记录错误并保持现有文件系统不变。                                                                | No        | false   | `dm.directlvm_device_force=true`   |
 
 编辑 `daemon.json` 并设置相应选项，随后重启 Docker 使之生效。以下 `daemon.json` 示例配置了上表中的全部选项：
 
@@ -136,13 +132,12 @@ Docker 可以代你管理块设备，简化 `direct-lvm` 的配置。**仅适用
 }
 ```
 
-各存储驱动支持的所有存储选项，参见[守护进程参考文档](/reference/cli/dockerd/#options-per-storage-driver)
+各存储驱动支持的所有存储选项，参见[守护进程参考文档](/reference/cli/dockerd/#options-per-storage-driver)。
 
 重启 Docker 以使更改生效。Docker 将自动执行命令为你配置块设备。
 
 > [!WARNING]
-> Changing these values after Docker has prepared the block device for you is
-> not supported and causes an error.
+> 当 Docker 已为你准备好块设备后，再修改这些取值不受支持，并会导致错误。
 
 你仍需[执行周期性维护任务](#manage-devicemapper)。
 
@@ -365,11 +360,9 @@ $ sudo journalctl -fu dm-event.service
 
 如果不想使用 `device_tool`，可以改为[手动调整精简池](#use-operating-system-utilities)。
 
-1.  To use the tool, clone the Github repository, change to the
-    `contrib/docker-device-tool`, and follow the instructions in the `README.md`
-    to compile the tool.
+1.  使用该工具前，先克隆 Github 仓库，进入 `contrib/docker-device-tool` 目录，并按照 `README.md` 的说明进行编译。
 
-2.  Use the tool. The following example resizes the thin pool to 200GB.
+2.  使用该工具。如下示例将精简池扩容至 200GB：
 
     ```console
     $ ./device_tool resize 200GB
@@ -553,7 +546,7 @@ $ mount |grep devicemapper
 
 ### 镜像与容器层的磁盘布局
 
-`/var/lib/docker/devicemapper/metadata/` 目录包含 Devicemapper 自身配置以及每个镜像/容器层的元数据。`devicemapper` 使用快照机制，这些元数据也包含与快照相关的信息。文件为 JSON 格式。
+`/var/lib/docker/devicemapper/metadata/` 目录包含 Device Mapper 自身配置以及每个镜像/容器层的元数据。`devicemapper` 使用快照机制，这些元数据也包含与快照相关的信息。文件为 JSON 格式。
 
 `/var/lib/docker/devicemapper/mnt/` 目录为每个镜像层与容器层提供挂载点。镜像层的挂载点为空目录；容器的挂载点展示容器视角下的文件系统。
 
@@ -610,11 +603,11 @@ $ mount |grep devicemapper
 
 ## Device Mapper 与 Docker 性能
 
-- **`allocate-on demand` 的性能影响**：
+- **`allocate-on-demand` 的性能影响**：
 
   `devicemapper` 使用“按需分配”从精简池为容器可写层分配新块。每个块为 64KB，这是单次写入的最小占用单位。
 
-- **写时复制的性能影响**：容器首次修改某个块时，该块会写入可写层。由于操作发生在块级而非文件级，性能影响被尽量降低。但当需要写入大量块时，性能仍可能受影响，某些场景下 `devicemapper` 甚至不如其他驱动。对于写入密集型负载，应使用数据卷以完全绕过存储驱动。
+- **写时复制的性能影响**：容器首次修改某个块时，该块会写入可写层。由于操作发生在块级而非文件级，性能影响被尽量降低。但当需要写入大量块时，性能仍可能受影响，某些场景下 `devicemapper` 甚至不如其他驱动。对于写入密集型负载，建议使用卷来完全绕过存储驱动。
 
 ### 性能最佳实践
 
