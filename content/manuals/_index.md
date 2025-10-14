@@ -9,11 +9,11 @@ params:
   icon: description
   sidebar:
     groups:
-      - 开源项目
-      - AI 工具
-      - 产品
-      - 平台
-      - 企业版
+      - Open source
+      - AI
+      - Products
+      - Platform
+      - Enterprise
   notoc: true
   open-source:
   - title: Docker Build
