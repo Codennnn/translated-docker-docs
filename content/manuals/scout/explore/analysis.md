@@ -1,132 +1,120 @@
 ---
-title: Docker Scout image analysis
+title: Docker Scout 镜像分析
 description:
-  Docker Scout image analysis provides a detailed view into the composition of
-  your images and the vulnerabilities that they contain
+  Docker Scout 的镜像分析为你提供镜像组成与其包含漏洞的细粒度视图
 keywords: scout, scanning, vulnerabilities, supply chain, security, analysis
 aliases:
   - /scout/advanced-image-analysis/
   - /scout/image-analysis/
 ---
 
-When you activate image analysis for a repository,
-Docker Scout automatically analyzes new images that you push to that repository.
+当你为某个仓库启用镜像分析后，
+Docker Scout 会自动分析你推送到该仓库的新镜像。
 
-Image analysis extracts the Software Bill of Material (SBOM)
-and other image metadata,and evaluates it against vulnerability data from
-[security advisories](/manuals/scout/deep-dive/advisory-db-sources.md).
+镜像分析会提取软件物料清单（Software Bill of Materials，SBOM）
+及其他镜像元数据，并与[安全通告](/manuals/scout/deep-dive/advisory-db-sources.md)中的漏洞数据进行比对评估。
 
-If you run image analysis as a one-off task using the CLI or Docker Desktop,
-Docker Scout won't store any data about your image.
-If you enable Docker Scout for your container image repositories however,
-Docker Scout saves a metadata snapshot of your images after the analysis.
-As new vulnerability data becomes available, Docker Scout recalibrates the analysis using the metadata snapshot, which means your security status for images is updated in real-time.
-This dynamic evaluation means there's no need to re-analyze images when new CVE information is disclosed.
+如果你通过 CLI 或 Docker Desktop 以一次性任务方式运行镜像分析，
+Docker Scout 不会存储任何镜像相关数据。
+但如果你为容器镜像仓库启用 Docker Scout，分析完成后 Docker Scout 会保存镜像的元数据快照。
+当有新的漏洞数据发布时，Docker Scout 会基于该快照重新校准分析结果，
+这意味着镜像的安全状态会实时更新，而无需在每次披露新 CVE 时重新分析镜像。
 
-Docker Scout image analysis is available by default for Docker Hub repositories.
-You can also integrate third-party registries and other services. To learn more,
-see [Integrating Docker Scout with other systems](/manuals/scout/integrations/_index.md).
+Docker Hub 仓库默认支持 Docker Scout 镜像分析。
+你也可以集成第三方镜像仓库与服务。更多信息请参阅
+[将 Docker Scout 集成到其他系统](/manuals/scout/integrations/_index.md)。
 
-## Activate Docker Scout on a repository
+## 在仓库中启用 Docker Scout
 
-Docker Personal comes with 1 Scout-enabled repository. You can upgrade your
-Docker subscription if you need additional repositories.
-See [Subscriptions and features](../../subscription/details.md)
-to learn how many Scout-enabled
-repositories come with each subscription tier.
+Docker Personal 默认包含 1 个启用 Scout 的仓库。若需要更多仓库，
+可升级你的 Docker 订阅。
+各订阅档位包含的启用仓库数量，见
+[订阅与功能](../../subscription/details.md)。
 
-Before you can activate image analysis on a repository in a third-party registry,
-the registry must be integrated with Docker Scout for your Docker organization.
-Docker Hub is integrated by default. For more information, see
-See [Container registry integrations](/manuals/scout/integrations/_index.md#container-registries)
+在第三方仓库的仓库上启用镜像分析前，
+需要先为你的 Docker 组织完成该仓库与 Docker Scout 的集成。
+Docker Hub 默认已完成集成。更多信息参见
+[容器仓库集成](/manuals/scout/integrations/_index.md#container-registries)。
 
 > [!NOTE]
 >
-> You must have the **Editor** or **Owner** role in the Docker organization to
-> activate image analysis on a repository.
+> 你必须在 Docker 组织中拥有 **Editor** 或 **Owner** 角色，
+> 才能在仓库上启用镜像分析。
 
-To activate image analysis:
+启用镜像分析：
 
-1. Go to [Repository settings](https://scout.docker.com/settings/repos) in the Docker Scout Dashboard.
-2. Select the repositories that you want to enable.
-3. Select **Enable image analysis**.
+1. 进入 Docker Scout Dashboard 的 [Repository settings](https://scout.docker.com/settings/repos)。
+2. 选择需要启用的仓库。
+3. 选择 **Enable image analysis**。
 
-If your repositories already contain images,
-Docker Scout pulls and analyzes the latest images automatically.
+如果你的仓库已经包含镜像，
+Docker Scout 会自动拉取并分析最新的镜像。
 
-## Analyze registry images
+## 分析仓库中的镜像
 
-To trigger image analysis for an image in a registry, push the image to a
-registry that's integrated with Docker Scout, to a repository where image
-analysis is activated.
+要触发仓库中某个镜像的分析，请将该镜像 push 到已与 Docker Scout 集成、且已启用镜像分析的仓库。
 
 > [!NOTE]
 >
-> Image analysis on the Docker Scout platform has a maximum image file size
-> limit of 10 GB, unless the image has an SBOM attestation.
-> See [Maximum image size](#maximum-image-size).
+> Docker Scout 平台上的镜像分析单个镜像文件大小上限为 10 GB，除非该镜像包含 SBOM 证明（attestation）。
+> 参见[最大镜像大小](#maximum-image-size)。
 
-1. Sign in with your Docker ID, either using the `docker login` command or the
-   **Sign in** button in Docker Desktop.
-2. Build and push the image that you want to analyze.
+1. 使用你的 Docker ID 登录，可通过 `docker login` 命令或 Docker Desktop 中的 **Sign in** 按钮。
+2. 构建并 push 你要分析的镜像。
 
    ```console
    $ docker build --push --tag <org>/<image:tag> --provenance=true --sbom=true .
    ```
 
-   Building with the `--provenance=true` and `--sbom=true` flags attaches
-   [build attestations](/manuals/build/metadata/attestations/_index.md) to the image. Docker
-   Scout uses attestations to provide more fine-grained analysis results.
+   使用 `--provenance=true` 与 `--sbom=true` 构建会将
+   [构建证明（build attestations）](/manuals/build/metadata/attestations/_index.md)附加到镜像。
+   Docker Scout 会利用这些证明提供更细粒度的分析结果。
 
    > [!NOTE]
    >
-   > The default `docker` driver only supports build attestations if you use the
-   > [containerd image store](/manuals/desktop/features/containerd.md).
+   > 仅当你使用 [containerd 镜像存储](/manuals/desktop/features/containerd.md) 时，
+   > 默认的 `docker` 驱动才支持构建证明。
 
-3. Go to the [Images page](https://scout.docker.com/reports/images) in the Docker Scout Dashboard.
+3. 打开 Docker Scout Dashboard 的 [Images 页面](https://scout.docker.com/reports/images)。
 
-   The image appears in the list shortly after you push it to the registry.
-   It may take a few minutes for the analysis results to appear.
+   你 push 到仓库的镜像会很快出现在列表中。
+   分析结果可能需要等待数分钟才会显示。
 
-## Analyze images locally
+## 本地分析镜像
 
-You can analyze local images with Docker Scout using Docker Desktop or the
-`docker scout` commands for the Docker CLI.
+你可以使用 Docker Desktop 或 Docker CLI 的 `docker scout` 命令来分析本地镜像。
 
 ### Docker Desktop
 
 > [!NOTE]
 >
-> Docker Desktop background indexing supports images up to 10 GB in size.
-> See [Maximum image size](#maximum-image-size).
+> Docker Desktop 的后台索引支持大小最高为 10 GB 的镜像。
+> 参见[最大镜像大小](#maximum-image-size)。
 
-To analyze an image locally using the Docker Desktop GUI:
+使用 Docker Desktop GUI 在本地分析镜像：
 
-1. Pull or build the image that you want to analyze.
-2. Go to the **Images** view in the Docker Dashboard.
-3. Select one of your local images in the list.
+1. 拉取或构建你想要分析的镜像。
+2. 打开 Docker Dashboard 的 **Images** 视图。
+3. 在列表中选择一个本地镜像。
 
-   This opens the [Image details view](./image-details-view.md), showing a
-   breakdown of packages and vulnerabilities found by the Docker Scout analysis
-   for the image you selected.
+   这将打开[镜像详情视图](./image-details-view.md)，展示 Docker Scout 针对该镜像的分析结果，
+   包括软件包与发现的漏洞。
 
 ### CLI
 
-The `docker scout` CLI commands provide a command line interface for using Docker
-Scout from your terminal.
+`docker scout` CLI 命令为你提供在终端使用 Docker Scout 的命令行接口。
 
-- `docker scout quickview`: summary of the specified image, see [Quickview](#quickview)
-- `docker scout cves`: local analysis of the specified image, see [CVEs](#cves)
-- `docker scout compare`: analyzes and compares two images
+- `docker scout quickview`：查看指定镜像的摘要，见[Quickview](#quickview)
+- `docker scout cves`：在本地分析指定镜像，见[CVEs](#cves)
+- `docker scout compare`：分析并比较两个镜像
 
-By default, the results are printed to standard output.
-You can also export results to a file in a structured format,
-such as Static Analysis Results Interchange Format (SARIF).
+默认情况下，结果会输出到标准输出。
+你也可以将结果导出为结构化文件，
+例如 SARIF（Static Analysis Results Interchange Format，静态分析结果交换格式）。
 
 #### Quickview
 
-The `docker scout quickview` command provides an overview of the
-vulnerabilities found in a given image and its base image.
+`docker scout quickview` 命令会概览指定镜像及其基础镜像中发现的漏洞。
 
 ```console
 $ docker scout quickview traefik:latest
@@ -136,8 +124,7 @@ $ docker scout quickview traefik:latest
   Base image  alpine:3        │    0C     0H     0M     0L
 ```
 
-If your the base image is out of date, the `quickview` command also shows how
-updating your base image would change the vulnerability exposure of your image.
+如果你的基础镜像已过期，`quickview` 还会显示“更新基础镜像后对当前镜像漏洞暴露的改善程度”。
 
 ```console
 $ docker scout quickview postgres:13.1
@@ -155,10 +142,8 @@ $ docker scout quickview postgres:13.1
 
 #### CVEs
 
-The `docker scout cves` command gives you a complete view of all the
-vulnerabilities in the image. This command supports several flags that lets you
-specify more precisely which vulnerabilities you're interested in, for example,
-by severity or package type:
+`docker scout cves` 命令为你提供镜像中全部漏洞的完整视图。
+该命令支持若干参数，用于更精确地筛选你感兴趣的漏洞，例如按严重等级或软件包类型：
 
 ```console
 $ docker scout cves --format only-packages --only-vuln-packages \
@@ -180,57 +165,49 @@ $ docker scout cves --format only-packages --only-vuln-packages \
   zlib        1:1.2.11.dfsg-1        deb      1C     0H     0M     0L
 ```
 
-For more information about these commands and how to use them, refer to the CLI
-reference documentation:
+关于这些命令及其用法的更多信息，请参阅 CLI 参考文档：
 
 - [`docker scout quickview`](/reference/cli/docker/scout/quickview.md)
 - [`docker scout cves`](/reference/cli/docker/scout/cves.md)
 
-## Vulnerability severity assessment
+## 漏洞严重性评估
 
-Docker Scout assigns a severity rating to vulnerabilities based on
-vulnerability data from [advisory sources](/manuals/scout/deep-dive/advisory-db-sources.md).
-Advisories are ranked and prioritized depending on the type of package that's
-affected by a vulnerability. For example, if a vulnerability affects an OS
-package, the severity level assigned by the distribution maintainer is
-prioritized.
+Docker Scout 基于[通告来源](/manuals/scout/deep-dive/advisory-db-sources.md)中的漏洞数据为漏洞赋予严重等级。
+不同类型的软件包在通告中的优先级不同。例如，若漏洞影响的是操作系统软件包，
+则更优先采用发行版维护者给出的严重性等级。
 
-If the preferred advisory source has assigned a severity rating to a CVE, but
-not a CVSS score, Docker Scout falls back to displaying a CVSS score from
-another source. The severity rating from the preferred advisory and the CVSS
-score from the fallback advisory are displayed together. This means a
-vulnerability can have a severity rating of `LOW` with a CVSS score of 9.8, if
-the preferred advisory assigns a `LOW` rating but no CVSS score, and a fallback
-advisory assigns a CVSS score of 9.8.
+如果首选通告来源为某个 CVE 指定了严重等级，但未提供 CVSS 分数，
+Docker Scout 会回退显示来自其他来源的 CVSS 分数。
+页面会同时展示首选通告来源的严重等级与回退来源的 CVSS 分数。
+因此，可能出现“某个漏洞的严重等级为 `LOW`，但 CVSS 分数为 9.8”的情况——
+即首选通告标为 `LOW` 且未给出 CVSS 分数，而回退来源给出了 9.8 的 CVSS 分数。
 
-Vulnerabilities that haven't been assigned a CVSS score in any source are
-categorized as **Unspecified** (U).
+若某漏洞在所有来源中都未被赋予 CVSS 分数，
+则会被归类为 **Unspecified**（U，未指定）。
 
-Docker Scout doesn't implement a proprietary vulnerability metrics system. All
-metrics are inherited from security advisories that Docker Scout integrates
-with. Advisories may use different thresholds for classifying vulnerabilities,
-but most of them adhere to the CVSS v3.0 specification, which maps CVSS scores
-to severity ratings according to the following table:
+Docker Scout 并未实现自有的漏洞度量体系。
+其使用的所有度量均来自已集成的安全通告来源。
+不同通告对漏洞分级阈值可能有所不同，
+但大多数遵循 CVSS v3.0 规范，其将 CVSS 分数映射到如下严重等级：
 
-| CVSS score | Severity rating  |
-| ---------- | ---------------- |
-| 0.1 – 3.9  | **Low** (L)      |
-| 4.0 – 6.9  | **Medium** (M)   |
-| 7.0 – 8.9  | **High** (H)     |
-| 9.0 – 10.0 | **Critical** (C) |
+| CVSS 分数  | 严重等级          |
+| ---------- | ----------------- |
+| 0.1 – 3.9  | **Low** (L)       |
+| 4.0 – 6.9  | **Medium** (M)    |
+| 7.0 – 8.9  | **High** (H)      |
+| 9.0 – 10.0 | **Critical** (C)  |
 
-For more information, see [Vulnerability Metrics (NIST)](https://nvd.nist.gov/vuln-metrics/cvss).
+更多信息见 [Vulnerability Metrics (NIST)](https://nvd.nist.gov/vuln-metrics/cvss)。
 
-Note that, given the advisory prioritization and fallback mechanism described
-earlier, severity ratings displayed in Docker Scout may deviate from this
-rating system.
+需要注意的是，由于前述的通告优先与回退机制，
+Docker Scout 中显示的严重等级可能与该映射有偏差。
 
-## Maximum image size
+## 最大镜像大小
 
-Image analysis on the Docker Scout platform, and analysis triggered by background
-indexing in Docker Desktop, has an image file size limit of 10 GB (uncompressed).
-To analyze images larger than that:
+Docker Scout 平台上的镜像分析，以及 Docker Desktop 后台索引触发的分析，
+对镜像文件大小（未压缩）有 10 GB 的限制。
+如需分析更大的镜像：
 
-- Attach an [SBOM attestation](/manuals/build/metadata/attestations/sbom.md) at build-time. When an image includes an SBOM attestation, Docker Scout uses it instead of generating one, so the 10 GB limit doesn’t apply.
-- Alternatively, you can use the [CLI](#cli) to analyze the image locally. The 10 GB limit doesn’t apply when using the CLI. If the image includes an SBOM attestation, the CLI uses it to complete the analysis faster.
+- 在构建时附加 [SBOM attestation](/manuals/build/metadata/attestations/sbom.md)。若镜像包含 SBOM 证明，Docker Scout 将直接使用它而非重新生成，因而不受 10 GB 限制。
+- 或者，你可以使用 [CLI](#cli) 在本地分析镜像。使用 CLI 时同样不受 10 GB 限制。若镜像已包含 SBOM 证明，CLI 会利用其加速分析。
 

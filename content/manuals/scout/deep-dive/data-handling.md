@@ -1,105 +1,95 @@
 ---
-description: How Docker Scout handles image metadata
+description: Docker Scout 如何处理镜像元数据
 keywords: |
   scout, scanning, supply chain, security, purl, sbom, provenance, environment,
   materials, config, ports, labels, os, registry, timestamp, digest, layers,
   architecture, license, dependencies, base image
-title: Data collection and storage in Docker Scout
+title: Docker Scout 中的数据采集与存储
 aliases:
   /scout/data-handling/
 ---
 
-Docker Scout's image analysis works by collecting metadata from the container
-images that you analyze. This metadata is stored on the Docker Scout platform.
+Docker Scout 的镜像分析通过收集你所分析的容器镜像的元数据来完成。这些元数据会存储在 Docker Scout 平台上。
 
-## Data transmission
+## 数据传输
 
-This section describes the data that Docker Scout collects and sends to the
-platform.
+本节介绍 Docker Scout 会收集并发送到平台的数据。
 
-### Image metadata
+### 镜像元数据
 
-Docker Scout collects the following image metadata:
+Docker Scout 会收集以下镜像元数据：
 
-- Image creation timestamp
-- Image digest
-- Ports exposed by the image
-- Environment variable names and values
-- Name and value of image labels
-- Order of image layers
-- Hardware architecture
-- Operating system type and version
-- Registry URL and type
+- 镜像创建时间戳
+- 镜像摘要（digest）
+- 镜像暴露的端口
+- 环境变量名称与取值
+- 镜像标签（label）的名称与取值
+- 镜像层（layer）的顺序
+- 硬件架构
+- 操作系统类型与版本
+- 仓库（registry）的 URL 与类型
 
-Image digests are created for each layer of an image when the image is built
-and pushed to a registry. They are SHA256 digests of the contents of a layer.
-Docker Scout doesn't create the digests; they're read from the image manifest.
+镜像在构建并推送到仓库时，会为其每一层生成摘要。摘要是层内容的 SHA256 值。
+Docker Scout 不会创建这些摘要；它们来源于镜像清单（manifest）。
 
-The digests are matched against your own private images and Docker's database
-of public images to identify images that share the same layers. The image that
-shares most of the layers is considered a base image match for the image that's
-currently being analyzed.
+这些摘要会与你的私有镜像以及 Docker 的公共镜像数据库进行比对，以识别哪些镜像共享相同的层。
+与当前分析的镜像共享层数最多的镜像会被视为其基础镜像匹配项。
 
-### SBOM metadata
+### SBOM 元数据
 
-Software Bill of Material (SBOM) metadata is used to match package types
-and versions with vulnerability data to infer whether an image is affected.
-When the Docker Scout platform receives information from security advisories
-about new CVEs or other risk factors, such as leaked secrets, it cross-references
-this information with the SBOM. If there's a match, Docker Scout displays the
-results in the user interfaces where Docker Scout data is surfaced,
-such as the Docker Scout Dashboard and in Docker Desktop.
+软件物料清单（SBOM）元数据用于将软件包类型与版本和漏洞数据进行匹配，从而推断镜像是否受影响。
+当 Docker Scout 平台从安全通告中接收到新的 CVE 或其他风险（例如泄露的密钥）时，
+会将这些信息与 SBOM 进行交叉比对；一旦匹配，Docker Scout 会在展示其数据的界面中显示结果，
+例如 Docker Scout 控制台和 Docker Desktop。
 
-Docker Scout collects the following SBOM metadata:
+Docker Scout 会收集以下 SBOM 元数据：
 
-- Package URLs (PURL)
-- Package author and description
-- License IDs
-- Package name and namespace
-- Package scheme and size
-- Package type and version
-- Filepath within the image
-- The type of direct dependency
-- Total package count
+- 软件包 URL（PURL）
+- 软件包作者与描述
+- 许可证 ID
+- 软件包名称与命名空间
+- 软件包的方案与大小
+- 软件包类型与版本
+- 软件包在镜像内的文件路径
+- 直接依赖的类型
+- 软件包总数
 
-The PURLs in Docker Scout follow the
-[purl-spec](https://github.com/package-url/purl-spec) specification. Package
-information is derived from the contents of image, including OS-level programs
-and packages, and application-level packages such as maven, npm, and so on.
+Docker Scout 中的 PURL 遵循
+[purl-spec](https://github.com/package-url/purl-spec) 规范。软件包信息来源于镜像内容，
+包括操作系统层面的程序与软件包，以及应用层的软件包（例如 Maven、npm 等）。
 
-### Environment metadata
+### 运行环境元数据
 
-If you integrate Docker Scout with your runtime environment via the
-[Sysdig integration](/manuals/scout/integrations/environment/sysdig.md),
-Docker Scout collects the following data points about your deployments:
+如果你通过
+[Sysdig 集成](/manuals/scout/integrations/environment/sysdig.md)
+将 Docker Scout 接入运行环境，Docker Scout 会收集以下部署相关的数据点：
 
-- Kubernetes namespace
-- Workload name
-- Workload type (for example, DaemonSet)
+- Kubernetes 命名空间
+- 工作负载名称
+- 工作负载类型（例如 DaemonSet）
 
-### Local analysis
+### 本地分析
 
-For images analyzed locally on a developer's machine, Docker Scout only
-transmits PURLs and layer digests. This data isn't persistently stored on the
-Docker Scout platform; it's only used to run the analysis.
+对于在开发者机器上进行的本地镜像分析，Docker Scout 仅会传输 PURL 与层摘要。
+这些数据不会在 Docker Scout 平台上持久化存储，只用于执行分析。
 
-### Provenance
+### 溯源（Provenance）
 
-For images with [provenance attestations](/manuals/build/metadata/attestations/slsa-provenance.md),
-Docker Scout stores the following data in addition to the SBOM:
+对于带有[溯源证明（provenance attestation）](/manuals/build/metadata/attestations/slsa-provenance.md)的镜像，
+Docker Scout 在 SBOM 之外还会存储以下数据：
 
-- Materials
-- Base image
-- VCS information
+- 材料（Materials）
+- 基础镜像
+- VCS 信息
 - Dockerfile
 
-## Data storage
+## 数据存储
 
-For the purposes of providing the Docker Scout service, data is stored using:
+为提供 Docker Scout 服务，数据存储在以下位置：
 
-- Amazon Web Services (AWS) on servers located in US East
-- Google Cloud Platform (GCP) on servers located in US East
+- 位于美国东部的 Amazon Web Services（AWS）
+- 位于美国东部的 Google Cloud Platform（GCP）
 
-Data is used according to the processes described at
-[docker.com/legal](https://www.docker.com/legal/) to provide the key
-capabilities of Docker Scout.
+数据的使用遵循
+[docker.com/legal](https://www.docker.com/legal/) 中的流程说明，
+以提供 Docker Scout 的核心能力。

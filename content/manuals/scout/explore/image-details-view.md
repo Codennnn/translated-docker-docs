@@ -1,150 +1,124 @@
 ---
-title: Image details view
+title: 镜像详情视图
 keywords: scout, supply chain, vulnerabilities, packages, cves, image, tag, scan,
   analysis, analyze
-description: The Docker Scout image detail view analyzes images to show their hierarchy,
-  layers, packages, and vulnerabilities
+description: Docker Scout 的镜像详情视图会对镜像进行分析，展示其层级、镜像层、软件包与漏洞
 aliases:
   - /scout/image-details-view
 ---
 
-The image details view shows a breakdown of the Docker Scout analysis. You can
-access the image view from the Docker Scout Dashboard, the Docker Desktop
-**Images** view, and from the image tag page on Docker Hub. The image details
-show a breakdown of the image hierarchy (base images), image layers, packages,
-and vulnerabilities.
+镜像详情视图用于展示 Docker Scout 的分析结果。你可以在 Docker Scout Dashboard、Docker Desktop 的
+**Images** 视图，以及 Docker Hub 的镜像标签页中打开该视图。镜像详情会分解展示镜像层级（基础镜像）、
+镜像层、软件包和漏洞。
 
 ![The image details view in Docker Desktop](../images/dd-image-view.png)
 
-Docker Desktop first analyzes images locally, where it generates a software bill of materials (SBOM).
-Docker Desktop, Docker Hub, and the Docker Scout Dashboard and CLI all use the [package URL (PURL) links](https://github.com/package-url/purl-spec)
-in this SBOM to query for matching Common Vulnerabilities and Exposures (CVEs) in [Docker Scout's advisory database](/manuals/scout/deep-dive/advisory-db-sources.md).
+Docker Desktop 会先在本地对镜像进行分析并生成软件物料清单（SBOM）。
+Docker Desktop、Docker Hub、Docker Scout Dashboard 与 CLI 都会使用 SBOM 中的
+[PURL（package URL）链接](https://github.com/package-url/purl-spec)，在
+[Docker Scout 的通告数据库](/manuals/scout/deep-dive/advisory-db-sources.md) 中查询匹配的
+CVEs（Common Vulnerabilities and Exposures，通用漏洞与暴露）。
 
-## Image hierarchy
+## 镜像层级（Image hierarchy）
 
-The image you inspect may have one or more base images represented under
-**Image hierarchy**. This means the author of the image used other images as
-starting points when building the image. Often these base images are either
-operating system images such as Debian, Ubuntu, and Alpine, or programming
-language images such as PHP, Python, and Java.
+你正在查看的镜像，可能在 **Image hierarchy** 下显示一个或多个基础镜像。
+这表示镜像作者在构建该镜像时，以其他镜像作为起点。常见的基础镜像包括操作系统镜像（如 Debian、Ubuntu、Alpine），
+或编程语言镜像（如 PHP、Python、Java）。
 
-Selecting each image in the chain lets you see which layers originate from each
-base image. Selecting the **ALL** row selects all layers and base images.
+选择链条中的任意镜像，可以查看哪些镜像层来自该基础镜像。选择 **ALL** 行可一次选中所有镜像层与基础镜像。
 
-One or more of the base images may have updates available, which may include
-updated security patches that remove vulnerabilities from your image. Any base
-images with available updates are noted to the right of **Image hierarchy**.
+一个或多个基础镜像可能存在可用更新，这些更新通常包含安全补丁，可减少你当前镜像中的漏洞。
+可用更新会在 **Image hierarchy** 右侧标注出来。
 
-## Layers
+## 层（Layers）
 
-A Docker image consists of layers. Image layers are listed from top to bottom,
-with the earliest layer at the top and the most recent layer at the bottom.
-Often, the layers at the top of the list originate from a base image, and the
-layers towards the bottom added by the image author, often using
-commands in a Dockerfile. Selecting a base image under **Image hierarchy** 
-highlights with layers originate from a base image.
+Docker 镜像由多层（layer）组成。镜像层自上而下排列，最早的镜像层位于顶部，最新的镜像层位于底部。
+通常，列表顶部的镜像层来自基础镜像，而靠近底部的镜像层由镜像作者添加，
+一般通过 Dockerfile 中的命令生成。在 **Image hierarchy** 中选择某个基础镜像时，
+会高亮显示哪些镜像层源自该基础镜像。
 
-Selecting individual or multiple layers filters the packages and vulnerabilities
-on the right-hand side to show what the selected layers added.
+选择一个或多个镜像层，会在右侧过滤显示相应的软件包与漏洞，帮助你定位由这些镜像层引入的内容。
 
-## Vulnerabilities
+## 漏洞
 
-The **Vulnerabilities** tab displays a list of vulnerabilities and exploits detected in the image. The list is grouped by package, and sorted in order of severity.
+**Vulnerabilities** 选项卡展示在镜像中检测到的漏洞与利用信息。列表按软件包分组，并按严重等级排序。
 
-You can find further information on the vulnerability or exploit, including if a fix is available, by expanding the list item.
+展开某一项可查看更多详情（例如是否存在可用修复方案）。
 
-## Remediation recommendations
+## 修复建议
 
-When you inspect an image in Docker Desktop or Docker Hub,
-Docker Scout can provide recommendations for improving the security of that image.
+当你在 Docker Desktop 或 Docker Hub 中查看镜像时，
+Docker Scout 会提供提升该镜像安全性的建议。
 
-### Recommendations in Docker Desktop
+### 在 Docker Desktop 中的建议
 
-To view security recommendations for an image in Docker Desktop:
+在 Docker Desktop 中查看某个镜像的安全建议：
 
-1. Go to the **Images** view in Docker Desktop.
-2. Select the image tag that you want to view recommendations for.
-3. Near the top, select the **Recommended fixes** drop-down button.
+1. 打开 Docker Desktop 的 **Images** 视图。
+2. 选择你想查看建议的镜像标签。
+3. 在顶部附近，点击 **Recommended fixes** 下拉按钮。
 
-The drop-down menu lets you choose whether you want to see recommendations for
-the current image or any base images used to build it:
+下拉菜单允许你选择查看当前镜像本身的建议，或其构建所用基础镜像的建议：
 
 - [**Recommendations for this image**](#recommendations-for-current-image)
-  provides recommendations for the current image that you're inspecting.
-- [**Recommendations for base image**](#recommendations-for-base-image) provides
-  recommendations for base images used to build the image.
+ ：提供针对当前镜像本身的建议。
+- [**Recommendations for base image**](#recommendations-for-base-image)
+  ：提供针对用于构建该镜像的基础镜像的建议。
 
-If the image you're viewing has no associated base images, the drop-down menu only 
-shows the option to view recommendations for the current image.
+如果当前镜像没有关联的基础镜像，则下拉菜单仅显示“查看当前镜像的建议”。
 
-### Recommendations in Docker Hub
+### 在 Docker Hub 中的建议
 
-To view security recommendations for an image in Docker Hub:
+在 Docker Hub 中查看某个镜像的安全建议：
 
-1. Go to the repository page for an image where you have activated Docker Scout
-   image analysis.
-2. Open the **Tags** tab.
-3. Select the tag that you want to view recommendations for.
-4. Select the **View recommended base image fixes** button.
+1. 进入已启用 Docker Scout 镜像分析的镜像仓库页面。
+2. 打开 **Tags** 标签页。
+3. 选择你想查看建议的镜像标签。
+4. 点击 **View recommended base image fixes** 按钮。
 
-   This opens a window which gives you recommendations for you can improve the
-   security of your image by using better base images. See
-   [Recommendations for base image](#recommendations-for-base-image) for more
-   details.
+   随后会弹出一个窗口，给出“通过更优的基础镜像提升镜像安全性”的建议。
+   详情可参阅 [Recommendations for base image](#recommendations-for-base-image)。
 
-### Recommendations for current image
+### 当前镜像的建议 {#recommendations-for-current-image}
 
-The recommendations for the current image view helps you determine whether the image
-version that you're using is out of date. If the tag you're using is referencing an
-old digest, the view shows a recommendation to update the tag by pulling the
-latest version.
+“当前镜像”的建议视图可帮助你判断所用镜像版本是否已过期。
+如果该标签引用的是较旧的镜像摘要（digest），此处会建议你通过拉取最新版本来更新该标签。
 
-Select the **Pull new image** button to get the updated version. Check the
-checkbox to remove the old version after pulling the latest.
+点击 **Pull new image** 获取更新版本。勾选复选框可在拉取完成后移除旧版本。
 
-### Recommendations for base image
+### 基础镜像的建议 {#recommendations-for-base-image}
 
-The base image recommendations view contains two tabs for toggling between
-different types of recommendations:
+“基础镜像”的建议视图包含两个选项卡，用于切换不同类型的建议：
 
 - **Refresh base image**
 - **Change base image**
 
-These base image recommendations are only actionable if you're the author of the
-image you're inspecting. This is because changing the base image for an image
-requires you to update the Dockerfile and re-build the image.
+只有当你是该镜像的作者时，这些基础镜像建议才具有可操作性。
+因为更换基础镜像需要你修改 Dockerfile 并重新构建镜像。
 
-#### Refresh base image
+#### 刷新基础镜像
 
-This tab shows if the selected base image tag is the latest available version,
-or if it's outdated.
+该选项卡用于判断所选基础镜像的标签是否为最新可用版本，或者是否已过期。
 
-If the base image tag used to build the current image isn't the latest, then the
-delta between the two versions shows in this window. The delta information
-includes:
+如果用于构建当前镜像的基础镜像标签不是最新版本，则会在此窗口展示两者之间的差异信息（delta），包括：
 
-- The tag name, and aliases, of the recommended (newer) version
-- The age of the current base image version
-- The age of the latest available version
-- The number of CVEs affecting each version
+- 推荐（较新）版本的标签名称与别名
+- 当前基础镜像版本的发布时间（age）
+- 最新可用版本的发布时间（age）
+- 各版本受影响的 CVE 数量
 
-At the bottom of the window, you also receive command snippets that you can 
-run to re-build the image using the latest version.
+在窗口底部，你还会得到命令片段，可直接用于用最新版本重新构建镜像。
 
-#### Change base image
+#### 更换基础镜像
 
-This tab shows different alternative tags that you can use, and outlines the
-benefits and disadvantages of each tag version. Selecting the base image shows
-recommended options for that tag.
+该选项卡会展示可选的不同基础镜像标签，并概述每个标签版本的优缺点。
+选择某个基础镜像后，会显示与该标签相关的推荐选项。
 
-For example, if the image you're inspecting is using an old version of `debian`
-as a base image, it shows recommendations for newer and more secure versions
-of `debian` to use. By providing more than one alternative to choose from, you
-can see for yourself how the options compare with each other, and decide which
-one to use.
+例如，如果当前镜像使用了较旧版本的 `debian` 作为基础镜像，
+此处会推荐更新且更安全的 `debian` 版本供你选择。
+通过提供多个备选项，你可以直观比较它们之间的差异，从而做出决策。
 
-![Base image recommendations](../images/change-base-image.png)
+![基础镜像建议](../images/change-base-image.png)
 
-Select a tag recommendation to see further details of the recommendation.
-It shows the benefits and potential disadvantages of the tag, why it's a
-recommended, and how to update your Dockerfile to use this version.
+选择某个标签建议可查看更详细的信息：该标签的优势与潜在劣势、推荐理由，
+以及如何修改 Dockerfile 以使用该版本。

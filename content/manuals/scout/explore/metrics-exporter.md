@@ -1,59 +1,52 @@
 ---
-title: Docker Scout metrics exporter
+title: Docker Scout 指标导出器（Metrics exporter）
 description: |
-  Learn how to scrape data from Docker Scout using Prometheus to create your own
-  vulnerability and policy dashboards with Grafana
+  了解如何使用 Prometheus 从 Docker Scout 抓取数据，并在 Grafana 中构建你自己的漏洞与策略看板
 keywords: scout, exporter, prometheus, grafana, metrics, dashboard, api, compose
 aliases:
   - /scout/metrics-exporter/
 ---
 
-Docker Scout exposes a metrics HTTP endpoint that lets you scrape vulnerability
-and policy data from Docker Scout, using Prometheus or Datadog. With this you
-can create your own, self-hosted Docker Scout dashboards for visualizing supply
-chain metrics.
+Docker Scout 提供一个指标（metrics）HTTP 端点，可配合 Prometheus 或 Datadog 抓取漏洞与策略数据。
+借助它，你可以自建并托管 Docker Scout 看板，用于可视化软件供应链相关指标。
 
-## Metrics
+## 指标（Metrics）
 
-The metrics endpoint exposes the following metrics:
+该指标端点会暴露以下指标：
 
-| Metric                          | Description                                         | Labels                            | Type  |
-| ------------------------------- | --------------------------------------------------- | --------------------------------- | ----- |
-| `scout_stream_vulnerabilities`  | Vulnerabilities in a stream                         | `streamName`, `severity`          | Gauge |
-| `scout_policy_compliant_images` | Compliant images for a policy in a stream           | `id`, `displayName`, `streamName` | Gauge |
-| `scout_policy_evaluated_images` | Total images evaluated against a policy in a stream | `id`, `displayName`, `streamName` | Gauge |
+| 指标名                           | 描述                                                | 标签                              | 类型  |
+| -------------------------------- | --------------------------------------------------- | --------------------------------- | ----- |
+| `scout_stream_vulnerabilities`   | 某条 stream 中的漏洞数量                            | `streamName`, `severity`          | Gauge |
+| `scout_policy_compliant_images`  | 某条 stream 中符合某策略的镜像数量                  | `id`, `displayName`, `streamName` | Gauge |
+| `scout_policy_evaluated_images`  | 某条 stream 中按策略评估过的镜像总数                | `id`, `displayName`, `streamName` | Gauge |
 
 > **Streams**
 >
-> In Docker Scout, the streams concept is a superset of [environments](/manuals/scout/integrations/environment/_index.md).
-> Streams include all runtime environments that you've defined,
-> as well as the special `latest-indexed` stream.
-> The `latest-indexed` stream contains the most recently pushed (and analyzed) tag for each repository.
+> 在 Docker Scout 中，stream 的概念是 [environment](/manuals/scout/integrations/environment/_index.md) 的超集。
+> stream 覆盖你定义的全部运行环境，以及一个特殊的 `latest-indexed` stream。
+> `latest-indexed` stream 包含每个仓库最近一次推送（且已分析）的标签。
 >
-> Streams is mostly an internal concept in Docker Scout,
-> with the exception of the data exposed through this metrics endpoint.
+> 除了通过本指标端点暴露的数据外，stream 多用于 Docker Scout 的内部概念。
 { #stream }
 
-## Creating an access token
+## 创建访问令牌（Access token）
 
-To export metrics from your organization, first make sure your organization is enrolled in Docker Scout.
-Then, create a Personal Access Token (PAT) - a secret token that allows the exporter to authenticate with the Docker Scout API.
+若要从你的组织导出指标，请先确认你的组织已启用 Docker Scout。
+然后创建个人访问令牌（Personal Access Token，PAT）——它用于让导出器与 Docker Scout API 进行认证。
 
-The PAT does not require any specific permissions, but it must be created by a user who is an owner of the Docker organization.
-To create a PAT, follow the steps in [Create an access token](/manuals/security/access-tokens.md).
+PAT 无需特殊权限，但必须由 Docker 组织的拥有者（owner）用户创建。
+创建 PAT 的步骤详见：[创建访问令牌](/manuals/security/access-tokens.md)。
 
-Once you have created the PAT, store it in a secure location.
-You will need to provide this token to the exporter when scraping metrics.
+创建完成后，请将 PAT 安全保存。抓取指标时需要将该令牌提供给导出器。
 
 ## Prometheus
 
-This section describes how to scrape the metrics endpoint using Prometheus.
+本节介绍如何使用 Prometheus 抓取该指标端点的数据。
 
-### Add a job for your organization
+### 为组织新增任务
 
-In the Prometheus configuration file, add a new job for your organization.
-The job should include the following configuration;
-replace `ORG` with your organization name:
+在 Prometheus 配置文件中为你的组织添加一个新任务。
+任务应包含以下配置；将 `ORG` 替换为你的组织名称：
 
 ```yaml
 scrape_configs:
@@ -65,16 +58,16 @@ scrape_configs:
           - api.scout.docker.com
 ```
 
-The address in the `targets` field is set to the domain name of the Docker Scout API, `api.scout.docker.com`.
-Make sure that there's no firewall rule in place preventing the server from communicating with this endpoint.
+`targets` 字段应设置为 Docker Scout API 的域名 `api.scout.docker.com`。
+确保没有防火墙规则阻止服务器访问该端点。
 
-### Add bearer token authentication
+### 添加 Bearer Token 认证
 
-To scrape metrics from the Docker Scout Exporter endpoint using Prometheus, you need to configure Prometheus to use the PAT as a bearer token.
-The exporter requires the PAT to be passed in the `Authorization` header of the request.
+使用 Prometheus 从导出器端点抓取指标时，需要将 PAT 配置为 Bearer Token。
+导出器要求在请求的 `Authorization` 头中携带该 PAT。
 
-Update the Prometheus configuration file to include the `authorization` configuration block.
-This block defines the PAT as a bearer token stored in a file:
+在 Prometheus 配置文件中加入 `authorization` 配置块，
+并将 PAT 作为 Bearer Token 存储在文件中：
 
 ```yaml
 scrape_configs:
@@ -84,39 +77,36 @@ scrape_configs:
       credentials_file: /etc/prometheus/token
 ```
 
-The content of the file should be the PAT in plain text:
+该文件内容应为纯文本的 PAT：
 
 ```console
 dckr_pat_...
 ```
 
-If you are running Prometheus in a Docker container or Kubernetes pod, mount the file into the container using a volume or secret.
+如果 Prometheus 运行在 Docker 容器或 Kubernetes Pod 中，请通过卷或 Secret 将该文件挂载进容器。
 
-Finally, restart Prometheus to apply the changes.
+最后，重启 Prometheus 以应用变更。
 
-### Prometheus sample project
+### Prometheus 示例项目
 
-If you don't have a Prometheus server set up, you can run a [sample project](https://github.com/dockersamples/scout-metrics-exporter) using Docker Compose.
-The sample includes a Prometheus server that scrapes metrics for a Docker organization enrolled in Docker Scout,
-alongside Grafana with a pre-configured dashboard to visualize the vulnerability and policy metrics.
+如果你尚未搭建 Prometheus 服务器，可以使用 Docker Compose 运行一个[示例项目](https://github.com/dockersamples/scout-metrics-exporter)。
+该示例包含一个用于抓取指标的 Prometheus 服务器，以及一个预先配置好仪表盘的 Grafana，
+用于可视化漏洞与策略指标。
 
-1. Clone the starter template for bootstrapping a set of Compose services
-   for scraping and visualizing the Docker Scout metrics endpoint:
+1. 克隆启动模板，以拉起一组用于抓取与可视化 Docker Scout 指标端点的 Compose 服务：
 
    ```console
    $ git clone git@github.com:dockersamples/scout-metrics-exporter.git
    $ cd scout-metrics-exporter/prometheus
    ```
 
-2. [Create a Docker access token](/manuals/security/access-tokens.md)
-   and store it in a plain text file at `/prometheus/prometheus/token` under the template directory.
+2. [创建 Docker 访问令牌](/manuals/security/access-tokens.md)，并以纯文本形式保存到模板目录下的 `/prometheus/prometheus/token`。
 
    ```plaintext {title=token}
    $ echo $DOCKER_PAT > ./prometheus/token
    ```
 
-3. In the Prometheus configuration file at `/prometheus/prometheus/prometheus.yml`,
-   replace `ORG` in the `metrics_path` property on line 6 with the namespace of your Docker organization.
+3. 在 `/prometheus/prometheus/prometheus.yml` 中，将第 6 行 `metrics_path` 中的 `ORG` 替换为你的 Docker 组织命名空间。
 
    ```yaml {title="prometheus/prometheus.yml",hl_lines="6",linenos=1}
    global:
@@ -134,69 +124,60 @@ alongside Grafana with a pre-configured dashboard to visualize the vulnerability
          credentials_file: /etc/prometheus/token
    ```
 
-4. Start the compose services.
+4. 启动 Compose 服务。
 
    ```console
    docker compose up -d
    ```
 
-   This command starts two services: the Prometheus server and Grafana.
-   Prometheus scrapes metrics from the Docker Scout endpoint,
-   and Grafana visualizes the metrics using a pre-configured dashboard.
+   该命令启动两个服务：Prometheus 与 Grafana。
+   Prometheus 从 Docker Scout 端点抓取指标，Grafana 使用预置仪表盘进行可视化。
 
-To stop the demo and clean up any resources created, run:
+要停止演示并清理创建的资源，执行：
 
 ```console
 docker compose down -v
 ```
 
-### Access to Prometheus
+### 访问 Prometheus
 
-After starting the services, you can access the Prometheus expression browser by visiting <http://localhost:9090>.
-The Prometheus server runs in a Docker container and is accessible on port 9090.
+服务启动后，访问 <http://localhost:9090> 打开 Prometheus 表达式浏览器。
+Prometheus 服务器运行在 Docker 容器中，可通过 9090 端口访问。
 
-After a few seconds, you should see the metrics endpoint as a target in the
-Prometheus UI at <http://localhost:9090/targets>.
+数秒后，你应能在 Prometheus UI（<http://localhost:9090/targets>）中看到该指标端点作为抓取目标。
 
-![Docker Scout metrics exporter Prometheus target](../images/scout-metrics-prom-target.png "Docker Scout metrics exporter Prometheus target")
+![Docker Scout 指标导出器 Prometheus 目标](../images/scout-metrics-prom-target.png "Docker Scout metrics exporter Prometheus target")
 
-### Viewing the metrics in Grafana
+### 在 Grafana 中查看指标
 
-To view the Grafana dashboards, go to <http://localhost:3000/dashboards>,
-and sign in using the credentials defined in the Docker Compose file (username: `admin`, password: `grafana`).
+访问 <http://localhost:3000/dashboards> 查看 Grafana 仪表盘，
+使用 Compose 文件中定义的凭据登录（用户名：`admin`，密码：`grafana`）。
 
-![Vulnerability dashboard in Grafana](../images/scout-metrics-grafana-vulns.png "Vulnerability dashboard in Grafana")
+![Grafana 中的漏洞仪表盘](../images/scout-metrics-grafana-vulns.png "Vulnerability dashboard in Grafana")
 
-![Policy dashboard in Grafana](../images/scout-metrics-grafana-policy.png "Policy dashboard in Grafana")
+![Grafana 中的策略仪表盘](../images/scout-metrics-grafana-policy.png "Policy dashboard in Grafana")
 
-The dashboards are pre-configured to visualize the vulnerability and policy metrics scraped by Prometheus.
+这些仪表盘已预先配置，可直接展示 Prometheus 抓取的漏洞与策略指标。
 
 ## Datadog
 
-This section describes how to scrape the metrics endpoint using Datadog.
-Datadog pulls data for monitoring by running a customizable
-[agent](https://docs.datadoghq.com/agent/?tab=Linux) that scrapes available
-endpoints for any exposed metrics. The OpenMetrics and Prometheus checks are
-included in the agent, so you don’t need to install anything else on your
-containers or hosts.
+本节介绍如何使用 Datadog 抓取指标端点。
+Datadog 通过运行可定制的[代理](https://docs.datadoghq.com/agent/?tab=Linux)来抓取公开的指标端点。
+该代理内置 OpenMetrics 与 Prometheus 检查，无需在容器或主机上额外安装组件。
 
-This guide assumes you have a Datadog account and a Datadog API Key. Refer to
-the [Datadog documentation](https://docs.datadoghq.com/agent) to get started.
+本指南假设你拥有 Datadog 账户与 API Key。入门请参阅[Datadog 文档](https://docs.datadoghq.com/agent)。
 
-### Configure the Datadog agent
+### 配置 Datadog 代理
 
-To start collecting the metrics, you will need to edit the agent’s
-configuration file for the OpenMetrics check. If you're running the agent as a
-container, such file must be mounted at
-`/etc/datadog-agent/conf.d/openmetrics.d/conf.yaml`.
+要开始采集指标，你需要编辑代理的 OpenMetrics 检查配置文件。
+如果代理以容器方式运行，请将该文件挂载到 `/etc/datadog-agent/conf.d/openmetrics.d/conf.yaml`。
 
-The following example shows a Datadog configuration that:
+下面的示例展示了一个 Datadog 配置：
 
-- Specifies the OpenMetrics endpoint targeting the `dockerscoutpolicy` Docker organization
-- A `namespace` that all collected metrics will be prefixed with
-- The [`metrics`](#metrics) you want the agent to scrape (`scout_*`)
-- An `auth_token` section for the Datadog agent to authenticate to the Metrics
-  endpoint, using a Docker PAT as a Bearer token.
+- 指定了 `dockerscoutpolicy` 这个 Docker 组织的 OpenMetrics 端点
+- 指定了所有采集指标的统一前缀 `namespace`
+- 指定了代理应抓取的[`metrics`](#metrics)（`scout_*`）
+- 配置了 `auth_token`，让 Datadog 代理以 Docker PAT 作为 Bearer Token 访问指标端点
 
 ```yaml
 instances:
@@ -216,40 +197,33 @@ instances:
 
 > [!IMPORTANT]
 >
-> Do not replace the `<TOKEN>` placeholder in the previous configuration
-> example. It must stay as it is. Only make sure the Docker PAT is correctly
-> mounted into the Datadog agent in the specified filesystem path. Save the
-> file as `conf.yaml` and restart the agent.
+> 请勿替换上例中的 `<TOKEN>` 占位符，请保持原样。
+> 仅需确认 Docker PAT 已正确挂载到 Datadog 代理的指定路径。
+> 将文件保存为 `conf.yaml` 并重启代理。
 
-When creating a Datadog agent configuration of your own, make sure to edit the
-`openmetrics_endpoint` property to target your organization, by replacing
-`dockerscoutpolicy` with the namespace of your Docker organization.
+当你编写自己的 Datadog 代理配置时，请将 `openmetrics_endpoint` 中的 `dockerscoutpolicy`
+替换为你的 Docker 组织命名空间，以确保指向正确组织。
 
-### Datadog sample project
+### Datadog 示例项目
 
-If you don't have a Datadog server set up, you can run a [sample project](https://github.com/dockersamples/scout-metrics-exporter)
-using Docker Compose. The sample includes a Datadog agent, running as a
-container, that scrapes metrics for a Docker organization enrolled in Docker
-Scout. This sample project assumes that you have a Datadog account, an API key,
-and a Datadog site.
+如果你尚未配置 Datadog 服务，可以使用 Docker Compose 运行一个[示例项目](https://github.com/dockersamples/scout-metrics-exporter)。
+该示例包含一个以容器运行的 Datadog 代理，用于抓取已启用 Docker Scout 的组织的指标。
+此示例假设你拥有 Datadog 账户、API Key 和 Datadog 站点信息。
 
-1. Clone the starter template for bootstrapping a Datadog Compose service for
-   scraping the Docker Scout metrics endpoint:
+1. 克隆启动模板，以拉起用于抓取 Docker Scout 指标端点的 Datadog Compose 服务：
 
    ```console
    $ git clone git@github.com:dockersamples/scout-metrics-exporter.git
    $ cd scout-metrics-exporter/datadog
    ```
 
-2. [Create a Docker access token](/manuals/security/access-tokens.md)
-   and store it in a plain text file at `/datadog/token` under the template directory.
+2. [创建 Docker 访问令牌](/manuals/security/access-tokens.md)，并将其以纯文本形式存放在模板目录的 `/datadog/token`。
 
    ```plaintext {title=token}
    $ echo $DOCKER_PAT > ./token
    ```
 
-3. In the `/datadog/compose.yaml` file, update the `DD_API_KEY` and `DD_SITE` environment variables
-   with the values for your Datadog deployment.
+3. 在 `/datadog/compose.yaml` 文件中，填入你的 Datadog 部署对应的 `DD_API_KEY` 与 `DD_SITE` 环境变量：
 
    ```yaml {hl_lines="5-6"}
      datadog-agent:
@@ -265,15 +239,12 @@ and a Datadog site.
          - ./token:/var/run/secrets/scout-metrics-exporter/token:ro
    ```
 
-   The `volumes` section mounts the Docker socket from the host to the
-   container. This is required to obtain an accurate hostname when running as a
-   container ([more details here](https://docs.datadoghq.com/agent/troubleshooting/hostname_containers/)).
+   `volumes` 部分将宿主机 Docker socket 挂载至容器，这有助于在容器模式下获取准确主机名
+   （详见[文档](https://docs.datadoghq.com/agent/troubleshooting/hostname_containers/)）。
 
-   It also mounts the agent's config file and the Docker access token.
+   同时也会挂载代理的配置文件与 Docker 访问令牌。
 
-4. Edit the `/datadog/config.yaml` file by replacing the placeholder `<ORG>` in
-   the `openmetrics_endpoint` property with the namespace of the Docker
-   organization that you want to collect metrics for.
+4. 编辑 `/datadog/config.yaml`，将 `openmetrics_endpoint` 中的 `<ORG>` 占位符替换为目标 Docker 组织命名空间：
 
    ```yaml {hl_lines=2}
    instances:
@@ -282,15 +253,13 @@ and a Datadog site.
    # ...
    ```
 
-5. Start the Compose services.
+5. 启动 Compose 服务。
 
    ```console
    docker compose up -d
    ```
 
-If configured properly, you should see the OpenMetrics check under Running
-Checks when you run the agent’s status command whose output should look similar
-to:
+若配置正确，当你运行代理状态命令时，应能在 Running Checks 下看到 OpenMetrics 检查，输出类似：
 
 ```text
 openmetrics (4.2.0)
@@ -306,48 +275,40 @@ openmetrics (4.2.0)
   Last Successful Execution Date : 2024-05-08 10:41:07 UTC (1715164867000)
 ```
 
-For a comprehensive list of options, take a look at this [example config file](https://github.com/DataDog/integrations-core/blob/master/openmetrics/datadog_checks/openmetrics/data/conf.yaml.example) for the generic OpenMetrics check.
+如需了解完整的配置项，请参考通用 OpenMetrics 检查的[示例配置](https://github.com/DataDog/integrations-core/blob/master/openmetrics/datadog_checks/openmetrics/data/conf.yaml.example)。
 
-### Visualizing your data
+### 可视化数据
 
-Once the agent is configured to grab Prometheus metrics, you can use them to build comprehensive Datadog graphs, dashboards, and alerts.
+当代理已被配置为抓取 Prometheus 指标后，你可以据此构建 Datadog 图表、仪表盘与告警。
 
-Go into your [Metric summary page](https://app.datadoghq.com/metric/summary?filter=scout_prometheus_exporter)
-to see the metrics collected from this example. This configuration will collect
-all exposed metrics starting with `scout_` under the namespace
-`scout_metrics_exporter`.
+前往[Metric summary 页面](https://app.datadoghq.com/metric/summary?filter=scout_prometheus_exporter)
+查看本示例采集到的指标。该配置会收集以 `scout_` 开头、命名空间为 `scout_metrics_exporter` 的所有指标。
 
 ![datadog_metrics_summary](../images/datadog_metrics_summary.png)
 
-The following screenshots show examples of a Datadog dashboard containing
-graphs about vulnerability and policy compliance for a specific [stream](#stream).
+下列截图展示了 Datadog 仪表盘示例，包含针对特定[stream](#stream)的漏洞与策略合规图表。
 
 ![datadog_dashboard_1](../images/datadog_dashboard_1.png)
 ![datadog_dashboard_2](../images/datadog_dashboard_2.png)
 
-> The reason why the lines in the graphs look flat is due to the own nature of
-> vulnerabilities (they don't change too often) and the short time interval
-> selected in the date picker.
+> 图中曲线看起来较为平直，主要是因为漏洞数据变化不频繁，且时间选择器中选择的时间区间较短。
 
-## Scrape interval
+## 抓取间隔（Scrape interval）
 
-By default, Prometheus and Datadog scrape metrics at a 15 second interval.
-Because of the own nature of vulnerability data, the metrics exposed through this API are unlikely to change at a high frequency.
-For this reason, the metrics endpoint has a 60-minute cache by default,
-which means a scraping interval of 60 minutes or higher is recommended.
-If you set the scrape interval to less than 60 minutes, you will see the same data in the metrics for multiple scrapes during that time window.
+默认情况下，Prometheus 与 Datadog 以 15 秒为间隔抓取指标。
+由于漏洞数据本身变化不频繁，通过该 API 暴露的指标通常不会高频更新。
+因此，该端点默认设置了 60 分钟缓存，推荐抓取间隔为 60 分钟或更长。
+若将抓取间隔设置为小于 60 分钟，你会在该时间窗口的多次抓取中看到相同的数据。
 
-To change the scrape interval:
+修改抓取间隔：
 
-- Prometheus: set the `scrape_interval` field in the Prometheus configuration
-  file at the global or job level.
-- Datadog: set the `min_collection_interval` property in the Datadog agent
-  configuration file, see [Datadog documentation](https://docs.datadoghq.com/developers/custom_checks/write_agent_check/#updating-the-collection-interval).
+- Prometheus：在 Prometheus 配置文件的全局或 job 级别设置 `scrape_interval`。
+- Datadog：在 Datadog 代理配置文件中设置 `min_collection_interval`，详见[Datadogh 文档](https://docs.datadoghq.com/developers/custom_checks/write_agent_check/#updating-the-collection-interval)。
 
-## Revoke an access token
+## 撤销访问令牌
 
-If you suspect that your PAT has been compromised or is no longer needed, you can revoke it at any time.
-To revoke a PAT, follow the steps in the [Create and manage access tokens](/manuals/security/access-tokens.md).
+如果怀疑 PAT 被泄露或已不再需要，可随时撤销。
+撤销 PAT 的步骤参见：[创建与管理访问令牌](/manuals/security/access-tokens.md)。
 
-Revoking a PAT immediately invalidates the token, and prevents Prometheus from scraping metrics using that token.
-You will need to create a new PAT and update the Prometheus configuration to use the new token.
+撤销后，该令牌立即失效，Prometheus 将无法继续使用该令牌抓取指标。
+你需要创建新的 PAT 并更新 Prometheus 配置以使用新令牌。

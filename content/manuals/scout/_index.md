@@ -3,56 +3,55 @@ title: Docker Scout
 weight: 40
 keywords: scout, supply chain, vulnerabilities, packages, cves, scan, analysis, analyze
 description:
-  Get an overview on Docker Scout to proactively enhance your software supply chain security
+  了解 Docker Scout，主动提升你的软件供应链安全
 aliases:
   - /engine/scan/
 params:
   sidebar:
     group: Products
 grid:
-  - title: Quickstart
+  - title: 快速开始
     link: /scout/quickstart/
-    description: Learn what Docker Scout can do, and how to get started.
+    description: 了解 Docker Scout 能做什么，以及如何上手。
     icon: explore
-  - title: Image analysis
+  - title: 镜像分析
     link: /scout/image-analysis/
-    description: Reveal and dig into the composition of your images.
+    description: 揭示并深入剖析你的镜像构成。
     icon: radar
-  - title: Advisory database
+  - title: 安全公告数据库
     link: /scout/advisory-db-sources/
-    description: Learn about the information sources that Docker Scout uses.
+    description: 了解 Docker Scout 使用的信息来源。
     icon: database
-  - title: Integrations
+  - title: 集成
     description: |
-      Connect Docker Scout with your CI, registries, and other third-party services.
+      将 Docker Scout 连接到你的 CI、镜像仓库及其他第三方服务。
     link: /scout/integrations/
     icon: multiple_stop
-  - title: Dashboard
+  - title: 仪表板
     link: /scout/dashboard/
     description: |
-      The web interface for Docker Scout.
+      Docker Scout 的 Web 界面。
     icon: dashboard
-  - title: Policy
+  - title: 策略
     link: /scout/policy/
     description: |
-      Ensure that your artifacts align with supply chain best practices.
+      确保你的制品遵循供应链最佳实践。
     icon: policy
-  - title: Upgrade
+  - title: 升级
     link: /subscription/change/
     description: |
-      A Personal subscription includes up to 1 repository. Upgrade for more.
+      个人订阅包含最多 1 个仓库。如需更多请升级。
     icon: upgrade
 ---
 
-Container images consist of layers and software packages, which are susceptible to vulnerabilities.
-These vulnerabilities can compromise the security of containers and applications.
+容器镜像由多层与软件包组成，天然可能包含漏洞。
+这些漏洞会影响容器与应用的安全。
 
-Docker Scout is a solution for proactively enhancing your software supply chain security.
-By analyzing your images, Docker Scout compiles an inventory of components, also known as a Software Bill of Materials (SBOM).
-The SBOM is matched against a continuously updated vulnerability database to pinpoint security weaknesses.
+Docker Scout 是一套用于主动提升软件供应链安全的解决方案。
+通过分析你的镜像，Docker Scout 会汇总其组成清单（SBOM，软件物料清单）。
+随后将该 SBOM 与持续更新的漏洞数据库比对，以定位安全弱点。
 
-Docker Scout is a standalone service and platform that you can interact with
-using Docker Desktop, Docker Hub, the Docker CLI, and the Docker Scout Dashboard.
-Docker Scout also facilitates integrations with third-party systems, such as container registries and CI platforms.
+Docker Scout 是一个独立的服务与平台，你可以通过 Docker Desktop、Docker Hub、Docker CLI 以及 Docker Scout 仪表板进行使用。
+它还支持与第三方系统集成，例如容器仓库与 CI 平台。
 
 {{< grid >}}

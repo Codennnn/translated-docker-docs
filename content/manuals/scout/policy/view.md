@@ -1,75 +1,61 @@
 ---
-title: View Docker Scout policy status
+title: 查看 Docker Scout 策略状态
 description: |
-  The Docker Scout Dashboard and the `docker scout policy` command lets you
-  view policy status of images.
+  你可以通过 Docker Scout Dashboard 或 `docker scout policy` 命令
+  查看镜像的策略状态。
 keywords: scout, policy, status, vulnerabilities, supply chain, cves, licenses
 ---
 
-You can track policy status for your artifacts from the [Docker Scout
-Dashboard](#dashboard), or using the [CLI](#cli).
+你可以在 [Docker Scout 仪表板](#dashboard) 中，或通过[命令行](#cli)，
+跟踪各制品（artifact）的策略状态。
 
-## Dashboard
+## 仪表板 {#dashboard}
 
-The **Overview** tab of the [Docker Scout Dashboard](https://scout.docker.com/)
-displays a summary of recent changes in policy for your repositories.
-This summary shows images that have seen the most change in their policy
-evaluation between the most recent image and the previous image.
+[Docker Scout Dashboard](https://scout.docker.com/) 的 **Overview** 页签
+展示了各仓库近期策略变化的概要。
+该摘要会对比最新镜像与上一个版本的策略评估结果，突出变化最大的镜像。
 
 ![Policy overview](../images/policy-overview.webp)
 
-### Policy status per repository
+### 按仓库查看策略状态
 
-The **Images** tab shows the current policy status, and recent policy trend,
-for all images in the selected environment. The **Policy status** column in the
-list shows:
+在所选环境中，**Images** 页签显示所有镜像的当前策略状态与近期趋势。
+列表中的 **Policy status** 列展示：
 
-- Number of fulfilled policies versus the total number of policies
-- Recent policy trends
+- 已满足策略的数量/策略总数
+- 近期策略趋势
 
 ![Policy status in the image list](../images/policy-image-list.webp)
 
-The policy trend, denoted by the directional arrows, indicates whether an image
-is better, worse, or unchanged in terms of policy, compared to the previous
-image in the same environment.
+列表中的方向箭头用于表示与同环境下的上一版本相比，
+该镜像的策略状况是变好、变差，还是保持不变：
 
-- The green arrow pointing upwards shows the number of policies that got better
-  in the latest pushed image.
-- The red arrow pointing downwards shows the number of policies that got worse
-  in the latest pushed image.
-- The bidirectional gray arrow shows the number of policies that were unchanged
-  in the latest version of this image.
+- 绿色上箭头：在最新推送的镜像中，变好的策略数量。
+- 红色下箭头：在最新推送的镜像中，变差的策略数量。
+- 灰色双向箭头：在最新版本中，保持不变的策略数量。
 
-If you select a repository, you can open the **Policy** tab for a detailed
-description of the policy delta for the most recently analyzed image and its
-predecessor.
+选中某个仓库后，可打开 **Policy** 页签，查看最新分析的镜像与其上一个版本之间的策略差异详情。
 
-### Detailed results and remediation
+### 详细结果与修复建议
 
-To view the full evaluation results for an image, navigate to the image tag in
-the Docker Scout Dashboard and open the **Policy** tab. This shows a breakdown
-for all policy violations for the current image.
+要查看某个镜像的完整评估结果，请在 Dashboard 中进入该镜像标签的详情页，打开 **Policy** 页签。
+此处会列出当前镜像涉及的所有策略违规项的明细。
 
 ![Detailed Policy Evaluation results](../images/policy-detailed-results.webp)
 
-This view also provides recommendations on how to improve improve policy status
-for violated policies.
+该视图还会给出改进策略状态的建议与指引。
 
 ![Policy details in the tag view](../images/policy-tag-view.webp)
 
-For vulnerability-related policies, the policy details view displays the fix
-version that removes the vulnerability, when a fix version is available. To fix
-the issue, upgrade the package version to the fix version.
+对于与漏洞相关的策略，若存在可用的修复版本，策略详情会显示对应的修复版本。
+要修复问题，请将相关软件包升级到该修复版本。
 
-For licensing-related policies, the list shows all packages whose license
-doesn't meet the policy criteria. To fix the issue, find a way to remove the
-dependency to the violating package, for example by looking for an alternative
-package distributed under a more appropriate license.
+对于与许可证合规相关的策略，列表会显示不满足策略条件的所有软件包。
+要修复问题，可尝试移除对该软件包的依赖，或寻找使用更合适许可证分发的替代包。
 
-## CLI
+## CLI {#cli}
 
-To view policy status for an image from the CLI, use the `docker scout policy`
-command.
+要在命令行中查看镜像的策略状态，使用 `docker scout policy` 命令：
 
 ```console
 $ docker scout policy \
@@ -110,5 +96,4 @@ $ docker scout policy \
 ...
 ```
 
-For more information about the command, refer to the [CLI
-reference](/reference/cli/docker/scout/policy.md).
+关于该命令的更多信息，请参阅[CLI 参考](/reference/cli/docker/scout/policy.md)。

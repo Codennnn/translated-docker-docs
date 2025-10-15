@@ -1,108 +1,99 @@
 ---
-title: Insights and analytics
-description: Discover how to access usage statistics of your images on Docker Hub
-keywords: docker hub, hub, insights, analytics, api, verified publisher
+title: 洞察与分析
+description: 了解如何在 Docker Hub 获取你的镜像使用统计
+keywords: docker hub, hub, 洞察, 分析, api, 验证发布者
 aliases:
 - /docker-hub/publish/insights-analytics/
 - /docker-hub/insights-analytics/
 - /trusted-content/insights-analytics/
 ---
 
-Insights and analytics provides usage analytics for Docker Verified
-Publisher (DVP) and Docker-Sponsored Open Source (DSOS) images on Docker Hub. This includes self-serve access to image and extension usage metrics for a desired time span. You can also display the number of image pulls by tag or by digest, and get breakdowns by geolocation, cloud provider, client, and more.
+“洞察与分析”为 Docker Hub 上的 Docker 验证发布者（DVP）与 Docker 赞助开源（DSOS）镜像提供使用分析。
+这包括在所选时间范围内自助获取镜像与扩展的使用度量。你还可以按标签或摘要显示镜像的拉取次数，
+并按地理位置、云服务商、客户端等维度查看细分数据。
 
 <!-- prettier-ignore -->
 > [!TIP]
 >
-> Head to the
-[Docker Verified Publisher Program](https://www.docker.com/partners/programs/) or [Docker-Sponsored Open Source](https://www.docker.com/community/open-source/application/#) pages
-to learn more about the programs.
+> 前往 [Docker 验证发布者计划](https://www.docker.com/partners/programs/) 或
+> [Docker 赞助开源](https://www.docker.com/community/open-source/application/#) 页面了解这些计划的更多信息。
 
-## View the image's analytics data
+## 查看镜像的分析数据
 
-You can find analytics data for your repositories on the **Insights and
-analytics** dashboard at the following URL:
-`https://hub.docker.com/orgs/{namespace}/insights/images`. The dashboard contains a
-visualization of the usage data and a table where you can download
-the data as CSV files.
+你可以在以下 URL 的 **Insights and analytics（洞察与分析）** 控制台中查看你的存储库分析数据：
+`https://hub.docker.com/orgs/{namespace}/insights/images`。
+该控制台包含使用数据的可视化图表，以及可下载 CSV 文件的数据表格。
 
-To view data in the chart:
+要在图表中查看数据：
 
-- Select the data granularity: weekly or monthly
-- Select the time interval: 3, 6, or 12 months
-- Select one or more repositories in the list
+- 选择数据粒度：每周或每月
+- 选择时间范围：3、6 或 12 个月
+- 在列表中选择一个或多个存储库
 
-![Insights and analytics chart visualization](../../../images/chart.png)
+![洞察与分析图表可视化](../../../images/chart.png)
 
 <!-- prettier-ignore -->
 > [!TIP]
 >
-> Hovering your cursor over the chart displays a tooltip, showing precise data
-> for points in time.
+> 将光标悬停在图表上会显示提示信息，呈现某个时间点的精确数据。
 
-### Share analytics data
+### 共享分析数据
 
-You can share the visualization with others using the **Share** icon above the chart.
-This is a convenient way to share statistics with others in your organization.
+你可以使用图表上方的 **Share（分享）** 图标，将该可视化与他人共享。
+这是与你的组织内他人共享统计数据的便捷方式。
 
-![Chart share icon](../../../images/chart-share-icon.png)
+![图表分享图标](../../../images/chart-share-icon.png)
 
-Selecting the icon generates a link that's copied to your clipboard. The link
-preserves the display selections you made. When someone follows the link, the
-**Insights and analytics** page opens and displays the chart with the same
-configuration as you had set up when creating the link.
+选择该图标会生成一个链接并复制到你的剪贴板。该链接会保留你所做的显示选项。
+他人打开该链接时，**Insights and analytics** 页面将按你创建链接时的相同配置显示图表。
 
-## Extension analytics data
+## 扩展的分析数据
 
-If you have published Docker Extensions in the Extension marketplace, you can also get analytics about your extension usage, available as CSV files.
-You can download extension CSV reports from the **Insights and analytics** dashboard at the following URL:
-`https://hub.docker.com/orgs/{namespace}/insights/extensions`. If your Docker namespace contains extensions known in the marketplace, you will see an **Extensions** tab listing CSV files for your extension(s).
+如果你在扩展市场发布了 Docker 扩展，也可以获取扩展使用情况的分析数据（CSV 文件形式）。
+你可以从以下 URL 的 **Insights and analytics** 控制台下载扩展相关的 CSV 报告：
+`https://hub.docker.com/orgs/{namespace}/insights/extensions`。
+如果你的 Docker 命名空间下包含在市场中已知的扩展，你将看到一个 **Extensions** 选项卡，列出你的扩展的 CSV 文件。
 
-## Exporting analytics data
+## 导出分析数据
 
-You can export the analytics data either from the web dashboard, or using the
-[DVP Data API](/reference/api/dvp/latest.md). All members of an organization have access to the analytics data.
+你可以通过 Web 控制台或使用 [DVP 数据 API](/reference/api/dvp/latest.md) 导出分析数据。
+组织的所有成员都可以访问这些分析数据。
 
-The data is available as a downloadable CSV file, in a weekly (Monday through
-Sunday) or monthly format. Monthly data is available from the first day of the
-following calendar month. You can import this data into your own systems, or you
-can analyze it manually as a spreadsheet.
+数据可作为可下载的 CSV 文件提供，格式为每周（周一至周日）或每月。
+月度数据会在下一个自然月的第一天可用。你可以将这些数据导入到自有系统，
+或作为电子表格手动分析。
 
-### Export data
+### 导出数据
 
-Export usage data for your organization's images using the Docker Hub website by following these steps:
+在 Docker Hub 网站导出你组织的镜像使用数据，请按以下步骤操作：
 
-1.  Sign in to [Docker Hub](https://hub.docker.com/) and select **My Hub**.
+1.  登录 [Docker Hub](https://hub.docker.com/)，选择 **My Hub**。
 
-2.  Choose your organization and select **Analytics**.
+2.  选择你的组织，然后选择 **Analytics**。
 
-    ![Organization overview page, with the Insights and Analytics tab](../../../images/organization-tabs.png)
+    ![组织总览页面，包含洞察与分析选项卡](../../../images/organization-tabs.png)
 
-3.  Set the time span for which you want to export analytics data.
+3.  设置你希望导出分析数据的时间范围。
 
-    The downloadable CSV files for summary and raw data appear on the right-hand
-    side.
+    可下载的摘要与原始数据的 CSV 文件会显示在右侧。
 
-    ![Filtering options and download links for analytics data](../../../images/download-analytics-data.png)
+    ![分析数据的筛选选项与下载链接](../../../images/download-analytics-data.png)
 
-### Export data using the API
+### 使用 API 导出数据
 
-The HTTP API endpoints are available at:
-`https://hub.docker.com/api/publisher/analytics/v1`. Learn how to export data
-using the API in the [DVP Data API documentation](/reference/api/dvp/latest.md).
+HTTP API 端点如下：
+`https://hub.docker.com/api/publisher/analytics/v1`。
+如何使用 API 导出数据，请参阅 [DVP 数据 API 文档](/reference/api/dvp/latest.md)。
 
-## Data points
+## 数据点（Data points）
 
-Export data in either raw or summary format. Each format contains different data
-points and with different structure.
+导出的数据包含两种格式：原始数据与汇总数据。不同格式包含的数据点与结构不同。
 
-The following sections describe the available data points for each format. The
-**Date added** column shows when the field was first introduced.
+下文分别说明各格式中可用的数据点。表格中的 **Date added** 列表示该字段首次引入的日期。
 
-### Image pulls raw data
+### 镜像拉取原始数据（Image pulls raw data）
 
-The raw data format contains the following data points. Each row in the CSV file
-represents an image pull.
+原始数据格式包含以下数据点。CSV 文件中的每一行代表一次镜像拉取。
 
 | Data point                    | Description                                                                                                  | Date added        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------- |
@@ -128,16 +119,14 @@ represents an image pull.
 [3]: /admin/organization/orgs/
 [4]: /docker-hub/repos/
 
-### Image pulls summary data
+### 镜像拉取汇总数据（Image pulls summary data）
 
-There are two levels of summary data available:
+汇总数据提供两个层级：
 
-- Repository-level, a summary of every namespace and repository
-- Tag- or digest-level, a summary of every namespace, repository, and reference
-  (tag or digest)
+- 存储库层级：对每个命名空间与存储库的汇总
+- 标签或摘要层级：对每个命名空间、存储库与引用（标签或摘要）的汇总
 
-The summary data formats contain the following data points for the selected time
-span:
+在所选时间范围内，汇总数据格式包含以下数据点：
 
 | Data point        | Description                                             | Date added        |
 | ----------------- | ------------------------------------------------------- | ----------------- |
@@ -147,23 +136,20 @@ span:
 | Version check     | HEAD by tag, not followed by a GET                      | January 1, 2022   |
 | Owner             | The name of the organization that owns the repository.  | December 19, 2022 |
 
-### Image pulls action classification rules
+### 镜像拉取行为分类规则（Image pulls action classification rules）
 
-An action represents the multiple request events associated with a
-`docker pull`. Pulls are grouped by category to make the data more meaningful
-for understanding user behavior and intent. The categories are:
+一次动作（action）表示与一次 `docker pull` 相关的多个请求事件。
+为了更有助于理解用户行为与意图，系统会将拉取按类别分组。类别包括：
 
-- Version check
-- Pull by tag
-- Pull by digest
+- 版本检查（Version check）
+- 按标签拉取（Pull by tag）
+- 按摘要拉取（Pull by digest）
 
-Automated systems frequently check for new versions of your images. Being able
-to distinguish between "version checks" in CI versus actual image pulls by a
-user grants you more insight into your users' behavior.
+自动化系统会频繁检查你的镜像是否有新版本。能区分 CI 中的“版本检查”与用户实际镜像拉取，
+可以让你更好地洞察用户行为。
 
-The following table describes the rules applied for determining intent behind
-pulls. To provide feedback or ask questions about these rules,
-[fill out the Google Form](https://forms.gle/nb7beTUQz9wzXy1b6).
+下表描述了用于判断拉取意图的规则。如需就这些规则提供反馈或提问，
+请[填写此 Google 表单](https://forms.gle/nb7beTUQz9wzXy1b6)。
 
 | Starting event | Reference | Followed by                                                     | Resulting action | Use case(s)                                                                                                    | Notes                                                                                                                                                                                                                                                                                 |
 | :------------- | :-------- | :-------------------------------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -179,68 +165,57 @@ pulls. To provide feedback or ask questions about these rules,
 | HEAD           | digest    | GET by same digest                                              | Pull by digest   | Image is single-arch and/or image is multi-arch but some part of the image already exists on the local machine |                                                                                                                                                                                                                                                                                       |
 | HEAD           | digest    | GET by same digest, then a second GET by different digest       | Pull by Digest   | Image is multi-arch                                                                                            |                                                                                                                                                                                                                                                                                       |
 
-### Extension Summary data
+### 扩展汇总数据（Extension Summary data）
 
-There are two levels of extension summary data available:
+扩展汇总数据提供两个层级：
 
-- Core summary, with basic extension usage information: number of extension installs, uninstalls, and total install all times
+- 核心汇总（Core summary）：基础的扩展使用信息，包括扩展安装数、卸载数与历史总安装数
 
-The core-summary-data file contains the following data points for the selected time
-span:
+在所选时间范围内，核心汇总数据文件包含以下数据点：
 
-| Data point        | Description                                             | Date added        |
+| 数据点            | 描述                                                    | 添加日期          |
 | ----------------- | ------------------------------------------------------- | ----------------- |
-| Installs          | Number of installs for the extension                    | Feb 1, 2024       |
-| TotalInstalls     | Number of installs for the extension all times          | Feb 1, 2024       |
-| Uninstalls        | Number of uninstalls for the extension                  | Feb 1, 2024       |
-| TotalUninstalls   | Number of uninstalls for the extension all times        | Feb 1, 2024       |
-| Updates           | Number of updates for the extension                     | Feb 1, 2024       |
+| Installs          | 扩展的安装次数                                          | Feb 1, 2024       |
+| TotalInstalls     | 扩展的历史总安装次数                                    | Feb 1, 2024       |
+| Uninstalls        | 扩展的卸载次数                                          | Feb 1, 2024       |
+| TotalUninstalls   | 扩展的历史总卸载次数                                    | Feb 1, 2024       |
+| Updates           | 扩展的更新次数                                          | Feb 1, 2024       |
 
-- Premium summary, with advanced extension usage information: installs, uninstalls by unique users, extension opening by unique users.
+- 高级汇总（Premium summary）：高级的扩展使用信息，包括按唯一用户统计的安装、卸载，以及按唯一用户统计的扩展打开次数。
 
-The core-summary-data file contains the following data points for the selected time
-span:
+在所选时间范围内，高级汇总数据文件包含以下数据点：
 
-| Data point        | Description                                             | Date added        |
+| 数据点            | 描述                                                    | 添加日期          |
 | ----------------- | ------------------------------------------------------- | ----------------- |
-| Installs          | Number of installs for the extension                    | Feb 1, 2024       |
-| UniqueInstalls    | Number of unique users installing the extension         | Feb 1, 2024       |
-| Uninstalls        | Number of uninstalls for the extension                  | Feb 1, 2024       |
-| UniqueUninstalls  | Number of unique users uninstalling the extension       | Feb 1, 2024       |
-| Usage             | Number of openings of the extension tab                 | Feb 1, 2024       |
-| UniqueUsers       | Number of unique users openings the extension tab       | Feb 1, 2024       |
+| Installs          | 扩展的安装次数                                          | Feb 1, 2024       |
+| UniqueInstalls    | 安装该扩展的唯一用户数                                  | Feb 1, 2024       |
+| Uninstalls        | 扩展的卸载次数                                          | Feb 1, 2024       |
+| UniqueUninstalls  | 卸载该扩展的唯一用户数                                  | Feb 1, 2024       |
+| Usage             | 扩展选项卡被打开的次数                                  | Feb 1, 2024       |
+| UniqueUsers       | 打开扩展选项卡的唯一用户数                              | Feb 1, 2024       |
 
-## Changes in data over time
+## 数据随时间的变化（Changes in data over time）
 
-The insights and analytics service is continuously improved to increase the
-value it brings to publishers. Some changes might include adding new data
-points, or improving existing data to make it more useful.
+“洞察与分析”服务会持续改进，以提升对发布者的价值。
+这可能包括新增数据点，或改进现有数据以提升其实用性。
 
-Changes in the dataset, such as added or removed fields, generally only apply
-from the date of when the field was first introduced, and going forward.
+数据集中的变更（如新增或移除字段）通常仅自该字段首次引入之日起生效，并向后生效。
 
-Refer to the tables in the [Data points](#data-points) section to see from which
-date a given data point is available.
+请参阅[数据点](#data-points)章节中的表格，查看特定数据点从何时开始可用。
 
-## Privacy
+## 隐私（Privacy）
 
-This section contains information about privacy-protecting measures that ensures
-consumers of content on Docker Hub remain completely anonymous.
+本节介绍保护隐私的措施，确保在 Docker Hub 上消费内容的用户保持完全匿名。
 
 <!-- prettier-ignore -->
 > [!IMPORTANT]
 >
-> Docker never shares any Personally Identifiable Information (PII) as part of
-> analytics data.
+> Docker 不会在分析数据中共享任何可识别个人身份的信息（PII）。
 
-The image pulls summary dataset includes unique IP address count. This data point only
-includes the number of distinct unique IP addresses that request an image.
-Individual IP addresses are never shared.
+镜像拉取汇总数据集包含“唯一 IP 地址计数”。该数据点仅统计请求某镜像的不同唯一 IP 数，
+不会共享任何单个 IP 地址。
 
-The image pulls raw dataset includes user IP domains as a data point. This is the domain name
-associated with the IP address used to pull an image. If the IP type is
-`business`, the domain represents the company or organization associated with
-that IP address (for example, `docker.com`). For any other IP type that's not
-`business`, the domain represents the internet service provider or hosting
-provider used to make the request. On average, only about 30% of all pulls
-classify as the `business` IP type (this varies between publishers and images).
+镜像拉取原始数据集包含“用户 IP 域名”这一数据点，即用于拉取镜像的 IP 地址所关联的域名。
+如果 IP 类型是 `business`，该域名代表与该 IP 地址关联的公司或组织（例如 `docker.com`）。
+对于其他非 `business` 的 IP 类型，域名代表用于发起请求的互联网服务提供商或托管服务商。
+平均而言，约只有 30% 的拉取会被归类为 `business` IP 类型（不同发布者与镜像之间会有所差异）。

@@ -18,7 +18,7 @@ Docker Desktop 利用 WSL 2 的动态内存分配功能来优化资源占用。�
 
 此外，在 WSL 2 下，冷启动后启动 Docker 守护进程的耗时也显著缩短。
 
-## 前置条件
+## 先决条件
 
 在启用 Docker Desktop 的 WSL 2 功能之前，请确认：
 

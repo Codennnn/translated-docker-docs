@@ -167,7 +167,7 @@ $ docker run -it \
 
 ### 访问 NVIDIA GPU
 
-#### 前置条件
+#### 先决条件
 
 访问 [NVIDIA 驱动下载页面](https://www.nvidia.com/Download/index.aspx) 获取并安装合适的驱动。安装完成后请重启系统。
 
