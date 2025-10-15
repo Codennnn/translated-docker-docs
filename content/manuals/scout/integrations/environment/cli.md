@@ -1,28 +1,24 @@
 ---
-description: Integrate your runtime environments with Docker Scout using the CLI client
+description: 使用 CLI 客户端将运行时环境与 Docker Scout 集成
 keywords: docker scout, integration, image analysis, runtime, workloads, cli, environments
-title: Generic environment integration with CLI
+title: 通过 CLI 进行通用环境集成
 linkTitle: Generic (CLI)
 ---
 
 {{% include "scout-early-access.md" %}}
 
-You can create a generic environment integration by running the Docker Scout
-CLI client in your CI workflows. The CLI client is available as a binary on
-GitHub and as a container image on Docker Hub. Use the client to invoke the
-`docker scout environment` command to assign your images to environments.
+您可以在 CI 工作流中运行 Docker Scout CLI 客户端，以创建通用的环境集成。该 CLI 客户端既可作为二进制在 GitHub 获取，也可作为容器镜像在 Docker Hub 获取。使用该客户端调用 `docker scout environment` 命令，将镜像分配到指定环境。
 
-For more information about how to use the `docker scout environment` command,
-refer to the [CLI reference](/reference/cli/docker/scout/environment.md).
+有关 `docker scout environment` 命令的详细用法，请参见 [CLI 参考](/reference/cli/docker/scout/environment.md)。
 
-## Examples
+## 示例
 
-Before you start, set the following environment variables in your CI system:
+在开始之前，请在 CI 系统中设置以下环境变量：
 
-- `DOCKER_SCOUT_HUB_USER`: your Docker Hub username
-- `DOCKER_SCOUT_HUB_PASSWORD`: your Docker Hub personal access token
+- `DOCKER_SCOUT_HUB_USER`：您的 Docker Hub 用户名
+- `DOCKER_SCOUT_HUB_PASSWORD`：您的 Docker Hub 个人访问令牌
 
-Make sure the variables are accessible to your project.
+确保这些变量对项目可用。
 
 {{< tabs >}}
 {{< tab name="Circle CI" >}}
@@ -56,7 +52,7 @@ jobs:
 {{< /tab >}}
 {{< tab name="GitLab" >}}
 
-The following example uses the [Docker executor](https://docs.gitlab.com/runner/executors/docker.html).
+下面的示例使用 [Docker executor](https://docs.gitlab.com/runner/executors/docker.html)。
 
 ```yaml
 variables:

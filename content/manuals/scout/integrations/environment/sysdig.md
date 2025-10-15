@@ -1,103 +1,71 @@
 ---
-title: Integrate Docker Scout with Sysdig
+title: 将 Docker Scout 与 Sysdig 集成
 linkTitle: Sysdig
-description: Integrate your runtime environments with Docker Scout using Sysdig
+description: 使用 Sysdig 将运行时环境与 Docker Scout 集成
 keywords: scout, sysdig, integration, image analysis, environments, supply chain
 ---
 
 {{% include "scout-early-access.md" %}}
 
-The Sysdig integration enables Docker Scout to automatically detect the images
-you're using for your running workloads. Activating this integration gives you
-real-time insights about your security posture, and lets you compare your
-builds with what's running in production.
+通过 Sysdig 集成，Docker Scout 能自动发现您当前运行的工作负载所使用的镜像。启用该集成后，您可以实时了解安全状况，并将构建产物与生产环境中实际运行的版本进行对比。
 
-## How it works
+## 工作原理
 
-The Sysdig Agent captures the images of your container workloads. Docker Scout
-integrates with the Sysdig API to discover the images in your cluster. This
-integration uses Sysdig's Risk Spotlight feature. For more information, see
-[Risk Spotlight Integrations (Sysdig docs)](https://docs.sysdig.com/en/docs/sysdig-secure/integrations-for-sysdig-secure/risk-spotlight-integrations/).
+Sysdig Agent 会采集容器工作负载所使用的镜像。Docker Scout 通过集成 Sysdig API 来发现集群中的镜像。该集成依赖 Sysdig 的 Risk Spotlight 功能。详情参见：[Risk Spotlight Integrations（Sysdig 文档）](https://docs.sysdig.com/en/docs/sysdig-secure/integrations-for-sysdig-secure/risk-spotlight-integrations/)。
 
 > [!TIP]
 >
-> Sysdig offers a free trial for Docker users to try out the new Docker Scout integration.
+> Sysdig 为 Docker 用户提供了免费试用，便于体验全新的 Docker Scout 集成。
 >
 > {{< button url=`https://sysdig.com/free-trial-for-docker-customers/` text="Sign up" >}}
 
-Each Sysdig integration maps to an environment. When you enable a Sysdig
-integration, you specify the environment name for that cluster, such as
-`production` or `staging`. Docker Scout assigns the images in the cluster to
-the corresponding environment. This lets you use the environment filters to see
-vulnerability status and policy compliance for an environment.
+每个 Sysdig 集成都对应一个环境。当您启用某个 Sysdig 集成时，需要为该集群指定环境名称（例如 `production` 或 `staging`）。Docker Scout 会将集群中的镜像分配到对应环境。这样，您就可以按环境筛选并查看漏洞状态与策略合规性。
 
-Only images analyzed by Docker Scout can be assigned to an environment. The
-Sysdig runtime integration doesn't trigger image analysis by itself. To analyze
-images automatically, enable a [registry integration](../_index.md#container-registries).
+只有经过 Docker Scout 分析的镜像才能被分配到环境。Sysdig 运行时集成本身不会触发镜像分析。若要自动分析镜像，请启用[仓库集成](../_index.md#container-registries)。
 
-Image analysis must not necessarily precede the runtime integration, but the
-environment assignment only takes place once Docker Scout has analyzed the
-image.
+镜像分析不必先于运行时集成进行，但只有当 Docker Scout 完成镜像分析后，环境分配才会生效。
 
-## Prerequisites
+## 先决条件
 
-- Install the Sysdig Agent in the cluster that you want to integrate, see [Install Sysdig Agent (Sysdig docs)](https://docs.sysdig.com/en/docs/installation/sysdig-monitor/install-sysdig-agent/).
-- Enable profiling for Risk Spotlight Integrations in Sysdig, see [Profiling (Sysdig docs)](https://docs.sysdig.com/en/docs/sysdig-secure/policies/profiling/#enablement).
-- You must be an organization owner to enable the integration in the Docker Scout Dashboard.
+- 在需要集成的集群中安装 Sysdig Agent，参见：[Install Sysdig Agent（Sysdig 文档）](https://docs.sysdig.com/en/docs/installation/sysdig-monitor/install-sysdig-agent/)。
+- 在 Sysdig 中为 Risk Spotlight 集成启用 profiling，参见：[Profiling（Sysdig 文档）](https://docs.sysdig.com/en/docs/sysdig-secure/policies/profiling/#enablement)。
+- 您必须是组织所有者，才能在 Docker Scout 控制台中启用该集成。
 
-## Integrate an environment
+## 集成环境
 
-1. Go to the [Sysdig integration page](https://scout.docker.com/settings/integrations/sysdig/)
-   on the Docker Scout Dashboard.
-2. In the **How to integrate** section, enter a configuration name for this
-   integration. Docker Scout uses this label as a display name for the
-   integration.
+1. 打开 Docker Scout 控制台的 [Sysdig 集成页面](https://scout.docker.com/settings/integrations/sysdig/)。
+2. 在 **How to integrate** 区域，为此次集成输入一个配置名称。Docker Scout 会将该名称用作显示名与 webhook 名称。
 
-3. Select **Next**.
+3. 选择 **Next**。
 
-4. Enter a Risk Spotlight API token and select the region in the drop-down list.
+4. 输入 Risk Spotlight API Token，并在下拉列表中选择区域（region）。
 
-   The Risk Spotlight API token is the Sysdig token that Docker Scout needs to
-   integrate with Sysdig. For more instructions on how to generate a Risk
-   Spotlight token, See [Risk Spotlight Integrations (Sysdig docs)](https://docs.sysdig.com/en/docs/sysdig-secure/integrations-for-sysdig-secure/risk-spotlight-integrations/docker-scout/#generate-a-token-for-the-integration).
+   Risk Spotlight API Token 是 Docker Scout 集成 Sysdig 所需的 Sysdig 令牌。关于如何生成该令牌，参见：[Risk Spotlight Integrations（Sysdig 文档）](https://docs.sysdig.com/en/docs/sysdig-secure/integrations-for-sysdig-secure/risk-spotlight-integrations/docker-scout/#generate-a-token-for-the-integration)。
 
-   The region corresponds to the `global.sysdig.region` configuration parameter
-   set when deploying the Sysdig Agent.
+   所选区域对应部署 Sysdig Agent 时设置的 `global.sysdig.region` 配置参数。
 
-5. Select **Next**.
+5. 选择 **Next**。
 
-   After selecting **Next**, Docker Scout connects to Sysdig and retrieves the
-   cluster names for your Sysdig account. Cluster names correspond to the
-   `global.clusterConfig.name` configuration parameter set when deploying
-   Sysdig Agents.
+   点击 **Next** 后，Docker Scout 会连接 Sysdig 并拉取您账户下的集群名称。集群名称对应部署 Sysdig Agents 时设置的 `global.clusterConfig.name` 配置参数。
 
-   An error displays if Docker Scout fails to connect to Sysdig using the
-   provided token. If there's an error, you won't be able to continue the
-   integration. Go back and verify that the configuration details are correct.
+   若使用提供的令牌连接 Sysdig 失败，将显示错误，且无法继续集成。请返回检查并修正配置。
 
-6. Select a cluster name in the drop-down list.
+6. 在下拉列表中选择一个集群名称。
 
-7. Select **Next**.
+7. 选择 **Next**。
 
-8. Assign an environment name for this cluster.
+8. 为该集群指定要关联的环境名称。
 
-    You can reuse an existing environment or create a new one.
+    您可以复用现有环境，或新建一个环境。
 
-9. Select **Enable integration**.
+9. 选择 **Enable integration**。
 
-After enabling the integration, Docker Scout automatically detects images
-running in the cluster, and assigns those images to the environment associated
-with the cluster. For more information about environments, see [Environment
-monitoring](./_index.md).
+启用集成后，Docker Scout 会自动发现集群中正在运行的镜像，并将这些镜像分配到与该集群关联的环境。关于环境的更多信息，参见：[环境监控](./_index.md)。
 
 > [!NOTE]
 >
-> Docker Scout only detects images that have been analyzed. To trigger an image
-> analysis, enable a [registry integration](../_index.md#container-registries)
-> and push an image to your registry.
+> Docker Scout 仅会检测已完成分析的镜像。若要触发镜像分析，请启用[仓库集成](../_index.md#container-registries)并将镜像推送到您的仓库。
 >
-> If you created a new environment for this integration, the environment
-> appears in Docker Scout when at least one image has been analyzed.
+> 如果您为此次集成新建了环境，则在至少有一个镜像完成分析后，该环境才会出现在 Docker Scout 中。
 
-To integrate more clusters, go to the [Sysdig integrations page](https://scout.docker.com/settings/integrations/sysdig/)
-and select the **Add** button.
+如需集成更多集群，请前往 [Sysdig 集成页面](https://scout.docker.com/settings/integrations/sysdig/) 并选择 **Add** 按钮。

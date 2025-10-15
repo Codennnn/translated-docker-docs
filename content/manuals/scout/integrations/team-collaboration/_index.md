@@ -1,5 +1,5 @@
 ---
 build:
   render: never
-title: Team collaboration
+title: 团队协作
 ---

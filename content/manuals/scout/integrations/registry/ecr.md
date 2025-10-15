@@ -1,174 +1,121 @@
 ---
-description: Integrate Amazon Elastic Container Registry with Docker Scout
+description: 将 Amazon Elastic Container Registry 与 Docker Scout 集成
 keywords: docker scout, ecr, integration, image analysis, security, cves
-title: Integrate Docker Scout with Amazon ECR
+title: 将 Docker Scout 与 Amazon ECR 集成
 linkTitle: Amazon ECR
 ---
 
-Integrating Docker Scout with Amazon Elastic Container Registry (ECR) lets you
-view image insights for images hosted in ECR repositories. After integrating
-Docker Scout with ECR and activating Docker Scout for a repository, pushing an
-image to the repository automatically triggers image analysis. You can view
-image insights using the Docker Scout Dashboard, or the `docker scout` CLI
-commands.
+将 Docker Scout 与 Amazon Elastic Container Registry（ECR）集成后，您可以查看托管在 ECR 仓库中的镜像洞察。完成集成并在指定仓库启用 Docker Scout 后，向该仓库推送镜像会自动触发镜像分析。您可以在 Docker Scout 控制台或通过 `docker scout` CLI 查看分析结果。
 
-## How it works
+## 工作原理
 
-To help you integrate Docker Scout with ECR, you can use a CloudFormation stack
-template that creates and configures the necessary AWS resources for
-integrating Docker Scout with your ECR registry. For more details about the AWS
-resources, see [CloudFormation stack template](#cloudformation-stack-template).
+为便于将 Docker Scout 集成到 ECR，您可以使用 CloudFormation Stack 模板，在 AWS 中自动创建并配置集成所需的资源。关于这些 AWS 资源的更多详情，参见[CloudFormation 堆栈模板](#cloudformation-stack-template)。
 
-The following diagram shows how the Docker Scout ECR integration works.
+下图展示了 Docker Scout 与 ECR 集成的工作方式。
 
 ![How the ECR integration works](../../images/Scout-ECR.png)
 
-After the integration, Docker Scout automatically pulls and analyzes images
-that you push to the ECR registry. Metadata about your images are stored on the
-Docker Scout platform, but Docker Scout doesn't store the container images
-themselves. For more information about how Docker Scout handles image data, see
-[Data handling](/manuals/scout/deep-dive/data-handling.md).
+集成完成后，Docker Scout 会自动拉取并分析您推送到 ECR 的镜像。镜像相关的元数据会存储在 Docker Scout 平台上，但 Docker Scout 不会存储镜像本体。关于镜像数据的处理方式，参见：[数据处理](/manuals/scout/deep-dive/data-handling.md)。
 
-### CloudFormation stack template
+### CloudFormation 堆栈模板
 
-The following table describes the configuration resources.
+下表描述了需要配置的资源：
 
 > [!NOTE]
 >
-> Creating these resources incurs a small, recurring cost on the AWS account.
-> The **Cost** column in the table represents an estimated monthly cost of the
-> resources, when integrating an ECR registry that gets 100 images pushed per day.
+> 在 AWS 账户中创建这些资源会产生少量的持续费用。表格中的 **Cost** 列给出了当 ECR 每日有 100 个镜像推送时的月度费用估算。
 >
-> Additionally, an egress cost also applies when Docker Scout pulls the images
-> from ECR. The egress cost is around $0.09 per GB.
+> 此外，当 Docker Scout 从 ECR 拉取镜像时还会产生出口（egress）费用，约为 $0.09/GB。
 
 | Resource type                 | Resource name                 | Description                                                                                | Cost  |
 | ----------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------ | ----- |
-| `AWS::SNSTopic::Topic`        | `SNSTopic`                    | SNS topic for notifying Docker Scout when the AWS resources have been created.             | Free  |
-| `AWS::SNS::TopicPolicy`       | `TopicPolicy`                 | Defines the topic for the initial setup notification.                                      | Free  |
-| `AWS::SecretsManager::Secret` | `ScoutAPICredentials`         | Stores the credentials used by EventBridge to fire events to Scout.                        | $0.42 |
-| `AWS::Events::ApiDestination` | `ApiDestination`              | Sets up the EventBridge connection to Docker Scout for sending ECR push and delete events. | $0.01 |
-| `AWS::Events::Connection`     | `Connection`                  | EventBridge connection credentials to Scout.                                               | Free  |
-| `AWS::Events::Rule`           | `DockerScoutEcrRule`          | Defines the rule to send ECR pushes and deletes to Scout.                                  | Free  |
-| `AWS::Events::Rule`           | `DockerScoutRepoDeletedRule`  | Defines the rule to send ECR repository deletes to Scout.                                  | Free  |
-| `AWS::IAM::Role`              | `InvokeApiRole`               | Internal role to grant the event access to `ApiDestination`.                               | Free  |
-| `AWS::IAM::Role`              | `AssumeRoleEcrAccess`         | This role has access to `ScoutAPICredentials` for setting up the Docker Scout integration. | Free  |
+| `AWS::SNSTopic::Topic`        | `SNSTopic`                    | 当 AWS 资源创建完成时，用于通知 Docker Scout 的 SNS 主题。                                 | Free  |
+| `AWS::SNS::TopicPolicy`       | `TopicPolicy`                 | 初始设置通知所使用的主题策略。                                                              | Free  |
+| `AWS::SecretsManager::Secret` | `ScoutAPICredentials`         | 存储 EventBridge 触发事件到 Scout 所用的凭据。                                             | $0.42 |
+| `AWS::Events::ApiDestination` | `ApiDestination`              | 建立到 Docker Scout 的 EventBridge 连接，用于发送 ECR 推送与删除事件。                     | $0.01 |
+| `AWS::Events::Connection`     | `Connection`                  | EventBridge 到 Scout 的连接凭据。                                                           | Free  |
+| `AWS::Events::Rule`           | `DockerScoutEcrRule`          | 将 ECR 推送与删除事件发送到 Scout 的规则。                                                  | Free  |
+| `AWS::Events::Rule`           | `DockerScoutRepoDeletedRule`  | 将 ECR 仓库删除事件发送到 Scout 的规则。                                                    | Free  |
+| `AWS::IAM::Role`              | `InvokeApiRole`               | 允许事件访问 `ApiDestination` 的内部角色。                                                  | Free  |
+| `AWS::IAM::Role`              | `AssumeRoleEcrAccess`         | 拥有 `ScoutAPICredentials` 访问权限，用于完成 Docker Scout 集成的角色。                     | Free  |
 
-## Integrate your first registry
+## 集成首个仓库
 
-Create the CloudFormation stack in your AWS account to enable the Docker Scout
-integration.
+在您的 AWS 账号中创建 CloudFormation 堆栈以启用 Docker Scout 集成。
 
-Prerequisites:
+前提条件：
 
-- You must have access to an AWS account with permission to create resources.
-- You have be an owner of the Docker organization.
+- 您拥有可创建资源的 AWS 账户访问权限。
+- 您是 Docker 组织的所有者。
 
-To create the stack:
+创建堆栈步骤：
 
-1. Go to the [ECR integration page](https://scout.docker.com/settings/integrations/ecr/)
-   on the Docker Scout Dashboard.
-2. Select the **Create on AWS** button.
+1. 打开 Docker Scout 控制台中的 [ECR 集成页面](https://scout.docker.com/settings/integrations/ecr/)。
+2. 选择 **Create on AWS** 按钮。
 
-   This opens the **Create stack** wizard in the AWS CloudFormation console in
-   a new browser tab. If you're not already signed in to AWS, you're redirected
-   to the sign-in page first.
+   这会在新标签页中打开 AWS CloudFormation 控制台的 **Create stack** 向导。如果尚未登录 AWS，会先跳转到登录页面。
 
-   If the button is grayed-out, it means you're lacking the necessary
-   permissions in the Docker organization.
+   如果按钮呈灰色，说明您在该 Docker 组织中缺少所需权限。
 
-3. Follow the steps in the **Create stack** wizard until the end. Choose the
-   AWS region you want to integrate. Complete the procedure by creating the
-   resources.
+3. 按 **Create stack** 向导完成全部步骤，选择要集成的 AWS 区域，并创建资源。
 
-   The fields in the wizard are pre-populated by the CloudFormation template,
-   so you don't need to edit any of the fields.
+   向导中的字段由 CloudFormation 模板预填，一般无需修改。
 
-4. When the resources have been created (the CloudFormation status shows
-   `CREATE_COMPLETE` in the AWS console), return to the ECR integrations page
-   in the Docker Scout Dashboard.
+4. 当资源创建完成（AWS 控制台中 CloudFormation 状态显示为 `CREATE_COMPLETE`）后，返回 Docker Scout 控制台的 ECR 集成页面。
 
-   The **Integrated registries** list shows the account ID and region for the
-   ECR registry that you just integrated. If successful, the integration status
-   is **Connected**.
+   在 **Integrated registries** 列表中，您将看到刚集成的 ECR 仓库对应的账号 ID 与区域；若成功，状态为 **Connected**。
 
-The ECR integration is now active. For Docker Scout to start analyzing images
-in the registry, you need to activate it for each repository in
-[Repository settings](https://scout.docker.com/settings/repos/).
+至此，ECR 集成已启用。要让 Docker Scout 开始分析该仓库中的镜像，需在[仓库设置](https://scout.docker.com/settings/repos/)中对每个仓库启用分析。
 
-After activating repositories, images that you push are analyzed by Docker
-Scout. The analysis results appear in the Docker Scout Dashboard.
-If your repository already contains images, Docker Scout pulls and analyzes the
-latest image version automatically.
+启用后，您推送的镜像会被 Docker Scout 分析，结果显示在控制台。如果仓库已存在镜像，Docker Scout 会自动拉取并分析最新版本。
 
-## Integrate additional registries
+## 集成更多仓库
 
-To add additional registries:
+添加更多仓库：
 
-1. Go to the [ECR integration page](https://scout.docker.com/settings/integrations/ecr/)
-   on the Docker Scout Dashboard.
-2. Select the **Add** button at the top of the list.
-3. Complete the steps for creating the AWS resources.
-4. When the resources have been created, return to the ECR integrations page in
-   the Docker Scout Dashboard.
+1. 打开 [ECR 集成页面](https://scout.docker.com/settings/integrations/ecr/)。
+2. 点击列表顶部的 **Add** 按钮。
+3. 按步骤创建所需的 AWS 资源。
+4. 资源创建完成后，返回 Docker Scout 控制台的 ECR 集成页面。
 
-   The **Integrated registries** list shows the account ID and region for the
-   ECR registry that you just integrated. If successful, the integration status
-   is **Connected**.
+   在 **Integrated registries** 列表中会显示新集成的 ECR 仓库的账号 ID 与区域；若成功，状态为 **Connected**。
 
-Next, activate Docker Scout for the repositories that you want to analyze in
-[Repository settings](https://scout.docker.com/settings/repos/).
+接下来，请在[仓库设置](https://scout.docker.com/settings/repos/)中为需要分析的仓库启用 Docker Scout。
 
-## Remove integration
+## 移除集成
 
-To remove an integrated ECR registry, you must be an owner of the Docker
-organization.
+要移除已集成的 ECR 仓库，您必须是 Docker 组织的所有者。
 
-1. Go to the [ECR integration page](https://scout.docker.com/settings/integrations/ecr/)
-   on the Docker Scout Dashboard.
-2. Find the registry that you want to remove in the list of integrated
-   registries, and select the remove icon in the **Actions** column.
+1. 前往 Docker Scout 控制台的 [ECR 集成页面](https://scout.docker.com/settings/integrations/ecr/)。
+2. 在已集成列表中找到目标仓库，在 **Actions** 列点击移除图标。
 
-   If the remove icon is disabled, it means that you're lacking the necessary
-   permissions in the Docker organization.
+   若移除图标不可用，说明您在该 Docker 组织中缺少所需权限。
 
-3. In the dialog that opens, confirm by selecting **Remove**.
+3. 在弹出的对话框中选择 **Remove** 确认。
 
 > [!IMPORTANT]
 >
-> Removing the integration from the Docker Scout dashboard doesn't remove the
-> AWS resources in your account.
+> 从 Docker Scout 控制台移除集成并不会删除您账户中的 AWS 资源。
 >
-> After removing the integration in Docker Scout, go to the AWS console and
-> delete the **DockerScoutECRIntegration** CloudFormation stack for the integration
-> that you want to remove.
+> 从 Docker Scout 中移除后，请到 AWS 控制台删除对应集成的 **DockerScoutECRIntegration** CloudFormation 堆栈。
 
-## Troubleshooting
+## 故障排查
 
-### Unable to integrate registry
+### 无法完成仓库集成
 
-Check the **Status** of the integration on the [ECR integration page](https://scout.docker.com/settings/integrations/ecr/)
-in the Docker Scout Dashboard.
+请在 Docker Scout 控制台的 [ECR 集成页面](https://scout.docker.com/settings/integrations/ecr/) 查看 **Status**：
 
-- If the status is **Pending** for a prolonged period of time, it's an
-  indication that the integration was not yet completed on the AWS side. Select
-  the **Pending** link to open the CloudFormation wizard, and complete all the
-  steps.
+- 如果状态长时间为 **Pending**，通常意味着 AWS 侧的集成尚未完成。点击 **Pending** 链接重新打开 CloudFormation 向导并完成所有步骤。
 
-- An **Error** status indicates that something's gone wrong in the back-end.
-  You can try [removing the integration](#remove-integration) and recreating it
-  again.
+- 如果状态为 **Error**，表示后端发生错误。可尝试[移除集成](#remove-integration)后重新创建。
 
-### ECR images not showing in the dashboard
+### 控制台未显示 ECR 镜像分析结果
 
-If image analysis results for your ECR images aren't showing up in the Docker
-Scout Dashboard:
+如果 ECR 镜像的分析结果未在 Docker Scout 控制台显示：
 
-- Ensure that you've activated Docker Scout for the repository. View and manage
-  active repositories in [Repository settings](https://scout.docker.com/settings/repos/).
+- 确认已在目标仓库启用 Docker Scout。可在[仓库设置](https://scout.docker.com/settings/repos/)查看与管理已启用的仓库。
 
-- Ensure that the AWS account ID and region for your registry is listed on the
-  ECR integrations page.
+- 确认 ECR 集成页已列出目标仓库的 AWS 账号 ID 与区域。
 
-  The account ID and region are included in the registry hostname:
+  账号 ID 与区域包含在仓库主机名中：
   `<aws_account_id>.dkr.ecr.<region>.amazonaws.com/<image>`

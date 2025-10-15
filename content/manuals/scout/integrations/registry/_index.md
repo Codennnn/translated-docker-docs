@@ -1,5 +1,5 @@
 ---
 build:
   render: never
-title: Container registries
+title: 容器仓库
 ---

@@ -1,88 +1,68 @@
 ---
-description: Integrate Artifactory Container Registry with Docker Scout
+description: 将 Artifactory 容器仓库与 Docker Scout 集成
 keywords: docker scout, artifactory, integration, image analysis, security, cves
-title: Integrate Docker Scout with Artifactory Container Registry
+title: 将 Docker Scout 与 Artifactory 容器仓库集成
 linkTitle: Artifactory Container Registry
 ---
 
 {{% experimental %}}
 
-The `docker scout watch` command is experimental.
+`docker scout watch` 命令为实验性功能。
 
-Experimental features are intended for testing and feedback as their
-functionality or design may change between releases without warning or
-can be removed entirely in a future release.
+实验性功能仅用于测试与反馈，其功能或设计可能在版本间变更且不另行通知，或在未来版本中被移除。
 
 {{% /experimental %}}
 
-Integrating Docker Scout with JFrog Artifactory lets you index and analyze
-images from Artifactory. This integration is powered by a long-running
-`docker scout watch` process. It pulls images from your selected repositories
-(optionally filtered), can receive webhook callbacks from Artifactory, and
-pushes image data to Docker Scout. View results in the Docker Scout Dashboard or
-with `docker scout` CLI.
+将 Docker Scout 与 JFrog Artifactory 集成后，您可以对 Artifactory 中的镜像进行索引与分析。该集成通过一个长期运行的 `docker scout watch` 进程实现。它会从您选择的仓库（可选过滤）拉取镜像、接收来自 Artifactory 的 webhook 回调，并将镜像数据推送到 Docker Scout。您可以在 Docker Scout 控制台或通过 `docker scout` CLI 查看结果。
 
-## How it works
+## 工作原理
 
-You run [`docker scout watch`](/reference/cli/docker/scout/watch/) on a host you
-control and configure the Artifactory-specific registry string via `--registry
-"key=value,..."`. The watch process can:
+在您控制的主机上运行 [`docker scout watch`](/reference/cli/docker/scout/watch/)，并通过 `--registry "key=value,..."` 配置与 Artifactory 相关的仓库字符串。watch 进程可以：
 
-- Watch specific repositories or an entire registry
-- Optionally ingest all existing images once
-- Periodically refresh repository lists
-- Receive webhook callbacks from Artifactory on a local port you choose
+- 监控指定仓库或整个仓库服务
+- 可选地一次性导入所有现有镜像
+- 定期刷新仓库列表
+- 在您指定的本地端口接收来自 Artifactory 的 webhook 回调
 
-After the integration, Docker Scout automatically pulls and analyzes images
-that you push to the Artifactory registry. Metadata about your images are stored on the
-Docker Scout platform, but Docker Scout doesn't store the container images
-themselves. For more information about how Docker Scout handles image data, see
-[Data handling](/manuals/scout/deep-dive/data-handling.md).
+完成集成后，Docker Scout 会自动拉取并分析推送到 Artifactory 的镜像。镜像的元数据会存储在 Docker Scout 平台上，但不会存储镜像本体。关于镜像数据处理方式，参见：[数据处理](/manuals/scout/deep-dive/data-handling.md)。
 
-### Artifactory-specific registry string options
+### Artifactory 专用的 registry 字符串选项
 
-These `type=artifactory` options override the generic registry handling for the `--registry` option:
+以下 `type=artifactory` 选项会覆盖 `--registry` 的通用处理：
 
 | Key              | Required | Description                                                                            |
 |------------------|:--------:|----------------------------------------------------------------------------------------|
-| `type`           |   Yes    | Must be `artifactory`.                                                                 |
-| `registry`       |   Yes    | Docker/OCI registry hostname (e.g., `example.jfrog.io`).                               |
-| `api`            |   Yes    | Artifactory REST API base URL (e.g., `https://example.jfrog.io/artifactory`).          |
-| `repository`     |   Yes    | Repository to watch (replaces `--repository`).                                         |
-| `includes`       |    No    | Globs to include (e.g., `*/frontend*`).                                                |
-| `excludes`       |    No    | Globs to exclude (e.g., `*/legacy/*`).                                                 |
-| `port`           |    No    | Local port to listen on for webhook callbacks.                                         |
-| `subdomain-mode` |    No    | `true` or `false`; matches Artifactory’s Docker layout (subdomain versus repository-path). |
+| `type`           |   Yes    | 必须为 `artifactory`。                                                                 |
+| `registry`       |   Yes    | Docker/OCI 仓库主机名（如 `example.jfrog.io`）。                                       |
+| `api`            |   Yes    | Artifactory REST API 基础 URL（如 `https://example.jfrog.io/artifactory`）。           |
+| `repository`     |   Yes    | 要监控的仓库（替代 `--repository` 选项）。                                             |
+| `includes`       |    No    | 需要包含的通配模式（如 `*/frontend*`）。                                               |
+| `excludes`       |    No    | 需要排除的通配模式（如 `*/legacy/*`）。                                                 |
+| `port`           |    No    | 用于接收 webhook 回调的本地端口。                                                       |
+| `subdomain-mode` |    No    | `true` 或 `false`；匹配 Artifactory 的 Docker 布局（子域名 vs 仓库路径）。             |
 
-## Integrate an Artifactory registry
+## 集成 Artifactory 仓库
 
-Use the following steps to integrate your Artifactory registry with Docker
-Scout.
+按照以下步骤将您的 Artifactory 仓库与 Docker Scout 集成：
 
-1. Pick the host on which to run `docker scout watch`.
+1. 选择运行 `docker scout watch` 的主机。
 
-   The host must have local or network access to your private registry and be able
-   to access the Scout API (`https://api.scout.docker.com`) over the internet. If
-   you're using webhook callbacks, Artifactory must also be able to reach the Scout
-   client host on the configured port.
-   Override the `--workers` option (default: `3`) for optimal performance based on
-   the size of the host and the expected workload.
+   该主机需要具备对私有仓库的本地或网络访问能力，并可通过互联网访问 Scout API（`https://api.scout.docker.com`）。如果使用 webhook 回调，还需确保 Artifactory 能够访问该主机的已配置端口。
+   根据主机规模与预计负载，适当调整 `--workers`（默认 `3`）以获得最佳性能。
 
-2. Ensure you are running the latest version of Scout.
+2. 确保正在运行的 Scout 为最新版本。
 
-   Check your current version:
+   查看当前版本：
 
    ```console
    $ docker scout version
    ```
 
-   If necessary, [install the latest version of Scout](https://docs.docker.com/scout/install/).
+   如有需要，请[安装最新版本的 Scout](https://docs.docker.com/scout/install/)。
 
-3. Set up your Artifactory credentials.
+3. 配置 Artifactory 凭据。
 
-   Store the credentials that the Scout client will use to authenticate with
-   Artifactory. The following is an example using environment variables. Replace
-   `<user>` and `<password-or-access-token>` with your actual values.
+   为 Scout 客户端配置用于访问 Artifactory 的凭据。以下示例使用环境变量；将 `<user>` 与 `<password-or-access-token>` 替换为实际值：
 
    ```console
    $ export DOCKER_SCOUT_ARTIFACTORY_API_USER=<user>
@@ -91,12 +71,9 @@ Scout.
 
    > [!TIP]
    >
-   > As a best practice, create a dedicated user with read-only access and use
-   > an access token instead of a password.
+   > 最佳实践：创建一个仅读的专用用户，并优先使用访问令牌而非密码。
 
-   Store the credential that Artifactory will use to authenticate webhook
-   callbacks. The following is an example using an environment variable. Replace
-   `<random-64-128-character-secret>` with an actual secret.
+   配置 Artifactory 用于验证 webhook 回调的凭据。以下示例使用环境变量；将 `<random-64-128-character-secret>` 替换为实际的密钥：
 
    ```console
    $ export DOCKER_SCOUT_ARTIFACTORY_WEBHOOK_SECRET=<random-64-128-character-secret>
@@ -104,31 +81,28 @@ Scout.
 
    > [!TIP]
    >
-   > As a best practice, generate a high-entropy random string of 64-128 characters.
+   > 最佳实践：生成 64–128 个字符、熵值较高的随机字符串。
 
-4. Set up your Scout credentials.
+4. 配置 Scout 凭据。
 
-   1. Generate an organization access token for accessing Scout. For more
-      details, see [Create an organization access
-      token](/enterprise/security/access-tokens/#create-an-organization-access-token).
-   2. Sign in to Docker using the organization access token.
+   1. 生成用于访问 Scout 的组织访问令牌。参见：[创建组织访问令牌](/enterprise/security/access-tokens/#create-an-organization-access-token)。
+   2. 使用组织访问令牌登录 Docker。
 
        ```console
        $ docker login --username <your_organization_name>
        ```
 
-       When prompted for a password, paste the organization access token you
-       generated.
+       当提示输入密码时，粘贴上一步生成的组织访问令牌。
 
-   3. Connect your local Docker environment to your organization's Docker Scout service.
+   3. 将本地 Docker 环境连接到组织的 Docker Scout 服务：
 
        ```console
        $ docker scout enroll <your_organization_name>
        ```
 
-5. Index existing images. You only need to do this once.
+5. 索引现有镜像（仅需执行一次）。
 
-    Run `docker scout watch` with the `--all-images` option to index all images in the specified Artifactory repository. The following is an example command:
+    使用 `--all-images` 选项运行 `docker scout watch`，以索引指定 Artifactory 仓库中的所有镜像。例如：
 
    ```console
    $ docker scout watch --registry \
@@ -136,25 +110,18 @@ Scout.
    --all-images
    ```
 
-6. Confirm the images have been indexed by viewing them on the [Scout
-   Dashboard](https://scout.docker.com/).
+6. 在 [Scout 控制台](https://scout.docker.com/) 中确认镜像已被索引。
 
-7. Configure Artifactory callbacks.
+7. 配置 Artifactory 回调。
 
-   In your Artifactory UI or via REST API, configure webhooks for image
-   push/update events. Set the endpoint to your `docker scout watch` host and
-   port, and include the `DOCKER_SCOUT_ARTIFACTORY_WEBHOOK_SECRET` for
-   authentication.
+   在 Artifactory UI 或通过 REST API，为镜像推送/更新事件配置 webhooks。将回调地址指向运行 `docker scout watch` 的主机与端口，并包含 `DOCKER_SCOUT_ARTIFACTORY_WEBHOOK_SECRET` 用于鉴权。
 
-   For more information, see the [JFrog Artifactory Webhooks
-   documentation](https://jfrog.com/help/r/jfrog-platform-administration-documentation/webhooks)
-   or the [JFrog Artifactory REST API Webhooks
-   documentation](https://jfrog.com/help/r/jfrog-rest-apis/webhooks).
+   参见 [JFrog Artifactory Webhooks 文档](https://jfrog.com/help/r/jfrog-platform-administration-documentation/webhooks)
+   或 [JFrog Artifactory REST API Webhooks 文档](https://jfrog.com/help/r/jfrog-rest-apis/webhooks)。
 
-8. Continuously watch for new or updated images.
+8. 持续监控新增或更新的镜像。
 
-   Run `docker scout watch` with the `--refresh-registry` option to watch for
-   new images to index. The following is an example command:
+   使用 `--refresh-registry` 选项运行 `docker scout watch` 以持续发现需索引的新镜像。例如：
 
    ```console
    $ docker scout watch --registry \
@@ -162,6 +129,4 @@ Scout.
    --refresh-registry
    ```
 
-9. Optional. Set up Scout integration for real-time notifications from popular
-   collaboration platforms. For details, see [Integrate Docker Scout with
-   Slack](../team-collaboration/slack.md).
+9. 可选：为常用团队协作平台设置实时通知。详见：[将 Docker Scout 与 Slack 集成](../team-collaboration/slack.md)。

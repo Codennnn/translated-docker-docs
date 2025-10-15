@@ -1,35 +1,24 @@
 ---
-description: How to integrate Docker Scout with GitHub Actions
+description: 如何将 Docker Scout 集成到 GitHub Actions
 keywords: supply chain, security, ci, continuous integration, github actions
-title: Integrate Docker Scout with GitHub Actions
+title: 将 Docker Scout 与 GitHub Actions 集成
 linkTitle: GitHub Actions
 ---
 
-The following example shows how to set up a Docker Scout workflow with GitHub
-Actions. Triggered by a pull request, the action builds the image and uses
-Docker Scout to compare the new version to the version of that image running in
-production.
+下面的示例展示了如何设置与 GitHub Actions 配合的 Docker Scout 工作流。当有 Pull Request 时，该 Action 会构建镜像，并使用 Docker Scout 将新版本与生产环境中运行的版本进行对比。
 
-This workflow uses the
-[docker/scout-action](https://github.com/docker/scout-action) GitHub Action to
-run the `docker scout compare` command to visualize how images for pull request
-stack up against the image you run in production.
+该工作流使用 [docker/scout-action](https://github.com/docker/scout-action) GitHub Action 来执行 `docker scout compare` 命令，可视化展示 PR 中的镜像与生产环境镜像的对比情况。
 
-## Prerequisites
+## 先决条件
 
-- This example assumes that you have an existing image repository, in Docker Hub
-  or in another registry, where you've enabled Docker Scout.
-- This example makes use of [environments](../environment/_index.md), to compare
-  the image built in the pull request with a different version of the same image
-  in an environment called `production`.
+- 本示例假设您已有一个现有的镜像仓库（在 Docker Hub 或其他仓库中），并已启用 Docker Scout。
+- 本示例使用[环境](../environment/_index.md)功能，将 PR 中构建的镜像与名为 `production` 环境中的同一镜像的不同版本进行对比。
 
-## Steps
+## 步骤
 
-First, set up the GitHub Action workflow to build an image. This isn't specific
-to Docker Scout here, but you'll need to build an image to have
-something to compare with.
+首先，设置 GitHub Action 工作流来构建镜像。这部分与 Docker Scout 无关，但您需要构建一个镜像才能进行对比。
 
-Add the following to a GitHub Actions YAML file:
+在 GitHub Actions YAML 文件中添加以下内容：
 
 ```yaml
 name: Docker
@@ -96,26 +85,20 @@ jobs:
           cache-to: type=gha,mode=max
 ```
 
-This creates workflow steps to:
+上述配置创建了以下工作流步骤：
 
-1. Set up Docker buildx.
-2. Authenticate to the registry.
-3. Extract metadata from Git reference and GitHub events.
-4. Build and push the Docker image to the registry.
+1. 设置 Docker buildx。
+2. 向仓库进行身份验证。
+3. 从 Git 引用与 GitHub 事件中提取元数据。
+4. 构建并将 Docker 镜像推送到仓库。
 
 > [!NOTE]
 >
-> This CI workflow runs a local analysis and evaluation of your image. To
-> evaluate the image locally, you must ensure that the image is loaded the
-> local image store of your runner.
+> 该 CI 工作流会对您的镜像执行本地分析与评估。要在本地评估镜像，必须确保镜像已加载到运行器的本地镜像存储中。
 >
-> This comparison doesn't work if you push the image to a registry, or if you
-> build an image that can't be loaded to the runner's local image store. For
-> example, multi-platform images or images with SBOM or provenance attestation
-> can't be loaded to the local image store.
+> 如果您将镜像推送到仓库，或构建无法加载到运行器本地镜像存储的镜像（例如多平台镜像或包含 SBOM/溯源声明的镜像），则此对比功能将无法工作。
 
-With this setup out of the way, you can add the following steps to run the
-image comparison:
+完成上述设置后，您可以添加以下步骤来执行镜像对比：
 
 ```yaml
       # You can skip this step if Docker Hub is your registry
@@ -140,20 +123,12 @@ image comparison:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-The compare command analyzes the image and evaluates policy compliance, and
-cross-references the results with the corresponding image in the `production`
-environment. This example only includes critical and high-severity
-vulnerabilities, and excludes vulnerabilities that exist in both images,
-showing only what's changed.
+compare 命令会分析镜像并评估策略合规性，然后将结果与 `production` 环境中的对应镜像进行交叉引用。本示例仅包含严重（critical）与高危（high）漏洞，并排除两个镜像中都存在的漏洞，仅显示变化的部分。
 
-The GitHub Action outputs the comparison results in a pull request comment by
-default.
+GitHub Action 默认会在 Pull Request 评论中输出对比结果。
 
 ![A screenshot showing the results of Docker Scout output in a GitHub Action](../../images/gha-output.webp)
 
-Expand the **Policies** section to view the difference in policy compliance
-between the two images. Note that while the new image in this example isn't
-fully compliant, the output shows that the standing for the new image has
-improved compared to the baseline.
+展开 **Policies** 部分可查看两个镜像在策略合规性方面的差异。注意，虽然本示例中的新镜像并非完全合规，但输出显示新镜像的状况相比基线已有所改善。
 
 ![GHA policy evaluation output](../../images/gha-policy-eval.webp)

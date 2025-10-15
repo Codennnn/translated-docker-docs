@@ -1,5 +1,5 @@
 ---
 build:
   render: never
-title: Code quality
+title: 代码质量
 ---

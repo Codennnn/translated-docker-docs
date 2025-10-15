@@ -1,17 +1,15 @@
 ---
-description: How to integrate Docker Scout with Circle CI
+description: 如何将 Docker Scout 集成到 Circle CI
 keywords: supply chain, security, ci, continuous integration, circle ci
-title: Integrate Docker Scout with Circle CI
+title: 将 Docker Scout 与 Circle CI 集成
 linkTitle: Circle CI
 ---
 
-The following examples runs when triggered in CircleCI. When triggered, it
-checks out the "docker/scout-demo-service:latest" image and tag and then uses
-Docker Scout to create a CVE report.
+下面的示例在 CircleCI 中触发时运行。触发后，它会检出 "docker/scout-demo-service:latest" 镜像与标签，然后使用 Docker Scout 创建 CVE 报告。
 
-Add the following to a _.circleci/config.yml_ file.
+在 _.circleci/config.yml_ 文件中添加以下内容。
 
-First, set up the rest of the workflow. Add the following to the YAML file:
+首先，设置整体工作流。在 YAML 文件中添加：
 
 ```yaml
 version: 2.1
@@ -24,10 +22,9 @@ jobs:
       IMAGE_TAG: docker/scout-demo-service:latest
 ```
 
-This defines the container image the workflow uses and an environment variable
-for the image.
+这定义了工作流使用的容器镜像以及镜像的环境变量。
 
-Add the following to the YAML file to define the steps for the workflow:
+继续在 YAML 文件中添加工作流步骤：
 
 ```yaml
 steps:
@@ -58,14 +55,11 @@ steps:
         docker-scout cves $IMAGE_TAG --exit-code --only-severity critical,high
 ```
 
-This checks out the repository files and then sets up a separate Docker
-environment to run commands in.
+上述配置会检出仓库文件，然后设置一个独立的 Docker 环境来运行命令。
 
-It installs Docker Scout, logs into Docker Hub, builds the Docker image, and
-then runs Docker Scout to generate a CVE report. It only shows critical or
-high-severity vulnerabilities.
+它会安装 Docker Scout，登录 Docker Hub，构建 Docker 镜像，然后运行 Docker Scout 生成 CVE 报告。仅显示严重（critical）与高危（high）漏洞。
 
-Finally, add a name for the workflow and the workflow's jobs:
+最后，为工作流及其任务添加名称：
 
 ```yaml
 workflows:

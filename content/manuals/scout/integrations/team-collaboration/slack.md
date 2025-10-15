@@ -1,61 +1,46 @@
 ---
-title: Integrate Docker Scout with Slack
+title: 将 Docker Scout 与 Slack 集成
 linkTitle: Slack
 description: |
-  Integrate Docker Scout with Slack to receive real-time updates
-  about vulnerabilities and policy compliance in Slack channels
+  将 Docker Scout 接入 Slack，在频道中实时接收漏洞与策略合规更新
 keywords: scout, team collaboration, slack, notifications, updates
 ---
 
-You can integrate Docker Scout with Slack by creating a Slack webhook and
-adding it to the Docker Scout Dashboard. Docker Scout will notify you about
-when a new vulnerability is disclosed, and it affects one or more of your
-images.
+您可以通过创建 Slack webhook 并将其添加到 Docker Scout 控制台，将 Docker Scout 与 Slack 集成。当有新披露的漏洞影响到您的一个或多个镜像时，Docker Scout 会向您发送通知。
 
 ![Slack notification from Docker Scout](../../images/scout-slack-notification.png?border=true "Example Slack notification from Docker Scout")
 
-## How it works
+## 工作原理
 
-After configuring the integration, Docker Scout sends notifications about
-changes to policy compliance and vulnerability exposure for your repositories,
-to the Slack channels associated with the webhook.
+完成集成配置后，Docker Scout 会将与仓库相关的策略合规性与漏洞暴露变化，发送到与该 webhook 关联的 Slack 频道。
 
 > [!NOTE]
 >
-> Notifications are only triggered for the *last pushed* image tags for each
-> repository. "Last pushed" refers to the image tag that was most recently
-> pushed to the registry and analyzed by Docker Scout. If the last pushed image
-> is not by a newly disclosed CVE, then no notification will be triggered.
+> 仅针对每个仓库的“最后一次推送”的镜像标签触发通知。“最后一次推送”指最近被推送到仓库并被 Docker Scout 分析的镜像标签。如果最后一次推送的镜像未受到新披露的 CVE 影响，则不会触发通知。
 
-For more information about Docker Scout notifications,
-see [Notification settings](/manuals/scout/explore/dashboard.md#notification-settings)
+关于 Docker Scout 通知的更多信息，请参见：[通知设置](/manuals/scout/explore/dashboard.md#notification-settings)
 
-## Setup
+## 设置
 
-To add a Slack integration:
+添加 Slack 集成：
 
-1. Create a webhook, see [Slack documentation](https://api.slack.com/messaging/webhooks).
-2. Go to the [Slack integration page](https://scout.docker.com/settings/integrations/slack/) in the Docker Scout Dashboard.
-3. In the **How to integrate** section, enter a **Configuration name**.
-   Docker Scout uses this label as a display name for the integration,
-   so you might want to change the default name into something more meaningful.
-   For example the `#channel-name`, or the name of the team that this configuration belongs to.
-4. Paste the webhook you just created in the **Slack webhook** field.
+1. 创建一个 webhook，参见 [Slack 文档](https://api.slack.com/messaging/webhooks)。
+2. 前往 Docker Scout 控制台的 [Slack 集成页面](https://scout.docker.com/settings/integrations/slack/)。
+3. 在 **How to integrate** 部分输入一个 **Configuration name**。
+   Docker Scout 会将其作为该集成的显示名，您可以将默认值改为更有意义的名称，例如 `#channel-name` 或所属团队名称。
+4. 将刚创建的 webhook 粘贴到 **Slack webhook** 字段中。
 
-   Select the **Test webhook** button if you wish to verify the connection.
-   Docker Scout will send a test message to the specified webhook.
+   如需验证连接，可点击 **Test webhook** 按钮。Docker Scout 会向该 webhook 发送一条测试消息。
 
-5. Select whether you want to enable notifications for all your Scout-enabled image repositories,
-   or enter the names of the repositories that you want to send notifications for.
-6. When you're ready to enable the integration, select **Create**.
+5. 选择是否为所有已启用 Scout 的镜像仓库开启通知，或仅填写需要发送通知的仓库名。
+6. 准备就绪后，点击 **Create** 启用集成。
 
-After creating the webhook, Docker Scout begins to send notifications updates
-to the Slack channels associated with the webhook.
+创建 webhook 后，Docker Scout 将开始把通知发送到与该 webhook 关联的 Slack 频道。
 
-## Remove a Slack integration
+## 移除 Slack 集成
 
-To remove a Slack integration:
+移除 Slack 集成：
 
-1. Go to the [Slack integration page](https://scout.docker.com/settings/integrations/slack/) in the Docker Scout Dashboard.
-2. Select the **Remove** icon for the integration that you want to remove.
-3. Confirm by selecting **Remove** again in the confirmation dialog.
+1. 前往 Docker Scout 控制台的 [Slack 集成页面](https://scout.docker.com/settings/integrations/slack/)。
+2. 为要移除的集成点击 **Remove** 图标。
+3. 在确认对话框中再次选择 **Remove** 完成移除。

@@ -1,42 +1,32 @@
 ---
-description: How to setup Docker Scout with other systems.
+description: 如何将 Docker Scout 与其他系统集成。
 keywords: supply chain, security, integrations, registries, ci, environments
-title: Integrating Docker Scout with other systems
-linkTitle: Integrations
+title: 将 Docker Scout 集成至其他系统
+linkTitle: 集成
 weight: 80
 ---
 
-By default, Docker Scout integrates with your Docker organization and your
-Docker Scout-enabled repositories on Docker Hub. You can integrate Docker Scout
-with additional third-party systems to get access to even more insights,
-including real-time information about you running workloads.
+默认情况下，Docker Scout 会与您的 Docker 组织以及在 Docker Hub 上启用 Docker Scout 的仓库集成。您还可以将 Docker Scout 与更多第三方系统对接，以获取更丰富的洞察信息，包括对正在运行的工作负载的实时可见性。
 
-## Integration categories
+## 集成类别
 
-You'll get different insights depending on where and how you choose to integrate
-Docker Scout.
+根据集成的位置与方式不同，Docker Scout 能提供的洞察也会有所差异。
 
-### Container registries
+### 容器仓库（Registry）
 
-Integrating Docker Scout with third-party container
-registries enables Docker Scout to run image analysis on those repositories,
-so that you can get insights into the composition of those images even if they
-aren't hosted on Docker Hub.
+将 Docker Scout 集成到第三方容器仓库后，Docker Scout 可以对这些仓库中的镜像执行分析，即使镜像并未托管在 Docker Hub 上，您也能了解其组成与风险。
 
-The following container registry integrations are available:
+可用的容器仓库集成：
 
 - [Amazon Elastic Container Registry](./registry/ecr.md)
 - [Azure Container Registry](./registry/acr.md)
 - [JFrog Artifactory](./registry/artifactory.md)
 
-### Continuous Integration
+### 持续集成（CI）
 
-Integrating Docker Scout with Continuous Integration (CI) systems is a great way
-to get instant, automatic feedback about your security posture in your inner
-loop. Analysis running in CI also gets the benefit of additional context that's
-useful for getting even more insights.
+将 Docker Scout 接入持续集成（CI）系统，可以在开发内循环中即时、自动地反馈安全状况。运行在 CI 中的分析还能结合更多上下文信息，帮助您获得更深入的洞察。
 
-The following CI integrations are available:
+可用的 CI 集成：
 
 - [GitHub Actions](./ci/gha.md)
 - [GitLab](./ci/gitlab.md)
@@ -44,53 +34,40 @@ The following CI integrations are available:
 - [Circle CI](./ci/circle-ci.md)
 - [Jenkins](./ci/jenkins.md)
 
-### Environment monitoring
+### 环境监控（Environment）
 
-Environment monitoring refers to integrating Docker Scout with your deployments.
-This can give you information in real-time about your running container workloads.
+环境监控是指将 Docker Scout 与您的部署环境进行集成，从而获取正在运行的容器工作负载的实时信息。
 
-Integrating with environments lets you compare production workloads to other
-versions, in your image repositories or in your other environments.
+接入环境后，您可以将生产环境中的工作负载与镜像仓库或其他环境中的版本进行对比分析。
 
-The following environment monitoring integrations are available
+可用的环境监控集成：
 
 - [Sysdig](./environment/sysdig.md)
 
-For more information about environment integrations, see
-[Environments](./environment/_index.md).
+要了解更多环境集成内容，请参阅：[环境](./environment/_index.md)。
 
-### Code quality
+### 代码质量（Code Quality）
 
-Integrating Docker Scout with code analysis tools enables quality checks
-directly on source code, helping you keep track of bugs, security issues, test
-coverage, and more. In addition to image analysis and environment monitoring,
-code quality gates let you shift left your supply chain management with Docker
-Scout.
+将 Docker Scout 与代码分析工具集成，可以在源代码层面进行质量检查，帮助跟踪缺陷、安全问题、测试覆盖率等。配合镜像分析与环境监控，代码质量门禁可让您的供应链管理进一步前移。
 
-Once you enable a code quality integration, Docker Scout includes the code
-quality assessments as policy evaluation results for the repositories where
-you've enabled the integration.
+启用代码质量集成后，Docker Scout 会在已启用该集成的仓库中，将代码质量评估结果纳入策略评估。
 
-The following code quality integrations are available:
+可用的代码质量集成：
 
 - [SonarQube](sonarqube.md)
 
-### Source code management
+### 源代码管理（SCM）
 
-Integrate Docker Scout with your version control system to get guided
-remediation advice on how to address issues detected by Docker Scout image
-analysis, directly in your repositories.
+将 Docker Scout 与版本控制系统集成，可在代码仓库中直接获得有关镜像分析问题的修复建议。
 
-The following source code management integrations are available:
+可用的源代码管理集成：
 
 - [GitHub](source-code-management/github.md) {{< badge color=blue text=Beta >}}
 
-### Team collaboration
+### 团队协作（Collaboration）
 
-Integrations in this category let you integrate Docker Scout with collaboration
-platforms for broadcasting notifications about your software supply chain in
-real-time to team communication platforms.
+该类别的集成用于将软件供应链相关的通知实时推送到团队沟通平台。
 
-The following team collaboration integrations are available:
+可用的团队协作集成：
 
 - [Slack](./team-collaboration/slack.md)
