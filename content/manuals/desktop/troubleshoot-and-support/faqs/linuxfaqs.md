@@ -1,7 +1,7 @@
 ---
-description: Frequently asked questions for Docker Desktop for Linux
+description: Docker Desktop for Linux 常见问题
 keywords: desktop, linux, faqs
-title: FAQs for Docker Desktop for Linux
+title: Docker Desktop for Linux 常见问题
 linkTitle: Linux
 tags: [FAQ]
 aliases:
@@ -10,72 +10,54 @@ aliases:
 weight: 40
 ---
 
-### Why does Docker Desktop for Linux run a VM?
+### 为什么 Docker Desktop for Linux 要运行虚拟机？
 
-Docker Desktop for Linux runs a Virtual Machine (VM) for the following reasons:
+Docker Desktop for Linux 运行虚拟机（VM）主要基于以下原因：
 
-1. To ensure that Docker Desktop provides a consistent experience across platforms.
+1. 确保 Docker Desktop 在各平台提供一致的体验。
 
-    During research, the most frequently cited reason for users wanting Docker Desktop for Linux was to ensure a consistent Docker Desktop
-    experience with feature parity across all major operating systems. Utilizing
-    a VM ensures that the Docker Desktop experience for Linux users will closely
-    match that of Windows and macOS.
+    在用户调研中，Linux 用户选择 Docker Desktop 最常见的原因是希望在所有主流操作系统上获得一致的功能体验。使用虚拟机可以确保 Linux 用户获得与 Windows 和 macOS 相近的 Docker Desktop 使用体验。
 
-2. To make use of new kernel features.
+2. 充分利用新的内核特性。
 
-    Sometimes we want to make use of new operating system features. Because we control the kernel and the OS inside the VM, we can roll these out to all users immediately, even to users who are intentionally sticking on an LTS version of their machine OS.
+    有时我们需要使用新的操作系统特性。由于我们可以控制虚拟机内的内核和操作系统，因此能够立即向所有用户推出这些新特性，即使是那些刻意使用 LTS 版本系统的用户也能享受到。
 
-3. To enhance security.
+3. 增强安全性。
 
-    Container image vulnerabilities pose a security risk for the host environment. There is a large number of unofficial images that are not guaranteed to be verified for known vulnerabilities. Malicious users can push images to public registries and use different methods to trick users into pulling and running them. The VM approach mitigates this threat as any malware that gains root privileges is restricted to the VM environment without access to the host.
+    容器镜像的漏洞会对宿主环境构成安全风险。网上存在大量未经已知漏洞验证的非官方镜像。恶意用户可以将镜像推送到公共仓库，并通过各种手段诱骗用户拉取并运行这些镜像。虚拟机方案可以缓解这一威胁，因为任何获得 root 权限的恶意软件都被限制在虚拟机环境中，无法访问宿主机。
 
-    Why not run rootless Docker? Although this has the benefit of superficially limiting access to the root user so everything looks safer in "top", it allows unprivileged users to gain `CAP_SYS_ADMIN` in their own user namespace and access kernel APIs which are not expecting to be used by unprivileged users, resulting in [vulnerabilities](https://www.openwall.com/lists/oss-security/2022/01/18/7).
+    为什么不使用 rootless Docker？虽然这种方式表面上限制了 root 用户访问，让"top"命令看起来更安全，但它允许非特权用户在自己的用户命名空间中获得 `CAP_SYS_ADMIN` 能力，并访问那些本不应被非特权用户使用的内核 API，从而导致[安全漏洞](https://www.openwall.com/lists/oss-security/2022/01/18/7)。
 
-4. To provide the benefits of feature parity and enhanced security, with minimal impact on performance.
+4. 在保证功能一致性和安全性的同时，将对性能的影响降到最低。
 
-    The VM utilized by Docker Desktop for Linux uses [`VirtioFS`](https://virtio-fs.gitlab.io), a shared file system that allows virtual machines to access a directory tree located on the host. Our internal benchmarking shows that with the right resource allocation to the VM, near native file system performance can be achieved with VirtioFS.
+    Docker Desktop for Linux 使用的虚拟机采用了 [`VirtioFS`](https://virtio-fs.gitlab.io)，这是一个共享文件系统，允许虚拟机访问宿主机上的目录树。我们的内部基准测试表明，通过为虚拟机分配合适的资源，VirtioFS 可以实现接近原生的文件系统性能。
 
-    As such, we have adjusted the default memory available to the VM in Docker Desktop for Linux. You can tweak this setting to your specific needs by using the **Memory** slider within the **Settings** > **Resources** tab of Docker Desktop.
+    因此，我们调整了 Docker Desktop for Linux 中虚拟机的默认内存大小。你可以在 Docker Desktop 的 **设置** > **资源** 标签页中使用 **内存** 滑块，根据具体需求调整此设置。
 
-### How do I enable file sharing?
+### 如何启用文件共享？
 
-Docker Desktop for Linux uses [VirtioFS](https://virtio-fs.gitlab.io/) as the
-default (and currently only) mechanism to enable file sharing between the host
-and Docker Desktop VM. 
+Docker Desktop for Linux 使用 [VirtioFS](https://virtio-fs.gitlab.io/) 作为默认（目前也是唯一）的文件共享机制，用于在宿主机和 Docker Desktop 虚拟机之间共享文件。
 
-{{< accordion title="Additional information for Docker Desktop version 4.34 and earlier" >}}
+{{< accordion title="Docker Desktop 4.34 及更早版本的补充信息" >}}
 
-In order not to require elevated privileges, without
-unnecessarily restricting operations on the shared files, Docker Desktop runs
-the file sharing service (`virtiofsd`) inside a user namespace (see
-`user_namespaces(7)`) with UID and GID mapping configured. As a result Docker
-Desktop relies on the host being configured to enable the current user to use
-subordinate ID delegation. For this to be true `/etc/subuid` (see `subuid(5)`)
-and `/etc/subgid` (see `subgid(5)`) must be present. Docker Desktop only
-supports subordinate ID delegation configured via files. Docker Desktop maps the
-current user ID and GID to 0 in the containers. It uses the first entry
-corresponding to the current user in `/etc/subuid` and `/etc/subgid` to set up
-mappings for IDs greater than 0 in the containers.
+为了在不需要提升权限的同时，又不过度限制对共享文件的操作，Docker Desktop 在用户命名空间（参见 `user_namespaces(7)`）内运行文件共享服务（`virtiofsd`），并配置了 UID 和 GID 映射。因此，Docker Desktop 需要宿主机配置为允许当前用户使用从属 ID 委派。为此，必须存在 `/etc/subuid`（参见 `subuid(5)`）和 `/etc/subgid`（参见 `subgid(5)`）文件。Docker Desktop 仅支持通过文件配置的从属 ID 委派。Docker Desktop 将当前用户的 ID 和 GID 映射为容器中的 0。它使用 `/etc/subuid` 和 `/etc/subgid` 中与当前用户对应的第一个条目来设置容器中大于 0 的 ID 映射。
 
-| ID in container | ID on host                                                                       |
+| 容器内的 ID | 宿主机上的 ID                                                                       |
 | --------------- | -------------------------------------------------------------------------------- |
-| 0 (root)        | ID of the user running Docker Desktop (e.g. 1000)                                            |
-| 1               | 0 + beginning of ID range specified in `/etc/subuid`/`/etc/subgid` (e.g. 100000) |
-| 2               | 1 + beginning of ID range specified in `/etc/subuid`/`/etc/subgid` (e.g. 100001) |
-| 3               | 2 + beginning of ID range specified in `/etc/subuid`/`/etc/subgid` (e.g. 100002) |
+| 0 (root)        | 运行 Docker Desktop 的用户 ID（例如 1000）                                            |
+| 1               | 0 + `/etc/subuid`/`/etc/subgid` 中指定的 ID 范围起始值（例如 100000） |
+| 2               | 1 + `/etc/subuid`/`/etc/subgid` 中指定的 ID 范围起始值（例如 100001） |
+| 3               | 2 + `/etc/subuid`/`/etc/subgid` 中指定的 ID 范围起始值（例如 100002） |
 | ...             | ...                                                                              |
 
-If `/etc/subuid` and `/etc/subgid` are missing, they need to be created.
-Both should contain entries in the form -
-`<username>:<start of id range>:<id range size>`. For example, to allow the current user
-to use IDs from 100 000 to 165 535:
+如果缺少 `/etc/subuid` 和 `/etc/subgid` 文件，则需要创建它们。两个文件都应该包含以下格式的条目：`<用户名>:<id 范围起始值>:<id 范围大小>`。例如，要允许当前用户使用从 100000 到 165535 的 ID：
 
 ```console
 $ grep "$USER" /etc/subuid >> /dev/null 2&>1 || (echo "$USER:100000:65536" | sudo tee -a /etc/subuid)
 $ grep "$USER" /etc/subgid >> /dev/null 2&>1 || (echo "$USER:100000:65536" | sudo tee -a /etc/subgid)
 ```
 
-To verify the configs have been created correctly, inspect their contents:
+要验证配置是否正确创建，可以检查文件内容：
 
 ```console
 $ echo $USER
@@ -86,86 +68,80 @@ $ cat /etc/subgid
 exampleuser:100000:65536
 ```
 
-In this scenario if a shared file is `chown`ed inside a Docker Desktop container
-owned by a user with a UID of 1000, it shows up on the host as owned by
-a user with a UID of 100999. This has the unfortunate side effect of preventing
-easy access to such a file on the host. The problem is resolved by creating
-a group with the new GID and adding our user to it, or by setting a recursive
-ACL (see `setfacl(1)`) for folders shared with the Docker Desktop VM.
+在这种情况下，如果在 Docker Desktop 容器内对一个共享文件执行 `chown`，将其所有者设置为 UID 为 1000 的用户，那么在宿主机上该文件会显示为属于 UID 为 100999 的用户。这会导致一个不便之处：在宿主机上难以访问此类文件。解决方法是创建一个具有新 GID 的组并将用户添加到该组，或者为与 Docker Desktop 虚拟机共享的文件夹设置递归 ACL（参见 `setfacl(1)`）。
 
 {{< /accordion >}}
 
-### Where does Docker Desktop store Linux containers?
+### Docker Desktop 在哪里存储 Linux 容器？
 
-Docker Desktop stores Linux containers and images in a single, large "disk image" file in the Linux filesystem. This is different from Docker on Linux, which usually stores containers and images in the `/var/lib/docker` directory on the host's filesystem.
+Docker Desktop 将 Linux 容器和镜像存储在 Linux 文件系统中的一个大型"磁盘镜像"文件中。这与 Linux 上的 Docker 不同，后者通常将容器和镜像存储在宿主机文件系统的 `/var/lib/docker` 目录中。
 
-#### Where is the disk image file?
+#### 磁盘镜像文件在哪里？
 
-To locate the disk image file, select **Settings** from the Docker Desktop Dashboard then **Advanced** from the **Resources** tab.
+要查找磁盘镜像文件的位置，请在 Docker Desktop 仪表板中选择 **设置**，然后在 **资源** 标签页中选择 **高级**。
 
-The **Advanced** tab displays the location of the disk image. It also displays the maximum size of the disk image and the actual space the disk image is consuming. Note that other tools might display space usage of the file in terms of the maximum file size, and not the actual file size.
+**高级** 标签页会显示磁盘镜像的位置，以及磁盘镜像的最大大小和实际占用的空间。请注意，其他工具可能会以最大文件大小而非实际文件大小来显示文件的空间使用情况。
 
-##### What if the file is too large?
+##### 如果文件太大怎么办？
 
-If the disk image file is too large, you can:
+如果磁盘镜像文件过大，你可以：
 
-- Move it to a bigger drive
-- Delete unnecessary containers and images
-- Reduce the maximum allowable size of the file
+- 将其移动到更大的磁盘
+- 删除不必要的容器和镜像
+- 减小文件的最大允许大小
 
-##### How do I move the file to a bigger drive?
+##### 如何将文件移动到更大的磁盘？
 
-To move the disk image file to a different location:
+要将磁盘镜像文件移动到其他位置：
 
-1. Select **Settings** then  **Advanced** from the **Resources** tab.
+1. 选择 **设置**，然后在 **资源** 标签页中选择 **高级**。
 
-2. In the **Disk image location** section, select **Browse** and choose a new location for the disk image.
+2. 在 **磁盘镜像位置** 部分，选择 **浏览** 并为磁盘镜像选择新位置。
 
-3. Select **Apply** for the changes to take effect.
+3. 选择 **应用** 以使更改生效。
 
-Do not move the file directly in Finder as this can cause Docker Desktop to lose track of the file.
+不要直接在 Finder 中移动文件，因为这可能导致 Docker Desktop 无法跟踪该文件。
 
-##### How do I delete unnecessary containers and images?
+##### 如何删除不必要的容器和镜像？
 
-Check whether you have any unnecessary containers and images. If your client and daemon API are running version 1.25 or later (use the `docker version` command on the client to check your client and daemon API versions), you can see the detailed space usage information by running:
+检查是否存在不必要的容器和镜像。如果你的客户端和守护进程 API 运行的是 1.25 或更高版本（在客户端使用 `docker version` 命令检查客户端和守护进程的 API 版本），你可以通过运行以下命令查看详细的空间使用信息：
 
 ```console
 $ docker system df -v
 ```
 
-Alternatively, to list images, run:
+或者，要列出镜像，可以运行：
 
 ```console
 $ docker image ls
 ```
 
-To list containers, run:
+要列出容器，可以运行：
 
 ```console
 $ docker container ls -a
 ```
 
-If there are lots of redundant objects, run the command:
+如果存在大量冗余对象，可以运行以下命令：
 
 ```console
 $ docker system prune
 ```
 
-This command removes all stopped containers, unused networks, dangling images, and build cache.
+此命令会移除所有已停止的容器、未使用的网络、悬空镜像和构建缓存。
 
-It might take a few minutes to reclaim space on the host depending on the format of the disk image file:
+根据磁盘镜像文件的格式，回收宿主机上的空间可能需要几分钟：
 
-- If the file is named `Docker.raw`: space on the host should be reclaimed within a few seconds.
-- If the file is named `Docker.qcow2`: space will be freed by a background process after a few minutes.
+- 如果文件名为 `Docker.raw`：宿主机上的空间应该会在几秒钟内回收。
+- 如果文件名为 `Docker.qcow2`：空间将在几分钟后由后台进程释放。
 
-Space is only freed when images are deleted. Space is not freed automatically when files are deleted inside running containers. To trigger a space reclamation at any point, run the command:
+只有在删除镜像时才会释放空间。在运行的容器内删除文件时，空间不会自动释放。要在任何时候触发空间回收，可以运行以下命令：
 
 ```console
 $ docker run --privileged --pid=host docker/desktop-reclaim-space
 ```
 
-Note that many tools report the maximum file size, not the actual file size.
-To query the actual size of the file on the host from a terminal, run:
+请注意，许多工具报告的是最大文件大小，而不是实际文件大小。要从终端查询宿主机上文件的实际大小，可以运行：
 
 ```console
 $ cd ~/.docker/desktop/vms/0/data
@@ -173,16 +149,16 @@ $ ls -klsh Docker.raw
 2333548 -rw-r--r--@ 1 username  staff    64G Dec 13 17:42 Docker.raw
 ```
 
-In this example, the actual size of the disk is `2333548` KB, whereas the maximum size of the disk is `64` GB.
+在这个例子中，磁盘的实际大小是 `2333548` KB，而磁盘的最大大小是 `64` GB。
 
-##### How do I reduce the maximum size of the file?
+##### 如何减小文件的最大大小？
 
-To reduce the maximum size of the disk image file:
+要减小磁盘镜像文件的最大大小：
 
-1. From Docker Desktop Dashboard select **Settings** then **Advanced** from the **Resources** tab.
+1. 在 Docker Desktop 仪表板中选择 **设置**，然后在 **资源** 标签页中选择 **高级**。
 
-2. The **Disk image size** section contains a slider that allows you to change the maximum size of the disk image. Adjust the slider to set a lower limit.
+2. **磁盘镜像大小** 部分包含一个滑块，允许你更改磁盘镜像的最大大小。调整滑块以设置更低的限制。
 
-3. Select **Apply**.
+3. 选择 **应用**。
 
-When you reduce the maximum size, the current disk image file is deleted, and therefore, all containers and images are lost.
+当你减小最大大小时，当前的磁盘镜像文件将被删除，因此所有容器和镜像都会丢失。

@@ -1,43 +1,41 @@
 ---
-description: How to uninstall Docker Desktop
+description: 如何卸载 Docker Desktop
 keywords: Windows, uninstall, Mac, Linux, Docker Desktop
-title: Uninstall Docker Desktop
-linkTitle: Uninstall
+title: 卸载 Docker Desktop
+linkTitle: 卸载
 weight: 210
 ---
 
 > [!WARNING]
 >
-> Uninstalling Docker Desktop destroys Docker containers, images, volumes, and
-> other Docker-related data local to the machine, and removes the files generated
-> by the application. To learn how to preserve important data before uninstalling, refer to the [back up and restore data](/manuals/desktop/settings-and-maintenance/backup-and-restore.md) section.
+> 卸载 Docker Desktop 会销毁本地机器上的 Docker 容器、镜像、卷以及其他 Docker 相关数据，并删除应用程序生成的文件。要了解如何在卸载前保存重要数据，请参阅[备份和恢复数据](/manuals/desktop/settings-and-maintenance/backup-and-restore.md)部分。
 
 {{< tabs >}}
 {{< tab name="Windows" >}}
 
-#### From the GUI
+#### 通过图形界面
 
-1. From the Windows **Start** menu, select **Settings** > **Apps** > **Apps & features**.
-2. Select **Docker Desktop** from the **Apps & features** list and then select **Uninstall**.
-3. Select **Uninstall** to confirm your selection.
+1. 从 Windows **开始** 菜单中，选择 **设置** > **应用** > **应用和功能**。
+2. 从 **应用和功能** 列表中选择 **Docker Desktop**，然后选择 **卸载**。
+3. 选择 **卸载** 确认你的选择。
 
-#### From the CLI
+#### 通过命令行
 
-1. Locate the installer:
+1. 找到安装程序：
    ```console
    $ C:\Program Files\Docker\Docker\Docker Desktop Installer.exe
    ```
-2. Uninstall Docker Desktop. 
- - In PowerShell, run:
+2. 卸载 Docker Desktop。
+ - 在 PowerShell 中，运行：
     ```console
     $ Start-Process 'Docker Desktop Installer.exe' -Wait uninstall
     ```
- - In the Command Prompt, run:
+ - 在命令提示符中，运行：
     ```console
     $ start /w "" "Docker Desktop Installer.exe" uninstall
     ```
 
-After uninstalling Docker Desktop, some residual files may remain which you can remove manually. These are:
+卸载 Docker Desktop 后，可能会留下一些残留文件，你可以手动删除这些文件：
 
 ```console
 C:\ProgramData\Docker
@@ -52,27 +50,27 @@ C:\Users\<your user name>\.docker
 {{< /tab >}}
 {{< tab name="Mac" >}}
 
-#### From the GUI
+#### 通过图形界面
 
-1. Open Docker Desktop. 
-2. In the top-right corner of the Docker Desktop Dashboard, select the **Troubleshoot** icon.
-3. Select **Uninstall**.
-4. When prompted, confirm by selecting **Uninstall** again.
+1. 打开 Docker Desktop。
+2. 在 Docker Desktop 仪表板的右上角，选择 **故障排查** 图标。
+3. 选择 **卸载**。
+4. 出现提示时，再次选择 **卸载** 进行确认。
 
-You can then move the Docker application to the trash. 
+然后你可以将 Docker 应用程序移至废纸篓。
 
-#### From the CLI
+#### 通过命令行
 
-Run:
+运行：
 
 ```console
 $ /Applications/Docker.app/Contents/MacOS/uninstall
 ```
 
-You can then move the Docker application to the trash. 
+然后你可以将 Docker 应用程序移至废纸篓。
 
 > [!NOTE]
-> You may encounter the following error when uninstalling Docker Desktop using the uninstall command.
+> 使用卸载命令卸载 Docker Desktop 时，你可能会遇到以下错误。
 >
 > ```console
 > $ /Applications/Docker.app/Contents/MacOS/uninstall
@@ -81,17 +79,17 @@ You can then move the Docker application to the trash.
 > Error: unlinkat /Users/<USER_HOME>/Library/Containers/com.docker.docker/.com.apple.containermanagerd.metadata.plist: > operation not permitted
 > ```
 >
-> The operation not permitted error is reported either on the file `.com.apple.containermanagerd.metadata.plist` or on the parent directory `/Users/<USER_HOME>/Library/Containers/com.docker.docker/`. This error can be ignored as you have successfully uninstalled Docker Desktop.
-> You can remove the directory `/Users/<USER_HOME>/Library/Containers/com.docker.docker/` later by allowing **Full Disk Access** to the terminal application you are using (**System Settings** > **Privacy & Security** > **Full Disk Access**).
+> 此"操作不被允许"错误是针对文件 `.com.apple.containermanagerd.metadata.plist` 或其父目录 `/Users/<USER_HOME>/Library/Containers/com.docker.docker/` 报告的。可以忽略此错误，因为你已成功卸载 Docker Desktop。
+> 你可以稍后通过为正在使用的终端应用程序授予 **完全磁盘访问** 权限来删除目录 `/Users/<USER_HOME>/Library/Containers/com.docker.docker/`（**系统设置** > **隐私与安全性** > **完全磁盘访问**）。
 
-After uninstalling Docker Desktop, some residual files may remain which you can remove:
+卸载 Docker Desktop 后，可能会留下一些残留文件，你可以删除这些文件：
 
 ```console
 $ rm -rf ~/Library/Group\ Containers/group.com.docker
 $ rm -rf ~/.docker
 ```
 
-With Docker Desktop version 4.36 and earlier, the following files may also be left on the file system. You can remove these with administrative privileges:
+对于 Docker Desktop 4.36 及更早版本，文件系统上可能还会留下以下文件。你可以使用管理员权限删除这些文件：
 
 ```console
 /Library/PrivilegedHelperTools/com.docker.vmnetd
@@ -101,17 +99,17 @@ With Docker Desktop version 4.36 and earlier, the following files may also be le
 {{< /tab >}}
 {{< tab name="Ubuntu" >}}
 
-To uninstall Docker Desktop for Ubuntu:
+要卸载 Docker Desktop for Ubuntu：
 
-1. Remove the Docker Desktop application. Run:
+1. 删除 Docker Desktop 应用程序。运行：
 
    ```console
    $ sudo apt remove docker-desktop
    ```
 
-   This removes the Docker Desktop package itself but doesn’t delete all of its files or settings.
+   这会删除 Docker Desktop 软件包本身，但不会删除其所有文件或设置。
 
-2. Manually remove leftover file.
+2. 手动删除残留文件。
 
    ```console
    $ rm -r $HOME/.docker/desktop
@@ -119,26 +117,26 @@ To uninstall Docker Desktop for Ubuntu:
    $ sudo apt purge docker-desktop
    ```
 
-   This removes configuration and data files at `$HOME/.docker/desktop`, the symlink at `/usr/local/bin/com.docker.cli`, and purges the remaining systemd service files.
+   这会删除 `$HOME/.docker/desktop` 中的配置和数据文件、`/usr/local/bin/com.docker.cli` 中的符号链接，并清除剩余的 systemd 服务文件。
 
-3. Clean up Docker config settings. In `$HOME/.docker/config.json`, remove the `credsStore` and `currentContext` properties.
+3. 清理 Docker 配置设置。在 `$HOME/.docker/config.json` 中，删除 `credsStore` 和 `currentContext` 属性。
 
-   These entries tell Docker where to store credentials and which context is active. If they remain after uninstalling Docker Desktop, they may conflict with a future Docker setup.
+   这些条目告诉 Docker 在哪里存储凭据以及哪个上下文处于活动状态。如果它们在卸载 Docker Desktop 后仍然存在，可能会与将来的 Docker 设置冲突。
 
 {{< /tab >}}
 {{< tab name="Debian" >}}
 
-To uninstall Docker Desktop for Debian, run:
+要卸载 Docker Desktop for Debian，运行：
 
-1. Remove the Docker Desktop application:
+1. 删除 Docker Desktop 应用程序：
 
    ```console
    $ sudo apt remove docker-desktop
    ```
 
-   This removes the Docker Desktop package itself but doesn’t delete all of its files or settings.
+   这会删除 Docker Desktop 软件包本身，但不会删除其所有文件或设置。
 
-2. Manually remove leftover file.
+2. 手动删除残留文件。
 
    ```console
    $ rm -r $HOME/.docker/desktop
@@ -146,26 +144,26 @@ To uninstall Docker Desktop for Debian, run:
    $ sudo apt purge docker-desktop
    ```
 
-   This removes configuration and data files at `$HOME/.docker/desktop`, the symlink at `/usr/local/bin/com.docker.cli`, and purges the remaining systemd service files.
+   这会删除 `$HOME/.docker/desktop` 中的配置和数据文件、`/usr/local/bin/com.docker.cli` 中的符号链接，并清除剩余的 systemd 服务文件。
 
-3. Clean up Docker config settings. In `$HOME/.docker/config.json`, remove the `credsStore` and `currentContext` properties.
+3. 清理 Docker 配置设置。在 `$HOME/.docker/config.json` 中，删除 `credsStore` 和 `currentContext` 属性。
 
-   These entries tell Docker where to store credentials and which context is active. If they remain after uninstalling Docker Desktop, they may conflict with a future Docker setup.
+   这些条目告诉 Docker 在哪里存储凭据以及哪个上下文处于活动状态。如果它们在卸载 Docker Desktop 后仍然存在，可能会与将来的 Docker 设置冲突。
 
 {{< /tab >}}
 {{< tab name="Fedora" >}}
 
-To uninstall Docker Desktop for Fedora:
+要卸载 Docker Desktop for Fedora：
 
-1. Remove the Docker Desktop application. Run:
+1. 删除 Docker Desktop 应用程序。运行：
 
    ```console
    $ sudo dnf remove docker-desktop
    ```
 
-   This removes the Docker Desktop package itself but doesn’t delete all of its files or settings.
+   这会删除 Docker Desktop 软件包本身，但不会删除其所有文件或设置。
 
-2. Manually remove leftover file.
+2. 手动删除残留文件。
 
    ```console
    $ rm -r $HOME/.docker/desktop
@@ -173,36 +171,36 @@ To uninstall Docker Desktop for Fedora:
    $ sudo dnf remove docker-desktop
    ```
 
-   This removes configuration and data files at `$HOME/.docker/desktop`, the symlink at `/usr/local/bin/com.docker.cli`, and purges the remaining systemd service files.
+   这会删除 `$HOME/.docker/desktop` 中的配置和数据文件、`/usr/local/bin/com.docker.cli` 中的符号链接，并清除剩余的 systemd 服务文件。
 
-3. Clean up Docker config settings. In `$HOME/.docker/config.json`, remove the `credsStore` and `currentContext` properties.
+3. 清理 Docker 配置设置。在 `$HOME/.docker/config.json` 中，删除 `credsStore` 和 `currentContext` 属性。
 
-   These entries tell Docker where to store credentials and which context is active. If they remain after uninstalling Docker Desktop, they may conflict with a future Docker setup.
+   这些条目告诉 Docker 在哪里存储凭据以及哪个上下文处于活动状态。如果它们在卸载 Docker Desktop 后仍然存在，可能会与将来的 Docker 设置冲突。
 
 {{< /tab >}}
 {{< tab name="Arch" >}}
 
-To uninstall Docker Desktop for Arch:
+要卸载 Docker Desktop for Arch：
 
-1. Remove the Docker Desktop application. Run:
+1. 删除 Docker Desktop 应用程序。运行：
 
    ```console
    $ sudo pacman -Rns docker-desktop
    ```
 
-   This removes the Docker Desktop package along with its configuration files and dependencies not required by other packages.
+   这会删除 Docker Desktop 软件包及其配置文件，以及其他软件包不需要的依赖项。
 
-2. Manually remove leftover files.
+2. 手动删除残留文件。
 
    ```console
    $ rm -r $HOME/.docker/desktop
    ```
 
-   This removes configuration and data files at `$HOME/.docker/desktop`.
+   这会删除 `$HOME/.docker/desktop` 中的配置和数据文件。
 
-3. Clean up Docker config settings. In `$HOME/.docker/config.json`, remove the `credsStore` and `currentContext` properties.
+3. 清理 Docker 配置设置。在 `$HOME/.docker/config.json` 中，删除 `credsStore` 和 `currentContext` 属性。
 
-   These entries tell Docker where to store credentials and which context is active. If they remain after uninstalling Docker Desktop, they may conflict with a future Docker setup.
+   这些条目告诉 Docker 在哪里存储凭据以及哪个上下文处于活动状态。如果它们在卸载 Docker Desktop 后仍然存在，可能会与将来的 Docker 设置冲突。
 
 {{< /tab >}}
 {{< /tabs >}}

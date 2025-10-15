@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Troubleshoot and support
+title: 故障排查与支持
 weight: 50
 ---

@@ -1,70 +1,53 @@
 ---
-description: Frequently asked questions for Docker Desktop for Windows
+description: Docker Desktop for Windows 常见问题
 keywords: desktop, windows, faqs
-title: FAQs for Docker Desktop for Windows
+title: Docker Desktop for Windows 常见问题
 linkTitle: Windows
 tags: [FAQ]
 weight: 30
 ---
 
-### Can I use VirtualBox alongside Docker Desktop?
+### 可以同时使用 VirtualBox 和 Docker Desktop 吗？
 
-Yes, you can run VirtualBox along with Docker Desktop if you have enabled the [Windows Hypervisor Platform](https://docs.microsoft.com/en-us/virtualization/api/) feature on your machine.
+可以。如果你在机器上启用了 [Windows Hypervisor Platform](https://docs.microsoft.com/en-us/virtualization/api/) 功能，就可以同时运行 VirtualBox 和 Docker Desktop。
 
-### Why is Windows 10 or Windows 11 required?
+### 为什么需要 Windows 10 或 Windows 11？
 
-Docker Desktop uses the Windows Hyper-V features. While older Windows versions have Hyper-V, their Hyper-V implementations lack features critical for Docker Desktop to work.
+Docker Desktop 使用了 Windows Hyper-V 功能。虽然较旧的 Windows 版本也有 Hyper-V，但它们的 Hyper-V 实现缺少 Docker Desktop 运行所必需的关键功能。
 
-### Can I run Docker Desktop on Windows Server?
+### 可以在 Windows Server 上运行 Docker Desktop 吗？
 
-No, running Docker Desktop on Windows Server is not supported.
+不可以，不支持在 Windows Server 上运行 Docker Desktop。
 
-### How do symlinks work on Windows?
+### 符号链接在 Windows 上如何工作？
 
-Docker Desktop supports two types of symlinks: Windows native symlinks and symlinks created inside a container.
+Docker Desktop 支持两种类型的符号链接：Windows 原生符号链接和容器内创建的符号链接。
 
-The Windows native symlinks are visible within the containers as symlinks, whereas symlinks created inside a container are represented as [mfsymlinks](https://wiki.samba.org/index.php/UNIX_Extensions#Minshall.2BFrench_symlinks). These are regular Windows files with a special metadata. Therefore the symlinks created inside a container appear as symlinks inside the container, but not on the host.
+Windows 原生符号链接在容器内会显示为符号链接，而容器内创建的符号链接则表示为 [mfsymlinks](https://wiki.samba.org/index.php/UNIX_Extensions#Minshall.2BFrench_symlinks)。这些是带有特殊元数据的常规 Windows 文件。因此，在容器内创建的符号链接在容器内显示为符号链接，但在宿主机上则不是。
 
-### File sharing with Kubernetes and WSL 2
+### Kubernetes 和 WSL 2 的文件共享
 
-Docker Desktop mounts the Windows host filesystem under `/run/desktop` inside the container running Kubernetes.
-See the [Stack Overflow post](https://stackoverflow.com/questions/67746843/clear-persistent-volume-from-a-kubernetes-cluster-running-on-docker-desktop/69273405#69273) for an example of how to configure a Kubernetes Persistent Volume to represent directories on the host.
+Docker Desktop 将 Windows 宿主机文件系统挂载到运行 Kubernetes 的容器内的 `/run/desktop` 下。有关如何配置 Kubernetes 持久卷以表示宿主机上的目录的示例，请参阅 [Stack Overflow 帖子](https://stackoverflow.com/questions/67746843/clear-persistent-volume-from-a-kubernetes-cluster-running-on-docker-desktop/69273405#69273)。
 
-### How do I add custom CA certificates?
+### 如何添加自定义 CA 证书？
 
-You can add trusted Certificate Authorities (CAs) to your Docker daemon to verify registry server certificates, and client certificates, to authenticate to registries.
+你可以向 Docker 守护进程添加受信任的证书颁发机构（CA），用于验证仓库服务器证书和客户端证书，以便向仓库进行身份验证。
 
-Docker Desktop supports all trusted Certificate Authorities (CAs) (root or
-intermediate). Docker recognizes certs stored under Trust Root
-Certification Authorities or Intermediate Certification Authorities.
+Docker Desktop 支持所有受信任的证书颁发机构（CA）（根证书或中间证书）。Docker 会识别存储在受信任的根证书颁发机构或中间证书颁发机构下的证书。
 
-Docker Desktop creates a certificate bundle of all user-trusted CAs based on
-the Windows certificate store, and appends it to Moby trusted certificates. Therefore, if an enterprise SSL certificate is trusted by the user on the host, it is trusted by Docker Desktop.
+Docker Desktop 会根据 Windows 证书存储创建一个包含所有用户受信任 CA 的证书包，并将其附加到 Moby 的受信任证书中。因此，如果宿主机上的用户信任某个企业 SSL 证书，Docker Desktop 也会信任该证书。
 
-To learn more about how to install a CA root certificate for the registry, see
-[Verify repository client with certificates](/manuals/engine/security/certificates.md)
-in the Docker Engine topics.
+要了解更多关于如何为仓库安装 CA 根证书的信息，请参阅 Docker Engine 主题中的[使用证书验证仓库客户端](/manuals/engine/security/certificates.md)。
 
-### How do I add client certificates?
+### 如何添加客户端证书？
 
-You can add your client certificates
-in `~/.docker/certs.d/<MyRegistry><Port>/client.cert` and
-`~/.docker/certs.d/<MyRegistry><Port>/client.key`. You do not need to push your certificates with `git` commands.
+你可以在 `~/.docker/certs.d/<MyRegistry><Port>/client.cert` 和 `~/.docker/certs.d/<MyRegistry><Port>/client.key` 中添加客户端证书。你不需要使用 `git` 命令推送证书。
 
-When the Docker Desktop application starts, it copies the
-`~/.docker/certs.d` folder on your Windows system to the `/etc/docker/certs.d`
-directory on Moby (the Docker Desktop virtual machine running on Hyper-V).
+当 Docker Desktop 应用程序启动时，它会将 Windows 系统上的 `~/.docker/certs.d` 文件夹复制到 Moby（运行在 Hyper-V 上的 Docker Desktop 虚拟机）上的 `/etc/docker/certs.d` 目录。
 
-You need to restart Docker Desktop after making any changes to the keychain
-or to the `~/.docker/certs.d` directory in order for the changes to take effect.
+在对密钥链或 `~/.docker/certs.d` 目录进行任何更改后，你需要重启 Docker Desktop 才能使更改生效。
 
-The registry cannot be listed as an insecure registry (see
-[Docker Daemon](/manuals/desktop/settings-and-maintenance/settings.md#docker-engine)). Docker Desktop ignores
-certificates listed under insecure registries, and does not send client
-certificates. Commands like `docker run` that attempt to pull from the registry
-produce error messages on the command line, as well as on the registry.
+仓库不能被列为不安全仓库（参见 [Docker 守护进程](/manuals/desktop/settings-and-maintenance/settings.md#docker-engine)）。Docker Desktop 会忽略不安全仓库下列出的证书，并且不会发送客户端证书。诸如 `docker run` 之类试图从仓库拉取镜像的命令会在命令行和仓库上产生错误消息。
 
-To learn more about how to set the client TLS certificate for verification, see
-[Verify repository client with certificates](/manuals/engine/security/certificates.md)
-in the Docker Engine topics.
+要了解更多关于如何设置客户端 TLS 证书进行验证的信息，请参阅 Docker Engine 主题中的[使用证书验证仓库客户端](/manuals/engine/security/certificates.md)。
 

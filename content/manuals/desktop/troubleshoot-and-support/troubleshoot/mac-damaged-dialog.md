@@ -1,70 +1,70 @@
 ---
-description: Fix "Docker.app is damaged and can't be opened. You should move it to the Trash" dialog on macOS
+description: 修复 macOS 上的 "Docker.app is damaged and can't be opened. You should move it to the Trash" 对话框
 keywords: docker desktop mac, damaged app, move to trash, gatekeeper, installation issues, troubleshooting
-title: Fix "Docker.app is damaged and can't be opened" on macOS
-linkTitle: MacOS app damaged dialog
+title: 修复 macOS 上的 "Docker.app is damaged and can't be opened" 问题
+linkTitle: MacOS 应用损坏对话框
 tags: [Troubleshooting]
 weight: 30
 ---
 
-## Error message
+## 错误消息
 
-macOS shows the following dialog when you try to open Docker Desktop:
+当您尝试打开 Docker Desktop 时，macOS 会显示以下对话框：
 
 ```text
 Docker.app is damaged and can't be opened. You should move it to the Trash.
 ```
 
-This error prevents Docker Desktop from launching and can occur during installation or after updates.
+此错误会阻止 Docker Desktop 启动，可能在安装期间或更新后出现。
 
-## Possible cause
+## 可能原因
 
-This issue occurs due to a non-atomic copy during a drag/drop installation. When you drag and drop `Docker.app` from a DMG file while another application, like VS Code, is invoking the Docker CLI through symlinks, the copy operation may be interrupted, leaving the app in a partially copied state that Gatekeeper marks as "damaged".
+此问题是由于拖放安装过程中的非原子性复制操作导致的。当您从 DMG 文件拖放 `Docker.app` 时，如果另一个应用程序（如 VS Code）正在通过符号链接调用 Docker CLI，复制操作可能会被中断，导致应用程序处于部分复制状态，Gatekeeper 会将其标记为"已损坏"。
 
-## Solution
+## 解决方案
 
-Follow these steps to resolve the issue:
+按照以下步骤解决此问题：
 
-### Step one: Quit third-party software
+### 步骤一：退出第三方软件
 
-Close any applications that might call Docker in the background:
-- Visual Studio Code and other IDEs
-- Terminal applications
-- Agent apps or development tools
-- Any scripts or processes that use the Docker CLI
+关闭任何可能在后台调用 Docker 的应用程序：
+- Visual Studio Code 和其他 IDE
+- 终端应用程序
+- 代理应用或开发工具
+- 任何使用 Docker CLI 的脚本或进程
 
-### Step two: Remove any partial installation
+### 步骤二：删除任何部分安装
 
-1. Move `/Applications/Docker.app` to Trash and empty Trash.
-2. If you used a DMG installer, eject and re-mount the Docker DMG.
+1. 将 `/Applications/Docker.app` 移至废纸篓并清空废纸篓。
+2. 如果您使用了 DMG 安装程序，请弹出并重新挂载 Docker DMG。
 
-### Step three: Reinstall Docker Desktop
+### 步骤三：重新安装 Docker Desktop
 
-Follow the instructions in the [macOS installation guide](/manuals/desktop/setup/install/mac-install.md) to reinstall Docker Desktop.
+按照 [macOS 安装指南](/manuals/desktop/setup/install/mac-install.md)中的说明重新安装 Docker Desktop。
 
-### If the dialog persists
+### 如果对话框仍然出现
 
-If you continue to see the "damaged" dialog after following the recovery steps:
+如果按照恢复步骤操作后仍然看到"已损坏"对话框：
 
-1. Gather diagnostics using the terminal. Follow the instructions in [Diagnose from the terminal](/manuals/desktop/troubleshoot-and-support/troubleshoot/_index.md#diagnose-from-the-terminal).
-   - Note down the your diagnostics ID displayed in the terminal after running diagnostics.
+1. 使用终端收集诊断信息。按照[从终端诊断](/manuals/desktop/troubleshoot-and-support/troubleshoot/_index.md#diagnose-from-the-terminal)中的说明操作。
+   - 记下运行诊断后终端中显示的诊断 ID。
 
-2. Get help:
-   - If you have a paid Docker subscription, [contact support](/manuals/desktop/troubleshoot-and-support/support.md) and include your diagnostics ID
-   - For community users, [open an issue on GitHub](https://github.com/docker/for-mac/issues) and include your diagnostics ID
+2. 获取帮助：
+   - 如果您有付费的 Docker 订阅，请[联系支持](/manuals/desktop/troubleshoot-and-support/support.md)并提供您的诊断 ID
+   - 对于社区用户，请在 [GitHub 上创建 issue](https://github.com/docker/for-mac/issues) 并提供您的诊断 ID
 
-## Prevention
+## 预防措施
 
-To avoid this issue in the future:
+要在将来避免此问题：
 
-- If your organization allows, update Docker Desktop via the in-app update flow
-- Always quit applications that use Docker before installing Docker Desktop via the DMG installer drag-and-drop approach
-- In managed environments, use PKG installations over DMG drag-and-drop
-- Keep installer volumes mounted until installation is complete
+- 如果您的组织允许，请通过应用内更新流程更新 Docker Desktop
+- 在通过 DMG 安装程序拖放方式安装 Docker Desktop 之前，务必退出使用 Docker 的应用程序
+- 在受管理的环境中，优先使用 PKG 安装方式而不是 DMG 拖放方式
+- 在安装完成之前保持安装程序卷处于挂载状态
 
-## Related information
+## 相关信息
 
-- [Install Docker Desktop on Mac](/manuals/desktop/setup/install/mac-install.md)
-- [PKG installer documentation](/manuals/enterprise/enterprise-deployment/pkg-install-and-configure.md)
-- [Troubleshoot Docker Desktop](/manuals/desktop/troubleshoot-and-support/troubleshoot/_index.md)
-- [Known issues](/manuals/desktop/troubleshoot-and-support/troubleshoot/known-issues.md)
+- [在 Mac 上安装 Docker Desktop](/manuals/desktop/setup/install/mac-install.md)
+- [PKG 安装程序文档](/manuals/enterprise/enterprise-deployment/pkg-install-and-configure.md)
+- [Docker Desktop 故障排查](/manuals/desktop/troubleshoot-and-support/troubleshoot/_index.md)
+- [已知问题](/manuals/desktop/troubleshoot-and-support/troubleshoot/known-issues.md)
