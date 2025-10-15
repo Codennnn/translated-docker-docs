@@ -1,34 +1,35 @@
 ---
 description: Docker Hub Webhooks
 keywords: Docker, webhooks, hub, builds
-title: Webhooks
+title: Webhooks（Webhook 回调）
 weight: 80
 aliases:
 - /docker-hub/webhooks/
 ---
 
-You can use webhooks to cause an action in another service in response to a push event in the repository. Webhooks are POST requests sent to a URL you define in Docker Hub.
+你可以使用 Webhook 在存储库发生推送（push）事件时，通知并触发其他服务的动作。
+Webhook 会向你在 Docker Hub 中配置的目标 URL 发送 POST 请求。
 
-## Create a webhook
+## 创建 Webhook
 
-To create a webhook:
-1. In your chosen repository, select the **Webhooks** tab.
-2. Provide a name for the webhook.
-3. Provide a destination webhook URL. This is where webhook POST requests are delivered.
-4. Select **Create**.
+创建 Webhook：
+1. 在目标存储库中，进入 **Webhooks** 选项卡。
+2. 输入 Webhook 的名称。
+3. 填写目标 Webhook URL（POST 请求将发送至此地址）。
+4. 点击 **Create**。
 
-## View webhook delivery history
+## 查看 Webhook 投递历史
 
-To view the history of the webhook:
-1. Hover over your webhook under the **Current Webhooks section**.
-2. Select the **Menu options** icon.
-3. Select **View History**.
+查看某个 Webhook 的历史记录：
+1. 在 **Current Webhooks** 区域，鼠标悬停于目标 Webhook。
+2. 点击 **Menu options** 图标。
+3. 选择 **View History**。
 
-You can then view the delivery history, and whether delivering the POST request was successful or not.
+随后你可以查看投递历史，以及每次 POST 请求是否成功。
 
-## Example webhook payload
+## Webhook 负载示例
 
-Webhook payloads have the following JSON format:
+Webhook 的负载（payload）通常为如下 JSON 格式：
 
 ```json
 {

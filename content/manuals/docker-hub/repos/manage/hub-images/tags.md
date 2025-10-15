@@ -1,70 +1,68 @@
 ---
-description: Discover how to manage repository tags on Docker Hub.
-keywords: Docker Hub, Hub, repository content, tags
-title: Tags on Docker Hub
-linkTitle: Tags
+description: 了解如何在 Docker Hub 上管理存储库标签。
+keywords: Docker Hub, Hub, 存储库内容, 标签
+title: Docker Hub 上的标签
+linkTitle: 标签
 weight: 10
 ---
 
-Tags let you manage multiple versions of images within a single Docker Hub
-repository. By adding a specific `:<tag>` to each image, such as
-`docs/base:testing`, you can organize and differentiate image versions for
-various use cases. If no tag is specified, the image defaults to the `latest`
-tag.
+在同一个 Docker Hub 存储库中，标签（tag）可用于管理镜像的多个版本。
+为每个镜像添加特定的 `:<tag>`（例如 `docs/base:testing`），
+即可按不同使用场景对镜像版本进行组织与区分。
+如果未指定标签，默认使用 `latest`。
 
-## Tag a local image
+## 为本地镜像打标签
 
-To tag a local image, use one of the following methods:
+为本地镜像打标签，你可以使用以下任一方式：
 
-- When you build an image, use `docker build -t <org-or-user-namespace>/<repo-name>[:<tag>`.
-- Re-tag an existing local image with `docker tag <existing-image> <org-or-user-namespace>/<repo-name>[:<tag>]`.
-- When you commit changes, use `docker commit <existing-container> <org-or-user-namespace>/<repo-name>[:<tag>]`.
+- 在构建镜像时使用 `docker build -t <org-or-user-namespace>/<repo-name>[:<tag>]`。
+- 使用 `docker tag <existing-image> <org-or-user-namespace>/<repo-name>[:<tag>]` 重新打标签。
+- 提交变更时使用 `docker commit <existing-container> <org-or-user-namespace>/<repo-name>[:<tag>]`。
 
-Then, you can push this image to the repository designated by its name or tag:
+随后，你可以将该镜像推送到其名称或标签指定的存储库：
 
 ```console
 $ docker push <org-or-user-namespace>/<repo-name>:<tag>
 ```
 
-The image is then uploaded and available for use in Docker Hub.
+镜像上传成功后，即可在 Docker Hub 中使用。
 
-## View repository tags
+## 查看存储库标签
 
-You can view the available tags and the size of the associated image.
+你可以查看可用的标签以及其对应镜像的大小。
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-2. Select **My Hub** > **Repositories**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+2. 选择 **My Hub** > **Repositories**。
 
-   A list of your repositories appears.
+   随即显示你的存储库列表。
 
-3. Select a repository.
+3. 选择一个存储库。
 
-   The **General** page for the repository appears.
+   将进入该存储库的 **General** 页面。
 
-4. Select the **Tags** tab.
+4. 切换到 **Tags** 选项卡。
 
-You can select a tag's digest to see more details.
+你可以点击某个标签的 digest 查看更多详情。
 
-## Delete repository tags
+## 删除存储库标签
 
-Only the repository owner or other team members with granted permissions can
-delete tags.
+仅存储库所有者或被授予权限的团队成员可以删除标签。
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-2. Select **My Hub** > **Repositories**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+2. 选择 **My Hub** > **Repositories**。
 
-   A list of your repositories appears.
+   随即显示你的存储库列表。
 
-3. Select a repository.
+3. 选择一个存储库。
 
-   The **General** page for the repository appears.
+   将进入该存储库的 **General** 页面。
 
-4. Select the **Tags** tab.
+4. 切换到 **Tags** 选项卡。
 
-5. Select the corresponding checkbox next to the tags to delete.
+5. 勾选要删除的标签旁的复选框。
 
-6. Select **Delete**.
+6. 点击 **Delete**。
 
-   A confirmation dialog appears.
+   随后会弹出确认对话框。
 
-7. Select **Delete**.
+7. 再次点击 **Delete**。

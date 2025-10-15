@@ -1,136 +1,124 @@
 ---
-title: Software artifacts on Docker Hub
-linkTitle: Software artifacts
+title: Docker Hub 上的软件工件
+linkTitle: 软件工件
 weight: 20
 keywords: oci, artifacts, docker hub
-description: You can use Docker Hub to store software artifacts packaged as OCI artifacts.
+description: 你可以在 Docker Hub 中存储以 OCI 工件形式打包的软件工件。
 aliases:
 - /docker-hub/oci-artifacts/
 ---
 
-You can use Docker Hub to store any kind of software artifact, not just
-container images. A software artifact is any item produced during the software
-development process that contributes to the creation, maintenance, or
-understanding of the software. Docker Hub supports OCI artifacts by leveraging
-the config property on the image manifest.
+在 Docker Hub 中，你可以存储的不仅仅是容器镜像，还包括各种类型的软件工件（software artifact）。
+软件工件是指在软件开发过程中产出的、用于创建、维护或理解软件的任何项目。
+Docker Hub 通过利用镜像清单（image manifest）中的 config 属性来支持 OCI 工件。
 
-## What are OCI artifacts?
+## 什么是 OCI 工件？
 
-OCI artifacts are any arbitrary files related to a software application. Some
-examples include:
+OCI 工件是与软件应用相关的任意文件，例如：
 
 - Helm charts
-- Software Bill of Materials (SBOM)
+- Software Bill of Materials（SBOM，软件物料清单）
 - Digital signatures
 - Provenance data
 - Attestations
 - Vulnerability reports
 
-Docker Hub supporting OCI artifacts means you can use one repository for storing
-and distributing container images as well as other assets.
+Docker Hub 支持 OCI 工件意味着你可以在同一个存储库中存储与分发容器镜像及其他资产。
 
-A common use case for OCI artifacts is
-[Helm charts](https://helm.sh/docs/topics/charts/). Helm charts is a packaging
-format that defines a Kubernetes deployment for an application. Since Kubernetes
-is a popular runtime for containers, it makes sense to host application images
-and deployment templates all in one place.
+OCI 工件的一个常见用例是
+[Helm charts](https://helm.sh/docs/topics/charts/)。Helm Chart 是一种为应用定义 Kubernetes 部署的打包格式。
+由于 Kubernetes 是流行的容器运行时，将应用镜像与部署模板托管在同一位置是合理的选择。
 
-## Using OCI artifacts with Docker Hub
+## 在 Docker Hub 中使用 OCI 工件
 
-You manage OCI artifacts on Docker Hub in a similar way you would container
-images.
+在 Docker Hub 上管理 OCI 工件的方式与管理容器镜像类似。
 
-Pushing and pulling OCI artifacts to and from a registry is done using a
-registry client. [ORAS CLI](https://oras.land/docs/installation)
-is a command-line tool that provides the capability of managing
-OCI artifacts in a registry. If you use Helm charts, the
-[Helm CLI](https://helm.sh/docs/intro/install/) provides built-in
-functionality for pushing and pulling charts to and from a registry.
+向注册表推送/拉取 OCI 工件通常借助注册表客户端完成。
+[ORAS CLI](https://oras.land/docs/installation) 是一个命令行工具，
+可用于在注册表中管理 OCI 工件。
+如果你使用 Helm Chart，
+[Helm CLI](https://helm.sh/docs/intro/install/) 也提供了将 Chart 推送/拉取到注册表的内置功能。
 
-Registry clients invoke HTTP requests to the Docker Hub registry API. The
-registry API conforms to a standard protocol defined in the
-[OCI distribution specification](https://github.com/opencontainers/distribution-spec).
+这些注册表客户端会向 Docker Hub 的 Registry API 发起 HTTP 请求。
+该 API 遵循
+[OCI 分发规范（OCI distribution specification）](https://github.com/opencontainers/distribution-spec) 所定义的标准协议。
 
-## Examples
+## 示例
 
-This section shows some examples on using OCI artifacts with Docker Hub.
+本节展示在 Docker Hub 中使用 OCI 工件的一些示例。
 
-### Push a Helm chart
+### 推送一个 Helm Chart
 
-The following procedure shows how to push a Helm chart as an OCI artifact to
-Docker Hub.
+以下步骤演示如何将 Helm Chart 作为 OCI 工件推送到 Docker Hub。
 
-Prerequisites:
+前提条件：
 
 - Helm version 3.0.0 or later
 
-Steps:
+步骤：
 
-1. Create a new Helm chart
+1. 创建一个新的 Helm Chart
 
    ```console
    $ helm create demo
    ```
 
-   This command generates a boilerplate template chart.
+   该命令会生成一个样板 Chart。
 
-2. Package the Helm chart into a tarball.
+2. 将 Helm Chart 打包为 tarball。
 
    ```console
    $ helm package demo
    Successfully packaged chart and saved it to: /Users/hubuser/demo-0.1.0.tgz
    ```
 
-3. Sign in to Docker Hub with Helm, using your Docker credentials.
+3. 使用 Docker 凭据通过 Helm 登录 Docker Hub。
 
    ```console
    $ helm registry login registry-1.docker.io -u hubuser
    ```
 
-4. Push the chart to a Docker Hub repository.
+4. 将该 Chart 推送到 Docker Hub 的某个存储库。
 
    ```console
    $ helm push demo-0.1.0.tgz oci://registry-1.docker.io/docker
    ```
 
-   This uploads the Helm chart tarball to a `demo` repository in the `docker`
-   namespace.
+   这会把 Helm Chart 的压缩包上传到 `docker` 命名空间下的 `demo` 存储库。
 
-5. Go to the repository page on Docker Hub. The **Tags** section of the page
-   shows the Helm chart tag.
+5. 前往 Docker Hub 上该存储库的页面。页面中的 **Tags** 区域会显示该 Helm Chart 的标签。
 
    ![List of repository tags](./images/oci-helm.png)
 
-6. Select the tag name to go to the page for that tag.
+6. 点击某个标签名进入该标签详情页。
 
-   The page lists a few useful commands for working with Helm charts.
+   该页面会列出几个用于处理 Helm Chart 的常用命令。
 
    ![Tag page of a Helm chart artifact](./images/oci-helm-tagview.png)
 
-### Push a volume
+### 推送一个卷（volume）
 
-The following procedure shows how to push container volume as an OCI artifact to
-Docker Hub.
+以下步骤演示如何将容器卷作为 OCI 工件推送到 Docker Hub。
 
-Prerequisites:
+前提条件：
 
 - ORAS CLI version 0.15 or later
 
-Steps:
+步骤：
 
-1. Create a dummy file to use as volume content.
+1. 创建一个占位文件作为卷内容。
 
    ```console
    $ touch myvolume.txt
    ```
 
-2. Sign in to Docker Hub using the ORAS CLI.
+2. 使用 ORAS CLI 登录 Docker Hub。
 
    ```console
    $ oras login -u hubuser registry-1.docker.io
    ```
 
-3. Push the file to Docker Hub.
+3. 将该文件推送到 Docker Hub。
 
    ```console
    $ oras push registry-1.docker.io/docker/demo:0.0.1 \
@@ -138,44 +126,41 @@ Steps:
      myvolume.txt:text/plain
    ```
 
-   This uploads the volume to a `demo` repository in the `docker` namespace. The
-   `--artifact-type` flag specifies a special media type that makes Docker Hub
-   recognize the artifact as a container volume.
+   这会把该卷上传到 `docker` 命名空间下的 `demo` 存储库。
+   其中 `--artifact-type` 标志指定了特殊的媒体类型，使 Docker Hub 将该工件识别为“容器卷”。
 
-4. Go to the repository page on Docker Hub. The **Tags** section on that page
-   shows the volume tag.
+4. 前往 Docker Hub 上该存储库页面。页面中的 **Tags** 区域会显示该卷的标签。
 
    ![Repository page showing a volume in the tag list](./images/oci-volume.png)
 
-### Push a generic artifact file
+### 推送通用工件文件
 
-The following procedure shows how to push a generic OCI artifact to Docker Hub.
+以下步骤演示如何将通用 OCI 工件推送到 Docker Hub。
 
-Prerequisites:
+前提条件：
 
 - ORAS CLI version 0.15 or later
 
-Steps:
+步骤：
 
-1. Create your artifact file.
+1. 创建你的工件文件。
 
    ```console
    $ touch myartifact.txt
    ```
 
-2. Sign in to Docker Hub using the ORAS CLI.
+2. 使用 ORAS CLI 登录 Docker Hub。
 
    ```console
    $ oras login -u hubuser registry-1.docker.io
    ```
 
-3. Push the file to Docker Hub.
+3. 将该文件推送到 Docker Hub。
 
    ```console
    $ oras push registry-1.docker.io/docker/demo:0.0.1 myartifact.txt:text/plain
    ```
 
-4. Go to the repository page on Docker Hub. The **Tags** section on that page
-   shows the artifact tag.
+4. 前往 Docker Hub 上该存储库页面。页面中的 **Tags** 区域会显示该工件的标签。
 
    ![Repository page showing an artifact in the tag list](./images/oci-artifact.png)

@@ -1,53 +1,56 @@
 ---
-description: Learn about immutable tags and how they help maintain image version consistency on Docker Hub.
-keywords: Docker Hub, Hub, repository content, tags, immutable tags, version control
-title: Immutable tags on Docker Hub
-linkTitle: Immutable tags
+description: 了解不可变标签及其在 Docker Hub 上保持镜像版本一致性的作用。
+keywords: Docker Hub, Hub, 存储库内容, 标签, 不可变标签, 版本控制
+title: Docker Hub 上的不可变标签
+linkTitle: 不可变标签
 weight: 11
 ---
 {{< summary-bar feature_name="Immutable tags" >}}
 
-Immutable tags provide a way to ensure that specific image versions remain unchanged once they are published to Docker Hub. This feature helps maintain consistency and reliability in your container deployments by preventing accidental overwrites of important image versions.
+不可变标签用于确保特定镜像版本一经发布至 Docker Hub 后即保持不变。
+通过防止关键镜像版本被意外覆盖，该功能有助于在容器部署中维持一致性与可靠性。
 
-## What are immutable tags?
+## 什么是不可变标签？
 
-Immutable tags are image tags that, once pushed to Docker Hub, cannot be overwritten or deleted. This ensures that a specific version of an image remains exactly the same throughout its lifecycle, providing:
+不可变标签是指一旦推送到 Docker Hub 后，就不能被覆盖或删除的镜像标签。
+这确保了镜像的特定版本在其生命周期内始终保持一致，带来以下好处：
 
-- Version consistency
-- Reproducible builds
-- Protection against accidental overwrites
-- Better security and compliance
+- 版本一致性
+- 可复现的构建
+- 防止意外覆盖
+- 更好的安全性与合规性
 
-## Enable immutable tags
+## 启用不可变标签
 
-To enable immutable tags for your repository:
+为存储库启用不可变标签：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-2. Select **My Hub** > **Repositories**.
-3. Select the repository where you want to enable immutable tags.
-4. Go to **Settings** > **General**.
-5. Under **Tag mutability settings**, select one of the following options:
-   - **All tags are mutable (Default)**:  
-     Tags can be changed to reference a different image. This lets you retarget a tag without creating a new one.
-   - **All tags are immutable**:  
-     Tags cannot be updated to point to a different image after creation. This ensures consistency and prevents accidental changes. This includes the `latest` tag.
-   - **Specific tags are immutable**:  
-     Define specific tags that cannot be updated after creation using regex values.
-6. Select **Save**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+2. 选择 **My Hub** > **Repositories**。
+3. 选择你要启用不可变标签的存储库。
+4. 进入 **Settings** > **General**。
+5. 在 **Tag mutability settings** 下，选择以下其一：
+   - **All tags are mutable (Default)**：
+     标签可被更改为指向其他镜像，从而在无需新建标签的情况下重定向标签。
+   - **All tags are immutable**：
+     标签创建后不可再更新为指向其他镜像，以确保一致性并防止意外改动；`latest` 也包含在内。
+   - **Specific tags are immutable**：
+     使用正则表达式指定创建后不可更新的特定标签。
+6. 点击 **Save**。
 
-Once enabled, all tags are locked to their specific images, ensuring that each tag always points to the same image version and cannot be modified.
+启用后，所有标签都会与其对应镜像“锁定”，确保每个标签始终指向同一镜像版本且不可修改。
 
 > [!NOTE]
-> This implementation of regular expressions follows the [Go regexp package](https://pkg.go.dev/regexp), which is based on the RE2 engine. For more information, visit [RE2 Regular Expression Syntax](https://github.com/google/re2/wiki/Syntax).
+> 这里的正则表达式实现遵循 [Go regexp 包](https://pkg.go.dev/regexp)，其基于 RE2 引擎。
+> 详见 [RE2 正则表达式语法](https://github.com/google/re2/wiki/Syntax)。
 
-## Working with immutable tags
+## 使用不可变标签
 
-When immutable tags are enabled:
+启用不可变标签后：
 
-- You cannot push a new image with the same tag name
-- You must use a new tag name for each new image version
+- 你不能再推送使用相同标签名的新镜像；
+- 每个新的镜像版本都必须使用新的标签名。
 
-To push an image, create a new tag for your updated image and push it to the repository.
+要推送镜像，请为更新后的镜像创建一个新标签并推送到存储库。
 
 
 

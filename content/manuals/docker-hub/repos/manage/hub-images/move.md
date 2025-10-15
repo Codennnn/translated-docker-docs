@@ -1,63 +1,59 @@
 ---
-description: Discover how to move images between repositories.
-keywords: Docker Hub, Hub, repository content, move
-title: Move images between repositories
-linkTitle: Move images
+description: 了解如何在不同存储库之间迁移镜像。
+keywords: Docker Hub, Hub, 存储库内容, 迁移
+title: 在存储库之间迁移镜像
+linkTitle: 迁移镜像
 weight: 40
 ---
 
-Consolidating and organizing your Docker images across repositories can
-streamline your workflows, whether you're managing personal projects or
-contributing to an organization. This topic explains how to move images between
-Docker Hub repositories, ensuring that your content remains accessible and
-organized under the correct accounts or namespaces.
+将镜像在多个存储库间进行整合与组织，有助于简化工作流，无论是个人项目还是组织协作。
+本主题介绍如何在 Docker Hub 存储库之间迁移镜像，确保内容在正确的账号或命名空间下保持可访问与有序。
 
-## Personal to personal
+## 个人到个人（Personal to personal）
 
-When consolidating personal repositories, you can pull private images from the initial repository and push them into another repository owned by you. To avoid losing your private images, perform the following steps:
+在整合个人存储库时，你可以先从原存储库拉取私有镜像，再将其推送到你拥有的另一个存储库。为避免丢失私有镜像，请执行以下步骤：
 
-1. [Sign up](https://app.docker.com/signup) for a new Docker account with a personal subscription.
-2. Sign in to [Docker](https://app.docker.com/login) using your original Docker account
-3. Pull your images:
+1. 使用个人订阅[注册](https://app.docker.com/signup)一个新的 Docker 账号。
+2. 使用原有 Docker 账号登录 [Docker](https://app.docker.com/login)。
+3. 拉取你的镜像：
 
    ```console
    $ docker pull namespace1/docker101tutorial
    ```
 
-4. Tag your private images with your newly created Docker username, for example:
+4. 使用新创建的 Docker 用户名为你的私有镜像打标签，例如：
 
    ```console
    $ docker tag namespace1/docker101tutorial new_namespace/docker101tutorial
    ```
-5. Using `docker login` from the CLI, sign in with your newly created Docker account, and push your newly tagged private images to your new Docker account namespace:
+5. 在命令行使用 `docker login`，以新账号登录，并将新打标签的私有镜像推送到新账号的命名空间：
 
    ```console
    $ docker push new_namespace/docker101tutorial
    ```
 
-The private images that existed in your previous account are now available in your new account.
+此前账号中的私有镜像现已在新账号中可用。
 
-## Personal to an organization
+## 个人到组织（Personal to an organization）
 
-To avoid losing your private images, you can pull your private images from your
-personal account and push them to an organization that's owned by you.
+为避免丢失私有镜像，你可以先从个人账号拉取私有镜像，再推送到你拥有的组织。
 
-1. Navigate to [Docker Hub](https://hub.docker.com) and select **My Hub**.
-2. Select the applicable organization and verify that your user account is a member of the organization.
-3. Sign in to [Docker Hub](https://hub.docker.com) using your original Docker account, and pull your images:
+1. 访问 [Docker Hub](https://hub.docker.com) 并选择 **My Hub**。
+2. 选择目标组织，并确认你的用户账号已加入该组织。
+3. 使用原有 Docker 账号登录 [Docker Hub](https://hub.docker.com)，并拉取你的镜像：
 
    ```console
    $ docker pull namespace1/docker101tutorial
    ```
-4. Tag your images with your new organization namespace:
+4. 使用新组织的命名空间为镜像打标签：
 
    ```console
    $ docker tag namespace1/docker101tutorial <new_org>/docker101tutorial
    ```
-5. Push your newly tagged images to your new org namespace:
+5. 将新打标签的镜像推送到新组织的命名空间：
 
    ```console
    $ docker push new_org/docker101tutorial
    ```
 
-The private images that existed in your user account are now available for your organization.
+原先用户账号中的私有镜像现已可供你的组织使用。

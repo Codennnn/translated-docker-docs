@@ -1,7 +1,7 @@
 ---
-description: Docker Service accounts
-keywords: Docker, service, accounts, Docker Hub
-title: Service accounts
+description: Docker 服务账户
+keywords: Docker, 服务, 账户, Docker Hub
+title: 服务账户
 weight: 50
 ---
 
@@ -9,23 +9,17 @@ weight: 50
 
 > [!IMPORTANT]
 >
-> As of December 10, 2024, Enhanced Service Account add-ons are no longer
-> available. Existing Service Account agreements will be honored until their
-> current term expires, but new purchases or renewals of Enhanced Service
-> Account add-ons are no longer available and customers must renew under a new
-> subscription.
+> 自 2024 年 12 月 10 日起，增强版 Service Account（服务账号）附加包已不再提供。现有的服务账号协议将在其当前期限内继续有效，但不再支持购买或续订增强版附加包，客户需在新的订阅方案下续约。
 >
-> Docker recommends transitioning to [Organization Access Tokens
-> (OATs)](/manuals/enterprise/security/access-tokens.md), which can provide similar
-> functionality.
+> Docker 建议迁移至 [Organization Access Tokens（组织访问令牌，OAT）](/manuals/enterprise/security/access-tokens.md)，其可提供类似功能。
 
-A service account is a Docker ID used for automated management of container images or containerized applications. Service accounts are typically used in automated workflows, and don't share Docker IDs with the members in the organization. Common use cases for service accounts include mirroring content on Docker Hub, or tying in image pulls from your CI/CD process.
+服务账号是一种用于自动化管理容器镜像或容器化应用的 Docker ID。服务账号通常用于自动化工作流中，且不会与组织成员共享个人 Docker ID。典型用例包括在 Docker Hub 上进行内容镜像，或在 CI/CD 流程中拉取镜像。
 
-## Enhanced Service Account add-on tiers
+## 增强版服务账号附加包档位
 
-Refer to the following table for details on the Enhanced Service Account add-ons:
+关于增强版服务账号附加包的详细信息，请参阅下表：
 
-| Tier | Pull Rates Per Day\* |
+| 档位 | 每日拉取次数上限\* |
 | ------ | ------ |
 | 1 | 5,000-10,000 |
 | 2 | 10,000-25,000 |
@@ -33,4 +27,4 @@ Refer to the following table for details on the Enhanced Service Account add-ons
 | 4 | 50,000-100,000 |
 | 5 | 100,000+ |
 
-<sub>*The service account may exceed Pulls by up to 25% for up to 20 days during the year without incurring additional fees. Reports on consumption are available upon request.<sub>
+<sub>*服务账号在全年范围内，最多可在 20 天内超出上述拉取次数上限 25%，且无需额外费用。可按需提供使用量报告。<sub>

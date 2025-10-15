@@ -1,122 +1,75 @@
 ---
-description: Discover how to browse and search Docker Hub's extensive resources.
-keywords: Docker Hub, Hub, explore, search, image library
-title: Docker Hub search
-linkTitle: Search
+description: 了解如何浏览与搜索 Docker Hub 的海量资源。
+keywords: Docker Hub, Hub, 浏览, 搜索, 镜像库
+title: Docker Hub 搜索
+linkTitle: 搜索
 weight: 10
 ---
 
-The [Docker Hub search interface](https://hub.docker.com/search) lets you
-explore millions of resources. To help you find exactly what you need, it offers
-a variety of filters that let you narrow your results or discover different
-types of content.
+[Docker Hub 搜索界面](https://hub.docker.com/search) 可帮助你探索数百万条资源。为便于精准定位所需内容，它提供了多种筛选条件，既可缩小搜索范围，也便于发现不同类型的内容。
 
-## Filters
+## 筛选条件
 
-The search functionality includes filters to narrow down
-results based on your requirements, such as products, categories, and trusted
-content. This ensures that you can quickly find and access the resources best
-suited to your project.
+搜索功能支持多类筛选条件来依据你的需求缩小结果范围，例如按产品、类别与可信内容等进行筛选，帮助你更快找到最适合项目的资源。
 
-### Products
+### 产品
 
-Docker Hub's content library features three products, each designed to meet
-specific needs of developers and organizations. These products include images,
-plugins, and extensions.
+Docker Hub 的内容库包含三类产品，分别面向开发者与组织的不同需求：镜像、插件与扩展。
 
-#### Images
+#### 镜像
 
-Docker Hub hosts millions of container images, making it the go-to repository
-for containerized applications and solutions. These images include:
+Docker Hub 托管了数百万个容器镜像，是容器化应用与方案的首选仓库。这些镜像包括：
 
-- Operating system images: Foundational images for Linux distributions like
-  Ubuntu, Debian, and Alpine, or Windows Server images.
-- Database and storage images: Pre-configured databases such as MySQL,
-  PostgreSQL, and MongoDB to simplify application development.
-- Languages and frameworks-based images: Popular images for Java, Python,
-  Node.js, Ruby, .NET, and more, offering pre-built environments for faster
-  development.
+- 操作系统镜像：如 Ubuntu、Debian、Alpine 等 Linux 发行版基础镜像，或 Windows Server 镜像。
+- 数据库与存储镜像：如 MySQL、PostgreSQL、MongoDB 等预配置数据库，简化应用开发。
+- 语言与框架镜像：如 Java、Python、Node.js、Ruby、.NET 等常用镜像，提供预构建环境以加快开发。
 
-Images in Docker Hub simplify the development process by providing pre-built,
-reusable building blocks, reducing the need to start from scratch. Whether
-you're a beginner building your first container or an enterprise managing
-complex architectures, Docker Hub images provide a reliable foundation.
+Docker Hub 上的镜像以预构建、可复用的“积木”形式简化开发流程，无需从零开始。无论你是初学者构建第一个容器，还是企业管理复杂架构，Docker Hub 镜像都能提供可靠的基石。
 
-#### Plugins
+#### 插件
 
-Plugins in Docker Hub let you extend and customize Docker Engine to suit
-specialized requirements. Plugins integrate directly with the Docker Engine and
-provide capabilities such as:
+Docker Hub 的插件可用于扩展与定制 Docker Engine，以满足特定需求。插件与 Docker Engine 直接集成，提供如下能力：
 
-- Network plugins: Enhance networking functionality, enabling integration with
-  complex network infrastructures.
-- Volume plugins: Provide advanced storage options, supporting persistent and
-  distributed storage across various backends.
-- Authorization plugins: Offer fine-grained access control to secure Docker
-  environments.
+- 网络插件：增强网络功能，便于对接复杂网络基础设施。
+- 卷插件：提供高级存储选项，支持跨多种后端的持久化与分布式存储。
+- 鉴权插件：提供细粒度的访问控制，强化 Docker 环境安全。
 
-By leveraging Docker plugins, teams can tailor Docker Engine to meet their
-specific operational needs, ensuring compatibility with existing infrastructures
-and workflows.
+借助 Docker 插件，团队可以按需定制 Docker Engine 的运行能力，并确保与现有基础设施与工作流的兼容性。
 
-To learn more about plugins, see [Docker Engine managed plugin
-system](/manuals/engine/extend/_index.md).
+了解插件更多信息，参见 [Docker Engine 托管插件系统](/manuals/engine/extend/_index.md)。
 
-#### Extensions
+#### 扩展
 
-Docker Hub offers extensions for Docker Desktop, which enhance its core
-functionality. These extensions are purpose-built to streamline the software
-development lifecycle. Extensions provide tools for:
+Docker Hub 为 Docker Desktop 提供扩展，用于增强核心功能。这些扩展旨在简化软件开发生命周期，主要提供以下工具：
 
-- System optimization and monitoring: Manage resources and optimize Docker
-  Desktop’s performance.
-- Container management: Simplify container deployment and monitoring.
-- Database management: Facilitate efficient database operations within
-  containers.
-- Kubernetes and cloud integration: Bridge local environments with cloud-native
-  and Kubernetes workflows.
-- Visualization tools: Gain insights into container resource usage through
-  graphical representations.
+- 系统优化与监控：管理资源并优化 Docker Desktop 性能。
+- 容器管理：简化容器的部署与监控。
+- 数据库管理：在容器内高效进行数据库操作。
+- Kubernetes 与云集成：打通本地环境与云原生/Kubernetes 工作流。
+- 可视化工具：通过图形化视图洞察容器资源使用情况。
 
-Extensions help developers and teams create a more efficient and unified
-workflow by reducing context switching and bringing essential tools into Docker
-Desktop's interface.
+这些扩展通过减少上下文切换、将关键工具集成到 Docker Desktop 界面中，帮助开发者与团队构建更高效、统一的工作流。
 
-To learn more about extensions, see [Docker
-Extensions](/manuals/extensions/_index.md).
+了解扩展更多信息，参见 [Docker Extensions](/manuals/extensions/_index.md)。
 
-### Trusted content
+### 可信内容
 
-Docker Hub's trusted content provides a curated selection of high-quality,
-secure images designed to give developers confidence in the reliability and
-security of the resources they use. These images are stable, regularly updated,
-and adhere to industry best practices, making them a strong foundation for
-building and deploying applications. Docker Hub's trusted content includes,
-Docker Official Images, Verified Publisher images, and Docker-Sponsored Open
-Source Software images.
+Docker Hub 的可信内容提供经过策展的高质量与安全镜像，旨在让开发者对所用资源的可靠性与安全性更有信心。这些镜像稳定、定期更新，并遵循行业最佳实践，是构建与部署应用的坚实基础。可信内容包括 Docker 官方镜像、Verified Publisher 镜像与 Docker 赞助的开源软件镜像。
 
-For more details, see [Trusted content](./trusted-content.md).
+更多详情参见 [Trusted content](./trusted-content.md)。
 
-### Categories
+### 类别
 
-Docker Hub makes it easy to find and explore container images with categories.
-Categories group images based on their primary use case, helping you quickly
-locate the tools and resources you need to build, deploy, and run your
-applications.
+Docker Hub 通过“类别”便于查找与探索容器镜像。类别会按主要使用场景对镜像分组，帮助你快速定位构建、部署与运行应用所需的工具与资源。
 
 {{% include "hub-categories.md" %}}
 
-### Operating systems
+### 操作系统
 
-The **Operating systems** filter lets you narrow your search to container
-images compatible with specific host operating systems. This filter ensures that
-the images you use align with your target environment, whether you're developing
-for Linux-based systems, Windows, or both.
+**Operating systems**（操作系统）筛选器可将搜索范围限定为与特定宿主操作系统兼容的容器镜像。无论你的目标环境是 Linux、Windows，还是同时兼容两者，都可借此确保所用镜像与之匹配。
 
-- **Linux**: Access a wide range of images tailored for Linux environments.
-  These images provide foundational environments for building and running
-  Linux-based applications in containers.
-- **Windows**: Explore Windows container images.
+- **Linux**：获取适配 Linux 环境的大量镜像，这些镜像提供构建与运行 Linux 应用所需的基础环境。
+- **Windows**：浏览 Windows 容器镜像。
 
 > [!NOTE]
 >
@@ -124,26 +77,17 @@ for Linux-based systems, Windows, or both.
 > the **Extensions** or **Plugins** filter, then the **Operating systems**
 > filter isn't available.
 
-### Architectures
+### 架构
 
-The **Architectures** filter lets you find images built to support specific CPU
-architectures. This ensures compatibility with your hardware environment, from
-development machines to production servers.
+**Architectures**（架构）筛选器可让你查找支持特定 CPU 架构的镜像，确保从开发设备到生产服务器的硬件兼容性。
 
-- **ARM**: Select images compatible with ARM processors, commonly used in IoT
-  devices and embedded systems.
-- **ARM 64**: Locate 64-bit ARM-compatible images for modern ARM processors,
-  such as those in AWS Graviton or Apple Silicon.
-- **IBM POWER**: Find images optimized for IBM Power Systems, offering
-  performance and reliability for enterprise workloads.
-- **PowerPC 64 LE**: Access images designed for the little-endian PowerPC 64-bit
-  architecture.
-- **IBM Z**: Discover images tailored for IBM Z mainframes, ensuring
-  compatibility with enterprise-grade hardware.
-- **x86**: Choose images compatible with 32-bit x86 architectures, suitable for
-  older systems or lightweight environments.
-- **x86-64**: Filter images for modern 64-bit x86 systems, widely used in
-  desktops, servers, and cloud infrastructures.
+- **ARM**：选择兼容 ARM 处理器的镜像，常见于物联网与嵌入式设备。
+- **ARM 64**：查找适配现代 ARM 处理器的 64 位镜像，例如 AWS Graviton 或 Apple Silicon。
+- **IBM POWER**：查找为 IBM Power Systems 优化的镜像，适用于企业级工作负载。
+- **PowerPC 64 LE**：获取适配小端序 PowerPC 64 位架构的镜像。
+- **IBM Z**：查找适配 IBM Z 大型机的镜像，确保企业级硬件兼容性。
+- **x86**：选择兼容 32 位 x86 架构的镜像，适合旧设备或轻量场景。
+- **x86-64**：筛选适配现代 64 位 x86 系统的镜像，广泛用于桌面、服务器与云基础设施。
 
 > [!NOTE]
 >
@@ -151,17 +95,13 @@ development machines to production servers.
 > **Extensions** or **Plugins** filter, then the **Architectures** filter isn't
 > available.
 
-### Reviewed by Docker
+### Docker 已审查
 
-The **Reviewed by Docker** filter provides an extra layer of assurance when
-selecting extensions. This filter helps you identify whether a Docker Desktop
-extension has been reviewed by Docker for quality and reliability.
+**Reviewed by Docker**（Docker 已审查）筛选器在选择扩展时提供额外保障。你可以据此确认某个 Docker Desktop 扩展是否经过 Docker 的质量与可靠性审查。
 
-- **Reviewed**: Extensions that have undergone Docker's review process, ensuring
-  they meet high standards.
-- **Not Reviewed**: Extensions that have not been reviewed by Docker.
+- **Reviewed**：已通过 Docker 审查流程、符合高标准的扩展。
+- **Not Reviewed**：尚未经过 Docker 审查的扩展。
 
 > [!NOTE]
 >
-> The **Reviewed by Docker** filter is only available for extensions. To make
-> the filter available, you must select only the **Extensions** filter in **Products**.
+> **Reviewed by Docker** 筛选器仅适用于扩展。要显示该筛选器，需要在 **Products** 中只选择 **Extensions**。

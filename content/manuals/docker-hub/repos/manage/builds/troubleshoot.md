@@ -1,73 +1,56 @@
 ---
-title: Troubleshoot your autobuilds
-description: How to troubleshoot Automated builds
+title: 诊断自动构建问题
+description: 如何排查自动构建（Autobuild）问题
 keywords: docker hub, troubleshoot, automated builds, autobuilds
 tags: [ Troubleshooting ]
-linkTitle: Troubleshoot
+linkTitle: 故障排查
 aliases:
 - /docker-hub/builds/troubleshoot/
 ---
 
 > [!NOTE]
 >
-> Automated builds require a
-> Docker Pro, Team, or Business subscription.
+> 使用自动构建需要 Docker Pro、Team 或 Business 订阅。
 
-## Failing builds
+## 构建失败（Failing builds）
 
-If a build fails, a **Retry** icon appears next to the build report line on the
-**General** and **Builds** tabs. The **Build report** page and **Timeline logs** also display a **Retry** button.
+当构建失败时，在 **General** 与 **Builds** 选项卡的构建报告行旁会出现 **Retry** 图标。在 **Build report** 页面与 **Timeline logs** 中也会显示 **Retry** 按钮。
 
-![Timeline view showing the retry build button](images/retry-build.png)
+![时间线视图，展示重试构建按钮](images/retry-build.png)
 
 > [!NOTE]
 >
-> If you are viewing the build details for a repository that belongs to an
-> organization, the **Cancel** and **Retry** buttons only appear if you have `Read & Write` access to the repository.
+> 如果你查看的是隶属某个组织的存储库的构建详情，只有当你对该存储库拥有 `Read & Write` 权限时，才会看到 **Cancel** 与 **Retry** 按钮。
 
-Automated builds have a 4-hour execution time limit. If a build reaches this time limit, it's
-automatically cancelled, and the build logs display the following message:
+自动构建有 4 小时的执行时限。若构建达到该时限，将被自动取消，且构建日志会显示如下消息：
 
 ```text
 2022-11-02T17:42:27Z The build was cancelled or exceeded the maximum execution time.
 ```
 
-This log message is the same as when you actively cancel a build. To identify
-whether a build was automatically cancelled, check the build duration.
+该日志消息与你主动取消构建时相同。要判断构建是否因超时被自动取消，请查看构建时长。
 
+## 构建包含私有子模块的存储库
 
-## Build repositories with linked private submodules
+Docker Hub 会在你的源代码存储库中设置一个部署密钥（deploy key），以便克隆并构建该存储库。该密钥仅适用于单个特定代码存储库。如果你的存储库使用了私有 Git 子模块，或构建需要克隆其他私有存储库，Docker Hub 无法访问这些附加存储库，导致构建无法完成，并在构建时间线中记录错误。
 
-Docker Hub sets up a deploy key in your source code repository that allows it
-to clone the repository and build it. This key only works for a single,
-specific code repository. If your source code repository uses private Git
-submodules, or requires that you clone other private repositories to build,
-Docker Hub cannot access these additional repositories, your build cannot complete,
-and an error is logged in your build timeline.
-
-To work around this, you can set up your automated build using the `SSH_PRIVATE`
-environment variable to override the deployment key and grant Docker Hub's build
-system access to the repositories.
+为解决该问题，你可以在自动构建中使用 `SSH_PRIVATE` 环境变量覆盖部署密钥，从而授予 Docker Hub 的构建系统访问这些存储库的权限。
 
 > [!NOTE]
 >
-> If you are using autobuild for teams, use the process below
-> instead, and configure a service user for your source code provider. You can
-> also do this for an individual account to limit Docker Hub's access to your
-> source repositories.
+> 如果你在团队中使用自动构建，请改用下述流程，并为你的源码提供方配置一个服务账户。即便是个人账户，也可以使用服务账户方式以限制 Docker Hub 对源存储库的访问范围。
 
-1. Generate a SSH keypair that you use for builds only, and add the public key to your source code provider account.
+1. 生成一对仅用于构建的 SSH 密钥，并将公钥添加到你的源码提供方账户。
 
-    This step is optional, but allows you to revoke the build-only keypair without removing other access.
+    该步骤可选，但这样做可以在不影响其他访问的情况下，单独撤销这对仅用于构建的密钥。
 
-2. Copy the private half of the keypair to your clipboard.
-3. In Docker Hub, navigate to the build page for the repository that has linked private submodules. (If necessary, follow the steps [here](index.md#configure-automated-builds) to configure the automated build.)
-4. At the bottom of the screen, select the **plus** icon next to **Build Environment variables**.
-5. Enter `SSH_PRIVATE` as the name for the new environment variable.
-6. Paste the private half of the keypair into the **Value** field.
-7. Select **Save**, or **Save and Build** to validate that the build now completes.
+2. 复制该密钥对中的私钥内容到剪贴板。
+3. 在 Docker Hub 中，打开包含私有子模块的存储库的构建页面（如有需要，先按[此处](index.md#configure-automated-builds)步骤配置自动构建）。
+4. 在页面底部，点击 **Build Environment variables** 旁的 **plus** 图标。
+5. 新增环境变量名为 `SSH_PRIVATE`。
+6. 将私钥内容粘贴到 **Value** 字段。
+7. 选择 **Save**，或选择 **Save and Build** 以验证构建是否可以完成。
 
 > [!NOTE]
 >
-> You must configure your private git submodules using git clone over SSH
-> (`git@submodule.tld:some-submodule.git`) rather than HTTPS.
+> 你的私有 git 子模块必须通过 SSH 方式进行克隆（`git@submodule.tld:some-submodule.git`），而不是通过 HTTPS。

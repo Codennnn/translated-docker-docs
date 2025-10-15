@@ -1,38 +1,30 @@
 ---
-description: Learn how to archive or unarchive a repository on Docker Hub
-keywords: Docker Hub, Hub, repositories, archive, unarchive
-title: Archive or unarchive a repository
-linkTitle: Archive
+description: 了解如何在 Docker Hub 上归档或取消归档仓库
+keywords: Docker Hub, Hub, 仓库, 归档, 取消归档
+title: 归档或取消归档仓库
+linkTitle: 归档
 toc_max: 3
 weight: 35
 ---
 
-You can archive a repository on Docker Hub to mark it as read-only and indicate
-that it's no longer actively maintained. This helps prevent the use of outdated
-or unsupported images in workflows. Archived repositories can also be unarchived
-if needed.
+你可以在 Docker Hub 上将仓库设置为“归档”以标记其为只读，并表明该仓库已不再积极维护。这有助于防止在工作流中继续使用过时或不受支持的镜像。若有需要，被归档的仓库也可以取消归档。
 
-Docker Hub highlights repositories that haven't been updated in over a year by
-displaying an icon ({{< inline-image src="./images/outdated-icon.webp"
-alt="outdated icon" >}}) next to them on the [**Repositories**
-page](https://hub.docker.com/repositories/). Consider reviewing these
-highlighted repositories and archiving them if necessary.
+对于一年以上未更新的仓库，Docker Hub 会在[**Repositories** 页面](https://hub.docker.com/repositories/)的仓库名称旁显示一个图标（{{< inline-image src="./images/outdated-icon.webp" alt="outdated icon" >}}）以突出提示。建议你审查这些仓库，并在必要时进行归档。
 
-When a repository is archived, the following occurs:
+当仓库被归档时，将发生以下变化：
 
-- The repository information can't be modified.
-- New images can't be pushed to the repository.
-- An **Archived** label is displayed on the public repository page.
-- Users can still pull the images.
+- 无法修改仓库信息。
+- 无法向该仓库推送新镜像。
+- 公共仓库页面会显示 **Archived** 标签。
+- 用户仍可拉取该仓库中的镜像。
 
-You can unarchive an archived repository to remove the archived state. When
-unarchived, the following occurs:
+你可以取消归档一个已归档的仓库以移除其归档状态。取消归档后：
 
-- The repository information can be modified.
-- New images can be pushed to the repository.
-- The **Archived** label is removed on the public repository page.
+- 可以修改仓库信息。
+- 可以向仓库推送新镜像。
+- 公共仓库页面的 **Archived** 标签将被移除。
 
-## Archive a repository
+## 归档仓库
 
 1. Sign in to [Docker Hub](https://hub.docker.com).
 2. Select **My Hub** > **Repositories**.
@@ -44,11 +36,11 @@ unarchived, the following occurs:
    The **General** page for the repository appears.
 
 4. Select the **Settings** tab.
-5. Select **Archive repository**.
+5. 选择 **Archive repository**。
 6. Enter the name of your repository to confirm.
-7. Select **Archive**.
+7. 选择 **Archive**。
 
-## Unarchive a repository
+## 取消归档仓库
 
 1. Sign in to [Docker Hub](https://hub.docker.com).
 2. Select **My Hub** > **Repositories**.
@@ -60,4 +52,4 @@ unarchived, the following occurs:
    The **General** page for the repository appears.
 
 4. Select the **Settings** tab.
-5. Select **Unarchive repository**.
+5. 选择 **Unarchive repository**。

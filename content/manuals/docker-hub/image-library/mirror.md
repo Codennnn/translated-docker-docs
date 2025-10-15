@@ -1,9 +1,9 @@
 ---
-description: Setting-up a local mirror for Docker Hub images
-keywords: registry, on-prem, images, tags, repository, distribution, mirror, Hub,
-  recipe, advanced
-title: Mirror the Docker Hub library
-linkTitle: Mirror
+description: 配置 Docker Hub 镜像的本地镜像站
+keywords: 注册表, 本地部署, 镜像, 标签, 仓库, 分发, 镜像站, Hub,
+  配置, 高级
+title: 镜像 Docker Hub 内容库
+linkTitle: 镜像站
 weight: 80
 aliases:
 - /engine/admin/registry_mirror/
@@ -11,96 +11,72 @@ aliases:
 - /docker-hub/mirror/
 ---
 
-## Use-case
+## 适用场景
 
-If you have multiple instances of Docker running in your environment, such as
-multiple physical or virtual machines all running Docker, each daemon goes out
-to the internet and fetches an image it doesn't have locally, from the Docker
-repository. You can run a local registry mirror and point all your daemons
-there, to avoid this extra internet traffic.
+如果你的环境中运行了多个 Docker 实例（例如多台物理机或虚拟机都在运行 Docker），每个守护进程在本地没有所需镜像时，都会从互联网上的 Docker 仓库拉取镜像。你可以部署一个本地注册表镜像站（registry mirror），并将所有守护进程指向该镜像站，从而避免额外的外网流量。
 
 > [!NOTE]
 >
-> Docker Official Images are an intellectual property of Docker.
+> Docker 官方镜像是 Docker 的知识产权。
 
-### Alternatives
+### 替代方案
 
-Alternatively, if the set of images you are using is well delimited, you can
-simply pull them manually and push them to a simple, local, private registry.
+如果你所使用的镜像集合范围明确，也可以选择手动拉取这些镜像，并推送到一个简单的本地私有注册表。
 
-Furthermore, if your images are all built in-house, not using the Hub at all and
-relying entirely on your local registry is the simplest scenario.
+另外，如果你的镜像全部由内部构建，不依赖 Docker Hub，那么完全依赖本地注册表是最简单的方案。
 
-### Gotcha
+### 注意事项
 
-It's currently not possible to mirror another private registry. Only the central
-Hub can be mirrored.
+目前无法对其他私有注册表进行镜像；只能镜像中央 Hub。
 
 > [!NOTE]
 >
-> Mirrors of Docker Hub are still subject to Docker's [fair use policy](/manuals/docker-hub/usage/_index.md#fair-use).
+> Docker Hub 的镜像站同样受制于 Docker 的[公平使用政策](/manuals/docker-hub/usage/_index.md#fair-use)。
 
-### Solution
+### 解决方案
 
-The Registry can be configured as a pull through cache. In this mode a Registry
-responds to all normal docker pull requests but stores all content locally.
+Registry 可以配置为“拉取透传缓存”（pull-through cache）模式。在该模式下，Registry 会响应常规的 `docker pull` 请求，并将所有内容缓存在本地。
 
-### Using Registry Access Management (RAM) with a registry mirror
+### 在镜像站中使用 Registry Access Management（RAM）
 
-If Docker Hub access is restricted via your Registry Access Management (RAM) configuration, you will not be able to pull images originating from Docker Hub even if the images are available in your registry mirror.
+如果你的 Registry Access Management（RAM）配置限制了对 Docker Hub 的访问，即便这些镜像在你的镜像站中可用，也无法拉取源自 Docker Hub 的镜像。
 
-You will encounter the following error:
+你会遇到如下错误：
 ```console
 Error response from daemon: Access to docker.io has been restricted by your administrators.
 ```
 
-If you are unable to allow access to Docker Hub, you can manually pull from your registry mirror and optionally, retag the image. For example:
+如果无法放通对 Docker Hub 的访问，你可以从镜像站手动拉取，并可选地为镜像重新打标签。例如：
 ```console
 docker pull <your-registry-mirror>[:<port>]/library/busybox
 docker tag <your-registry-mirror>[:<port>]/library/busybox:latest busybox:latest
 ```
 
-## How does it work?
+## 工作原理
 
-The first time you request an image from your local registry mirror, it pulls
-the image from the public Docker registry and stores it locally before handing
-it back to you. On subsequent requests, the local registry mirror is able to
-serve the image from its own storage.
+当你第一次从本地镜像站请求某个镜像时，镜像站会先从公共 Docker 注册表拉取该镜像并存储在本地，然后再返回给你。随后再次请求该镜像时，本地镜像站可直接从自身存储中提供服务。
 
-### What if the content changes on the Hub?
+### 如果 Hub 上的内容发生变化怎么办？
 
-When a pull is attempted with a tag, the Registry checks the remote to
-ensure if it has the latest version of the requested content. Otherwise, it
-fetches and caches the latest content.
+当以标签（tag）拉取时，Registry 会检查远端以确认当前是否为所请求内容的最新版本；若不是，则会获取并缓存最新内容。
 
-### What about my disk?
+### 磁盘占用怎么办？
 
-In environments with high churn rates, stale data can build up in the cache.
-When running as a pull through cache the Registry periodically removes old
-content to save disk space. Subsequent requests for removed content causes a
-remote fetch and local re-caching.
+在高变更率的环境中，缓存中可能会累积陈旧数据。以透传缓存模式运行时，Registry 会定期清理旧内容以节省磁盘空间。之后再次请求被清理的内容时，会触发远端拉取并重新缓存到本地。
 
-To ensure best performance and guarantee correctness the Registry cache should
-be configured to use the `filesystem` driver for storage.
+为获得最佳性能并确保正确性，建议将 Registry 缓存配置为使用 `filesystem` 存储驱动。
 
-## Run a Registry as a pull-through cache
+## 将 Registry 以透传缓存方式运行
 
-The easiest way to run a registry as a pull through cache is to run the official
-[Registry](https://hub.docker.com/_/registry) image.
-At least, you need to specify `proxy.remoteurl` within `/etc/docker/registry/config.yml`
-as described in the following subsection.
+将 Registry 作为透传缓存运行的最简单方式，是直接运行官方的[Registry](https://hub.docker.com/_/registry) 镜像。至少需要在 `/etc/docker/registry/config.yml` 中指定 `proxy.remoteurl`，如下小节所述。
 
-Multiple registry caches can be deployed over the same back-end. A single
-registry cache ensures that concurrent requests do not pull duplicate data,
-but this property does not hold true for a registry cache cluster.
+可在同一后端上部署多个注册表缓存。单个缓存可以确保并发请求不会重复拉取数据，但缓存集群不具备这一特性。
 
-### Configure the cache
+### 配置缓存
 
-To configure a Registry to run as a pull through cache, the addition of a
-`proxy` section is required to the config file.
+要将 Registry 配置为透传缓存，需要在配置文件中新增 `proxy` 段。
 
-To access private images on the Docker Hub, a username and password can
-be supplied.
+若需访问 Docker Hub 上的私有镜像，可以提供用户名与密码。
 
 ```yaml
 proxy:
@@ -111,21 +87,15 @@ proxy:
 
 > [!WARNING]
 >
-> If you specify a username and password, it's very important to understand that
-> private resources that this user has access to Docker Hub is made available on
-> your mirror. You must secure your mirror by implementing authentication if
-> you expect these resources to stay private!
+> 若你配置了用户名与密码，务必理解：该用户在 Docker Hub 有权访问的私有资源将可通过你的镜像站访问。若希望这些资源保持私密，必须为镜像站实现访问控制与鉴权！
 
 > [!WARNING]
 >
-> For the scheduler to clean up old entries, `delete` must be enabled in the
-> registry configuration.
+> 要让调度器清理旧条目，必须在注册表配置中启用 `delete`。
 
-### Configure the Docker daemon
+### 配置 Docker 守护进程
 
-Either pass the `--registry-mirror` option when starting `dockerd` manually,
-or edit [`/etc/docker/daemon.json`](/reference/cli/dockerd.md#daemon-configuration-file)
-and add the `registry-mirrors` key and value, to make the change persistent.
+可以在手动启动 `dockerd` 时传入 `--registry-mirror` 选项，或编辑 [`/etc/docker/daemon.json`](/reference/cli/dockerd.md#daemon-configuration-file)，添加 `registry-mirrors` 键值以持久化该配置。
 
 ```json
 {
@@ -133,20 +103,16 @@ and add the `registry-mirrors` key and value, to make the change persistent.
 }
 ```
 
-Save the file and reload Docker for the change to take effect.
+保存文件并重载 Docker 使变更生效。
 
 > [!NOTE]
 >
-> Some log messages that appear to be errors are actually informational
-> messages.
+> 某些看起来像错误的日志实际上只是信息级消息。
 >
-> Check the `level` field to determine whether the message is warning you about
-> an error or is giving you information. For example, this log message is
-> informational:
+> 可以通过日志中的 `level` 字段判断是错误/告警还是仅供参考的信息。例如，下面这条日志就是信息级：
 >
 > ```text
 > time="2017-06-02T15:47:37Z" level=info msg="error statting local store, serving from upstream: unknown blob" go.version=go1.7.4
 > ```
 >
-> It's telling you that the file doesn't exist yet in the local cache and is
-> being pulled from upstream.
+> 它表示该文件尚未存在于本地缓存，正在从上游拉取。

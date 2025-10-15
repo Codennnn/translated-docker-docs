@@ -1,45 +1,32 @@
 ---
-description: Learn about usage and limits for Docker Hub.
-keywords: Docker Hub, limit, usage
-title: Docker Hub usage and limits
-linkTitle: Usage and limits
+description: 了解 Docker Hub 的使用规则与额度限制。
+keywords: Docker Hub, 限制, 使用
+title: Docker Hub 使用与限制
+linkTitle: 使用与限制
 weight: 30
 aliases:
   /docker-hub/download-rate-limit/
 ---
 
-The following table provides an overview of the included usage and limits for each
-user type, subject to fair use:
+下表概述了在合理使用（Fair Use）前提下，不同用户类型所包含的使用额度与限制：
 
 
-| User type                | Pull rate limit per 6 hours             | Number of public repositories | Number of private repositories |
+| 用户类型                  | 每 6 小时拉取速率限制                     | 公共仓库数量                  | 私有仓库数量                   |
 |--------------------------|-----------------------------------------|-------------------------------|--------------------------------|
-| Business (authenticated) | Unlimited                               | Unlimited                     | Unlimited                      |
-| Team (authenticated)     | Unlimited                               | Unlimited                     | Unlimited                      |
-| Pro (authenticated)      | Unlimited                               | Unlimited                     | Unlimited                      |
-| Personal (authenticated) | 200                                     | Unlimited                     | Up to 1                        |
-| Unauthenticated users    | 100 per IPv4 address or IPv6 /64 subnet | Not applicable                | Not applicable                 |
+| 商业版（已登录）          | 无限制                                  | 无限制                        | 无限制                         |
+| 团队版（已登录）          | 无限制                                  | 无限制                        | 无限制                         |
+| 专业版（已登录）          | 无限制                                  | 无限制                        | 无限制                         |
+| 个人版（已登录）          | 200                                     | 无限制                        | 最多 1 个                      |
+| 未登录用户               | 每个 IPv4 地址或 IPv6 /64 子网 100 次    | 不适用                        | 不适用                         |
 
-For more details, see [Pull usage and limits](./pulls.md).
+详情参见［拉取使用与限制］(./pulls.md)。
 
-## Fair use
+## 合理使用（Fair Use）
 
-When utilizing the Docker Platform, users should be aware that excessive data
-transfer, pull rates, or data storage can lead to throttling, or additional
-charges. To ensure fair resource usage and maintain service quality, we reserve
-the right to impose restrictions or apply additional charges to accounts
-exhibiting excessive data and storage consumption.
+在使用 Docker 平台时，请注意：过量的数据传输、拉取频率或存储占用，可能导致限速或产生额外费用。为保障资源公平使用与服务质量，我们保留对数据与存储消耗异常的账户施加限制或收取额外费用的权利。
 
-### Abuse rate limit
+### 滥用速率限制
 
-Docker Hub has an abuse rate limit to protect the application and
-infrastructure. This limit applies to all requests to Hub properties including
-web pages, APIs, and image pulls. The limit is applied per IPv4 address or per
-IPv6 /64 subnet, and while the limit changes over time depending on load and
-other factors, it's in the order of thousands of requests per minute. The abuse
-limit applies to all users equally regardless of account level.
+为保护应用与基础设施，Docker Hub 实施了滥用防护速率限制。该限制适用于对 Hub 的所有请求，包括网页、API 与镜像拉取。限制按每个 IPv4 地址或每个 IPv6 /64 子网生效；具体阈值会随负载等因素动态调整，大致数量级为每分钟数千次请求。无论账户级别如何，此限制对所有用户一视同仁。
 
-You can differentiate between the pull rate limit and abuse rate limit by
-looking at the error code. The abuse limit returns a simple `429 Too Many
-Requests` response. The pull limit returns a longer error message that includes
-a link to documentation.
+你可以通过错误码区分拉取速率限制与滥用速率限制：触发滥用限制时，会返回简洁的 `429 Too Many Requests` 响应；触发拉取速率限制时，会返回一条包含文档链接的更长错误信息。

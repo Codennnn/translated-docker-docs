@@ -1,60 +1,48 @@
 ---
-title: Manage autobuilds
-description: How to manage autobuilds in Docker Hub
-keywords: autobuilds, automated, docker hub, registry
+title: 管理自动构建
+description: 在 Docker Hub 中管理自动构建的方法
+keywords: 自动构建, autobuilds, Docker Hub, 仓库
 aliases:
 - /docker-hub/builds/manage-builds/
 ---
 
 > [!NOTE]
 >
-> Automated builds require a Docker Pro, Team, or Business subscription.
+> 使用自动构建需要 Docker Pro、Team 或 Business 订阅。
 
 
-## Cancel or retry a build
+## 取消或重试构建
 
-While a build is in queue or running, a **Cancel** icon appears next to its build
-report link on the **General** tab and on the **Builds** tab. You can also select
-**Cancel** on the **Build report** page, or from the **Timeline** tab's logs
-display for the build.
+当某个构建处于排队或运行中时，在 **General** 选项卡与 **Builds** 选项卡的构建报告链接旁会出现 **Cancel** 图标。你也可以在 **Build report** 页面，或 **Timeline** 选项卡的日志视图中选择 **Cancel**。
 
 ![List of builds showing the cancel icon](images/build-cancelicon.png)
 
-## Check your active builds
+## 查看当前活跃的构建
 
-A summary of a repository's builds appears both on the repository **General**
-tab, and in the **Builds** tab. The **Builds** tab also displays a color coded
-bar chart of the build queue times and durations. Both views display the
-pending, in progress, successful, and failed builds for any tag of the
-repository.
+某个存储库的构建摘要会同时显示在该存储库的 **General** 与 **Builds** 选项卡中。**Builds** 选项卡还会以颜色编码的柱状图展示构建排队时间与持续时间。这两处都会展示该存储库各标签的待处理、进行中、成功与失败的构建。
 
 ![Active builds](images/index-active.png)
 
-From either location, you can select a build job to view its build report. The
-build report shows information about the build job. This includes the source
-repository and branch, or tag, the build logs, the build duration, creation time and location, and the user account the build occurred in.
+你可以在任一位置选择某个构建任务以查看其构建报告。构建报告包含该任务的详细信息：源代码仓库与分支或标签、构建日志、构建时长、创建时间与位置，以及执行构建的用户账号。
 
 > [!NOTE]
 >
-> You can now view the progress of your builds every 30 seconds when you refresh the **Builds** page. With the in-progress build logs, you can debug your builds before they're finished.
+> 现在在刷新 **Builds** 页面时，你可以每 30 秒查看一次构建进度。通过实时的构建日志，你可以在构建尚未完成时先行调试。
 
 ![Build report](./images/index-report.png)
 
-## Disable an automated build
+## 禁用自动构建
 
-Automated builds are enabled per branch or tag, and can be disabled and
-re-enabled. You might do this when you want to only build manually for
-a while, for example when you are doing major refactoring in your code. Disabling autobuilds doesn't disable [autotests](automated-testing.md).
+自动构建是按分支或标签启用的，你可以随时禁用或重新启用。例如在进行大规模重构、希望阶段性只进行手动构建时就很有用。禁用自动构建不会影响[自动测试](automated-testing.md)。
 
-To disable an automated build:
+要禁用某个自动构建：
 
-1. In [Docker Hub](https://hub.docker.com), go to **My Hub** >  **Repositories**, select a repository, and select the **Builds** tab.
+1. 在 [Docker Hub](https://hub.docker.com) 中，前往 **My Hub** > **Repositories**，选择目标存储库并进入 **Builds** 选项卡。
 
-2. Select **Configure automated builds** to edit the repository's build settings.
+2. 选择 **Configure automated builds** 以编辑该存储库的构建设置。
 
-3. In the **Build Rules** section, locate the branch or tag you no longer want
-to automatically build.
+3. 在 **Build Rules** 区域，找到你不再希望自动构建的分支或标签。
 
-4. Select the **Autobuild** toggle next to the configuration line. When disabled the toggle is gray.
+4. 切换该配置行旁的 **Autobuild** 开关；禁用后该开关会呈灰色。
 
-5. Select **Save**.
+5. 点击 **Save** 保存。
