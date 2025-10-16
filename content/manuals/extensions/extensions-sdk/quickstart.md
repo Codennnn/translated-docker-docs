@@ -1,6 +1,6 @@
 ---
-title: Quickstart
-description: Guide on how to build an extension quickly
+title: 快速开始
+description: 快速构建扩展的实用指南
 keywords: quickstart, extensions
 aliases:
  - desktop/extensions-sdk/tutorials/initialize/
@@ -8,9 +8,9 @@ aliases:
 weight: 20
 ---
 
-Follow this guide to get started with creating a basic Docker extension. The Quickstart guide automatically generates boilerplate files for you.
+按照本指南创建一个基础的 Docker 扩展。快速开始会为你自动生成脚手架文件。
 
-## Prerequisites
+## 先决条件
 
 - [Docker Desktop](/manuals/desktop/release-notes.md)
 - [NodeJS](https://nodejs.org/)
@@ -18,79 +18,75 @@ Follow this guide to get started with creating a basic Docker extension. The Qui
 
 > [!NOTE]
 >
-> NodeJS and Go are only required when you follow the quickstart guide to create an extension. It uses the `docker extension init` command to automatically generate boilerplate files. This command uses a template based on a ReactJS and Go application.
+> 只有在使用本快速开始创建扩展时才需要 NodeJS 与 Go。该流程会使用 `docker extension init` 命令自动生成脚手架文件，该命令基于 ReactJS 与 Go 的模板项目。
 
-In Docker Desktop settings, ensure you can install the extension you're developing. You may need to navigate to the **Extensions** tab in Docker Desktop settings and deselect **Allow only extensions distributed through the Docker Marketplace**.
+在 Docker Desktop 设置中，确保你可以安装正在开发的扩展。你可能需要进入 **Extensions** 选项卡，取消勾选 **Allow only extensions distributed through the Docker Marketplace**。
 
-## Step one: Set up your directory
+## 步骤一：初始化目录
 
-To set up your directory, use the `init` subcommand and provide a name for your extension.
+使用 `init` 子命令并提供扩展名称来初始化目录。
 
 ```console
 $ docker extension init <my-extension>
 ```
 
-The command asks a series of questions about your extension, such as its name, a description, and the name of your Hub repository. This helps the CLI generate a set of boilerplate files for you to get started. It stores the boilerplate files in the `my-extension` directory.
+该命令会询问扩展的名称、描述以及 Hub 仓库名等信息，以便 CLI 生成一套脚手架文件，并将其存放在 `my-extension` 目录中。
 
-The automatically generated extension contains:
+自动生成的扩展包含：
 
-- A Go backend service in the `backend` folder that listens on a socket. It has one endpoint `/hello` that returns a JSON payload.
-- A React frontend in the `frontend` folder that can call the backend and output the backend’s response.
+- `backend` 目录下的 Go 后端服务，通过 socket 提供服务，包含一个返回 JSON 的 `/hello` 端点。
+- `frontend` 目录下的 React 前端，可调用后端并展示其响应。
 
-For more information and guidelines on building the UI, see the [Design and UI styling section](design/design-guidelines.md).
+关于构建 UI 的更多建议与规范，请参阅 [设计与样式](design/design-guidelines.md)。
 
-## Step two: Build the extension
+## 步骤二：构建扩展
 
-To build the extension, move into the newly created directory and run:
+切换到新创建的目录并执行：
 
 ```console
 $ docker build -t <name-of-your-extension> .
 ```
 
-`docker build` builds the extension and generates an image named the same as the chosen hub repository. For example, if you typed `john/my-extension` as the answer to the following question:
+`docker build` 会构建扩展并生成与所选 Hub 仓库名一致的镜像。例如，如果你在以下问题中输入了 `john/my-extension`：
 
 ```console
 ? Hub repository (eg. namespace/repository on hub): john/my-extension`
 ```
 
-The `docker build` generates an image with name `john/my-extension`.
+则会生成名为 `john/my-extension` 的镜像。
 
-## Step three: Install and preview the extension
+## 步骤三：安装并预览扩展
 
-To install the extension in Docker Desktop, run:
+在 Docker Desktop 中安装扩展：
 
 ```console
 $ docker extension install <name-of-your-extension>
 ```
 
-To preview the extension in Docker Desktop, once the installation is complete and you should
-see a **Quickstart** item underneath the **Extensions** menu. Selecting this item opens the extension's frontend.
+安装完成后，你应当能在 **Extensions** 菜单下看到一个 **Quickstart** 项。点击即可打开扩展的前端界面进行预览。
 
 > [!TIP]
 >
-> During UI development, it’s helpful to use hot reloading to test your changes without rebuilding your entire
-> extension. See [Preview whilst developing the UI](dev/test-debug.md#hot-reloading-whilst-developing-the-ui) for more information.
+> 在进行 UI 开发时，建议使用热重载以便在无需重建整个扩展的情况下验证变更。参见 [开发 UI 时的预览](dev/test-debug.md#hot-reloading-whilst-developing-the-ui)。
 
-You may also want to inspect the containers that belong to the extension. By default, extension containers are
-hidden from the Docker Dashboard. You can change this in **Settings**, see
-[how to show extension containers](dev/test-debug.md#show-the-extension-containers) for more information.
+你可能还希望查看属于该扩展的容器。默认情况下，它们在 Docker Dashboard 中是隐藏的。你可以在 **Settings** 中更改此行为，详见[如何显示扩展容器](dev/test-debug.md#show-the-extension-containers)。
 
-## Step four: Submit and publish your extension to the Marketplace
+## 步骤四：提交并发布到扩展市场
 
-If you want to make your extension available to all Docker Desktop users, you can submit it for publication in the Marketplace. For more information, see [Publish](extensions/_index.md).
+如果希望让所有 Docker Desktop 用户都能使用你的扩展，可以提交发布到扩展市场。更多信息请参见 [发布](extensions/_index.md)。
 
-## Clean up
+## 清理
 
-To remove the extension, run:
+如需卸载扩展，执行：
 
 ```console
 $ docker extension rm <name-of-your-extension>
 ```
 
-## What's next
+## 下一步
 
-- Build a more [advanced frontend](build/frontend-extension-tutorial.md) for your extension.
-- Learn how to [test and debug](dev/test-debug.md) your extension.
-- Learn how to [setup CI for your extension](dev/continuous-integration.md).
-- Learn more about extensions [architecture](architecture/_index.md).
-- Learn more about [designing the UI](design/design-guidelines.md).
+- 为扩展构建更[高级的前端](build/frontend-extension-tutorial.md)。
+- 了解如何[测试与调试](dev/test-debug.md)扩展。
+- 了解如何[为扩展配置 CI](dev/continuous-integration.md)。
+- 进一步了解扩展的[架构](architecture/_index.md)。
+- 进一步了解[UI 设计](design/design-guidelines.md)。

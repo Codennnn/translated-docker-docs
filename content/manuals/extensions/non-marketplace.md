@@ -1,39 +1,39 @@
 ---
-description: Extensions
+description: 扩展功能
 keywords: Docker Extensions, Docker Desktop, Linux, Mac, Windows,
-title: Non-marketplace extensions
+title: 非市场分发的扩展（Non‑marketplace extensions）
 weight: 20
 aliases:
  - /desktop/extensions/non-marketplace/
 ---
 
-## Install an extension not available in the Marketplace
+## 安装未在市场上架的扩展
 
 > [!WARNING]
 >
-> Docker Extensions that are not in the Marketplace haven't gone through Docker's review process.
-> Extensions can install binaries, invoke commands and access files on your machine. Installing them is at your own risk.
+> 未在扩展市场上架的 Docker 扩展未经过 Docker 的审核流程。
+> 扩展可能会安装二进制、执行命令并访问你的本机文件，安装此类扩展请自行承担风险。
 
-The Extensions Marketplace is the trusted and official place to install extensions from within Docker Desktop. These extensions have gone through a review process by Docker. However, other extensions can also be installed in Docker Desktop if you trust the extension author.
+扩展市场（Extensions Marketplace）是 Docker Desktop 内安装扩展的官方可信渠道，其中的扩展均已通过 Docker 的审核。但如果你信任扩展作者，也可以在 Docker Desktop 中安装来自其他渠道的扩展。
 
-Given the nature of a Docker Extension (i.e. a Docker image) you can find other places where users have their extension's source code published. For example on GitHub, GitLab or even hosted in image registries like DockerHub or GHCR.
-You can install an extension that has been developed by the community or internally at your company from a teammate. You are not limited to installing extensions just from the Marketplace.
+由于 Docker 扩展本质上是一个 Docker 镜像，你可以在其他平台找到扩展的源代码或镜像来源，例如 GitHub、GitLab，或镜像仓库（如 Docker Hub、GHCR）。
+你可以安装社区开发的扩展，或安装你所在公司内部同事开发的扩展；安装来源并不局限于市场。
 
 > [!NOTE]
 >
-> Ensure the option **Allow only extensions distributed through the Docker Marketplace** is disabled. Otherwise, this prevents any extension not listed in the Marketplace, via the Extension SDK tools from, being installed.
-> You can change this option in **Settings**. 
+> 确保关闭 **Allow only extensions distributed through the Docker Marketplace**（仅允许通过 Docker Marketplace 分发的扩展）。否则，通过 Extension SDK 工具安装的、未在市场列出的扩展将被阻止。
+> 你可以在 **Settings** 中更改该选项。
 
-To install an extension which is not present in the Marketplace, you can use the Extensions CLI that is bundled with Docker Desktop.
+要安装未在市场上架的扩展，可以使用随 Docker Desktop 一同提供的 Extensions CLI。
 
-In a terminal, type `docker extension install IMAGE[:TAG]` to install an extension by its image reference and optionally a tag. Use the `-f` or `--force` flag to avoid interactive confirmation.
+在终端中执行 `docker extension install IMAGE[:TAG]`，根据镜像引用（可选附加 TAG）安装扩展。使用 `-f` 或 `--force` 标志可跳过交互式确认。
 
-Go to the Docker Desktop Dashboard to see the new extension installed.
+安装完成后，前往 Docker Desktop 仪表盘查看新扩展。
 
-## List installed extensions
+## 列出已安装的扩展
 
-Regardless whether the extension was installed from the Marketplace or manually by using the Extensions CLI, you can use the `docker extension ls` command to display the list of extensions installed.
-As part of the output you'll see the extension ID, the provider, version, the title and whether it runs a backend container or has deployed binaries to the host, for example:
+无论扩展是通过市场安装，还是通过 Extensions CLI 手动安装，你都可以使用 `docker extension ls` 查看已安装扩展的列表。
+输出中会包含扩展 ID、提供方、版本、标题，以及是否运行后端容器或是否向主机部署了二进制等信息。例如：
 
 ```console
 $ docker extension ls
@@ -41,20 +41,20 @@ ID                  PROVIDER            VERSION             UI                  
 john/my-extension   John                latest              1 tab(My-Extension)   Running(1)          -
 ```
 
-Go to the Docker Desktop Dashboard, select **Add Extensions** and on the **Managed** tab to see the new extension installed.
-Notice that an `UNPUBLISHED` label displays which indicates that the extension has not been installed from the Marketplace.
+前往 Docker Desktop 仪表盘，选择 **Add Extensions**，并在 **Managed** 页签中查看已安装的扩展。
+注意会看到 `UNPUBLISHED` 标签，表示该扩展并非通过市场安装。
 
-## Update an extension 
+## 更新扩展 
 
-To update an extension which isn't present in the Marketplace, in a terminal type `docker extension update IMAGE[:TAG]` where the `TAG` should be different from the extension that's already installed.
+要更新未在市场上架的扩展，在终端中执行 `docker extension update IMAGE[:TAG]`，其中 `TAG` 应区别于当前已安装版本的 TAG。
 
-For instance, if you installed an extension with `docker extension install john/my-extension:0.0.1`, you can update it by running `docker extension update john/my-extension:0.0.2`.
-Go to the Docker Desktop Dashboard to see the new extension updated.
+例如，如果你之前通过 `docker extension install john/my-extension:0.0.1` 安装了扩展，可通过 `docker extension update john/my-extension:0.0.2` 完成更新。
+更新完成后，前往 Docker Desktop 仪表盘查看结果。
 
 > [!NOTE]
 >
-> Extensions that aren't installed through the Marketplace don't receive update notifications from Docker Desktop.
+> 非市场安装的扩展不会在 Docker Desktop 中收到更新通知。
 
-## Uninstall an extension
+## 卸载扩展
 
-To uninstall an extension which is not present in the Marketplace, you can either navigate to the **Managed** tab in the Marketplace and select the **Uninstall** button, or from a terminal type `docker extension uninstall IMAGE[:TAG]`.
+要卸载未在市场上架的扩展，你可以在扩展市场的 **Managed** 页签中点击 **Uninstall**，或在终端执行 `docker extension uninstall IMAGE[:TAG]`。

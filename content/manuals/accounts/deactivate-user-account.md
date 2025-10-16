@@ -1,58 +1,48 @@
 ---
-title: Deactivate a Docker account
-linkTitle: Deactivate an account
+title: 停用 Docker 账户
+linkTitle: 停用账户
 weight: 30
-description: Learn how to deactivate a Docker user account.
-keywords: Docker Hub, delete, deactivate, account, account management, delete Docker account, close Docker account, disable Docker account
+description: 了解如何停用 Docker 用户账户。
+keywords: Docker Hub, 删除, 停用, 账户, 账户管理, 删除 Docker 账户, 关闭 Docker 账户, 禁用 Docker 账户
 ---
 
-Learn how to deactivate an individual Docker account, including prerequisites required
-for deactivation.
+本文介绍如何停用个人 Docker 账户，以及停用前需要满足的前提条件。
 
-For information on deactivating an organization,
-see [Deactivating an organization](../admin/organization/deactivate-account.md).
-
-> [!WARNING]
->
-> All Docker products and services that use your Docker account are
-inaccessible after deactivating your account.
-
-## Prerequisites
-
-Before deactivating your Docker account, ensure you meet the following requirements:
-
-- If you are an organization or company owner, you must leave your organization
-or company before deactivating your Docker account:
-    1. Sign in to [Docker Home](https://app.docker.com/admin) and choose
-    your organization.
-    1. Select **Members** and find your username.
-    1. Select the **Actions** menu and then select **Leave organization**.
-- If you are the sole owner of an organization, you must assign the owner role
-to another member of the organization and then remove yourself from the
-organization, or deactivate the organization. Similarly, if you are the sole
-owner of a company, either add someone else as a company owner and then remove
-yourself, or deactivate the company.
-- If you have an active Docker subscription, [downgrade it to a Docker Personal subscription](../subscription/change.md).
-- Download any images and tags you want to keep. Use `docker pull -a <image>:<tag>`.
-- Unlink your [GitHub and account](../docker-hub/repos/manage/builds/link-source.md#unlink-a-github-user-account).
-
-## Deactivate
-
-Once you have completed all the previous steps, you can deactivate your account.
+如需了解停用组织的信息，请参见
+[停用组织](../admin/organization/deactivate-account.md)。
 
 > [!WARNING]
 >
-> Deactivating your account is permanent and can't be undone. Make sure
-to back up any important data.
+> 停用账户后，所有使用你 Docker 账户的 Docker 产品与服务将无法访问。
 
-1. Sign in to [Docker Home](https://app.docker.com/login).
-1. Select your avatar to open the drop-down menu.
-1. Select **Account settings**.
-1. Select **Deactivate**.
-1. Select **Deactivate account**, then select again to confirm.
+## 先决条件
 
-## Delete personal data
+在停用 Docker 账户之前，请确保满足以下要求：
 
-Deactivating your account does not delete your personal data. To request
-personal data deletion, fill out Docker's
-[Privacy request form](https://preferences.docker.com/).
+- 如果你是组织或公司的所有者，必须先退出该组织或公司，才能停用 Docker 账户：
+    1. 登录 [Docker Home](https://app.docker.com/admin) 并选择你的组织。
+    1. 选择 **Members** 并找到你的用户名。
+    1. 打开 **Actions** 菜单，然后选择 **Leave organization**。
+- 如果你是组织的唯一所有者，必须将所有者角色转移给组织内其他成员，然后将自己移出组织，或直接停用该组织。类似地，如果你是公司的唯一所有者，要么新增一位公司所有者并移除自己，要么停用该公司。
+- 如果你有有效的 Docker 订阅，请[降级为 Docker Personal 订阅](../subscription/change.md)。
+- 下载你希望保留的镜像与标签。使用 `docker pull -a <image>:<tag>`。
+- 取消关联你的 [GitHub 账户](../docker-hub/repos/manage/builds/link-source.md#unlink-a-github-user-account)。
+
+## 停用
+
+完成上述步骤后，你即可停用账户。
+
+> [!WARNING]
+>
+> 停用账户为永久性操作，无法撤销。请务必先备份重要数据。
+
+1. 登录 [Docker Home](https://app.docker.com/login)。
+1. 点击头像打开下拉菜单。
+1. 选择 **Account settings**。
+1. 选择 **Deactivate**。
+1. 选择 **Deactivate account**，再次确认。
+
+## 删除个人数据
+
+停用账户不会删除你的个人数据。若要申请删除个人数据，请填写 Docker 的
+[隐私请求表单](https://preferences.docker.com/)。

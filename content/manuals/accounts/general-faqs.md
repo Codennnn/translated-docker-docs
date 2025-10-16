@@ -1,8 +1,8 @@
 ---
-title: FAQs on Docker accounts
-linkTitle: Accounts
+title: Docker 账户常见问题
+linkTitle: 账户
 weight: 10
-description: Frequently asked questions about Docker accounts
+description: 关于 Docker 账户的常见问题
 keywords: onboarding, docker, teams, orgs, user accounts, organization accounts
 tags: [FAQ]
 aliases:
@@ -12,38 +12,31 @@ aliases:
 - /admin/faqs/general-faqs/
 ---
 
-### What is a Docker ID?
+### 什么是 Docker ID？
 
-A Docker ID is a username for your Docker account that lets you access Docker
-products. To create a Docker ID you need one of the following:
+Docker ID 是你的 Docker 账户用户名，用于访问 Docker 的各类产品。要创建 Docker ID，你需要以下方式之一：
 
-- An email address
-- A social account
-- A GitHub account
+- 邮箱地址
+- 社交账号
+- GitHub 账号
 
-Your Docker ID must be between 4 and 30 characters long, and can only contain
-numbers and lowercase letters. You can't use any special characters or spaces.
+Docker ID 长度需在 4 到 30 个字符之间，只能包含数字与小写字母，不能包含特殊字符或空格。
 
-For more information, see [Create a Docker ID](/accounts/create-account/).
+更多信息，参见[创建 Docker ID](/accounts/create-account/)。
 
-### Can I change my Docker ID?
+### 我可以修改 Docker ID 吗？
 
-No. You can't change your Docker ID once it's created. If you need a different
-Docker ID, you must create a new Docker account with a new Docker ID.
+不可以。Docker ID 创建后无法更改。如果你需要不同的 Docker ID，必须使用新 Docker ID 创建一个新账户。
 
-Docker IDs can't be reused after deactivation.
+停用后的 Docker ID 不可被再次使用。
 
-### What if my Docker ID is taken?
+### 如果我的 Docker ID 已被占用怎么办？
 
-All Docker IDs are first-come, first-served except for companies that have a
-U.S. Trademark on a username.
+除持有相关用户名美国商标的公司外，所有 Docker ID 均按先到先得原则分配。
 
-If you have a trademark for your namespace,
-[Docker Support](https://hub.docker.com/support/contact/) can retrieve the
-Docker ID for you.
+如果你的命名空间拥有商标，
+[Docker 支持](https://hub.docker.com/support/contact/) 可以协助找回该 Docker ID。
 
-### What's an organization name or namespace?
+### 什么是组织名称或命名空间？
 
-The organization name, sometimes referred to as the organization namespace or
-the organization ID, is the unique identifier of a Docker organization. The
-organization name can't be the same as an existing Docker ID.
+组织名称（有时也称为组织命名空间或组织 ID）是 Docker 组织的唯一标识。组织名称不能与现有的 Docker ID 相同。

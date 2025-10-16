@@ -1,9 +1,9 @@
 ---
-description: How to configure and use Docker Extensions' private marketplace
+description: 如何配置与使用 Docker 扩展的私有市场
 keywords: Docker Extensions, Docker Desktop, Linux, Mac, Windows, Marketplace, private, security, admin
-title: Configure a private marketplace for extensions
+title: 为扩展配置私有市场（Private marketplace）
 tags: [admin]
-linkTitle: Configure a private marketplace
+linkTitle: 配置私有市场
 weight: 30
 aliases:
  - /desktop/extensions/private-marketplace/
@@ -11,26 +11,26 @@ aliases:
 
 {{< summary-bar feature_name="Private marketplace" >}}
 
-Learn how to configure and set up a private marketplace with a curated list of extensions for your Docker Desktop users.
+了解如何为 Docker Desktop 用户配置并部署一个私有扩展市场，提供你审核与管理的扩展清单。
 
-Docker Extensions' private marketplace is designed specifically for organizations who don’t give developers root access to their machines. It makes use of [Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md) so administrators have complete control over the private marketplace.
+Docker 扩展的私有市场专为不向开发者授予本机 root 权限的组织而设计。它依托 [Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md)，使管理员能够对私有市场进行完全控制。
 
-## Prerequisites
+## 先决条件
 
-- [Download and install Docker Desktop 4.26.0 or later](https://docs.docker.com/desktop/release-notes/).
-- You must be an administrator for your organization.
-- You have the ability to push the `extension-marketplace` folder and `admin-settings.json` file to the locations specified below through device management software such as [Jamf](https://www.jamf.com/).
+- [下载并安装 Docker Desktop 4.26.0 或更高版本](https://docs.docker.com/desktop/release-notes/)。
+- 你需要是组织的管理员。
+- 你可以通过设备管理软件（如 [Jamf](https://www.jamf.com/)）将 `extension-marketplace` 目录与 `admin-settings.json` 文件下发到下文指定的位置。
 
-## Step one: Initialize the private marketplace
+## 步骤一：初始化私有市场
 
-1. Create a folder locally for the content that will be deployed to your developers’ machines:
+1. 在本地创建用于存放将分发到开发者机器上的内容的目录：
 
    ```console
    $ mkdir my-marketplace
    $ cd my-marketplace
    ```
 
-2. Initialize the configuration files for your marketplace:
+2. 初始化私有市场所需的配置文件：
 
    {{< tabs group="os_version" >}}
    {{< tab name="Mac" >}}
@@ -56,21 +56,21 @@ Docker Extensions' private marketplace is designed specifically for organization
    {{< /tab >}}
    {{< /tabs >}}
 
-This creates 2 files:
+上述命令会生成 2 个文件：
 
-- `admin-settings.json`, which activates the private marketplace feature once it’s applied to Docker Desktop on your developers’ machines.
-- `extensions.txt`, which determines which extensions to list in your private marketplace.
+- `admin-settings.json`：当该文件被应用到开发者的 Docker Desktop 后，将启用私有市场功能。
+- `extensions.txt`：用于定义你的私有市场要展示的扩展列表。
 
-## Step two: Set the behaviour
+## 步骤二：设置行为
 
-The generated `admin-settings.json` file includes various settings you can modify.
+生成的 `admin-settings.json` 文件包含多个可修改的配置项。
 
-Each setting has a `value` that you can set, including a `locked` field that lets you lock the setting and make it unchangeable by your developers.
+每个配置项都包含可设置的 `value`，并可通过 `locked` 字段将其锁定，使开发者无法修改。
 
-- `extensionsEnabled` enables Docker Extensions.
-- `extensionsPrivateMarketplace` activates the private marketplace and ensures Docker Desktop connects to content defined and controlled by the administrator instead of the public Docker marketplace.
-- `onlyMarketplaceExtensions` allows or blocks developers from installing other extensions by using the command line. Teams developing new extensions must have this setting unlocked (`"locked": false`) to install and test extensions being developed.
-- `extensionsPrivateMarketplaceAdminContactURL` defines a contact link for developers to request new extensions in the private marketplace. If `value` is empty then no link is shown to your developers on Docker Desktop, otherwise this can be either an HTTP link or a “mailto:” link. For example,
+- `extensionsEnabled`：启用 Docker Extensions。
+- `extensionsPrivateMarketplace`：激活私有市场，确保 Docker Desktop 连接到由管理员定义和控制的内容，而非公共市场。
+- `onlyMarketplaceExtensions`：允许或阻止开发者通过命令行安装其他扩展。正在开发新扩展的团队需要将此项解锁（`"locked": false`）以便安装和测试。
+- `extensionsPrivateMarketplaceAdminContactURL`：定义开发者在私有市场中请求新增扩展时的联系链接。若 `value` 为空，Docker Desktop 不显示该链接；否则可以是 HTTP 链接或 “mailto:” 链接。例如：
 
   ```json
   "extensionsPrivateMarketplaceAdminContactURL": {
@@ -79,35 +79,35 @@ Each setting has a `value` that you can set, including a `locked` field that let
   }
   ```
 
-To find out more information about the `admin-settings.json` file, see [Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md).
+关于 `admin-settings.json` 的更多信息，参见 [Settings Management](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md)。
 
-## Step three: List allowed extensions
+## 步骤三：列出允许的扩展
 
-The generated `extensions.txt` file defines the list of extensions that are available in your private marketplace.
+生成的 `extensions.txt` 文件用于定义你的私有市场中可用的扩展列表。
 
-Each line in the file is an allowed extension and follows the format of `org/repo:tag`.
+文件中的每一行代表一个允许的扩展，格式为 `org/repo:tag`。
 
-For example, if you want to permit the Disk Usage extension you would enter the following into your `extensions.txt` file:
+例如，如果你希望允许 Disk Usage 扩展，可以在 `extensions.txt` 中添加：
 
 ```console
 docker/disk-usage-extension:0.2.8
 ```
 
-If no tag is provided, the latest tag available for the image is used. You can also comment out lines with `#` so the extension is ignored.
+如果未提供 tag，将使用该镜像可用的最新 tag。你也可以使用 `#` 注释行，使该扩展被忽略。
 
-This list can include different types of extension images:
+该列表可包含不同来源的扩展镜像：
 
-- Extensions from the public marketplace or any public image stored in Docker Hub.
-- Extension images stored in Docker Hub as private images. Developers need to be signed in and have pull access to these images.
-- Extension images stored in a private registry. Developers need to be signed in and have pull access to these images.
+- 来自公共市场的扩展，或存储在 Docker Hub 的公共镜像。
+- 存储在 Docker Hub 的私有镜像。开发者需登录并拥有拉取权限。
+- 存储在私有镜像仓库的镜像。开发者需登录并拥有拉取权限。
 
 > [!IMPORTANT]
 >
-> Your developers can only install the version of the extension that you’ve listed.
+> 开发者只能安装你在列表中指定的扩展版本。
 
-## Step four: Generate the private marketplace
+## 步骤四：生成私有市场
 
-Once the list in `extensions.txt` is ready, you can generate the marketplace:
+准备好 `extensions.txt` 后，即可生成私有市场：
 
 {{< tabs group="os_version" >}}
 {{< tab name="Mac" >}}
@@ -133,15 +133,15 @@ $ /opt/docker-desktop/extension-admin generate
 {{< /tab >}}
 {{< /tabs >}}
 
-This creates an `extension-marketplace` directory and downloads the marketplace metadata for all the allowed extensions.
+该命令会创建 `extension-marketplace` 目录，并为所有允许的扩展下载市场元数据。
 
-The marketplace content is generated from extension image information as image labels, which is the [same format as public extensions](extensions-sdk/extensions/labels.md). It includes the extension title, description, screenshots, links, etc.
+市场内容基于扩展镜像的标签信息生成，其格式与[公共扩展相同](extensions-sdk/extensions/labels.md)，包含扩展标题、描述、截图、链接等。
 
-## Step five: Test the private marketplace setup
+## 步骤五：测试私有市场配置
 
-It's recommended that you try the private marketplace on your Docker Desktop installation.
+建议你先在本机的 Docker Desktop 上验证私有市场配置。
 
-1. Run the following command in your terminal. This command automatically copies the generated files to the location where Docker Desktop reads the configuration files. Depending on your operating system, the location is:
+1. 在终端中运行以下命令。该命令会自动将生成的文件复制到 Docker Desktop 读取配置的路径。不同操作系统对应的位置如下：
 
     - Mac: `/Library/Application\ Support/com.docker.docker`
     - Windows: `C:\ProgramData\DockerDesktop`
@@ -171,29 +171,29 @@ It's recommended that you try the private marketplace on your Docker Desktop ins
    {{< /tab >}}
    {{< /tabs >}}
 
-2. Quit and re-open Docker Desktop. 
-3. Sign in with a Docker account.
+2. 退出并重新打开 Docker Desktop。
+3. 使用 Docker 账户登录。
 
-When you select the **Extensions** tab, you should see the private marketplace listing only the extensions you have allowed in `extensions.txt`.
+当你打开 **Extensions** 选项卡时，应能看到私有市场仅列出 `extensions.txt` 中允许的扩展。
 
-![Extensions Private Marketplace](/assets/images/extensions-private-marketplace.webp)
+![扩展私有市场](/assets/images/extensions-private-marketplace.webp)
 
-## Step six: Distribute the private marketplace
+## 步骤六：分发私有市场
 
-Once you’ve confirmed that the private marketplace configuration works, the final step is to distribute the files to the developers’ machines with the MDM software your organization uses. For example, [Jamf](https://www.jamf.com/).
+确认私有市场配置生效后，最后一步是通过组织使用的 MDM 软件（例如 [Jamf](https://www.jamf.com/)）将相关文件分发到开发者的机器。
 
-The files to distribute are:
+需要分发的文件包括：
 * `admin-settings.json`
-* the entire `extension-marketplace` folder and its subfolders
+* 整个 `extension-marketplace` 目录及其子目录
 
-These files must be placed on developer's machines. Depending on your operating system, the target location is (as mentioned above):
+这些文件需要放置在开发者机器上的以下路径（同前所列）：
 
 - Mac: `/Library/Application\ Support/com.docker.docker`
 - Windows: `C:\ProgramData\DockerDesktop`
 - Linux: `/usr/share/docker-desktop`
 
-Make sure your developers are signed in to Docker Desktop in order for the private marketplace configuration to take effect. As an administrator, you should [enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md).
+确保开发者已登录 Docker Desktop，使私有市场配置生效。作为管理员，建议[启用强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)。
 
-## Feedback
+## 反馈
 
-Give feedback or report any bugs you may find by emailing `extensions@docker.com`.
+如需反馈或报告问题，请发送邮件至 `extensions@docker.com`。

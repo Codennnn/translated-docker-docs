@@ -1,54 +1,53 @@
 ---
-description: Extensions
+description: 扩展功能
 keywords: Docker Extensions, Docker Desktop, Linux, Mac, Windows, Marketplace
-title: Marketplace extensions
+title: 扩展市场（Marketplace）
 weight: 10
 aliases:
  - /desktop/extensions/marketplace/
 ---
 
-There are two types of extensions available in the Extensions Marketplace:
-- Docker-reviewed extensions
-- Self-published extensions
+在扩展市场中，你可以找到两类扩展：
+- Docker 审核的扩展
+- 自主发布的扩展
 
-Docker-reviewed extensions are manually reviewed by the Docker Extensions team to ensure an extra level of trust
-and quality. They appear as **Reviewed** in the Marketplace.
+由 Docker 审核的扩展会经过 Docker Extensions 团队的人工审核，以提升可信度与质量保障。在市场中它们会标注为 **Reviewed**。
 
-Self-published extensions are autonomously published by extension developers and go through an automated validation process. They appear as **Not reviewed** in the Marketplace.
+自主发布的扩展由扩展开发者自行发布，并通过自动化校验流程。在市场中它们会标注为 **Not reviewed**。
 
-## Install an extension
-
-> [!NOTE]
->
-> For some extensions, a separate account needs to be created before use.
-
-To install an extension:
-
-1. Open Docker Desktop.
-2. From the Docker Desktop Dashboard, select the **Extensions** tab.
-   The Extensions Marketplace opens on the **Browse** tab.
-3. Browse the available extensions.
-   You can sort the list of extensions by **Recently added**, **Most installed**, or alphabetically. Alternatively, use the **Content** or **Categories** drop-down menu to search for extensions by whether they have been reviewed or not, or by category.
-4. Choose an extension and select **Install**.
-
-From here, you can select **Open** to access the extension or install additional extensions. The extension also appears in the left-hand menu and in the **Manage** tab.
-
-## Update an extension
-
-You can update any extension outside of Docker Desktop releases. To update an extension to the latest version, navigate to the Docker Desktop Dashboard and select the **Manage** tab.
-
-The **Manage** tab displays with all your installed extensions. If an extension has a new version available, it displays an **Update** button.
-
-
-## Uninstall an extension
-
-You can uninstall an extension at any time.
+## 安装扩展
 
 > [!NOTE]
 >
-> Any data used by the extension that's stored in a volume must be manually deleted.
+> 某些扩展在使用前需要先创建并登录单独的账户。
 
-1. Navigate to the Docker Desktop Dashboard and select the **Manage** tab.
-   This displays a list of extensions you've installed.
-2. Select the ellipsis to the right of extension you want to uninstall.
-3. Select **Uninstall**.
+安装步骤如下：
+
+1. 打开 Docker Desktop。
+2. 在 Docker Desktop 仪表盘中，选择 **Extensions** 选项卡。
+   扩展市场将打开在 **Browse**（浏览）页签。
+3. 浏览可用扩展。
+   你可以按 **Recently added**（最近添加）、**Most installed**（安装最多）或字母顺序排序；也可以通过 **Content** 或 **Categories** 下拉筛选，按是否审核或按类别搜索扩展。
+4. 选择一个扩展并点击 **Install**（安装）。
+
+安装完成后，你可以点击 **Open** 打开扩展，或继续安装其他扩展。已安装的扩展会出现在左侧菜单以及 **Manage**（管理）页签中。
+
+## 更新扩展
+
+扩展的更新不依赖 Docker Desktop 的发布周期。要更新到扩展的最新版本，请进入 Docker Desktop 仪表盘并打开 **Manage**（管理）页签。
+
+**Manage** 页签会列出你已安装的所有扩展。如果某个扩展提供了新版本，会显示 **Update**（更新）按钮。
+
+
+## 卸载扩展
+
+你可以随时卸载某个扩展。
+
+> [!NOTE]
+>
+> 扩展在卷中存储的数据不会随卸载自动删除，需要你手动清理。
+
+1. 进入 Docker Desktop 仪表盘并打开 **Manage**（管理）页签。
+   这里会显示你已安装的所有扩展。
+2. 在要卸载的扩展右侧，点击省略号菜单。
+3. 选择 **Uninstall**（卸载）。

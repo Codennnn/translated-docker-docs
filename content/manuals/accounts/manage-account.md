@@ -1,118 +1,109 @@
 ---
-title: Manage a Docker account
-linkTitle: Manage an account
+title: 管理 Docker 账户
+linkTitle: 管理账户
 weight: 20
-description: Learn how to manage your Docker account.
+description: 了解如何管理你的 Docker 账户。
 keywords: accounts, docker ID, account settings, account management, docker home
 ---
 
-You can centrally manage your Docker account using Docker Home, including
-adminstrative and security settings.
+你可以通过 Docker Home 统一管理你的 Docker 账户，包括管理与安全设置。
 
 > [!TIP]
 >
-> If your account is associated with an organization that enforces single
-> sign-on (SSO), you may not have permissions to update your account settings.
-> You must contact your administrator to update your settings.
+> 如果你的账户隶属于启用了单点登录（SSO）的组织，你可能没有权限更改账户设置。
+> 需要联系管理员来更新相关设置。
 
-## Update account information
+## 更新账户信息
 
-Account information is visible on your **Account settings** page. You can
-update the following account information:
+你可以在 **Account settings** 页面查看账户信息，并更新以下内容：
 
-- Full name
-- Company
-- Location
-- Website
-- Gravatar email
+- 全名
+- 公司
+- 所在地
+- 个人网站
+- Gravatar 邮箱
 
-To add or update your avatar using Gravatar:
+若要通过 Gravatar 新增或更新头像：
 
-1. Create a [Gravatar account](https://gravatar.com/).
-1. Create your avatar.
-1. Add your Gravatar email to your Docker account settings.
+1. 创建 [Gravatar 账户](https://gravatar.com/)。
+1. 创建你的头像。
+1. 在 Docker 账户设置中添加你的 Gravatar 邮箱。
 
-It may take some time for your avatar to update in Docker.
+头像在 Docker 中更新可能需要一定时间。
 
-## Update email address
+## 更新邮箱地址
 
-To update your email address:
+更新邮箱地址：
 
-1. Sign in to your [Docker account](https://app.docker.com/login).
-1. Select your avatar in the top-right corner and select **Account settings**.
-1. Select **Email**.
-1. Enter your new email address and your password to confirm the change.
-1. Select **Send verification email**. Docker sends a verification
-link to your new email.
+1. 登录你的 [Docker 账户](https://app.docker.com/login)。
+1. 点击右上角头像，选择 **Account settings**。
+1. 选择 **Email**。
+1. 输入新邮箱地址，并输入密码确认修改。
+1. 选择 **Send verification email**。Docker 会向新邮箱发送验证链接。
 
-Your new email address will appear as unverified until you complete the
-verification process. You can:
+在完成验证之前，新邮箱会显示为未验证状态。你可以：
 
-- Resend the verification email if needed.
-- Remove the unverified email address at any time before verification.
+- 如有需要，可重新发送验证邮件。
+- 在验证完成前，随时移除该未验证邮箱。
 
-To verify your email, open your email client and follow the instructions
-in the Docker verification email.
+要完成邮箱验证，请在邮箱客户端中按 Docker 验证邮件的指引操作。
 
 > [!NOTE]
 >
-> Docker accounts only support one verified email address at a time, which
-is used for account notifications and security-related communications. You
-can't add multiple verified email addresses to your account.
+> Docker 账户同一时间仅支持一个已验证邮箱，用于账户通知与安全相关通信。
+> 你无法为账户添加多个已验证邮箱。
 
-## Change your password
+## 修改密码
 
-You can change your password by initiating a password reset via email. To change your password:
+你可以通过邮件发起密码重置来修改密码。步骤如下：
 
-1. Sign in to your [Docker account](https://app.docker.com/login).
-1. Select your avatar in the top-right corner and select **Account settings**.
-1. Select **Password**, then **Reset password**.
-1. Docker will send you a password reset email with instructions to reset
-your password.
+1. 登录你的 [Docker 账户](https://app.docker.com/login)。
+1. 点击右上角头像，选择 **Account settings**。
+1. 选择 **Password**，再选择 **Reset password**。
+1. Docker 会向你发送密码重置邮件，并附带重置指引。
 
-## Manage two-factor authentication
+## 管理双重验证
 
-To update your two-factor authentication (2FA) settings:
+更新双重验证（2FA）设置：
 
-1. Sign in to your [Docker account](https://app.docker.com/login).
-1. Select your avatar in the top-right corner and select **Account settings**.
-1. Select **2FA**.
+1. 登录你的 [Docker 账户](https://app.docker.com/login)。
+1. 点击右上角头像，选择 **Account settings**。
+1. 选择 **2FA**。
 
-For more information, see
-[Enable two-factor authentication](../security/2fa/_index.md).
+更多信息参见
+[启用双重验证](../security/2fa/_index.md)。
 
-## Manage personal access tokens
+## 管理个人访问令牌
 
-To manage personal access tokens:
+管理个人访问令牌：
 
-1. Sign in to your [Docker account](https://app.docker.com/login).
-1. Select your avatar in the top-right corner and select **Account settings**.
-1. Select **Personal access tokens**.
+1. 登录你的 [Docker 账户](https://app.docker.com/login)。
+1. 点击右上角头像，选择 **Account settings**。
+1. 选择 **Personal access tokens**。
 
-For more information, see
-[Create and manage access tokens](../security/access-tokens.md).
+更多信息参见
+[创建与管理访问令牌](../security/access-tokens.md)。
 
-## Manage connected accounts
+## 管理已连接账户
 
-You can unlink connected Google or GitHub accounts:
+你可以解除已连接的 Google 或 GitHub 账户：
 
-1. Sign in to your [Docker account](https://app.docker.com/login).
-1. Select your avatar in the top-right corner and select **Account settings**.
-1. Select **Connected accounts**.
-1. Select **Disconnect** on your connected account.
+1. 登录你的 [Docker 账户](https://app.docker.com/login)。
+1. 点击右上角头像，选择 **Account settings**。
+1. 选择 **Connected accounts**。
+1. 在已连接账号上选择 **Disconnect**。
 
-To fully unlink your Docker account, you must also unlink Docker from Google
-or GitHub. See Google or GitHub's documentation for more information:
+若要彻底解除与 Docker 的关联，还需在 Google 或 GitHub 平台解除与 Docker 的连接。更多信息参见：
 
-- [Manage connections between your Google Account and third-parties](https://support.google.com/accounts/answer/13533235?hl=en)
-- [Reviewing and revoking authorization of GitHub Apps](https://docs.github.com/en/apps/using-github-apps/reviewing-and-revoking-authorization-of-github-apps)
+- [管理你的 Google 账户与第三方之间的连接](https://support.google.com/accounts/answer/13533235?hl=en)
+- [查看与撤销 GitHub 应用授权](https://docs.github.com/en/apps/using-github-apps/reviewing-and-revoking-authorization-of-github-apps)
 
-## Convert your account
+## 转换账户类型
 
-For information on converting your account into an organization, see
-[Convert an account into an organization](../admin/organization/convert-account.md).
+如需将个人账户转换为组织，请参见
+[将账户转换为组织](../admin/organization/convert-account.md)。
 
-## Deactivate your account
+## 停用你的账户
 
-For information on deactivating your account, see
-[Deactivating a user account](./deactivate-user-account.md).
+关于停用账户，参见
+[停用用户账户](./deactivate-user-account.md)。
