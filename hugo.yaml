@@ -155,7 +155,7 @@ menus:
   - name: 快速入门
     pageRef: /get-started/
     weight: 1
-  - name: 教程
+  - name: 进阶教程
     pageRef: /guides/
     weight: 2
   - name: 使用手册
