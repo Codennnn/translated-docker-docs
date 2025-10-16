@@ -1,146 +1,146 @@
 ---
-title: Home
-description: Docker Documentation is the official Docker library of resources, manuals, and guides to help you containerize applications.
-keywords: Docker, documentation, manual, guide, reference, api, samples
+title: 首页
+description: Docker 文档是官方的资源库、使用手册与指南，帮助你将应用容器化。
+keywords: Docker, 文档, 手册, 指南, 参考, API, 示例
 grid:
-  - title: Docker Desktop
+  - title: Docker 桌面版
     icon: computer
     description: |
-      Manage containers, applications, and images directly from your machine.
+      直接在本机管理容器、应用与镜像。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/desktop/"
-      - text: "Explore Docker Desktop"
+      - text: "探索 Docker Desktop"
         url: "/desktop/use-desktop/"
-      - text: "Release notes"
+      - text: "发行说明"
         url: "/desktop/release-notes/"
-  - title: Docker Hardened Images
+  - title: Docker 加固镜像
     icon: /icons/dhi.svg
     description: |
-      Secure, minimal images for trusted software delivery.
+      安全、精简的镜像，用于可信的软件交付。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/dhi/"
-      - text: "Quickstart"
+      - text: "快速入门"
         url: "/dhi/get-started/"
-      - text: "Use an image"
+      - text: "使用镜像"
         url: "/dhi/how-to/use/"
-  - title: Docker MCP Catalog and Toolkit
+  - title: Docker MCP 目录与工具包
     icon: /icons/toolkit.svg
     description: |
-      Augment your AI workflows with MCP servers.
+      使用 MCP 服务器增强你的 AI 工作流。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/ai/mcp-catalog-and-toolkit/"
-      - text: "Quickstart"
+      - text: "快速入门"
         url: "/ai/mcp-catalog-and-toolkit/get-started/"
-      - text: "Explore the MCP Toolkit"
+      - text: "探索 MCP 工具包"
         url: "/ai/mcp-catalog-and-toolkit/toolkit/"
-  - title: Docker Engine
+  - title: Docker 引擎
     icon: developer_board
     description: |
-      The definitive open source container client and runtime.
+      权威的开源容器客户端与运行时。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/engine/"
-      - text: "Install"
+      - text: "安装"
         url: "/engine/install/"
-      - text: "Release notes"
+      - text: "发行说明"
         url: "/engine/release-notes/"
-  - title: Docker Build
+  - title: Docker 构建（Build）
     icon: build
     description: |
-      Package, test, and ship your applications.
+      打包、测试并交付你的应用。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/build/"
-      - text: "Packaging your software"
+      - text: "打包你的软件"
         url: "/build/building/packaging/"
-      - text: "Release notes"
+      - text: "发行说明"
         url: "/build/release-notes/"
-  - title: Docker Build Cloud
+  - title: Docker 构建云（Build Cloud）
     icon: cloud
     description: |
-      Run your builds in the cloud.
+      在云端运行你的构建。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/build-cloud/"
-      - text: "Setup"
+      - text: "设置"
         url: "/build-cloud/setup/"
-      - text: "Release notes"
+      - text: "发行说明"
         url: "/build-cloud/release-notes/"
   - title: Docker Compose
     icon: polyline
     description: |
-      Define and run multi-container applications with Docker.
+      使用 Docker 定义并运行多容器应用。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/compose/"
-      - text: "Try Docker Compose"
+      - text: "体验 Docker Compose"
         url: "/compose/gettingstarted/"
-      - text: "Release notes"
+      - text: "发行说明"
         url: "/compose/releases/release-notes/"
   - title: Docker Hub
     icon: device_hub
     description: |
-      Find and share container images and other artifacts.
+      查找并分享容器镜像及其他制品。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/docker-hub/"
-      - text: "Create an account"
+      - text: "创建账号"
         url: "/accounts/create-account/"
-      - text: "Create a repository"
+      - text: "创建仓库"
         url: "/docker-hub/repos/create/"
   - title: Docker Scout
     icon: query_stats
     description: |
-      Strengthen your software supply chain with Docker Scout.
+      借助 Docker Scout 强化你的软件供应链。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/scout/"
-      - text: "Quickstart"
+      - text: "快速入门"
         url: "/scout/quickstart/"
-      - text: "Image analysis"
+      - text: "镜像分析"
         url: "/scout/image-analysis/"
-  - title: Subscription
+  - title: 订阅
     icon: card_membership
     description: |
-      Licensing for commercial use of Docker components.
+      Docker 组件商业使用的许可方案。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/subscription/"
-      - text: "Subscriptions and features"
+      - text: "订阅与功能"
         url: "/subscription/details/"
-      - text: "Change subscription"
+      - text: "更改订阅"
         url: "/subscription/change/"
-  - title: Billing
+  - title: 账单
     icon: payments
     description: |
-      Manage your billing and payment settings for your subscription.
+      管理订阅的账单与支付设置。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/billing/"
-      - text: "Update payment method"
+      - text: "更新支付方式"
         url: "/billing/payment-method/"
-      - text: "View billing history"
+      - text: "查看账单历史"
         url: "/billing/history/"
-  - title: Administration
+  - title: 管理
     icon: admin_panel_settings
     description: |
-      Manage company and organization users, permissions, and more.
+      管理公司与组织的用户、权限等。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/admin/company/"
-      - text: "Organization administration"
+      - text: "组织管理"
         url: "/admin/organization/"
-      - text: "Company administration"
+      - text: "公司管理"
         url: "/admin/company/"
-  - title: Security
+  - title: 安全
     icon: shield
     description: |
-      Security guardrails for both administrators and developers.
+      为管理员和开发者提供安全护栏。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/security/"
       - text: "SSO"
         url: "/security/for-admins/single-sign-on/"
@@ -149,23 +149,23 @@ grid:
   - title: Testcontainers Cloud
     icon: cloud
     description: |
-      Testcontainers Cloud lets you run heavy test workloads remotely.
+      Testcontainers Cloud 让你可以远程运行繁重的测试工作负载。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "https://testcontainers.com/cloud/docs/"
-      - text: "Getting started"
+      - text: "快速开始"
         url: "https://testcontainers.com/cloud/docs/#getting-started"
-      - text: "TCC for CI"
+      - text: "CI 场景下的 TCC"
         url: "https://testcontainers.com/cloud/docs/#tcc-for-ci"
   - title: Docker Offload
     icon: cloud
     description: |
-      Build and run containers in the cloud.
+      在云端构建并运行容器。
     links:
-      - text: "Overview"
+      - text: "概览"
         url: "/offload/"
-      - text: "Quickstart"
+      - text: "快速入门"
         url: "/offload/quickstart/"
-      - text: "About Docker Offload"
+      - text: "关于 Docker Offload"
         url: "/offload/about/"
 ---
