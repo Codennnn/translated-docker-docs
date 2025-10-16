@@ -1,137 +1,115 @@
 ---
-title: Docker subscriptions and features
-linkTitle: Subscriptions and features
-description: Learn about Docker subscription tiers and their key features
-keywords: subscription, personal, pro, team, business, features, docker subscription
+title: Docker 订阅与功能
+linkTitle: 订阅与功能
+description: 了解 Docker 各订阅层级及其关键功能
+keywords: 订阅, Personal, Pro, Team, Business, 功能, docker 订阅
 aliases:
 - /subscription/core-subscription/details/
 weight: 10
 ---
 
-Docker subscriptions provide licensing for commercial use of Docker products and include access to Docker's complete development platform:
+Docker 订阅为 Docker 产品的商业使用提供授权，并可访问 Docker 完整的开发平台：
 
-- [Docker Desktop](../desktop/_index.md): The industry-leading container-first
-  development solution that includes, Docker Engine, Docker CLI, Docker Compose,
-  Docker Build/BuildKit, and Kubernetes.
-- [Docker Hub](../docker-hub/_index.md): The world's largest cloud-based
-  container registry.
-- [Docker Build Cloud](../build-cloud/_index.md): Powerful cloud-based builders that accelerate build times by up to 39x.
-- [Docker Scout](../scout/_index.md): Tooling for software supply chain security
-  that lets you quickly assess image health and accelerate security improvements.
-- [Testcontainers Cloud](https://testcontainers.com/cloud/docs): Container-based
-  testing automation that provides faster tests, a unified developer experience,
-  and more.
+- [Docker Desktop](../desktop/_index.md)：业界领先的“以容器为先”的开发方案，包含 Docker Engine、Docker CLI、Docker Compose、
+  Docker Build/BuildKit 与 Kubernetes。
+- [Docker Hub](../docker-hub/_index.md)：全球最大的云端容器仓库。
+- [Docker Build Cloud](../build-cloud/_index.md)：强大的云端构建器，将构建速度最多提升至 39 倍。
+- [Docker Scout](../scout/_index.md)：用于软件供应链安全的工具，可快速评估镜像健康状况并加速安全改进。
+- [Testcontainers Cloud](https://testcontainers.com/cloud/docs)：基于容器的测试自动化，提供更快的测试、统一的开发者体验等。
 
-Choose the subscription that fits your needs, from individual developers to large enterprises.
+从个人开发者到大型企业，选择适合你需求的订阅。
 
 > [!NOTE]
 >
-> Legacy Docker plans apply to subscribers who last purchased or renewed before December 10, 2024. These subscribers keep their current subscription and pricing until their next renewal on or after December 10, 2024.
+> 旧版 Docker 计划适用于最后一次购买或续订发生在 2024 年 12 月 10 日之前的订阅者。这些订阅者将在 2024 年 12 月 10 日或之后的下一次续订之前，继续保留其当前订阅与定价。
 
-## Subscriptions
+## 订阅
 
 {{< tabs >}}
-{{< tab name="Docker subscription" >}}
+{{< tab name="Docker 订阅" >}}
 
 ## Docker Personal
 
-**Docker Personal** is ideal for open source communities, individual developers, education, and small businesses.
+**Docker Personal** 适合开源社区、个人开发者、教育场景和小型企业。
 
-Docker Personal includes:
+Docker Personal 包含：
 
-- Essential Docker tools at no cost
-- 1 Docker Scout repository with vulnerability analysis
-- Unlimited public Docker Hub repositories
-- 200 pulls per 6 hours for authenticated users
-- 7-day trials for Docker Build Cloud and Testcontainers Cloud
+- 核心 Docker 工具，免费使用
+- 1 个启用漏洞分析的 Docker Scout 仓库
+- 无限数量的 Docker Hub 公共仓库
+- 认证用户每 6 小时 200 次拉取配额
+- Docker Build Cloud 与 Testcontainers Cloud 的 7 天试用
 
-Docker Personal users who want to continue using Docker Build Cloud or Docker
-Testcontainers Cloud after their trial can upgrade to a Docker Pro subscription at any
-time.
+试用结束后，如需继续使用 Docker Build Cloud 或 Testcontainers Cloud，可随时升级至 Docker Pro。
 
-All unauthenticated users, including unauthenticated Docker Personal users, get
-100 pulls per 6 hours per IPv4 address or IPv6 /64 subnet.
+所有未认证用户（包括未认证的 Docker Personal 用户），按 IPv4 地址或 IPv6 /64 子网计，每 6 小时享有 100 次拉取配额。
 
-For a list of features available in each tier, see [Docker Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
 ## Docker Pro
 
-**Docker Pro** is ideal for individual developers who need full access to Docker's development platform.
+**Docker Pro** 适合需要完整访问 Docker 开发平台的个人开发者。
 
-Docker Pro includes:
+Docker Pro 包含：
 
-- Full access to all Docker tools
-- 200 Docker Build Cloud minutes per month, Docker Build Cloud minutes do not
-rollover month to month
-- 2 Docker Scout repositories with vulnerability analysis
-- 100 Testcontainers Cloud runtime minutes per month, Testcontainers Cloud runtime minutes do not rollover month to month
-- No Docker Hub pull rate limits
+- 完整访问所有 Docker 工具
+- 每月 200 分钟 Docker Build Cloud 构建时长（不结转）
+- 2 个启用漏洞分析的 Docker Scout 仓库
+- 每月 100 分钟 Testcontainers Cloud 运行时长（不结转）
+- Docker Hub 拉取不限速
 
-For a list of features available in each tier, see [Docker
-Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
 ## Docker Team
 
-**Docker Team** is ideal for development teams that need collaboration and security features.
+**Docker Team** 适合需要协作与安全能力的开发团队。
 
-Docker Team includes:
+Docker Team 包含：
 
-- 500 Docker Build Cloud minutes per month, Docker Build Cloud minutes do not
-rollover month to month
-- Unlimited Docker Scout repositories with vulnerability analysis
-- 500 Testcontainers Cloud runtime minutes per month, Testcontainers Cloud runtime minutes do not rollover month to month
-- No Docker Hub pull rate limits
-- Advanced collaboration tools including organization management, [Role Based Access Control
-(RBAC)](/security/for-admins/roles-and-permissions/), [activity logs](/admin/organization/activity-logs/), and more
+- 每月 500 分钟 Docker Build Cloud 构建时长（不结转）
+- 不限数量的启用漏洞分析的 Docker Scout 仓库
+- 每月 500 分钟 Testcontainers Cloud 运行时长（不结转）
+- Docker Hub 拉取不限速
+- 高级协作工具：组织管理、[基于角色的访问控制（RBAC）](/security/for-admins/roles-and-permissions/)、[活动日志](/admin/organization/activity-logs/) 等
 
-For a list of features available in each tier, see [Docker
-Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
 ## Docker Business
 
-**Docker Business** is ideal for enterprises that need centralized management and advanced security.
+**Docker Business** 适合需要集中化管理与高级安全能力的企业。
 
-Docker Business includes:
+Docker Business 包含：
 
-- 1500 Docker Build Cloud minutes per month, Docker Build Cloud minutes do not
-rollover month to month
-- Unlimited Docker Scout repositories with vulnerability analysis
-- 1500 Testcontainers Cloud runtime minutes per month, Testcontainers Cloud runtime minutes do not rollover month to month
-- No Docker Hub pull rate limits
-- Enterprise security features:
-  - [Hardened Docker Desktop](/manuals/enterprise/security/hardened-desktop/_index.md)
-  - [Image Access
-  Management](/manuals/enterprise/security/hardened-desktop/image-access-management.md)
-  which lets admins control what content developers can access
-  - [Registry Access
-  Management](/manuals/enterprise/security/hardened-desktop/registry-access-management.md)
-  which lets admins control what registries developers can access
-  - [Company layer](/admin/company/) to manage multiple organizations and settings
-  - [Single sign-on](/security/for-admins/single-sign-on/)
-  - [System for Cross-domain Identity
-  Management](/security/for-admins/provisioning/scim/)
+- 每月 1500 分钟 Docker Build Cloud 构建时长（不结转）
+- 不限数量的启用漏洞分析的 Docker Scout 仓库
+- 每月 1500 分钟 Testcontainers Cloud 运行时长（不结转）
+- Docker Hub 拉取不限速
+- 企业级安全功能：
+  - [强化版 Docker Desktop](/manuals/enterprise/security/hardened-desktop/_index.md)
+  - [镜像访问管理](/manuals/enterprise/security/hardened-desktop/image-access-management.md)
+  允许管理员控制开发者可访问的内容
+  - [仓库访问管理](/manuals/enterprise/security/hardened-desktop/registry-access-management.md)
+  允许管理员控制开发者可访问的仓库
+  - [公司层级](/admin/company/) 用于管理多个组织与设置
+  - [单点登录](/security/for-admins/single-sign-on/)
+  - [跨域身份管理系统（SCIM）](/security/for-admins/provisioning/scim/)
 
-For a list of features available in each tier, see [Docker
-Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
 {{< /tab >}}
-{{< tab name="Legacy Docker plans" >}}
+{{< tab name="旧版 Docker 计划" >}}
 
 > [!IMPORTANT]
 >
-> Legacy Docker plans apply to subscribers who last purchased or renewed before December 10, 2024. These subscribers keep their current subscription and pricing until their next renewal on or after December 10, 2024.
+> 旧版 Docker 计划适用于最后一次购买或续订发生在 2024 年 12 月 10 日之前的订阅者。这些订阅者将在 2024 年 12 月 10 日或之后的下一次续订之前，继续保留其当前订阅与定价。
 
-If you have a legacy subscription, you'll automatically upgrade to the new Docker subscription model when you renew. The new plans provide access to all Docker tools with increased limits and additional features.
+如果你持有旧版订阅，续费时会自动升级到新的 Docker 订阅模型。新计划可访问全部 Docker 工具，并提供更高配额与附加功能。
 
-## Legacy Docker Pro
+## 旧版 Docker Pro
 
-**Legacy Docker Pro** enables individual developers to get more control of their
-development environment and provides an integrated and reliable developer
-experience. It reduces the amount of time developers spend on mundane and
-repetitive tasks and empowers developers to spend more time creating value for
-their customers.
+**Legacy Docker Pro** 让个人开发者更好地掌控其开发环境，提供稳定一致的开发者体验，减少在琐碎重复任务上的时间投入，从而将更多时间用于为客户创造价值。
 
-Legacy Docker Pro includes:
+Legacy Docker Pro 包含：
 - Unlimited public repositories
 - Unlimited [Scoped Access Tokens](/security/access-tokens/)
 - Unlimited [collaborators](/docker-hub/repos/manage/access/#collaborators) for public repositories at no cost per month.
@@ -141,42 +119,37 @@ Legacy Docker Pro includes:
 - [Auto Builds](/docker-hub/builds/) with 5 concurrent builds
 - 300 [Vulnerability Scans](/docker-hub/vulnerability-scanning/)
 
-For a list of features available in each legacy tier, see [Legacy Docker Pricing](https://www.docker.com/legacy-pricing/).
+各旧版层级可用功能清单，参见 [Legacy Docker 定价](https://www.docker.com/legacy-pricing/)。
 
-### Upgrade your Legacy Docker Pro subscription
+### 升级你的旧版 Docker Pro 订阅
 
-When you upgrade your Legacy Docker Pro subscription to a Docker Pro subscription, your subscription includes the following changes:
+当你将 Legacy Docker Pro 升级到 Docker Pro 后，将获得以下变化：
 
 - Docker Build Cloud build minutes increased from 100/month to 200/month and no monthly fee. Docker Build Cloud minutes do not rollover month to month.
 - 2 included repositories with continuous vulnerability analysis in Docker Scout.
 - 100 Testcontainers Cloud runtime minutes are now included for use either in Docker Desktop or for CI. Testcontainers Cloud runtime minutes do not rollover month to month.
 - Docker Hub image pull rate limits are removed.
 
-For a list of features available in each tier, see [Docker Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
-## Legacy Docker Team
+## 旧版 Docker Team
 
-**Legacy Docker Team** offers capabilities for collaboration, productivity, and
-security across organizations. It enables groups of developers to unlock the
-full power of collaboration and sharing combined with essential security
-features and team management capabilities. A Docker Team subscription includes
-licensing for commercial use of Docker components including Docker Desktop and
-Docker Hub.
+**Legacy Docker Team** 为组织提供协作、效率与安全能力，使团队能够在必要的安全与团队管理功能的加持下，充分释放协作与共享的价值。Docker Team 订阅包含 Docker Desktop 与 Docker Hub 等组件的商业使用许可。
 
-Legacy Docker Team includes:
+Legacy Docker Team 包含：
 - Everything included in legacy Docker Pro
 - Unlimited teams
 - [Auto Builds](/docker-hub/builds/) with 15 concurrent builds
 - Unlimited [Vulnerability Scanning](/docker-hub/vulnerability-scanning/)
 - 5000 image [pulls per day](/manuals/docker-hub/usage/pulls.md) for each team member
 
-There are also advanced collaboration and management tools, including organization and team management with [Role Based Access Control (RBAC)](/security/for-admins/roles-and-permissions/), [activity logs](/admin/organization/activity-logs/), and more.
+还提供高级协作与管理工具，包括基于 [角色的访问控制（RBAC）](/security/for-admins/roles-and-permissions/) 的组织与团队管理、[活动日志](/admin/organization/activity-logs/)等。
 
-For a list of features available in each legacy tier, see [Legacy Docker Pricing](https://www.docker.com/legacy-pricing/).
+各旧版层级可用功能清单，参见 [Legacy Docker 定价](https://www.docker.com/legacy-pricing/)。
 
-### Upgrade your Legacy Docker Team subscription
+### 升级你的旧版 Docker Team 订阅
 
-When you upgrade your Legacy Docker Team subscription to a Docker Team subscription, your subscription includes the following changes:
+当你将 Legacy Docker Team 升级到 Docker Team 后，将获得以下变化：
 
 - Instead of paying an additional per-seat fee, Docker Build Cloud is now available to all users in your Docker subscription.
 - Docker Build Cloud build minutes increase from 400/mo to 500/mo. Docker Build Cloud minutes do not rollover month to month.
@@ -185,17 +158,13 @@ When you upgrade your Legacy Docker Team subscription to a Docker Team subscript
 - Docker Hub image pull rate limits are removed.
 - The minimum number of users is 1 (lowered from 5).
 
-For a list of features available in each tier, see [Docker Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
-## Legacy Docker Business
+## 旧版 Docker Business
 
-**Legacy Docker Business** offers centralized management and advanced security features
-for enterprises that use Docker at scale. It empowers leaders to manage their
-Docker development environments and speed up their secure software supply chain
-initiatives. A Docker Business subscription includes licensing for commercial
-use of Docker components including Docker Desktop and Docker Hub.
+**Legacy Docker Business** 为大规模使用 Docker 的企业提供集中化管理与高级安全能力，帮助管理者治理其 Docker 开发生态，并加速安全供应链建设。Docker Business 订阅包含 Docker Desktop 与 Docker Hub 等组件的商业使用许可。
 
-Legacy Docker Business includes:
+Legacy Docker Business 包含：
 - Everything included in legacy Docker Team
 - [Hardened Docker Desktop](/manuals/enterprise/security/hardened-desktop/_index.md)
 - [Image Access Management](/manuals/enterprise/security/hardened-desktop/image-access-management.md) which lets admins control what content developers can access
@@ -204,11 +173,11 @@ Legacy Docker Business includes:
 - [Single Sign-On](/security/for-admins/single-sign-on/)
 - [System for Cross-domain Identity Management](/security/for-admins/provisioning/scim/) and more.
 
-For a list of features available in each tier, see [Legacy Docker Pricing](https://www.docker.com/legacy-pricing/).
+各旧版层级可用功能清单，参见 [Legacy Docker 定价](https://www.docker.com/legacy-pricing/)。
 
-### Upgrade your Legacy Docker Business subscription
+### 升级你的旧版 Docker Business 订阅
 
-When you upgrade your Legacy Docker Business subscription to a Docker Business subscription, your subscription includes the following changes:
+当你将 Legacy Docker Business 升级到 Docker Business 后，将获得以下变化：
 
 - Instead of paying an additional per-seat fee, Docker Build Cloud is now available to all users in your Docker subscription.
 - Docker Build Cloud included minutes increase from 800/mo to 1500/mo. Docker Build Cloud minutes do not rollover month to month.
@@ -216,117 +185,99 @@ When you upgrade your Legacy Docker Business subscription to a Docker Business s
 - 1500 Testcontainers Cloud runtime minutes are now included for use either in Docker Desktop or for CI. Testcontainers Cloud runtime minutes do not rollover month to month.
 - Docker Hub image pull rate limits are removed.
 
-For a list of features available in each tier, see [Docker Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
-## Legacy Docker Scout subscriptions
+## 旧版 Docker Scout 订阅
 
-This section provides an overview of the legacy subscriptions for Docker
-Scout.
+本节概述 Docker Scout 的旧版订阅。
 
 > [!IMPORTANT]
 >
-> As of December 10, 2024, Docker Scout subscriptions are no longer available
-> and have been replaced by Docker subscriptions that provide access to
-> all tools. If you subscribed or renewed your subscriptions before December 10, 2024, your legacy Docker subscriptions still apply to your account until
-> you renew. For more details, see [Announcing Upgraded Docker
-> Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/).
+> 自 2024 年 12 月 10 日起，Docker Scout 订阅不再单独提供，已由可访问全部工具的新 Docker 订阅所取代。若你在 2024 年 12 月 10 日之前订阅或续费，旧版 Docker 订阅仍将持续生效，直至下一次续费。详情参见《[Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/)》。
 
-### Legacy Docker Scout Free
+### 旧版 Docker Scout Free
 
-Legacy Docker Scout Free is available for organizations. If you have a Legacy Docker subscription, you automatically have access to legacy Docker Scout Free.
+Legacy Docker Scout Free 面向组织提供。若你拥有 Legacy Docker 订阅，将自动获得对该版本的访问权限。
 
-Legacy Docker Scout Free includes:
+Legacy Docker Scout Free 包含：
 
-- Unlimited local image analysis
-- Up to 3 Docker Scout-enabled repositories
-- SDLC integration, including policy evaluation and workload integration
-- On-prem and cloud container registry integrations
-- Security posture reporting
+- 本地镜像分析不限量
+- 最多 3 个启用 Docker Scout 的仓库
+- SDLC 集成（含策略评估与工作负载集成）
+- 本地与云端容器仓库集成
+- 安全态势报告
 
-### Legacy Docker Scout Team
+### 旧版 Docker Scout Team
 
-Legacy Docker Scout Team includes:
+Legacy Docker Scout Team 包含：
 
-- All the features available in legacy Docker Scout Free
-- In addition to 3 Docker Scout-enabled repositories, add up to 100 repositories when you buy your subscription
+- 旧版 Docker Scout Free 的全部功能
+- 在 3 个启用 Docker Scout 的仓库之外，购买订阅后可额外添加最多 100 个仓库
 
-### Legacy Docker Scout Business
+### 旧版 Docker Scout Business
 
-Legacy Docker Scout Business includes:
+Legacy Docker Scout Business 包含：
 
-- All the features available in legacy Docker Scout Team
-- Unlimited Docker Scout-enabled repositories
+- 旧版 Docker Scout Team 的全部功能
+- 启用 Docker Scout 的仓库数量不限
 
-### Upgrade your Legacy Docker Scout subscription
+### 升级你的旧版 Docker Scout 订阅
 
-When you upgrade your Legacy Docker Scout subscription to a Docker subscription, your
-subscription includes the following changes:
+当你将 Legacy Docker Scout 升级到 Docker 订阅后，将获得以下变化：
 
 - Docker Business: Unlimited repositories with continuous vulnerability analysis, an increase from 3.
 - Docker Team: Unlimited repositories with continuous vulnerability analysis, an increase from 3
 - Docker Pro: 2 included repositories with continuous vulnerability analysis.
 - Docker Personal: 1 included repository with continuous vulnerability analysis.
 
-For a list of features available in each tier, see [Docker Pricing](https://www.docker.com/pricing/).
+各层级可用功能清单，参见 [Docker 定价](https://www.docker.com/pricing/)。
 
-## Legacy Docker Build Cloud subscriptions
+## 旧版 Docker Build Cloud 订阅
 
- This section describes the features available for the different legacy Docker
- Build Cloud subscription tiers.
+ 本节介绍不同旧版 Docker Build Cloud 订阅层级的功能。
 
 > [!IMPORTANT]
 >
-> As of December 10, 2024, Docker Build Cloud is only available with the
-> new Docker Pro, Team, and Business plans. When your subscription renews on or after
-> December 10, 2024, you will see an increase in your included Build Cloud
-> minutes each month. For more details, see [Announcing Upgraded Docker
-> Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/).
+> 自 2024 年 12 月 10 日起，Docker Build Cloud 仅随新的 Docker Pro、Team 与 Business 计划提供。自该日期起续费后，你每月包含的 Build Cloud 分钟数将增加。详情参见《[Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/)》。
 
-### Legacy Docker Build Cloud Starter
+### 旧版 Docker Build Cloud Starter
 
-If you have a Legacy Docker subscription, a base level of Build Cloud
-minutes and cache are included. The features available vary depending on your
-Legacy Docker subscription tier.
+如果你拥有 Legacy Docker 订阅，将包含一定基础的 Build Cloud 分钟数与缓存。具体功能随订阅层级而异。
 
-#### Legacy Docker Pro
+#### 旧版 Docker Pro
 
 - 100 build minutes every month
 - Available for one user
 - 4 parallel builds
 
-#### Legacy Docker Team
+#### 旧版 Docker Team
 
 - 400 build minutes every month shared across your organization
 - Option to onboard up to 100 members
 - Can buy additional seats to add more minutes
 
-#### Legacy Docker Business
+#### 旧版 Docker Business
 
 - All the features listed for Docker Team
 - 800 build minutes every month shared across your organization
 
-### Legacy Docker Build Cloud Team
+### 旧版 Docker Build Cloud Team
 
-Legacy Docker Build Cloud Team offers the following features:
+Legacy Docker Build Cloud Team 提供：
 
 - 200 additional build minutes per seat
 - Option to buy reserve minutes
 - Increased shared cache
 
-The legacy Docker Build Cloud Team subscription is tied to a Docker
-[organization](/admin/organization/). To use the build minutes or
-shared cache of a legacy Docker Build Cloud Team subscription, users must be a part of
-the organization associated with the subscription. See Manage seats and invites.
+Legacy Docker Build Cloud Team 订阅与 Docker [组织](/admin/organization/) 绑定。要使用该订阅的构建分钟数或共享缓存，用户必须属于与订阅关联的组织。参见“管理席位与邀请”。
 
-### Legacy Docker Build Cloud Enterprise
+### 旧版 Docker Build Cloud Enterprise
 
-For more details about your enterprise subscription, [contact sales](https://www.docker.com/products/build-cloud/#contact_sales).
+如需了解企业订阅的详细信息，请[联系销售](https://www.docker.com/products/build-cloud/#contact_sales)。
 
-### Upgrade your Legacy Docker Build Cloud subscription
+### 升级你的旧版 Docker Build Cloud 订阅
 
-You no longer need to subscribe to a separate Docker Build Cloud subscription to access
-Docker Build Cloud or to scale your minutes. When you upgrade your Legacy Docker subscription to
-a Docker subscription, your subscription includes the following changes:
+无需再单独订阅 Docker Build Cloud 才能使用或扩展分钟数。当你将 Legacy Docker 订阅升级到 Docker 订阅后，将获得以下变化：
 
 - Docker Business: Included minutes are increased from 800/mo to 1500/mo with the option to scale more minutes.
 - Docker Team: Included minutes are increased from 400/mo to 500/mo with the option to scale more minutes.
@@ -336,16 +287,16 @@ a Docker subscription, your subscription includes the following changes:
 {{< /tab >}}
 {{< /tabs >}}
 
-## Subscription management options
+## 订阅管理方式
 
-### Self-serve
+### 自助服务
 
-You manage everything directly including invoices, seats, billing information, and subscription changes.
+你可自行管理所有事项，包括发票、席位、账单信息与订阅变更。
 
-### Sales-assisted
+### 销售协助
 
-A dedicated Docker account manager handles setup and management for Docker Business and Team subscriptions.
+Docker 指定的客户经理将为 Docker Business 与 Team 订阅提供设置与管理支持。
 
-## Support
+## 支持
 
-All Docker Pro, Team, and Business subscribers receive email support for their subscriptions.
+所有 Docker Pro、Team 与 Business 订阅者均可获得订阅相关的邮件支持。

@@ -36,7 +36,7 @@ params:
 
 **退役：** 在实验期间，Docker 会评估是否让该条目继续推进生命周期。我们有权在任何时间更改范围或停止实验阶段的产品或功能，且无需另行通知，详见我们的[订阅服务协议](https://www.docker.com/legal/docker-subscription-service-agreement)。
 
-### Beta {#beta}
+### Beta（测试版） {#beta}
 
 Beta 阶段表示潜在未来产品或功能的初始发布。参与 Beta 计划的用户可测试、验证并反馈未来能力，帮助我们聚焦对用户最有价值的内容。
 

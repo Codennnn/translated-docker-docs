@@ -1,8 +1,8 @@
 ---
-description: Docker security announcements
-keywords: Docker, CVEs, security, notice, Log4J 2, Log4Shell, Text4Shell, announcements
-title: Docker security announcements
-linkTitle: Security announcements
+description: Docker 安全公告
+keywords: Docker, CVEs, security, notice, Log4J 2, Log4Shell, Text4Shell, announcements, 安全, 公告
+title: Docker 安全公告
+linkTitle: 安全公告
 outputs: ["HTML", "markdown", "RSS"]
 type: "security-announcements"
 weight: 80
@@ -10,110 +10,110 @@ toc_min: 1
 toc_max: 2
 ---
 
-{{< rss-button feed="/security/security-announcements/index.xml" text="Subscribe to security RSS feed" >}}
+{{< rss-button feed="/security/security-announcements/index.xml" text="订阅安全 RSS 提要" >}}
 
-## Docker Desktop 4.47.0 security update: CVE-2025-10657
+## Docker Desktop 4.47.0 安全更新：CVE-2025-10657
 
-A vulnerability in Docker Desktop was fixed on September 25 in the [4.47.0](/manuals/desktop/release-notes.md#4470) release:
+Docker Desktop 中的一个漏洞已在 9 月 25 日发布的 [4.47.0](/manuals/desktop/release-notes.md#4470) 版本中修复：
 
-- Fixed [CVE-2025-10657](https://www.cve.org/CVERecord?id=CVE-2025-10657) where the Enhanced Container Isolation [Docker Socket command restrictions](../enterprise/security/hardened-desktop/enhanced-container-isolation/config.md#command-restrictions) feature was not working properly in Docker Desktop 4.46.0 only (the configuration for it was being ignored).
+- 修复了 [CVE-2025-10657](https://www.cve.org/CVERecord?id=CVE-2025-10657)：在仅限 Docker Desktop 4.46.0 的情况下，增强型容器隔离（ECI）的 [Docker Socket 命令限制](../enterprise/security/hardened-desktop/enhanced-container-isolation/config.md#command-restrictions) 功能未正常生效（其配置被忽略）。
 
-## Docker Desktop 4.44.3 security update: CVE-2025-9074
+## Docker Desktop 4.44.3 安全更新：CVE-2025-9074
 
-_Last updated August 20, 2025_
+_最近更新：2025 年 8 月 20 日_
 
-A vulnerability in Docker Desktop was fixed on August 20 in the [4.44.3](/manuals/desktop/release-notes.md#4443) release:
+Docker Desktop 中的一个漏洞已在 8 月 20 日发布的 [4.44.3](/manuals/desktop/release-notes.md#4443) 版本中修复：
 
-- Fixed [CVE-2025-9074](https://www.cve.org/CVERecord?id=CVE-2025-9074) where a malicious container running on Docker Desktop could access the Docker Engine and launch additional containers without requiring the Docker socket to be mounted. This could allow unauthorized access to user files on the host system. Enhanced Container Isolation (ECI) does not mitigate this vulnerability.
+- 修复了 [CVE-2025-9074](https://www.cve.org/CVERecord?id=CVE-2025-9074)：在 Docker Desktop 上运行的恶意容器无需挂载 Docker socket 即可访问 Docker Engine 并启动额外容器，可能导致主机上的用户文件被未授权访问。增强型容器隔离（ECI）无法缓解此漏洞。
 
 
-## Docker Desktop 4.44.0 security update: CVE-2025-23266
+## Docker Desktop 4.44.0 安全更新：CVE-2025-23266
 
-_Last updated July 31, 2025_
+_最近更新：2025 年 7 月 31 日_
 
-We are aware of [CVE-2025-23266](https://nvd.nist.gov/vuln/detail/CVE-2025-23266), a critical vulnerability affecting the NVIDIA Container Toolkit in CDI mode up to version 1.17.7. Docker Desktop includes version 1.17.8, which is not impacted. However, older versions of Docker Desktop that bundled earlier toolkit versions may be affected if CDI mode was manually enabled. Upgrade to Docker Desktop 4.44 or later to ensure you're using the patched version.
+我们已注意到 [CVE-2025-23266](https://nvd.nist.gov/vuln/detail/CVE-2025-23266)，这是影响 NVIDIA Container Toolkit CDI 模式（至 1.17.7 版本）的严重漏洞。Docker Desktop 已内置 1.17.8 版本，不受影响。但较早版本的 Docker Desktop 若捆绑了旧版工具包，并且你曾手动启用 CDI 模式，则可能受影响。请升级至 Docker Desktop 4.44 或更高版本以确保使用修复版本。
 
-## Docker Desktop 4.43.0 security update: CVE-2025-6587
+## Docker Desktop 4.43.0 安全更新：CVE-2025-6587
 
-_Last updated July 03, 2025_
+_最近更新：2025 年 7 月 3 日_
 
-A vulnerability in Docker Desktop was fixed on July 03 in the [4.43.0](/manuals/desktop/release-notes.md#4430) release:
+Docker Desktop 中的一个漏洞已在 7 月 3 日发布的 [4.43.0](/manuals/desktop/release-notes.md#4430) 版本中修复：
 
-- Fixed [CVE-2025-6587](https://www.cve.org/CVERecord?id=CVE-2025-6587) where sensitive system environment variables were included in Docker Desktop diagnostic logs, allowing for potential secret exposure.
+- 修复了 [CVE-2025-6587](https://www.cve.org/CVERecord?id=CVE-2025-6587)：Docker Desktop 诊断日志中包含了敏感的系统环境变量，可能导致机密信息泄露。
 
-## Docker Desktop 4.41.0 Security Update: CVE-2025-3224, CVE-2025-4095, and CVE-2025-3911
+## Docker Desktop 4.41.0 安全更新：CVE-2025-3224、CVE-2025-4095、CVE-2025-3911
 
-_Last updated May 15, 2025_
+_最近更新：2025 年 5 月 15 日_
 
-Three vulnerabilities in Docker Desktop were fixed on April 28 in the [4.41.0](/manuals/desktop/release-notes.md#4410) release.
+Docker Desktop 中的三个漏洞已在 4 月 28 日发布的 [4.41.0](/manuals/desktop/release-notes.md#4410) 版本中修复。
 
-- Fixed [CVE-2025-3224](https://www.cve.org/CVERecord?id=CVE-2025-3224) allowing an attacker with access to a user machine to perform an elevation of privilege when Docker Desktop updates.
-- Fixed [CVE-2025-4095](https://www.cve.org/CVERecord?id=CVE-2025-4095) where Registry Access Management (RAM) policies were not enforced when using a MacOS configuration profile, allowing users to pull images from unapproved registries.
-- Fixed [CVE-2025-3911](https://www.cve.org/CVERecord?id=CVE-2025-3911) allowing an attacker with read access to a user's machine to obtain sensitive information from Docker Desktop log files, including environment variables configured for running containers.
+- 修复了 [CVE-2025-3224](https://www.cve.org/CVERecord?id=CVE-2025-3224)：攻击者在拥有目标机器访问权限的情况下，可能在 Docker Desktop 更新时实现权限提升。
+- 修复了 [CVE-2025-4095](https://www.cve.org/CVERecord?id=CVE-2025-4095)：当使用 macOS 配置描述文件时，镜像仓库访问管理（RAM）策略未被正确强制执行，导致用户可以从未批准的仓库拉取镜像。
+- 修复了 [CVE-2025-3911](https://www.cve.org/CVERecord?id=CVE-2025-3911)：拥有目标机器读取权限的攻击者可能从 Docker Desktop 日志文件中获取敏感信息，包括为运行中的容器设置的环境变量。
 
-We strongly encourage you to update to Docker Desktop [4.41.0](/manuals/desktop/release-notes.md#4410).
+我们强烈建议你升级到 Docker Desktop [4.41.0](/manuals/desktop/release-notes.md#4410)。
 
-## Docker Desktop 4.34.2 Security Update: CVE-2024-8695 and CVE-2024-8696
+## Docker Desktop 4.34.2 安全更新：CVE-2024-8695 与 CVE-2024-8696
 
-_Last updated September 13, 2024_
+_最近更新：2024 年 9 月 13 日_
 
-Two remote code execution (RCE) vulnerabilities in Docker Desktop related to Docker Extensions were reported by [Cure53](https://cure53.de/) and were fixed on September 12 in the [4.34.2](/manuals/desktop/release-notes.md#4342) release.
+与 Docker 扩展相关的两项远程代码执行（RCE）漏洞由 [Cure53](https://cure53.de/) 报告，并已在 9 月 12 日发布的 [4.34.2](/manuals/desktop/release-notes.md#4342) 版本中修复。
 
-- [CVE-2024-8695](https://www.cve.org/cverecord?id=CVE-2024-8695): A remote code execution (RCE) vulnerability via crafted extension description/changelog could be abused by a malicious extension in Docker Desktop before 4.34.2. [Critical]
-- [CVE-2024-8696](https://www.cve.org/cverecord?id=CVE-2024-8696): A remote code execution (RCE) vulnerability via crafted extension publisher-url/additional-urls could be abused by a malicious extension in Docker Desktop before 4.34.2. [High]
+- [CVE-2024-8695](https://www.cve.org/cverecord?id=CVE-2024-8695)：在 4.34.2 之前的 Docker Desktop 中，恶意扩展可以通过构造的扩展描述/变更日志实施远程代码执行（RCE）。【严重】
+- [CVE-2024-8696](https://www.cve.org/cverecord?id=CVE-2024-8696)：在 4.34.2 之前的 Docker Desktop 中，恶意扩展可以通过构造的扩展发布者 URL/附加 URL 实施远程代码执行（RCE）。【高】
 
-No existing extensions exploiting the vulnerabilities were found in the Extensions Marketplace. The Docker Team will be closely monitoring and diligently reviewing any requests for publishing new extensions.
+扩展市场中未发现利用这些漏洞的现有扩展。Docker 团队将持续密切监控并严格审核新的扩展发布请求。
 
-We strongly encourage you to update to Docker Desktop [4.34.2](/manuals/desktop/release-notes.md#4342). If you are unable to update promptly, you can [disable Docker Extensions](/manuals/extensions/settings-feedback.md#turn-on-or-turn-off-extensions) as a workaround.
+我们强烈建议你升级到 Docker Desktop [4.34.2](/manuals/desktop/release-notes.md#4342)。如果暂时无法升级，可作为权宜之计先[禁用 Docker 扩展](/manuals/extensions/settings-feedback.md#turn-on-or-turn-off-extensions)。
 
-## Deprecation of password logins on CLI when SSO enforced
+## 当强制启用 SSO 时，弃用 CLI 中的密码登录
 
-_Last updated July, 2024_
+_最近更新：2024 年 7 月_
 
-When [SSO enforcement](/manuals/enterprise/security/single-sign-on/connect.md) was first introduced, Docker provided a grace period to continue to let passwords be used on the Docker CLI when authenticating to Docker Hub. This was allowed so organizations could more easily use SSO enforcement. It is recommended that administrators configuring SSO encourage users using the CLI [to switch over to Personal Access Tokens](/manuals/enterprise/security/single-sign-on/_index.md#prerequisites) in anticipation of this grace period ending.
+当首次引入[强制启用 SSO](/manuals/enterprise/security/single-sign-on/connect.md) 时，Docker 提供了一个过渡期，允许在 Docker CLI 认证到 Docker Hub 时继续使用密码，以便组织更容易过渡到 SSO 强制模式。建议配置 SSO 的管理员提前引导 CLI 用户[切换为使用个人访问令牌（PAT）](/manuals/enterprise/security/single-sign-on/_index.md#prerequisites)，为过渡期结束做准备。
 
-On September 16, 2024 the grace period will end and passwords will no longer be able to authenticate to Docker Hub via the Docker CLI when SSO is enforced. Affected users are required to switch over to using PATs to continue signing in.
+自 2024 年 9 月 16 日起，过渡期结束；当 SSO 被强制启用时，将无法再通过 Docker CLI 使用密码登录 Docker Hub。受影响的用户需要改用 PAT 才能继续登录。
 
-At Docker, we want the experience to be the most secure for our developers and organizations and this deprecation is an essential step in that direction.
+Docker 一直致力于为开发者与组织提供最安全的使用体验，此次弃用是实现该目标的重要一步。
 
-## SOC 2 Type 2 attestation and ISO 27001 certification
+## 通过 SOC 2 Type 2 鉴证与获得 ISO 27001 认证
 
-_Last updated June, 2024_
+_最近更新：2024 年 6 月_
 
-Docker is pleased to announce that we have received our SOC 2 Type 2 attestation and ISO 27001 certification with no exceptions or major non-conformities.
+Docker 很高兴地宣布，我们已顺利通过 SOC 2 Type 2 鉴证并获得 ISO 27001 认证，且无例外与重大不符合项。
 
-Security is a fundamental pillar to Docker’s operations, which is embedded into our overall mission and company strategy. Docker’s products are core to our user community and our SOC 2 Type 2 attestation and ISO 27001 certification demonstrate Docker’s ongoing commitment to security to our user base.
+安全性是 Docker 运营的基石，已深度融入我们的使命与公司战略。Docker 的产品是用户社区的核心，而 SOC 2 Type 2 鉴证与 ISO 27001 认证也再次表明了我们对安全的长期承诺。
 
-For more information, see the [Blog announcement](https://www.docker.com/blog/docker-announces-soc-2-type-2-attestation-iso-27001-certification/).
+了解更多，请参阅[博客公告](https://www.docker.com/blog/docker-announces-soc-2-type-2-attestation-iso-27001-certification/)。
 
-## Docker Security Advisory: Multiple Vulnerabilities in runc, BuildKit, and Moby
+## Docker 安全公告：runc、BuildKit 与 Moby 中的多个漏洞
 
-_Last updated February 2, 2024_
+_最近更新：2024 年 2 月 2 日_
 
-We at Docker prioritize the security and integrity of our software and the trust of our users. Security researchers at Snyk Labs identified and reported four security vulnerabilities in the container ecosystem. One of the vulnerabilities, [CVE-2024-21626](https://scout.docker.com/v/CVE-2024-21626), concerns the runc container runtime, and the other three affect BuildKit ([CVE-2024-23651](https://scout.docker.com/v/CVE-2024-23651), [CVE-2024-23652](https://scout.docker.com/v/CVE-2024-23652), and [CVE-2024-23653](https://scout.docker.com/v/CVE-2024-23653)). We want to assure our community that our team, in collaboration with the reporters and open source maintainers, has been diligently working on coordinating and implementing necessary remediations.
+Docker 高度重视软件的安全与完整性，以及用户对我们的信任。Snyk Labs 的安全研究人员在容器生态中识别并报告了四个安全漏洞。其中一个漏洞 [CVE-2024-21626](https://scout.docker.com/v/CVE-2024-21626) 涉及 runc 容器运行时，另外三个影响 BuildKit（[CVE-2024-23651](https://scout.docker.com/v/CVE-2024-23651)、[CVE-2024-23652](https://scout.docker.com/v/CVE-2024-23652)、[CVE-2024-23653](https://scout.docker.com/v/CVE-2024-23653)）。我们与报告方及开源维护者紧密协作，已积极协调并实施必要修复。
 
-We are committed to maintaining the highest security standards. We have published patched versions of runc, BuildKit, and Moby on January 31 and released an update for Docker Desktop on February 1 to address these vulnerabilities. Additionally, our latest BuildKit and Moby releases included fixes for [CVE-2024-23650](https://scout.docker.com/v/CVE-2024-23650) and [CVE-2024-24557](https://scout.docker.com/v/CVE-2024-24557), discovered respectively by an independent researcher and through Docker’s internal research initiatives.
+我们致力于保持最高的安全标准。1 月 31 日我们发布了包含修复的 runc、BuildKit 与 Moby 版本，并于 2 月 1 日发布了 Docker Desktop 更新以应对这些漏洞。此外，我们最新版本的 BuildKit 与 Moby 还包含了对 [CVE-2024-23650](https://scout.docker.com/v/CVE-2024-23650) 与 [CVE-2024-24557](https://scout.docker.com/v/CVE-2024-24557) 的修复，分别由独立研究者与 Docker 内部研究发现。
 
-|                        | Versions Impacted         |
+|                        | 受影响的版本               |
 |:-----------------------|:--------------------------|
 | `runc`                 | <= 1.1.11                 |
 | `BuildKit`             | <= 0.12.4                 |
-| `Moby (Docker Engine)` | <= 25.0.1 and <= 24.0.8   |
+| `Moby (Docker Engine)` | <= 25.0.1 与 <= 24.0.8    |
 | `Docker Desktop`       | <= 4.27.0                 |
 
-### What should I do if I’m on an affected version?
+### 如果我使用的是受影响版本，该怎么办？
 
-If you are using affected versions of runc, BuildKit, Moby, or Docker Desktop, make sure to update to the latest versions, linked in the following table:
+如果你正在使用受影响版本的 runc、BuildKit、Moby 或 Docker Desktop，请尽快升级到下表所列的最新修复版本：
 
-|                        | Patched Versions          |
+|                        | 修复版本                   |
 |:-----------------------|:--------------------------|
 | `runc`                 | >= [1.1.12](https://github.com/opencontainers/runc/releases/tag/v1.1.12)                 |
 | `BuildKit`             | >= [0.12.5](https://github.com/moby/buildkit/releases/tag/v0.12.5)                 |
-| `Moby (Docker Engine)` | >= [25.0.2](https://github.com/moby/moby/releases/tag/v25.0.2) and >= [24.0.9](https://github.com/moby/moby/releases/tag/v24.0.9)   |
+| `Moby (Docker Engine)` | >= [25.0.2](https://github.com/moby/moby/releases/tag/v25.0.2) 与 >= [24.0.9](https://github.com/moby/moby/releases/tag/v24.0.9)   |
 | `Docker Desktop`       | >= [4.27.1](/manuals/desktop/release-notes.md#4271)                 |
 
 
-If you are unable to update to an unaffected version promptly, follow these best practices to mitigate risk:
+如果暂时无法立即升级到不受影响的版本，请遵循以下最佳实践以降低风险：
 
 * Only use trusted Docker images (such as [Docker Official Images](../docker-hub/image-library/trusted-content.md#docker-official-images)).
 * Don’t build Docker images from untrusted sources or untrusted Dockerfiles.
@@ -123,45 +123,45 @@ If you are unable to update to an unaffected version promptly, follow these best
 * For CVE-2024-23650, CVE-2024-23651, CVE-2024-23652, and CVE-2024-23653, avoid using BuildKit frontend from an untrusted source. A frontend image is usually specified as the #syntax line on your Dockerfile, or with `--frontend` flag when using the `buildctl build` command.
 * To mitigate CVE-2024-24557, make sure to either use BuildKit or disable caching when building images. From the CLI this can be done via the `DOCKER_BUILDKIT=1` environment variable (default for Moby >= v23.0 if the buildx plugin is installed) or the `--no-cache flag`. If you are using the HTTP API directly or through a client, the same can be done by setting `nocache` to `true` or `version` to `2` for the [/build API endpoint](https://docs.docker.com/reference/api/engine/version/v1.44/#tag/Image/operation/ImageBuild).
 
-### Technical details and impact
+### 技术细节与影响
 
-#### CVE-2024-21626 (High)
+#### CVE-2024-21626（高）
 
 In runc v1.1.11 and earlier, due to certain leaked file descriptors, an attacker can gain access to the host filesystem by causing a newly-spawned container process (from `runc exec`) to have a working directory in the host filesystem namespace, or by tricking a user to run a malicious image and allow a container process to gain access to the host filesystem through `runc run`. The attacks can also be adapted to overwrite semi-arbitrary host binaries, allowing for complete container escapes. Note that when using higher-level runtimes (such as Docker or Kubernetes), this vulnerability can be exploited by running a malicious container image without additional configuration or by passing specific workdir options when starting a container. The vulnerability can also be exploited from within Dockerfiles in the case of Docker.
 
-_The issue has been fixed in runc v1.1.12._
+_该问题已在 runc v1.1.12 中修复。_
 
-#### CVE-2024-23651 (High)
+#### CVE-2024-23651（高）
 
 In BuildKit <= v0.12.4, two malicious build steps running in parallel sharing the same cache mounts with subpaths could cause a race condition, leading to files from the host system being accessible to the build container. This will only occur if a user is trying to build a Dockerfile of a malicious project.
 
-_The issue has been fixed in BuildKit v0.12.5._
+_该问题已在 BuildKit v0.12.5 中修复。_
 
-#### CVE-2024-23652 (High)
+#### CVE-2024-23652（高）
 
 In BuildKit <= v0.12.4, a malicious BuildKit frontend or Dockerfile using `RUN --mount` could trick the feature that removes empty files created for the mountpoints into removing a file outside the container from the host system. This will only occur if a user is using a malicious Dockerfile.
 
-_The issue has been fixed in BuildKit v0.12.5._
+_该问题已在 BuildKit v0.12.5 中修复。_
 
-#### CVE-2024-23653 (High)
+#### CVE-2024-23653（高）
 
 In addition to running containers as build steps, BuildKit also provides APIs for running interactive containers based on built images. In BuildKit <= v0.12.4, it is possible to use these APIs to ask BuildKit to run a container with elevated privileges. Normally, running such containers is only allowed if special `security.insecure` entitlement is enabled both by buildkitd configuration and allowed by the user initializing the build request.
 
-_The issue has been fixed in BuildKit v0.12.5._
+_该问题已在 BuildKit v0.12.5 中修复。_
 
-#### CVE-2024-23650 (Medium)
+#### CVE-2024-23650（中）
 
 In BuildKit <= v0.12.4, a malicious BuildKit client or frontend could craft a request that could lead to BuildKit daemon crashing with a panic.
 
-_The issue has been fixed in BuildKit v0.12.5._
+_该问题已在 BuildKit v0.12.5 中修复。_
 
-#### CVE-2024-24557 (Medium)
+#### CVE-2024-24557（中）
 
 In Moby <= v25.0.1 and <= v24.0.8, the classic builder cache system is prone to cache poisoning if the image is built FROM scratch. Also, changes to some instructions (most important being `HEALTHCHECK` and `ONBUILD`) would not cause a cache miss. An attacker with knowledge of the Dockerfile someone is using could poison their cache by making them pull a specially crafted image that would be considered a valid cache candidate for some build steps.
 
-_The issue has been fixed in Moby >= v25.0.2 and >= v24.0.9._
+_该问题已在 Moby >= v25.0.2 与 >= v24.0.9 中修复。_
 
-### How are Docker products affected?
+### Docker 产品受到怎样的影响？
 
 #### Docker Desktop
 
@@ -175,7 +175,7 @@ Any new Docker Build Cloud builder instances will be provisioned with the latest
 
 _No other Docker products are affected by these vulnerabilities._
 
-### Advisory links
+### 公告链接
 
 * Runc
   * [CVE-2024-21626](https://github.com/opencontainers/runc/security/advisories/GHSA-xr7r-f8xq-vfvv)
@@ -189,25 +189,19 @@ _No other Docker products are affected by these vulnerabilities._
 
 ## Text4Shell CVE-2022-42889
 
-_Last updated October 2022_
+_最近更新：2022 年 10 月_
 
 [CVE-2022-42889](https://nvd.nist.gov/vuln/detail/CVE-2022-42889) has been discovered in the popular Apache Commons Text library. Versions of this library up to but not including 1.10.0 are affected by this vulnerability.
 
-We strongly encourage you to update to the latest version of [Apache Commons Text](https://commons.apache.org/proper/commons-text/download_text.cgi).
+我们强烈建议你升级到最新版本的 [Apache Commons Text](https://commons.apache.org/proper/commons-text/download_text.cgi)。
 
-### Scan images on Docker Hub
+### 在 Docker Hub 上扫描镜像
 
-Docker Hub security scans triggered after 1200 UTC 21 October 2021 are now
-correctly identifying the Text4Shell CVE. Scans before this date do not
-currently reflect the status of this vulnerability. Therefore, we recommend that
-you trigger scans by pushing new images to Docker Hub to view the status of
-the Text4Shell CVE in the vulnerability report. For detailed instructions, see [Scan images on Docker Hub](../docker-hub/repos/manage/vulnerability-scanning.md).
+在 2021 年 10 月 21 日 12:00（UTC）之后触发的 Docker Hub 安全扫描，已能正确识别 Text4Shell CVE。此日期之前的扫描暂不能准确反映该漏洞状态。因此，我们建议通过推送新镜像触发扫描，以在漏洞报告中查看 Text4Shell CVE 的状态。详见[在 Docker Hub 上扫描镜像](../docker-hub/repos/manage/vulnerability-scanning.md)。
 
-### Docker Official Images impacted by CVE-2022-42889
+### 受 CVE-2022-42889 影响的 Docker 官方镜像
 
-A number of [Docker Official Images](../docker-hub/image-library/trusted-content.md#docker-official-images) contain the vulnerable versions of
-Apache Commons Text. The following lists Docker Official Images that
-may contain the vulnerable versions of Apache Commons Text:
+部分 [Docker 官方镜像](../docker-hub/image-library/trusted-content.md#docker-official-images)包含受影响版本的 Apache Commons Text。以下是可能包含受影响版本 Apache Commons Text 的 Docker 官方镜像：
 
 - [bonita](https://hub.docker.com/_/bonita)
 - [Couchbase](https://hub.docker.com/_/couchbase)
@@ -223,44 +217,27 @@ vulnerable for other reasons. We recommend that you also review the guidelines p
 
 ## Log4j 2 CVE-2021-44228
 
-_Last updated December 2021_
+_最近更新：2021 年 12 月_
 
-The [Log4j 2 CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228) vulnerability in Log4j 2, a very common Java logging library, allows remote code execution, often from a context that is easily available to an attacker. For example, it was found in Minecraft servers which allowed the commands to be typed into chat logs as these were then sent to the logger. This makes it a very serious vulnerability, as the logging library is used so widely and it may be simple to exploit. Many open source maintainers are working hard with fixes and updates to the software ecosystem.
+[Log4j 2 CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228) 是存在于常见 Java 日志库 Log4j 2 中的漏洞，可被远程执行代码，且往往发生在攻击者易于触达的上下文中。例如，它曾在 Minecraft 服务器中被发现：攻击者可在聊天内容中输入命令，被记录到日志后触发执行。由于该日志库的广泛使用与利用门槛低，此漏洞影响极其严重。许多开源维护者正努力为软件生态提供修复与更新。
 
-The vulnerable versions of Log4j 2 are versions 2.0 to version 2.14.1 inclusive. The first fixed version is 2.15.0. We strongly encourage you to update to the [latest version](https://logging.apache.org/log4j/2.x/download.html) if you can. If you are using a version before 2.0, you are also not vulnerable.
+受影响的 Log4j 2 版本为 2.0 至 2.14.1（含）。首个修复版本为 2.15.0。我们强烈建议你升级到[最新版本](https://logging.apache.org/log4j/2.x/download.html)。如果你使用的是 2.0 之前的版本，则不受影响。
 
-You may not be vulnerable if you are using these versions, as your configuration
-may already mitigate this, or the things you
-log may not include any user input. This may be difficult to validate however
-without understanding all the code paths that may log in detail, and where they
-may get input from. So you probably will want to upgrade all code using
-vulnerable versions.
+即便使用受影响范围内的版本，你也可能因配置已做缓解或记录内容不包含用户输入而不受影响。但若不全面理解所有日志路径及其输入来源，很难进行准确验证。因此，我们仍建议升级所有使用受影响版本的代码。
 
 > CVE-2021-45046
 >
-> As an update to
-> [CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228), the fix made in version 2.15.0 was
-> incomplete. Additional issues have been identified and are tracked with
-> [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/CVE-2021-45046) and
-> [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/CVE-2021-45105).
-> For a more complete fix to this vulnerability, we recommended that you update to 2.17.0 where possible.
+> 作为对 [CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228) 的补充说明，2.15.0 的修复并不完整。又发现了其他问题，分别记录为 [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/CVE-2021-45046) 与 [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/CVE-2021-45105)。若想更全面地修复该漏洞，建议尽可能升级至 2.17.0。
 
-### Scan images on Docker Hub
+### 在 Docker Hub 上扫描镜像
 
-Docker Hub security scans triggered after 1700 UTC 13 December 2021 are now
-correctly identifying the Log4j 2 CVEs. Scans before this date do not
-currently reflect the status of this vulnerability. Therefore, we recommend that
-you trigger scans by pushing new images to Docker Hub to view the status of
-Log4j 2 CVE in the vulnerability report. For detailed instructions, see [Scan images on Docker Hub](../docker-hub/repos/manage/vulnerability-scanning.md).
+在 2021 年 12 月 13 日 17:00（UTC）之后触发的 Docker Hub 安全扫描，已能正确识别 Log4j 2 的相关 CVE。此日期之前的扫描暂不能准确反映该漏洞状态。因此，我们建议通过推送新镜像触发扫描，以在漏洞报告中查看 Log4j 2 CVE 的状态。详见[在 Docker Hub 上扫描镜像](../docker-hub/repos/manage/vulnerability-scanning.md)。
 
-## Docker Official Images impacted by Log4j 2 CVE
+## 受 Log4j 2 CVE 影响的 Docker 官方镜像
 
 _Last updated December 2021_
 
-A number of [Docker Official Images](../docker-hub/image-library/trusted-content.md#docker-official-images) contain the vulnerable versions of
-Log4j 2 CVE-2021-44228. The following table lists Docker Official Images that
-may contained the vulnerable versions of Log4j 2. We updated Log4j 2 in these images to the latest version. Some of these images may not be
-vulnerable for other reasons. We recommend that you also review the guidelines published on the upstream websites.
+部分 [Docker 官方镜像](../docker-hub/image-library/trusted-content.md#docker-official-images)包含受影响版本的 Log4j 2（CVE-2021-44228）。下表列出了可能包含受影响版本的 Docker 官方镜像。我们已将这些镜像中的 Log4j 2 升级至最新版本。部分镜像可能因为其他原因并不受影响。建议同时参阅上游网站发布的指引。
 
 | Repository                | Patched version         | Additional documentation       |
 |:------------------------|:-----------------------|:-----------------------|
@@ -277,8 +254,5 @@ vulnerable for other reasons. We recommend that you also review the guidelines p
 
 > [!NOTE]
 >
-> Although [xwiki](https://hub.docker.com/_/xwiki) images may be detected as vulnerable
-by some scanners, the authors believe the images are not vulnerable by Log4j 2
-CVE as the API jars do not contain the vulnerability.
-> The [Nuxeo](https://hub.docker.com/_/nuxeo)
-> image is deprecated and will not be updated.
+> 尽管某些扫描器可能会将 [xwiki](https://hub.docker.com/_/xwiki) 镜像识别为受影响，但镜像作者认为其并不受 Log4j 2 CVE 影响，因为 API JAR 并不包含漏洞。
+> [Nuxeo](https://hub.docker.com/_/nuxeo) 镜像已弃用且不再更新。

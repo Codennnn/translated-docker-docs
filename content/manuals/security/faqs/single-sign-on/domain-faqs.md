@@ -1,22 +1,22 @@
 ---
-title: SSO domain FAQs
-linkTitle: Domains
-description: Frequently asked questions about domain verification and management for Docker single sign-on
-keywords: SSO domains, domain verification, DNS, TXT records, single sign-on
+title: SSO 域名常见问题
+linkTitle: 域名
+description: 关于 Docker 单点登录（SSO）的域名验证与管理常见问题
+keywords: SSO 域名, 域名验证, DNS, TXT 记录, 单点登录
 tags: [FAQ]
 aliases:
 - /single-sign-on/domain-faqs/
 - /faq/security/single-sign-on/domain-faqs/
 ---
 
-## Can I add sub-domains?
+## 是否可以添加子域名？
 
-Yes, you can add sub-domains to your SSO connection. All email addresses must use domains you've added to the connection. Verify that your DNS provider supports multiple TXT records for the same domain.
+可以。你可以在 SSO 连接中添加子域名。所有邮箱地址必须使用你已添加到该连接中的域名。请确认 DNS 服务商支持为同一域名配置多个 TXT 记录。
 
-## Do I need to keep the DNS TXT record permanently?
+## DNS TXT 记录是否需要长期保留？
 
-You can remove the TXT record after one-time verification to add the domain. However, if your organization changes identity providers and needs to set up SSO again, you'll need to verify the domain again.
+在完成一次性验证并添加域名后，可以移除该 TXT 记录。但如果组织更换身份提供商并需要重新配置 SSO，则需要再次完成域名验证。
 
-## Can I verify the same domain for multiple organizations?
+## 同一个域名能否为多个组织完成验证？
 
-You can't verify the same domain for multiple organizations at the organization level. To verify one domain for multiple organizations, you must have a Docker Business subscription and create a company. Companies allow centralized management of organizations and domain verification at the company level.
+在“组织”层级，无法将同一域名验证给多个组织。若需对多个组织复用同一域名验证，你需要 Docker Business 订阅并创建“公司”。“公司”支持在公司层级集中管理组织与域名验证。

@@ -1,30 +1,30 @@
 ---
-title: Network and VM FAQs
-linkTitle: Network and VM
-description: Frequently asked questions about Docker Desktop networking and virtualization security
-keywords: docker desktop networking, virtualization, hyper-v, wsl2, network security, firewall
+title: 网络与虚拟机常见问题
+linkTitle: 网络与虚拟机
+description: 关于 Docker Desktop 网络与虚拟化安全的常见问题
+keywords: Docker Desktop 网络, 虚拟化, Hyper-V, WSL 2, 网络安全, 防火墙
 weight: 30
 tags: [FAQ]
 aliases:
 - /faq/security/networking-and-vms/
 ---
 
-## How can I limit container internet access?
+## 如何限制容器访问互联网？
 
-Docker Desktop doesn't have a built-in mechanism for this, but you can use process-level firewalls on the host. Apply rules to the `com.docker.vpnkit` user-space process to control where it can connect (DNS allowlists, packet filters) and which ports/protocols it can use.
+Docker Desktop 没有内置此功能，但你可以在宿主机使用进程级防火墙。针对用户态进程 `com.docker.vpnkit` 设置规则，以控制其可连接的目的地（例如 DNS 允许列表、包过滤）以及允许使用的端口和协议。
 
-For enterprise environments, consider [Air-gapped containers](/manuals/enterprise/security/hardened-desktop/air-gapped-containers.md) which provide network access controls for containers.
+在企业环境中，可考虑使用 [离线容器（Air-gapped containers）](/manuals/enterprise/security/hardened-desktop/air-gapped-containers.md)，它为容器提供网络访问控制能力。
 
-## Can I apply firewall rules to container network traffic?
+## 能否对容器网络流量应用防火墙规则？
 
-Yes. Docker Desktop uses a user-space process (`com.docker.vpnkit`) for network connectivity, which inherits constraints like firewall rules, VPN settings, and HTTP proxy properties from the user that launched it.
+可以。Docker Desktop 通过用户态进程（`com.docker.vpnkit`）提供网络连接，该进程会继承启动它的用户所配置的限制，例如防火墙规则、VPN 设置和 HTTP 代理属性。
 
-## Does Docker Desktop for Windows with Hyper-V allow users to create other VMs?
+## 启用 Hyper-V 的 Windows 版 Docker Desktop 是否允许创建其他虚拟机？
 
-No. The `DockerDesktopVM` name is hard-coded in the service, so you cannot use Docker Desktop to create or manipulate other virtual machines.
+不会。服务中将 `DockerDesktopVM` 名称进行了硬编码，无法使用 Docker Desktop 创建或操作其他虚拟机。
 
-## How does Docker Desktop achieve network isolation with Hyper-V and WSL 2?
+## Docker Desktop 如何在 Hyper-V 与 WSL 2 下实现网络隔离？
 
-Docker Desktop uses the same VM processes for both WSL 2 (in the `docker-desktop` distribution) and Hyper-V (in `DockerDesktopVM`). Host/VM communication uses `AF_VSOCK` hypervisor sockets (shared memory) rather than network switches or interfaces. All host networking is performed using standard TCP/IP sockets from the `com.docker.vpnkit.exe` and `com.docker.backend.exe` processes.
+Docker Desktop 在 WSL 2（发行版为 `docker-desktop`）与 Hyper-V（`DockerDesktopVM`）下使用相同的虚拟机进程。宿主机与虚拟机之间通过 `AF_VSOCK` 管理程序套接字（共享内存）通信，而不是通过网络交换机或网络接口。所有宿主机侧的网络操作均由 `com.docker.vpnkit.exe` 与 `com.docker.backend.exe` 进程使用标准 TCP/IP 套接字完成。
 
-For more information, see [How Docker Desktop networking works under the hood](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/).
+了解更多，请参阅 [Docker Desktop 网络在底层如何工作](https://www.docker.com/blog/how-docker-desktop-networking-works-under-the-hood/)。

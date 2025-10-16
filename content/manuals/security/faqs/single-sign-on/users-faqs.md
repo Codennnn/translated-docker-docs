@@ -1,61 +1,61 @@
 ---
-title: SSO user management FAQs
-linkTitle: User management
-description: Frequently asked questions about managing users with Docker single sign-ons
-keywords: SSO user management, user provisioning, SCIM, just-in-time provisioning, organization members
+title: SSO 用户管理常见问题
+linkTitle: 用户管理
+description: 使用 Docker 单点登录（SSO）进行用户管理的常见问题
+keywords: SSO 用户管理, 用户供应, SCIM, 即时供应, 组织成员
 tags: [FAQ]
 aliases:
 - /single-sign-on/users-faqs/
 - /faq/security/single-sign-on/users-faqs/
 ---
 
-## Do I need to manually add users to my organization?
+## 是否需要手动将用户添加到组织？
 
-No, you don't need to manually add users to your organization. Just ensure user accounts exist in your IdP. When users sign in to Docker with their domain email address, they're automatically added to the organization after successful authentication.
+不需要。只要用户在你的身份提供商（IdP）中已有账户，用户使用域邮箱登录 Docker 并完成认证后，会自动加入组织。
 
-## Can users use different email addresses to authenticate through SSO?
+## 用户能否使用不同邮箱通过 SSO 认证？
 
-All users must authenticate using the email domain specified during SSO setup. Users with email addresses that don't match the verified domain can sign in as guests with username and password if SSO isn't enforced, but only if they've been invited.
+所有用户必须使用 SSO 配置阶段指定的邮箱域进行认证。若未强制启用 SSO，邮箱不属于已验证域的受邀用户可作为来宾使用用户名与密码登录。
 
-## How will users know they're being added to a Docker organization?
+## 用户如何得知自己被加入某个 Docker 组织？
 
-When SSO is turned on, users are prompted to authenticate through SSO the next time they sign in to Docker Hub or Docker Desktop. The system detects their domain email and prompts them to sign in with SSO credentials instead.
+启用 SSO 后，用户下次登录 Docker Hub 或 Docker Desktop 时会被提示通过 SSO 进行认证。系统会识别其域邮箱，并引导其使用 SSO 凭据登录。
 
-For CLI access, users must authenticate using personal access tokens.
+对于 CLI 访问，用户必须使用个人访问令牌（PAT）进行认证。
 
-## Can I convert existing users from non-SSO to SSO accounts?
+## 能否将现有的非 SSO 用户转换为 SSO 账户？
 
-Yes, you can convert existing users to SSO accounts. Ensure users have:
+可以。请确保用户满足以下条件：
 
-- Company domain email addresses and accounts in your IdP
-- Docker Desktop version 4.4.2 or later
-- Personal access tokens created to replace passwords for CLI access
-- CI/CD pipelines updated to use PATs instead of passwords
+- 使用公司域邮箱，并在你的 IdP 中拥有账户
+- Docker Desktop 版本为 4.4.2 或更高
+- 已创建个人访问令牌（PAT），用于替换 CLI 密码
+- 已将 CI/CD 流水线更新为使用 PAT 而非密码
 
-For detailed instructions, see [Configure single sign-on](/manuals/enterprise/security/single-sign-on/configure.md).
+详细步骤参见[配置单点登录](/manuals/enterprise/security/single-sign-on/configure.md)。
 
-## Is Docker SSO fully synced with the IdP?
+## Docker 的 SSO 是否与 IdP 完全同步？
 
-Docker SSO provides Just-in-Time (JIT) provisioning by default. Users are provisioned when they authenticate with SSO. If users leave the organization, administrators must manually [remove the user](../../../admin/organization/members.md#remove-a-member-or-invitee) from the organization.
+Docker 的 SSO 默认提供即时（JIT）供应：用户在通过 SSO 认证时才会被开通账号。若用户离开组织，管理员需手动[移除用户](../../../admin/organization/members.md#remove-a-member-or-invitee)。
 
-[SCIM](/manuals/enterprise/security/provisioning/scim.md) provides full synchronization with users and groups. When using SCIM, the recommended configuration is to turn off JIT so all auto-provisioning is handled by SCIM.
+[SCIM](/manuals/enterprise/security/provisioning/scim.md) 可与用户和组进行完全同步。使用 SCIM 时，建议关闭 JIT，将所有自动开通交由 SCIM 处理。
 
-Additionally, you can use the [Docker Hub API](/reference/api/hub/latest/) to complete this process.
+你也可以使用 [Docker Hub API](/reference/api/hub/latest/) 完成相关流程。
 
-## How does turning off Just-in-Time provisioning affect user sign-in?
+## 关闭即时供应（JIT）会如何影响用户登录？
 
-When JIT is turned off (available with SCIM in the Admin Console), users must be organization members or have pending invitations to access Docker. Users who don't meet these criteria get an "Access denied" error and need administrator invitations.
+在管理控制台配合 SCIM 关闭 JIT 后，用户必须已是组织成员或拥有待接受的邀请才可访问 Docker。不满足条件的用户将收到“Access denied”错误，需要管理员邀请。
 
-See [SSO authentication with JIT provisioning disabled](/manuals/enterprise/security/provisioning/just-in-time.md#sso-authentication-with-jit-provisioning-disabled).
+详见[禁用 JIT 供应下的 SSO 认证](/manuals/enterprise/security/provisioning/just-in-time.md#sso-authentication-with-jit-provisioning-disabled)。
 
-## Can someone join an organization without an invitation?
+## 是否可以在没有邀请的情况下加入组织？
 
-Not without SSO. Joining requires an invite from an organization owner. When SSO is enforced, users with verified domain emails can automatically join the organization when they sign in.
+不可以（在未启用 SSO 的前提下）。加入组织需要组织所有者的邀请。启用并强制 SSO 后，使用已验证域邮箱的用户在登录时可自动加入组织。
 
-## What happens to existing licensed users when SCIM is turned on?
+## 启用 SCIM 后，现有的持证用户会有什么变化？
 
-Turning on SCIM doesn't immediately remove or modify existing licensed users. They retain current access and roles, but you'll manage them through your IdP after SCIM is active. If SCIM is later turned off, previously SCIM-managed users remain in Docker but are no longer automatically updated based on your IdP.
+启用 SCIM 并不会立即移除或修改现有的持证用户。他们会保留当前的访问与角色，但从启用起将由你的 IdP 管理。若随后关闭 SCIM，此前由 SCIM 管理的用户仍保留在 Docker 中，但不再依据 IdP 自动更新。
 
-## Is user information visible in Docker Hub?
+## 用户信息是否会在 Docker Hub 上公开可见？
 
-All Docker accounts have public profiles associated with their namespace. If you don't want user information (like full names) to be visible, remove those attributes from your SSO and SCIM mappings, or use different identifiers to replace users' full names.
+所有 Docker 账户都与各自的命名空间关联公开资料页。若不希望显示用户信息（如姓名），可在 SSO 与 SCIM 的映射中移除相应属性，或使用其他标识替代用户姓名。

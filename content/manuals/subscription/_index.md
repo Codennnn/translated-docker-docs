@@ -1,38 +1,38 @@
 ---
-title: Subscription
-description: Learn about Docker subscription features and how to manage your subscription
-keywords: docker subscription, pricing, billing, pro, team, business, subscription management
+title: 订阅
+description: 了解 Docker 订阅的功能，并掌握如何管理你的订阅
+keywords: docker 订阅, 定价, 计费, Pro, Team, Business, 订阅管理
 weight: 50
 params:
   sidebar:
     group: Platform
 grid_subscriptions:
-- title: Docker subscriptions and features
-  description: Explore what you can do with your Docker subscription.
+- title: Docker 订阅与功能
+  description: 了解你的 Docker 订阅能做什么。
   link: /subscription/details/
   icon: feature_search
-- title: Set up your subscription
-  description: Get started setting up a personal or organization subscription.
+- title: 设置你的订阅
+  description: 从个人或组织订阅的设置开始。
   link: /subscription/setup/
   icon: shopping_cart
-- title: Scale your subscription
-  description: Scale your subscription to fit your needs.
+- title: 扩展你的订阅
+  description: 按需扩展你的订阅。
   link: /subscription/scale/
   icon: leaderboard
-- title: Change your subscription
-  description: Learn how to upgrade or downgrade your subscription.
+- title: 变更你的订阅
+  description: 了解如何升级或降级订阅。
   link: /subscription/change/
   icon: upgrade
-- title: Manage seats
-  description: Learn how to add or remove seats from your subscription.
+- title: 管理席位
+  description: 了解如何为订阅添加或移除席位。
   link: /subscription/manage-seats/
   icon: group_add
-- title: Docker Desktop license agreement
-  description: Review the terms of the Docker Subscription Service Agreement.
+- title: Docker Desktop 许可协议
+  description: 查看 Docker 订阅服务协议的条款。
   link: /subscription/desktop-license/
   icon: license
-- title: Subscription FAQs
-  description: Find the answers you need and explore common questions.
+- title: 订阅常见问题
+  description: 查找常见问题与解答。
   link: /subscription/faq/
   icon: help
 aliases:
@@ -40,8 +40,8 @@ aliases:
 - /docker-hub/billing/faq/
 ---
 
-Docker subscriptions provide licensing for commercial use of Docker products including Docker Desktop, Docker Hub, Docker Build Cloud, Docker Scout, and Testcontainers Cloud.
+Docker 订阅为 Docker Desktop、Docker Hub、Docker Build Cloud、Docker Scout 和 Testcontainers Cloud 等产品的商业使用提供授权。
 
-Use these resources to choose the right subscription for your needs or manage your existing subscription.
+使用以下资源，选择适合你需求的订阅，或管理你的现有订阅。
 
 {{< grid items="grid_subscriptions" >}}

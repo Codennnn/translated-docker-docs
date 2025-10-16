@@ -1,7 +1,7 @@
 ---
-title: Change your subscription
-description: Upgrade or downgrade your Docker subscription and understand billing changes
-keywords: upgrade subscription, downgrade subscription, docker pricing, subscription changes
+title: 变更你的订阅
+description: 升级或降级你的 Docker 订阅，并了解相关计费变更
+keywords: 订阅升级, 订阅降级, docker 定价, 订阅变更
 aliases:
 - /docker-hub/upgrade/
 - /docker-hub/billing/upgrade/
@@ -18,95 +18,92 @@ weight: 30
 
 {{% include "tax-compliance.md" %}}
 
-You can upgrade or downgrade your Docker subscription at any time to match your changing needs. This page explains how to make subscription changes and what to expect with billing and feature access.
+你可以在任何时间升级或降级 Docker 订阅，以适配不断变化的需求。本文介绍如何进行订阅变更，以及计费与功能访问将会如何变化。
 
 > [!NOTE]
 >
-> Legacy Docker subscribers have different interfaces for subscription changes. Legacy subscriptions apply to subscribers who last purchased or renewed before December 10, 2024. For details, see [Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/).
+> 旧版 Docker 订阅用户在进行订阅变更时，界面可能与当前不同。旧版订阅适用于最后一次购买或续订发生在 2024 年 12 月 10 日之前的用户。详情参见《[Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/)》。
 
-## Upgrade your subscription
+## 升级你的订阅
 
-When you upgrade your Docker subscription, you immediately get access to all features and entitlements in your new subscription tier. For detailed feature information, see [Docker Pricing](https://www.docker.com/pricing).
+当你升级 Docker 订阅后，将立即获得新订阅层级的全部功能与权益。功能详情参见 [Docker 定价](https://www.docker.com/pricing)。
 
 {{< tabs >}}
-{{< tab name="Docker subscription" >}}
+{{< tab name="Docker 订阅" >}}
 
-To upgrade your subscription:
+升级订阅：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select the organization
-you want to upgrade.
-1. Select **Billing**.
-1. Optional. If you're upgrading from a free Personal subscription to a Team subscription and want to keep your username, [convert your user account into an organization](../admin/organization/convert-account.md).
-1. Select **Upgrade**.
-1. Follow the on-screen instructions to complete your upgrade.
+1. 登录 [Docker Home](https://app.docker.com/)，选择需要升级的组织。
+1. 进入 **Billing**。
+1. 可选：如果你从免费 Personal 升级至 Team 且希望保留当前用户名，请先[将用户账号转换为组织](../admin/organization/convert-account.md)。
+1. 选择 **Upgrade**。
+1. 按照页面指引完成升级。
 
 > [!NOTE]
 >
-> If you choose to pay using a US bank account, you must verify the account. For
-> more information, see [Verify a bank account](manuals/billing/payment-method.md#verify-a-bank-account).
+> 如果选择使用美国银行账户付款，你必须先完成账户验证。更多信息参见《[Verify a bank account](manuals/billing/payment-method.md#verify-a-bank-account)》。
 
 {{< /tab >}}
-{{< tab name="Legacy Docker subscription" >}}
+{{< tab name="旧版 Docker 订阅" >}}
 
-To upgrade your legacy Docker subscription to a new Docker subscription that includes access to all tools, contact [Docker sales](https://www.docker.com/pricing/contact-sales/).
+如需将旧版 Docker 订阅升级为可访问全部工具的新 Docker 订阅，请联系 [Docker 销售](https://www.docker.com/pricing/contact-sales/)。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Downgrade your subscription
+## 降级你的订阅
 
-You can downgrade your Docker subscription at any time before the renewal date. The unused portion isn't refundable, but you retain access to paid features until the next billing cycle.
+你可以在续费日期之前的任何时间降级 Docker 订阅。已支付但未使用的部分不予退款，但你可在当前计费周期结束前继续使用付费功能。
 
-### Downgrade considerations
+### 降级注意事项
 
-Consider the following before downgrading:
+降级前请注意：
 
-- Team size and repositories: You may need to reduce team members and convert private repositories to public or delete them based on your new subscription limits.
-- SSO and SCIM: If downgrading from Docker Business and your organization uses single sign-on, remove your SSO connection and verified domains first. Organization members who were auto-provisioned through SCIM need to reset their passwords to sign in without SSO.
-- Private repository collaborators: Personal subscriptions don't include collaborators for private repositories. When downgrading from Pro to Personal, all collaborators are removed and additional private repositories are locked.
+- 团队规模与仓库：根据新订阅的限制，你可能需要减少团队成员数量，并将私有仓库转为公共或删除。
+- SSO 与 SCIM：如果从 Docker Business 降级，且组织使用单点登录（SSO），请先移除 SSO 连接与已验证域名。通过 SCIM 自动开通的成员需要重置密码，才能在无 SSO 的情况下登录。
+- 私有仓库协作者：Personal 订阅不包含私有仓库协作者。当从 Pro 降级至 Personal 时，所有协作者将被移除，额外的私有仓库将被锁定。
 
-For feature limits in each tier, see [Docker Pricing](https://www.docker.com/pricing).
+各层级功能限制，参见 [Docker 定价](https://www.docker.com/pricing)。
 
 {{< tabs >}}
-{{< tab name="Docker subscription" >}}
+{{< tab name="Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to downgrade your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理办理降级。
 
-To downgrade your subscription:
+降级订阅：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select
-the organization you want to downgrade.
-1. Select **Billing**.
-1. Select the action icon and then **Cancel subscription**.
-1. Fill out the feedback survey to continue with cancellation.
+1. 登录 [Docker Home](https://app.docker.com/)，选择需要降级的组织。
+1. 进入 **Billing**。
+1. 点击操作图标，选择 **Cancel subscription**。
+1. 填写反馈问卷以继续完成取消。
 
 {{< /tab >}}
-{{< tab name="Legacy Docker subscription" >}}
+{{< tab name="旧版 Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to downgrade your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理办理降级。
 
-To downgrade your legacy Docker subscription:
+降级旧版 Docker 订阅：
 
-1. Sign in to [Docker Hub](https://hub.docker.com/billing).
-1. Select the organization you want to downgrade, then select **Billing**.
-1. To downgrade, you must navigate to the upgrade plan page. Select **Upgrade**.
-1. On the upgrade page, select **Downgrade** in the **Free Team** plan card.
-1. Follow the on-screen instructions to complete your downgrade.
+1. 登录 [Docker Hub](https://hub.docker.com/billing)。
+1. 选择需要降级的组织，然后进入 **Billing**。
+1. 要执行降级，你需要先进入升级计划页面，点击 **Upgrade**。
+1. 在升级页面的 **Free Team** 计划卡片中选择 **Downgrade**。
+1. 按照页面指引完成降级。
 
-To downgrade your Docker Build Cloud subscription:
+降级 Docker Build Cloud 订阅：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select **Build Cloud**.
-1. Select **Account settings**, then **Downgrade**.
-1. To confirm your downgrade, type **DOWNGRADE** in the text field and select **Yes, continue**.
-1. The account settings page will update with a notification bar notifying you of your downgrade date (start of next billing cycle).
+1. 登录 [Docker Home](https://app.docker.com)，选择 **Build Cloud**。
+1. 进入 **Account settings**，然后选择 **Downgrade**。
+1. 为确认降级，在文本框中输入 **DOWNGRADE**，并选择 **Yes, continue**。
+1. 账户设置页面将显示通知条，提示你的降级生效日期（下一个计费周期开始时）。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Subscription pause policy
+## 订阅暂停策略
 
-You can't pause or delay a subscription. If a subscription invoice isn't paid by the due date, there's a 15-day grace period starting from the due date.
+订阅无法暂停或延迟。如果订阅发票未在到期日支付，自到期日起将开始 15 天的宽限期。

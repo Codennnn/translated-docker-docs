@@ -8,41 +8,41 @@ params:
   sidebar:
     group: Platform
 grid_developers:
-- title: Set up two-factor authentication
-  description: Add an extra layer of authentication to your Docker account.
+- title: 启用双重验证
+  description: 为你的 Docker 账户增加一层身份验证。
   link: /security/2fa/
   icon: phonelink_lock
-- title: Manage access tokens
-  description: Create personal access tokens as an alternative to your password.
+- title: 管理访问令牌
+  description: 创建个人访问令牌，作为密码的替代方案。
   icon: password
   link: /security/access-tokens/
-- title: Static vulnerability scanning
-  description: Automatically run a point-in-time scan on your Docker images for vulnerabilities.
+- title: 静态漏洞扫描
+  description: 对你的 Docker 镜像执行一次性自动漏洞扫描。
   icon: image_search
   link: /docker-hub/repos/manage/vulnerability-scanning/
-- title: Docker Engine security
-  description: Understand how to keep Docker Engine secure.
+- title: Docker Engine 安全
+  description: 了解如何保障 Docker Engine 的安全。
   icon: security
   link: /engine/security/
-- title: Secrets in Docker Compose
-  description: Learn how to use secrets in Docker Compose.
+- title: 在 Docker Compose 中使用机密
+  description: 了解如何在 Docker Compose 中使用机密（secrets）。
   icon: privacy_tip
   link: /compose/how-tos/use-secrets/
 grid_resources:
-- title: Security FAQs
-  description: Explore common security FAQs.
+- title: 安全常见问题
+  description: 浏览常见的安全相关问题。
   icon: help
   link: /faq/security/general/
-- title: Security best practices
-  description: Understand the steps you can take to improve the security of your container.
+- title: 安全最佳实践
+  description: 了解提升容器安全性的措施。
   icon: category
   link: /develop/security-best-practices/
-- title: Suppress CVEs with VEX
-  description: Learn how to suppress non-applicable or fixed vulnerabilities found in your images.
+- title: 使用 VEX 抑制 CVE
+  description: 了解如何抑制镜像中不适用或已修复的漏洞。
   icon: query_stats
   link: /scout/guides/vex/
-- title: Docker Hardened Images
-  description: Learn how to use Docker Hardened Images to enhance your software supply security.
+- title: Docker 加固镜像
+  description: 了解如何使用 Docker Hardened Images 增强软件供应链安全。
   icon: encrypted_add_circle
   link: /dhi/
 ---

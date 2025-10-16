@@ -15,7 +15,7 @@ Docker Hub 提供庞大的预构建镜像与资源库，能加速开发流程并
 - [下载并安装 Docker](../../get-started/get-docker.md)
 - [创建 Docker 账号](https://app.docker.com/signup)
 
-## Step 1: Find an image in Docker Hub's library
+## 步骤 1：在 Docker Hub 库中查找镜像 {#step-1-find-an-image-in-docker-hubs-library}
 
 你可以直接在 Docker Hub、Docker Desktop 仪表板中搜索内容，或使用 CLI 进行搜索。
 
@@ -77,7 +77,7 @@ Docker Hub 提供庞大的预构建镜像与资源库，能加速开发流程并
 
 找到镜像后，就可以在本地拉取并运行它了。
 
-## Step 2: Pull and run an image from Docker Hub
+## 步骤 2：从 Docker Hub 拉取并运行镜像 {#step-2-pull-and-run-an-image-from-docker-hub}
 
 你可以使用 CLI 或 Docker Desktop 仪表板运行来自 Docker Hub 的镜像。
 
@@ -160,7 +160,7 @@ Docker Hub 提供庞大的预构建镜像与资源库，能加速开发流程并
 你也可以基于 Docker Hub 的镜像进行扩展，快速构建并定制满足特定需求的自定义镜像。
 
 
-## Step 3: Build and push an image to Docker Hub
+## 步骤 3：构建并推送镜像到 Docker Hub {#step-3-build-and-push-an-image-to-docker-hub}
 
 1. 创建一个用于描述应用的 [Dockerfile](/reference/dockerfile.md)：
 
@@ -234,7 +234,7 @@ Docker Hub 提供庞大的预构建镜像与资源库，能加速开发流程并
 
   完成创建仓库并推送镜像后，你可以查看仓库并探索更多可用选项。
 
-## Step 4: View your repository on Docker Hub and explore options
+## 步骤 4：在 Docker Hub 查看仓库并探索选项 {#step-4-view-your-repository-on-docker-hub-and-explore-options}
 
 你可以在 Docker Hub 或 Docker Desktop 界面查看你的 Docker Hub 仓库。
 

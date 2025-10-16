@@ -1,28 +1,28 @@
 ---
-description: Set up Docker subscriptions for personal accounts and organizations
+description: 为个人账户与组织设置 Docker 订阅
 keywords: subscription setup, docker pro, docker team, docker business, organization setup
-title: Set up your subscription
+title: 设置你的订阅
 weight: 15
 ---
 
-Docker subscriptions provide features and benefits for individual developers, teams, and enterprise businesses. This page explains how to set up subscriptions for personal accounts and organizations.
+Docker 订阅为个人开发者、团队与企业提供一系列功能与权益。本文介绍如何为个人账户与组织设置订阅。
 
-Before you begin, make sure you have a [Docker ID](../accounts/create-account.md). To learn more about what's included with each tier, see [Docker subscriptions and features](./details.md) and [Docker Pricing](https://www.docker.com/pricing/).
+开始之前，请确认你已拥有 [Docker ID](../accounts/create-account.md)。有关各订阅层级所含功能的详细说明，参见 [Docker 订阅与功能](./details.md) 与 [Docker 定价](https://www.docker.com/pricing/)。
 
 {{% include "tax-compliance.md" %}}
 
-## Set up a Docker subscription for a personal account
+## 为个人账户设置 Docker 订阅
 
-When you [create your Docker ID](../accounts/create-account.md), you automatically get a Docker Personal subscription. This subscription includes essential Docker tools at no cost. If you want to continue with Docker Personal, no further action is needed. You can start using Docker Desktop, Docker Hub, and other tools immediately.
+当你[创建 Docker ID](../accounts/create-account.md) 时，会自动获得 Docker Personal（个人版）订阅。该订阅免费，包含基础的 Docker 工具。如果你继续使用个人版，无需执行其他操作，可立即开始使用 Docker Desktop、Docker Hub 等工具。
 
-If you need additional features like Docker Build Cloud minutes and more Docker Scout repositories, see [Upgrade your subscription](./change.md#upgrade-your-subscription).
+若需要更多功能，例如 Docker Build Cloud 分钟数或更多 Docker Scout 仓库，请参见[升级你的订阅](./change.md#upgrade-your-subscription)。
 
-## Set up a Docker subscription for an organization
+## 为组织设置 Docker 订阅
 
-You can subscribe a new or existing organization to Docker Team or Business subscriptions. Only organization owners can manage billing for the organization.
+你可以为新建或现有组织订阅 Docker Team 或 Docker Business。仅组织所有者可以管理组织的计费。
 
-1. [Create your Docker ID](../accounts/create-account.md) if you don't already have one.
-1. [Create your organization](../admin/organization/orgs.md) or use an existing organization you own.
-1. Choose and purchase a Docker Team or Business subscription for the organization.
+1. 如果你还没有账号，请先[创建 Docker ID](../accounts/create-account.md)。
+1. [创建组织](../admin/organization/orgs.md)，或使用你已拥有的组织。
+1. 为该组织选择并购买 Docker Team 或 Docker Business 订阅。
 
-To upgrade an existing organization's subscription, see [Upgrade your subscription](./change.md#upgrade-your-subscription).
+如需升级现有组织的订阅，参见[升级你的订阅](./change.md#upgrade-your-subscription)。

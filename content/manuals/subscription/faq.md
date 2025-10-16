@@ -1,31 +1,31 @@
 ---
-title: Subscription FAQs
-linkTitle: FAQs
-description: Frequently asked questions about Docker subscriptions and billing
-keywords: subscription faqs, docker billing, subscription transfer, academic pricing, docker programs
+title: 订阅常见问题
+linkTitle: 常见问题
+description: 关于 Docker 订阅与计费的常见问题解答
+keywords: 订阅 常见问题, docker 计费, 订阅转移, 学术定价, docker 项目
 tags: [FAQ]
 weight: 50
 ---
 
-For more information on Docker subscriptions, see [Docker subscription overview](_index.md).
+如需了解更多订阅信息，参见《[Docker 订阅概览](_index.md)》。
 
-## Can I transfer my subscription from one user or organization account to another?
+## 我可以在用户或组织账户之间转移订阅吗？
 
-Subscriptions are non-transferable between accounts or organizations.
+订阅不可在不同的用户或组织账户之间转移。
 
-## Can I pause or delay my Docker subscription?
+## 我可以暂停或延迟 Docker 订阅吗？
 
-You can't pause or delay a subscription, but you can downgrade your subscription. If a subscription invoice isn't paid by the due date, there's a 15-day grace period starting from the due date.
+订阅无法暂停或延迟，但你可以选择降级订阅。如果订阅发票未在到期日支付，则从到期日起会有 15 天的宽限期。
 
-## Does Docker offer academic pricing?
+## Docker 是否提供学术定价？
 
-Contact the [Docker Sales Team](https://www.docker.com/company/contact) for information about academic pricing options.
+请联系 [Docker 销售团队](https://www.docker.com/company/contact) 了解学术定价选项。
 
-## How can I contribute to Docker content?
+## 我如何为 Docker 内容做出贡献？
 
-Docker offers two content contribution programs:
+Docker 提供两类内容贡献计划：
 
-- [Docker-Sponsored Open Source Program (DSOS)](../docker-hub/repos/manage/trusted-content/dsos-program.md) for open source projects
-- [Docker Verified Publisher (DVP)](../docker-hub/repos/manage/trusted-content/dvp-program.md) for commercial publishers
+- 面向开源项目的 [Docker-Sponsored Open Source Program（DSOS）](../docker-hub/repos/manage/trusted-content/dsos-program.md)
+- 面向商业发布者的 [Docker Verified Publisher（DVP）](../docker-hub/repos/manage/trusted-content/dvp-program.md)
 
-You can also join the [Developer Preview Program](https://www.docker.com/community/get-involved/developer-preview/) or sign up for early access programs to participate in research and try new features.
+你也可以加入 [Developer Preview Program](https://www.docker.com/community/get-involved/developer-preview/) 或报名早期体验计划，参与调研并试用新功能。

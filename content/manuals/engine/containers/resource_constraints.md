@@ -58,7 +58,7 @@ Docker 支持设置硬限制与软限制：
 
 关于 cgroups 与内存的更多信息，参见 [Memory Resource Controller](https://www.kernel.org/doc/Documentation/cgroup-v1/memory.txt)。
 
-### `--memory-swap` details
+### `--memory-swap` 详解 {#--memory-swap-details}
 
 `--memory-swap` 是一个修饰标志，仅在同时设置了 `--memory` 时才有意义。启用 swap 允许容器在用尽可用内存后，将超额内存需求写入磁盘。频繁发生内存换出会带来性能损失。
 
@@ -76,17 +76,17 @@ Docker 支持设置硬限制与软限制：
 
 - 在容器内，`free` 等工具显示的是宿主机可用的 swap，而非容器内可用的 swap。不要依赖 `free` 这类工具的输出判断是否存在 swap。
 
-#### Prevent a container from using swap
+#### 禁止容器使用 swap {#prevent-a-container-from-using-swap}
 
 当 `--memory` 与 `--memory-swap` 设置为相同的值时，容器将无法使用任何 swap。原因在于 `--memory-swap` 指定的是内存与 swap 的合计上限，而 `--memory` 指定的是仅物理内存的上限。
 
-### `--memory-swappiness` details
+### `--memory-swappiness` 详解 {#--memory-swappiness-details}
 
 - 值为 0：关闭匿名页换出。
 - 值为 100：将所有匿名页标记为可换出。
 - 默认不设置时，继承宿主机的配置。
 
-### `--kernel-memory` details
+### `--kernel-memory` 详解 {#--kernel-memory-details}
 
 内核内存限制是相对于容器整体内存配额来表达的。考虑以下场景：
 
@@ -101,7 +101,7 @@ Docker 支持设置硬限制与软限制：
 
 默认情况下，每个容器对宿主机 CPU 周期的使用不受限。你可以通过多种约束限制某个容器对 CPU 周期的使用。多数用户会使用并配置[默认 CFS 调度器](#configure-the-default-cfs-scheduler)，也可以配置[实时调度器](#configure-the-real-time-scheduler)。
 
-### Configure the default CFS scheduler
+### 配置默认 CFS 调度器 {#configure-the-default-cfs-scheduler}
 
 Linux 的 CFS（Completely Fair Scheduler）是常规进程的 CPU 调度器。可以通过若干运行时标志配置容器可用的 CPU 资源额度。设置后，Docker 会相应调整宿主机上该容器 cgroup 的配置。
 
@@ -125,7 +125,7 @@ $ docker run -it --cpus=".5" ubuntu /bin/bash
 $ docker run -it --cpu-period=100000 --cpu-quota=50000 ubuntu /bin/bash
 ```
 
-### Configure the real-time scheduler
+### 配置实时调度器 {#configure-the-real-time-scheduler}
 
 对于无法使用 CFS 的任务，可以将容器配置为使用实时调度器。在[配置 Docker 守护进程](#configure-the-docker-daemon)或[配置单个容器](#configure-individual-containers)之前，需要先[确保宿主机内核已正确配置](#configure-the-host-machines-kernel)。
 
@@ -133,15 +133,15 @@ $ docker run -it --cpu-period=100000 --cpu-quota=50000 ubuntu /bin/bash
 >
 > CPU 调度与优先级是高级的内核级特性。多数用户无需修改默认值。错误的配置可能导致宿主系统不稳定甚至不可用。
 
-#### Configure the host machine's kernel
+#### 配置宿主机内核 {#configure-the-host-machines-kernel}
 
 通过运行 `zcat /proc/config.gz | grep CONFIG_RT_GROUP_SCHED` 或检查 `/sys/fs/cgroup/cpu.rt_runtime_us` 是否存在，确认 Linux 内核启用了 `CONFIG_RT_GROUP_SCHED`。关于实时调度器的配置方法，请参考所用操作系统的文档。
 
-#### Configure the Docker daemon
+#### 配置 Docker 守护进程 {#configure-the-docker-daemon}
 
 若要让容器使用实时调度器，需以 `--cpu-rt-runtime` 参数启动 Docker 守护进程，用于指定每个调度周期为实时任务保留的微秒数。例如在默认 1,000,000 微秒（1 秒）周期下，设置 `--cpu-rt-runtime=950000` 表示实时任务每周期最多运行 950,000 微秒，至少保留 50,000 微秒给非实时任务。若系统使用 `systemd`，可通过创建 `docker` 服务的 unit 文件来持久化该配置。例如，参考如何通过 [systemd unit 文件](../daemon/proxy.md#systemd-unit-file) 为守护进程配置代理的说明。
 
-#### Configure individual containers
+#### 配置单个容器 {#configure-individual-containers}
 
 在使用 `docker run` 启动容器时，可以通过多个标志控制容器的 CPU 优先级。具体取值请参考操作系统文档或 `ulimit` 命令。
 

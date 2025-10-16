@@ -1,47 +1,47 @@
 ---
-title: Scale your subscription
-description: Scale Docker Build Cloud and Testcontainers Cloud consumption for your subscription
+title: 扩展订阅用量
+description: 为你的订阅扩展 Docker Build Cloud 与 Testcontainers Cloud 的用量
 keywords: scale subscription, docker build cloud minutes, testcontainers cloud minutes, usage scaling
 weight: 17
 ---
 
-Docker subscriptions let you scale consumption as your needs grow. All paid Docker subscriptions include base amounts of Docker Build Cloud build minutes and Testcontainers Cloud runtime minutes that you can supplement with additional capacity.
-You can scale consumption for:
+Docker 订阅支持按需扩展用量。所有付费 Docker 订阅均包含一定数量的 Docker Build Cloud 构建分钟数与 Testcontainers Cloud 运行分钟数；你可以根据需要购买额外容量进行补充。
+你可以扩展以下用量：
 
 - Docker Build Cloud build minutes
 - Testcontainers Cloud runtime minutes
 
-To understand your usage patterns, [view your consumption](../admin/organization/manage-products.md#view-docker-product-usage) at any time.
+若要了解你的使用模式，可随时[查看产品用量](../admin/organization/manage-products.md#view-docker-product-usage)。
 
 > [!NOTE]
 >
-> Legacy Docker subscribers must upgrade to new Docker subscriptions to access scaling options. Legacy subscriptions apply to subscribers who last purchased or renewed before December 10, 2024. For details, see [Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/).
+> 使用旧版 Docker 订阅的用户需升级至新版订阅才能使用扩容选项。旧版订阅指最后一次购买或续订发生在 2024 年 12 月 10 日之前的订阅。详情参见 [Announcing Upgraded Docker Plans](https://www.docker.com/blog/november-2024-updated-plans-announcement/)。
 
-## Usage considerations
+## 使用注意事项
 
-Minutes don't roll over. Base subscription minutes reset each billing period and don't accumulate. Additional purchased minutes expire at the end of your subscription period.
+分钟数不结转。订阅包含的基础分钟数在每个计费周期开始时重置，不会累积。另行购买的额外分钟数会在你的订阅周期结束时到期。
 
-For example, with an annual Docker Team subscription (500 included minutes), if you purchase 500 additional minutes, only the additional 500 minutes roll over until your annual renewal.
+例如，若你拥有年度 Docker Team 订阅（含 500 分钟），当你额外购买 500 分钟时，只有这 500 分钟会结转，直至你的年度续订。
 
-## Add Docker Build Cloud build minutes
+## 添加 Docker Build Cloud 构建分钟数
 
-Purchase additional build minutes through the Docker Build Cloud Dashboard:
+通过 Docker Build Cloud 控制台购买额外构建分钟数：
 
 1. Sign in to [Docker Home](https://app.docker.com/) and choose
 your organization.
-1. Select **Build Cloud**, then **Build minutes**.
-1. Select **Add prepaid minutes**.
-1. Select your additional minute amount, then **Continue to payment**.
-1. Enter your payment details and billing address.
-1. Review your order and select **Pay**.
+1. 选择 **Build Cloud**，然后选择 **Build minutes**。
+1. 选择 **Add prepaid minutes**。
+1. 选择要增加的分钟数，然后点击 **Continue to payment**。
+1. 输入支付信息与账单地址。
+1. 核对订单并点击 **Pay**。
 
-Your additional minutes appear on the Build minutes page immediately.
+你购买的额外分钟会立即显示在 Build minutes 页面中。
 
-## Add Docker Testcontainers Cloud runtime minutes
+## 添加 Docker Testcontainers Cloud 运行分钟数
 
-You can add Testcontainers Cloud runtime minutes in two ways:
+你可以通过两种方式增加 Testcontainers Cloud 运行分钟数：
 
 - [Contact sales](https://www.docker.com/pricing/contact-sales/) to pre-purchase runtime minutes at discounted rates
 - Use unlimited runtime minutes on-demand with billing at the end of each monthly cycle
 
-On-demand usage is billed at higher rates than pre-purchased capacity. To avoid higher on-demand charges, pre-purchase additional minutes if you expect consistent usage over your subscription's included minutes.
+按需用量的费率高于预购容量。若你预计用量持续超过订阅自带分钟，建议预先购买额外分钟以避免更高的按需费用。

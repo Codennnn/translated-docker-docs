@@ -1,7 +1,7 @@
 ---
-title: Manage subscription seats
-linkTitle: Manage seats
-description: Add or remove seats for Docker Team and Business subscriptions
+title: 管理订阅席位
+linkTitle: 管理席位
+description: 为 Docker Team 与 Business 订阅添加或移除席位
 keywords: manage seats, add seats, remove seats, subscription billing, team members
 aliases:
 - /docker-hub/billing/add-seats/
@@ -13,103 +13,99 @@ aliases:
 weight: 20
 ---
 
-You can add or remove seats from your Docker Team or Business subscription at any time to accommodate team changes. When you add seats mid-billing cycle, you're charged a prorated amount for the additional seats.
+你可以随时为 Docker Team 或 Docker Business 订阅添加或移除席位，以适配团队规模变化。若在计费周期中途添加席位，将按比例收取新增席位的费用。
 
 {{% include "tax-compliance.md" %}}
 
-## Add seats to your subscription
+## 为订阅添加席位
 
 {{< tabs >}}
-{{< tab name="Docker subscription" >}}
+{{< tab name="Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to add seats to your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理以添加席位。
 
-To add seats:
+添加席位：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. Select **Add seats** and follow the on-screen instructions to complete
-adding seats.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 进入 **Billing**。
+1. 选择 **Add seats**，并根据页面提示完成添加。
 
 > [!NOTE]
 >
-> If you choose to pay using a US bank account, you must verify the account. For
-> more information, see [Verify a bank account](manuals/billing/payment-method.md#verify-a-bank-account).
+> 如果你选择使用美国银行卡账户支付，需要先完成账户验证。参见[验证银行账户](manuals/billing/payment-method.md#verify-a-bank-account)。
 
-You can now add more members to your organization. For more information, see [Manage organization members](../admin/organization/members.md).
+此后你即可为组织添加更多成员。参见[管理组织成员](../admin/organization/members.md)。
 
 {{< /tab >}}
-{{< tab name="Legacy Docker subscription" >}}
+{{< tab name="旧版 Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to add seats to your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理以添加席位。
 
-To add seats to your Legacy Docker subscription:
+在旧版 Docker 订阅中添加席位：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. On the Billing page, select **Add seats**.
-1. Select the number of seats you want to add, then select **Purchase**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后进入 **Billing**。
+1. 在 Billing 页面选择 **Add seats**。
+1. 选择要添加的席位数量，随后点击 **Purchase**。
 
-To add seats to Docker Build Cloud:
+为 Docker Build Cloud 添加席位：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select **Build Cloud**.
-1. Select **Account settings**, then **Add seats**.
-1. Select the number of seats you want to add, then select **Add seats**.
+1. 登录 [Docker Home](https://app.docker.com) 并进入 **Build Cloud**。
+1. 选择 **Account settings**，然后点击 **Add seats**。
+1. 选择要添加的席位数量，并点击 **Add seats**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Volume pricing
+## 批量定价
 
-Docker offers volume pricing for Docker Business subscriptions starting at 25 seats. Contact the [Docker Sales Team](https://www.docker.com/pricing/contact-sales/) for more information.
+Docker 为 Docker Business 订阅提供 25 个席位起的批量定价。详情请联系 [Docker 销售团队](https://www.docker.com/pricing/contact-sales/)。
 
-## Remove seats from your subscription
+## 从订阅中移除席位
 
-You can remove seats from your Team or Business subscription at any time. Changes apply to your next billing cycle, and unused portions aren't refundable.
+你可以随时从 Team 或 Business 订阅中移除席位。变更将于下一个计费周期生效，未使用的部分不予退款。
 
-For example, if you're billed on the 8th of every month for 10 seats and remove 2 seats on the 15th, the 2 seats remain available until your next billing cycle. Your payment for 8 seats begins on the next billing cycle.
+例如，你每月 8 日为 10 个席位进行结算，若在 15 日移除 2 个席位，则这 2 个席位会保留至下一计费周期开始；从下一周期起你将按 8 个席位计费。
 
 {{< tabs >}}
-{{< tab name="Docker subscription" >}}
+{{< tab name="Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to remove seats from your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理以移除席位。
 
-To remove seats:
+移除席位：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. In the **Seats** row, select the action icon, then **Remove seats**.
-1. Follow the on-screen instructions to complete removing seats.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 进入 **Billing**。
+1. 在 **Seats** 行点击操作图标，选择 **Remove seats**。
+1. 根据页面提示完成移除。
 
-You can cancel the removal of seats before your next billing cycle. To do so, select **Cancel change**.
+在下一计费周期开始前，你可以撤销席位移除操作。点击 **Cancel change** 即可。
 
 {{< /tab >}}
-{{< tab name="Legacy Docker subscription" >}}
+{{< tab name="旧版 Docker 订阅" >}}
 
 > [!IMPORTANT]
 >
-> If you have a [sales-assisted Docker Business subscription](details.md#sales-assisted), contact your account manager to remove seats from your subscription.
+> 如果你使用的是[销售协助的 Docker Business 订阅](details.md#sales-assisted)，请联系你的客户经理以移除席位。
 
-To remove seats from your Legacy Docker subscription:
+在旧版 Docker 订阅中移除席位：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. On the Billing page, select **Remove seats**.
-1. Follow the on-screen instructions to complete removing seats.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后进入 **Billing**。
+1. 在 Billing 页面选择 **Remove seats**。
+1. 按页面提示完成移除。
 
-To remove seats from Docker Build Cloud:
+从 Docker Build Cloud 移除席位：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select **Build Cloud**.
-1. Select **Account settings**, then **Remove seats**.
-1. Follow the on-screen instructions to complete removing seats.
+1. 登录 [Docker Home](https://app.docker.com) 并进入 **Build Cloud**。
+1. 选择 **Account settings**，然后点击 **Remove seats**。
+1. 按页面提示完成移除。
 
 {{< /tab >}}
 {{< /tabs >}}

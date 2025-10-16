@@ -1,69 +1,69 @@
 ---
-description: Frequently asked questions about Docker security, authentication, and organization management
-keywords: Docker security, FAQs, authentication, SSO, vulnerability reporting, session management
-title: General security FAQs
-linkTitle: General
+description: 关于 Docker 安全、认证与组织管理的常见问题
+keywords: Docker 安全, 常见问题, 认证, SSO, 漏洞报告, 会话管理
+title: 通用安全常见问题
+linkTitle: 通用
 weight: 10
 tags: [FAQ]
 aliases:
 - /faq/security/general/
 ---
 
-## How do I report a vulnerability?
+## 我如何报告安全漏洞？
 
-If you've discovered a security vulnerability in Docker, report it responsibly to security@docker.com so Docker can quickly address it.
+如果你发现了 Docker 的安全漏洞，请负责任地发送至 security@docker.com，以便 Docker 能够尽快处理。
 
-## Does Docker lockout users after failed sign-ins?
+## 多次登录失败后 Docker 会锁定账户吗？
 
-Docker Hub locks out users after 10 failed sign-in attempts within 5 minutes. The lockout duration is 5 minutes. This policy applies to Docker Hub, Docker Desktop, and Docker Scout authentication.
+在 5 分钟内连续 10 次登录失败时，Docker Hub 会锁定用户账户，锁定时长为 5 分钟。该策略同样适用于 Docker Hub、Docker Desktop 与 Docker Scout 的认证流程。
 
-## Do you support physical multi-factor authentication (MFA) with YubiKeys?
+## 是否支持使用 YubiKey 等物理多因素认证（MFA）？
 
-You can configure physical multi-factor authentication (MFA) through SSO using your identity provider (IdP). Check with your IdP if they support physical MFA devices like YubiKeys.
+你可以通过 SSO 使用身份提供商（IdP）配置物理多因素认证（MFA）。请向你的 IdP 确认是否支持 YubiKey 等物理 MFA 设备。
 
-## How are sessions managed and do they expire?
+## 会话如何管理？是否会过期？
 
-Docker uses tokens to manage user sessions with different expiration periods:
+Docker 使用令牌来管理用户会话，并设置不同的过期时长：
 
-- Docker Desktop: Signs you out after 90 days, or 30 days of inactivity
-- Docker Hub and Docker Home: Sign you out after 24 hours
+- Docker Desktop：90 天后自动登出，或 30 天无活动则登出
+- Docker Hub 与 Docker Home：24 小时后自动登出
 
-Docker also supports your IdP's default session timeout through SAML attributes. For more information, see [SSO attributes](/manuals/enterprise/security/provisioning/_index.md#sso-attributes).
+Docker 也支持通过 SAML 属性采用你的 IdP 默认会话超时策略。详见 [SSO 属性](/manuals/enterprise/security/provisioning/_index.md#sso-attributes)。
 
-## How does Docker distinguish between employee users and contractor users?
+## Docker 如何区分员工与外包/承包商用户？
 
-Organizations use verified domains to distinguish user types. Team members with email domains other than verified domains appear as "Guest" users in the organization.
+组织可使用已验证域名来区分用户类型。邮箱域名不属于已验证域的团队成员，会在组织中显示为“Guest（访客）”。
 
-## How long are activity logs available?
+## 活动日志会保留多久？
 
-Docker activity logs are available for 90 days. You're responsible for exporting logs or setting up drivers to send logs to your internal systems for longer retention.
+Docker 活动日志保留 90 天。若需更长期的留存，请自行导出日志，或配置驱动将日志发送至你的内部门户/系统。
 
-## Can I export a list of users with their roles and privileges?
+## 能导出用户及其角色和权限的列表吗？
 
-Yes, use the [Export Members](../../admin/organization/members.md#export-members) feature to export a CSV file containing your organization's users with role and team information.
+可以。使用 [导出成员](../../admin/organization/members.md#export-members) 功能，可导出包含组织用户、角色与团队信息的 CSV 文件。
 
-## How does Docker Desktop handle authentication information?
+## Docker Desktop 如何存储认证信息？
 
-Docker Desktop uses the host operating system's secure key management to store authentication tokens:
+Docker Desktop 使用宿主操作系统的安全密钥管理来存储认证令牌：
 
-- macOS: [Keychain](https://support.apple.com/guide/security/keychain-data-protection-secb0694df1a/web)
-- Windows: [Security and Identity API via Wincred](https://learn.microsoft.com/en-us/windows/win32/api/wincred/)
-- Linux: [Pass](https://www.passwordstore.org/).
+- macOS：[钥匙串（Keychain）](https://support.apple.com/guide/security/keychain-data-protection-secb0694df1a/web)
+- Windows：[通过 Wincred 的安全与身份 API](https://learn.microsoft.com/en-us/windows/win32/api/wincred/)
+- Linux：[Pass](https://www.passwordstore.org/)
 
-## How do I remove users who aren't part of my IdP when using SSO without SCIM?
+## 在未启用 SCIM 的 SSO 场景下，如何移除不属于我 IdP 的用户？
 
-If SCIM isn't turned on, you must manually remove users from the organization. SCIM can automate user removal, but only for users added after SCIM is turned on. Users added before SCIM was turned on must be removed manually.
+若未启用 SCIM，则需要手动从组织中移除用户。SCIM 可以自动移除用户，但仅适用于启用 SCIM 之后新增的用户；启用前已添加的用户需要手动移除。
 
-For more information, see [Manage organization members](/manuals/admin/organization/members.md).
+详见[管理组织成员](/manuals/admin/organization/members.md)。
 
-## What metadata does Scout collect from container images?
+## Scout 会从容器镜像中收集哪些元数据？
 
-For information about metadata stored by Docker Scout, see [Data handling](/manuals/scout/deep-dive/data-handling.md).
+关于 Docker Scout 存储的元数据，参见[数据处理](/manuals/scout/deep-dive/data-handling.md)。
 
-## How are Marketplace extensions vetted for security?
+## 市场（Marketplace）扩展如何进行安全审查？
 
-Security vetting for extensions is on the roadmap but isn't currently implemented. Extensions aren't covered as part of Docker's Third-Party Risk Management Program.
+扩展的安全审查在规划中，目前尚未实施。扩展不属于 Docker 第三方风险管理计划的覆盖范围。
 
-## Can I prevent users from pushing images to Docker Hub private repositories?
+## 能否阻止用户向 Docker Hub 私有仓库推送镜像？
 
-No direct setting exists to disable private repositories. However, [Registry Access Management](/manuals/enterprise/security/hardened-desktop/registry-access-management.md) lets administrators control which registries developers can access through Docker Desktop via the Admin Console.
+目前没有直接禁用私有仓库的设置。不过，借助[仓库访问管理](/manuals/enterprise/security/hardened-desktop/registry-access-management.md)，管理员可以通过管理控制台，控制开发者在 Docker Desktop 中可访问的仓库。

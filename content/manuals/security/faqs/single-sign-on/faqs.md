@@ -1,8 +1,8 @@
 ---
-description: Frequently asked questions about Docker single sign-on
-keywords: Docker, Docker Hub, SSO FAQs, single sign-on, administration, security
-title: General SSO FAQs
-linkTitle: General
+description: 关于 Docker 单点登录（SSO）的常见问题
+keywords: Docker, Docker Hub, SSO 常见问题, 单点登录, 管理, 安全
+title: 通用 SSO 常见问题
+linkTitle: 通用
 weight: 10
 tags: [FAQ]
 aliases:
@@ -13,22 +13,22 @@ aliases:
 - /security/faqs/single-sign-on/saml-faqs/
 ---
 
-## What SSO flows does Docker support?
+## Docker 支持哪些 SSO 流程？
 
-Docker supports Service Provider Initiated (SP-initiated) SSO flow. Users must sign in to Docker Hub or Docker Desktop to initiate the SSO authentication process.
+Docker 支持由服务提供商发起（SP-initiated）的 SSO 流程。用户需先在 Docker Hub 或 Docker Desktop 发起登录以开始 SSO 认证。
 
-## Does Docker SSO support multi-factor authentication?
+## Docker 的 SSO 是否支持多因素认证？
 
-When an organization uses SSO, multi-factor authentication is controlled at the identity provider level, not on the Docker platform.
+组织启用 SSO 后，多因素认证由身份提供商（IdP）控制，而非 Docker 平台。
 
-## Can I retain my Docker ID when using SSO?
+## 使用 SSO 时，是否还能保留我的 Docker ID？
 
-Users with personal Docker IDs retain ownership of their repositories, images, and assets. When SSO is enforced, existing accounts with company domain emails are connected to the organization. Users signing in without existing accounts automatically have new accounts and Docker IDs created.
+拥有个人 Docker ID 的用户仍然保留其仓库、镜像与资产的所有权。启用 SSO 强制后，使用公司域邮箱的现有账户会与组织关联；首次登录且尚无账户的用户，会自动创建新账户与 Docker ID。
 
-## Are there any firewall rules required for SSO configuration?
+## 配置 SSO 是否需要特定的防火墙规则？
 
-No specific firewall rules are required as long as `login.docker.com` is accessible. This domain is commonly accessible by default, but some organizations may need to allow it in their firewall settings if SSO setup encounters issues.
+只要能够访问 `login.docker.com`，通常无需额外的防火墙规则。若在配置 SSO 时遇到访问问题，请在组织的防火墙策略中放行该域名。
 
-## Does Docker use my IdP's default session timeout?
+## Docker 是否采用 IdP 的默认会话超时？
 
-Yes, Docker supports your IdP's session timeout using a custom `dockerSessionMinutes` SAML attribute instead of the standard `SessionNotOnOrAfter` element. See [SSO attributes](/manuals/enterprise/security/provisioning/_index.md#sso-attributes) for more information.
+是的。Docker 通过自定义的 `dockerSessionMinutes` SAML 属性来支持 IdP 的会话超时，而不是使用标准的 `SessionNotOnOrAfter` 元素。详见 [SSO 属性](/manuals/enterprise/security/provisioning/_index.md#sso-attributes)。
