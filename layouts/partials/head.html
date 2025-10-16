@@ -117,9 +117,29 @@
       }
     });
   </script>
-{{/* preload Roboto Flex as it's a critical font: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload */}}
+{{/* 预加载关键字体以优化首屏渲染性能: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload */}}
+
+{{/* HarmonyOS Sans SC Regular - 主要正文字体 */}}
 <link
-  href="/assets/fonts/RobotoFlex.woff2"
+  href="/assets/fonts/HarmonyOS_Sans_SC_Regular.woff2"
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+{{/* HarmonyOS Sans SC Bold - 用于标题和强调文本 */}}
+<link
+  href="/assets/fonts/HarmonyOS_Sans_SC_Bold.woff2"
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+{{/* Maple Mono Regular - 代码块字体 */}}
+<link
+  href="/assets/fonts/MapleMonoNormalNL-Regular.woff2"
   rel="preload"
   as="font"
   type="font/woff2"

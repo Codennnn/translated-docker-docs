@@ -3,6 +3,84 @@
 @plugin "@tailwindcss/typography";
 @source "hugo_stats.json";
 
+/* ========================================
+   HarmonyOS Sans SC - 主要正文字体
+   用于中文和英文内容的显示
+   ======================================== */
+
+/* HarmonyOS Sans SC Regular - 常规字重 (400) */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* HarmonyOS Sans SC Medium - 中等字重 (500) */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* HarmonyOS Sans SC Bold - 粗体字重 (700) */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("/assets/fonts/HarmonyOS_Sans_SC_Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================
+   Maple Mono - 代码等宽字体
+   用于代码块和内联代码的显示
+   ======================================== */
+
+/* Maple Mono Regular - 常规字重 (400) */
+@font-face {
+  font-family: "Maple Mono";
+  src: url("/assets/fonts/MapleMonoNormalNL-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Maple Mono Medium - 中等字重 (500) */
+@font-face {
+  font-family: "Maple Mono";
+  src: url("/assets/fonts/MapleMonoNormalNL-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Maple Mono SemiBold - 半粗体字重 (600) */
+@font-face {
+  font-family: "Maple Mono";
+  src: url("/assets/fonts/MapleMonoNormalNL-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Maple Mono Bold - 粗体字重 (700) */
+@font-face {
+  font-family: "Maple Mono";
+  src: url("/assets/fonts/MapleMonoNormalNL-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ========================================
+   Roboto Flex - 备用正文字体
+   作为 HarmonyOS Sans SC 的备用字体
+   ======================================== */
+
 @font-face {
   font-family: "Roboto Flex";
   src: url("/assets/fonts/RobotoFlex.woff2") format("woff2");
@@ -12,7 +90,12 @@
   font-display: fallback;
 }
 
-/* Roboto Mono */
+/* ========================================
+   Roboto Mono - 备用等宽字体
+   作为 Maple Mono 的备用字体
+   ======================================== */
+
+/* Roboto Mono Regular */
 @font-face {
   font-family: "Roboto Mono";
   src: url("/assets/fonts/RobotoMono-Regular.woff2") format("woff2");

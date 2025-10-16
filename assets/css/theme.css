@@ -1,6 +1,10 @@
 @theme inline {
-  --font-sans: "roboto flex", sans-serif;
-  --font-mono: "roboto flex mono", ui-monospace, SFMono-Regular, monospace;
+  /* 正文字体: HarmonyOS Sans SC 优先,Roboto Flex 作为备用 */
+  --font-sans: "HarmonyOS Sans SC", "Roboto Flex", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* 等宽字体: Maple Mono 优先,Roboto Mono 作为备用 */
+  --font-mono: "Maple Mono", "Roboto Mono", ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
+
   --default-font-family: var(--font-sans);
 
   --text-xs: 0.7143rem;
