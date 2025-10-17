@@ -1,15 +1,13 @@
 command: docker buildx create
-short: Create a new builder instance
+short: 创建一个新的构建器实例
 long: |-
-    Create makes a new builder instance pointing to a Docker context or endpoint,
-    where context is the name of a context from `docker context ls` and endpoint is
-    the address for Docker socket (eg. `DOCKER_HOST` value).
+    使用 Create 可以新建一个构建器实例，并将其指向某个 Docker 上下文或终端点。
+    其中，上下文（context）指的是 `docker context ls` 中列出的上下文名称；终端点（endpoint）
+    指的是 Docker 套接字的地址（例如 `DOCKER_HOST` 的值）。
 
-    By default, the current Docker configuration is used for determining the
-    context/endpoint value.
+    默认情况下，会使用当前的 Docker 配置来确定上下文/终端点的取值。
 
-    Builder instances are isolated environments where builds can be invoked. All
-    Docker contexts also get the default builder instance.
+    构建器实例是可以发起构建的隔离环境。所有 Docker 上下文也都会获得一个默认的构建器实例。
 usage: docker buildx create [OPTIONS] [CONTEXT|ENDPOINT]
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -17,7 +15,7 @@ options:
     - option: append
       value_type: bool
       default_value: "false"
-      description: Append a node to builder instead of changing it
+      description: 在不更改构建器的情况下向其追加一个节点
       details_url: '#append'
       deprecated: false
       hidden: false
@@ -28,7 +26,7 @@ options:
     - option: bootstrap
       value_type: bool
       default_value: "false"
-      description: Boot builder after creation
+      description: 创建后启动构建器
       deprecated: false
       hidden: false
       experimental: false
@@ -45,7 +43,7 @@ options:
       swarm: false
     - option: buildkitd-config
       value_type: string
-      description: BuildKit daemon config file
+      description: BuildKit 守护进程配置文件
       details_url: '#buildkitd-config'
       deprecated: false
       hidden: false
@@ -55,7 +53,7 @@ options:
       swarm: false
     - option: buildkitd-flags
       value_type: string
-      description: BuildKit daemon flags
+      description: BuildKit 守护进程启动参数
       details_url: '#buildkitd-flags'
       deprecated: false
       hidden: false
@@ -65,7 +63,7 @@ options:
       swarm: false
     - option: config
       value_type: string
-      description: BuildKit daemon config file
+      description: BuildKit 守护进程配置文件
       deprecated: false
       hidden: true
       experimental: false
@@ -75,7 +73,7 @@ options:
     - option: driver
       value_type: string
       description: |
-        Driver to use (available: `docker-container`, `kubernetes`, `remote`)
+        要使用的驱动程序（可用值：`docker-container`、`kubernetes`、`remote`）
       details_url: '#driver'
       deprecated: false
       hidden: false
@@ -86,7 +84,7 @@ options:
     - option: driver-opt
       value_type: stringArray
       default_value: '[]'
-      description: Options for the driver
+      description: 驱动的附加选项
       details_url: '#driver-opt'
       deprecated: false
       hidden: false
@@ -97,7 +95,7 @@ options:
     - option: leave
       value_type: bool
       default_value: "false"
-      description: Remove a node from builder instead of changing it
+      description: 在不更改构建器的情况下从构建器移除一个节点
       details_url: '#leave'
       deprecated: false
       hidden: false
@@ -107,7 +105,7 @@ options:
       swarm: false
     - option: name
       value_type: string
-      description: Builder instance name
+      description: 构建器实例名称
       details_url: '#name'
       deprecated: false
       hidden: false
@@ -117,7 +115,7 @@ options:
       swarm: false
     - option: node
       value_type: string
-      description: Create/modify node with given name
+      description: 创建或修改指定名称的节点
       details_url: '#node'
       deprecated: false
       hidden: false
@@ -128,7 +126,7 @@ options:
     - option: platform
       value_type: stringArray
       default_value: '[]'
-      description: Fixed platforms for current node
+      description: 为当前节点固定支持的平台
       details_url: '#platform'
       deprecated: false
       hidden: false
@@ -139,7 +137,7 @@ options:
     - option: use
       value_type: bool
       default_value: "false"
-      description: Set the current builder instance
+      description: 将当前构建器实例设置为该实例
       details_url: '#use'
       deprecated: false
       hidden: false
@@ -152,7 +150,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -160,11 +158,10 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Append a new node to an existing builder (--append) {#append}
+    ### 向现有构建器追加一个新节点（--append） {#append}
 
-    The `--append` flag changes the action of the command to append a new node to an
-    existing builder specified by `--name`. Buildx will choose an appropriate node
-    for a build based on the platforms it supports.
+    `--append` 会将该命令的行为改为：向通过 `--name` 指定的现有构建器追加一个新节点。
+    Buildx 会根据节点所支持的平台，为构建自动选择合适的节点。
 
     ```console
     $ docker buildx create mycontext1
@@ -174,172 +171,159 @@ examples: |-
     eager_beaver
     ```
 
-    ### Specify a configuration file for the BuildKit daemon (--buildkitd-config) {#buildkitd-config}
+    ### 为 BuildKit 守护进程指定配置文件（--buildkitd-config） {#buildkitd-config}
 
     ```text
     --buildkitd-config FILE
     ```
 
-    Specifies the configuration file for the BuildKit daemon to use. The
-    configuration can be overridden by [`--buildkitd-flags`](#buildkitd-flags).
-    See an [example BuildKit daemon configuration file](https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md).
+    指定 BuildKit 守护进程要使用的配置文件。
+    该配置可被 [`--buildkitd-flags`](#buildkitd-flags) 覆盖。
+    参见[示例 BuildKit 守护进程配置文件](https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md)。
 
-    If you don't specify a configuration file, Buildx looks for one by default in:
+    如果未显式指定配置文件，Buildx 将按以下默认路径查找：
 
     * `$BUILDX_CONFIG/buildkitd.default.toml`
     * `$DOCKER_CONFIG/buildx/buildkitd.default.toml`
     * `~/.docker/buildx/buildkitd.default.toml`
 
-    Note that if you create a `docker-container` builder and have specified
-    certificates for registries in the `buildkitd.toml` configuration, the files
-    will be copied into the container under `/etc/buildkit/certs` and configuration
-    will be updated to reflect that.
+    注意：如果你创建的是 `docker-container` 驱动的构建器，并且在 `buildkitd.toml`
+    配置中为仓库（registries）指定了证书，这些文件将被复制到容器内的
+    `/etc/buildkit/certs`，并相应更新配置。
 
-    ### Specify options for the BuildKit daemon (--buildkitd-flags) {#buildkitd-flags}
+    ### 为 BuildKit 守护进程添加启动参数（--buildkitd-flags） {#buildkitd-flags}
 
     ```text
     --buildkitd-flags FLAGS
     ```
 
-    Adds flags when starting the BuildKit daemon. They take precedence over the
-    configuration file specified by [`--buildkitd-config`](#buildkitd-config). See
-    `buildkitd --help` for the available flags.
+    在启动 BuildKit 守护进程时附加参数。这些参数的优先级高于
+    [`--buildkitd-config`](#buildkitd-config) 指定的配置文件。可通过
+    `buildkitd --help` 查看可用参数。
 
     ```text
     --buildkitd-flags '--debug --debugaddr 0.0.0.0:6666'
     ```
 
-    #### BuildKit daemon network mode
+    #### BuildKit 守护进程的网络模式
 
-    You can specify the network mode for the BuildKit daemon with either the
-    configuration file specified by [`--buildkitd-config`](#buildkitd-config) using the
-    `worker.oci.networkMode` option or `--oci-worker-net` flag here. The default
-    value is `auto` and can be one of `bridge`, `cni`, `host`:
+    你可以通过 `buildkitd.toml` 中的 `worker.oci.networkMode`（即由
+    [`--buildkitd-config`](#buildkitd-config) 指定的配置文件）或这里的
+    `--oci-worker-net` 标志来设置 BuildKit 守护进程的网络模式。默认值为 `auto`，
+    可选值包括 `bridge`、`cni`、`host`：
 
     ```text
     --buildkitd-flags '--oci-worker-net bridge'
     ```
 
     > [!NOTE]
-    > Network mode "bridge" is supported since BuildKit v0.13 and will become the
-    > default in next v0.14.
+    > 网络模式 "bridge" 自 BuildKit v0.13 起受支持，并将在即将发布的 v0.14 中成为默认值。
 
-    ### Set the builder driver to use (--driver) {#driver}
+    ### 指定要使用的构建器驱动（--driver） {#driver}
 
     ```text
     --driver DRIVER
     ```
 
-    Sets the builder driver to be used. A driver is a configuration of a BuildKit
-    backend. Buildx supports the following drivers:
+    指定要使用的构建器驱动。驱动代表一种 BuildKit 后端的配置。
+    Buildx 支持以下驱动：
 
-    * `docker` (default)
+    * `docker`（默认）
     * `docker-container`
     * `kubernetes`
     * `remote`
 
-    For more information about build drivers, see [here](/build/builders/drivers/).
+    关于构建驱动的更多信息，见[此处](/build/builders/drivers/)。
 
-    #### `docker` driver
+    #### `docker` 驱动
 
-    Uses the builder that is built into the Docker daemon. With this driver,
-    the [`--load`](/reference/cli/docker/buildx/build/#load) flag is implied by default on
-    `buildx build`. However, building multi-platform images or exporting cache is
-    not currently supported.
+    使用集成在 Docker 守护进程中的构建器。在此驱动下，`buildx build` 默认隐含
+    启用 [`--load`](/reference/cli/docker/buildx/build/#load)。但当前不支持
+    构建多平台镜像或导出缓存。
 
-    #### `docker-container` driver
+    #### `docker-container` 驱动
 
-    Uses a BuildKit container that will be spawned via Docker. With this driver,
-    both building multi-platform images and exporting cache are supported.
+    通过 Docker 启动一个 BuildKit 容器。在此驱动下，既支持多平台镜像构建，
+    也支持导出缓存。
 
-    Unlike `docker` driver, built images will not automatically appear in
-    `docker images` and [`build --load`](/reference/cli/docker/buildx/build/#load) needs to be used
-    to achieve that.
+    与 `docker` 驱动不同，构建出的镜像不会自动出现在 `docker images` 中，
+    需要使用 [`build --load`](/reference/cli/docker/buildx/build/#load) 才能载入到本地镜像列表。
 
-    #### `kubernetes` driver
+    #### `kubernetes` 驱动
 
-    Uses Kubernetes pods. With this driver, you can spin up pods with defined
-    BuildKit container image to build your images.
+    使用 Kubernetes Pod。在此驱动下，你可以启动使用指定 BuildKit 镜像的 Pod 来执行构建。
 
-    Unlike `docker` driver, built images will not automatically appear in
-    `docker images` and [`build --load`](/reference/cli/docker/buildx/build/#load) needs to be used
-    to achieve that.
+    与 `docker` 驱动不同，构建出的镜像不会自动出现在 `docker images` 中，
+    需要使用 [`build --load`](/reference/cli/docker/buildx/build/#load) 才能载入到本地镜像列表。
 
-    #### `remote` driver
+    #### `remote` 驱动
 
-    Uses a remote instance of BuildKit daemon over an arbitrary connection. With
-    this driver, you manually create and manage instances of buildkit yourself, and
-    configure buildx to point at it.
+    通过任意连接使用远程的 BuildKit 守护进程实例。在此驱动下，
+    你需要自行创建并管理 buildkit 实例，并将 buildx 指向该实例。
 
-    Unlike `docker` driver, built images will not automatically appear in
-    `docker images` and [`build --load`](/reference/cli/docker/buildx/build/#load) needs to be used
-    to achieve that.
+    与 `docker` 驱动不同，构建出的镜像不会自动出现在 `docker images` 中，
+    需要使用 [`build --load`](/reference/cli/docker/buildx/build/#load) 才能载入到本地镜像列表。
 
-    ### Set additional driver-specific options (--driver-opt) {#driver-opt}
+    ### 设置驱动的额外选项（--driver-opt） {#driver-opt}
 
     ```text
     --driver-opt OPTIONS
     ```
 
-    Passes additional driver-specific options.
-    For information about available driver options, refer to the detailed
-    documentation for the specific driver:
+    传递驱动特定的附加选项。
+    可用选项请参考对应驱动的详细文档：
 
     * [`docker` driver](/build/builders/drivers/docker/)
     * [`docker-container` driver](/build/builders/drivers/docker-container/)
     * [`kubernetes` driver](/build/builders/drivers/kubernetes/)
     * [`remote` driver](/build/builders/drivers/remote/)
 
-    ### Remove a node from a builder (--leave) {#leave}
+    ### 从构建器中移除节点（--leave） {#leave}
 
-    The `--leave` flag changes the action of the command to remove a node from a
-    builder. The builder needs to be specified with `--name` and node that is removed
-    is set with `--node`.
+    `--leave` 会将该命令的行为改为：从构建器中移除一个节点。
+    需要通过 `--name` 指定目标构建器，并用 `--node` 指定要移除的节点。
 
     ```console
     $ docker buildx create --name mybuilder --node mybuilder0 --leave
     ```
 
-    ### Specify the name of the builder (--name) {#name}
+    ### 指定构建器名称（--name） {#name}
 
     ```text
     --name NAME
     ```
 
-    The `--name` flag specifies the name of the builder to be created or modified.
-    If none is specified, one will be automatically generated.
+    `--name` 指定要创建或修改的构建器名称。
+    如未指定，将自动生成一个名称。
 
-    ### Specify the name of the node (--node) {#node}
+    ### 指定节点名称（--node） {#node}
 
     ```text
     --node NODE
     ```
 
-    The `--node` flag specifies the name of the node to be created or modified. If
-    you don't specify a name, the node name defaults to the name of the builder it
-    belongs to, with an index number suffix.
+    `--node` 指定要创建或修改的节点名称。
+    如未指定，节点名称将默认与其所属构建器同名，并带有一个索引后缀。
 
-    ### Set the platforms supported by the node (--platform) {#platform}
+    ### 设置节点支持的平台（--platform） {#platform}
 
     ```text
     --platform PLATFORMS
     ```
 
-    The `--platform` flag sets the platforms supported by the node. It expects a
-    comma-separated list of platforms of the form OS/architecture/variant. The node
-    will also automatically detect the platforms it supports, but manual values take
-    priority over the detected ones and can be used when multiple nodes support
-    building for the same platform.
+    `--platform` 用于设置该节点支持的平台。其取值为以逗号分隔的列表，
+    格式为 OS/architecture/variant。节点也会自动检测其支持的平台，
+    但手动指定的值优先级更高，并可用于多个节点都支持同一平台的场景。
 
     ```console
     $ docker buildx create --platform linux/amd64
     $ docker buildx create --platform linux/arm64,linux/arm/v7
     ```
 
-    ### Automatically switch to the newly created builder (--use) {#use}
+    ### 自动切换到新创建的构建器（--use） {#use}
 
-    The `--use` flag automatically switches the current builder to the newly created
-    one. Equivalent to running `docker buildx use $(docker buildx create ...)`.
+    `--use` 会在创建成功后自动将当前构建器切换为新创建的实例。
+    等同于执行 `docker buildx use $(docker buildx create ...)`。
 deprecated: false
 hidden: false
 experimental: false

@@ -1,25 +1,21 @@
 command: docker version
-short: Show the Docker version information
+short: 显示 Docker 版本信息
 long: |-
-    The version command prints the current version number for all independently
-    versioned Docker components. Use the [`--format`](#format) option to customize
-    the output.
+    `version` 命令会打印所有独立版本化的 Docker 组件的当前版本号。
+    使用 [`--format`](#format) 选项可自定义输出。
 
-    The version command (`docker version`) outputs the version numbers of Docker
-    components, while the `--version` flag (`docker --version`) outputs the version
-    number of the Docker CLI you are using.
+    `docker version` 会输出 Docker 各组件的版本号；而 `--version`
+    （`docker --version`）则输出当前使用的 Docker CLI 版本号。
 
-    ### Default output
+    ### 默认输出
 
-    The default output renders all version information divided into two sections;
-    the `Client` section contains information about the Docker CLI and client
-    components, and the `Server` section contains information about the Docker
-    Engine and components used by the Docker Engine, such as the containerd and runc
-    OCI Runtimes.
+    默认输出将所有版本信息分为两个部分：
+    `Client` 部分包含关于 Docker CLI 与客户端组件的信息；
+    `Server` 部分包含关于 Docker Engine 及其所用组件的信息，
+    例如 containerd 与 runc 等 OCI 运行时。
 
-    The information shown may differ depending on how you installed Docker and
-    what components are in use. The following example shows the output on a macOS
-    machine running Docker Desktop:
+    显示的信息可能因安装方式与所用组件不同而异。
+    以下示例展示了在 macOS 上运行 Docker Desktop 的输出：
 
     ```console
     $ docker version
@@ -53,15 +49,13 @@ long: |-
       GitCommit:        de40ad0
     ```
 
-    ### Client and server versions
+    ### 客户端与服务端版本
 
-    Docker uses a client/server architecture, which allows you to use the Docker CLI
-    on your local machine to control a Docker Engine running on a remote machine,
-    which can be (for example) a machine running in the cloud or inside a virtual machine.
+    Docker 采用客户端/服务端架构。你可以在本机使用 Docker CLI 控制远程主机上的 Docker Engine，
+    例如云主机或虚拟机中的实例。
 
-    The following example switches the Docker CLI to use a [context](/reference/cli/docker/context/)
-    named `remote-test-server`, which runs an older version of the Docker Engine
-    on a Linux server:
+    下面示例将 Docker CLI 切换到名为 `remote-test-server` 的 [context](/reference/cli/docker/context/)，
+    它在一台 Linux 服务器上运行较旧版本的 Docker Engine：
 
     ```console
     $ docker context use remote-test-server
@@ -97,16 +91,13 @@ long: |-
       GitCommit:        fec3683
     ```
 
-    ### API version and version negotiation
+    ### API 版本与版本协商
 
-    The API version used by the client depends on the Docker Engine that the Docker
-    CLI is connecting with. When connecting with the Docker Engine, the Docker CLI
-    and Docker Engine perform API version negotiation, and select the highest API
-    version that is supported by both the Docker CLI and the Docker Engine.
+    客户端使用的 API 版本取决于所连接的 Docker Engine。
+    当 CLI 连接到 Docker Engine 时，双方会进行 API 版本协商，并选择两者共同支持的最高版本。
 
-    For example, if the CLI is connecting with Docker Engine version 19.03, it downgrades
-    to API version 1.40 (refer to the [API version matrix](/reference/api/engine/#api-version-matrix)
-    to learn about the supported API versions for Docker Engine):
+    例如，当 CLI 连接到 Docker Engine 19.03 时，API 版本会降级到 1.40。
+    支持的 API 版本参见 [API 版本矩阵](/reference/api/engine/#api-version-matrix)。
 
     ```console
     $ docker version --format '{{.Client.APIVersion}}'
@@ -114,11 +105,9 @@ long: |-
     1.40
     ```
 
-    Be aware that API version can also be overridden using the `DOCKER_API_VERSION`
-    environment variable, which can be useful for debugging purposes, and disables
-    API version negotiation. The following example illustrates an environment where
-    the `DOCKER_API_VERSION` environment variable is set. Unsetting the environment
-    variable removes the override, and re-enables API version negotiation:
+    需要注意，也可以通过环境变量 `DOCKER_API_VERSION` 覆盖 API 版本，这在调试时很有用，
+    同时会禁用 API 版本协商。下面示例展示了设置该环境变量时的行为；
+    取消设置该变量后，将移除覆盖并重新启用版本协商：
 
     ```console
     $ env | grep DOCKER_API_VERSION
@@ -139,10 +128,10 @@ options:
       shorthand: f
       value_type: string
       description: |-
-        Format output using a custom template:
-        'json':             Print in JSON format
-        'TEMPLATE':         Print output using the given Go template.
-        Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
+        使用自定义模板格式化输出：
+        'json'：             以 JSON 格式输出
+        'TEMPLATE'：         使用给定的 Go 模板渲染输出
+        使用模板格式化输出的更多信息，参阅 https://docs.docker.com/go/formatting/
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -154,7 +143,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -162,14 +151,12 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Format the output (--format) {#format}
+    ### 格式化输出（--format） {#format}
 
-    The formatting option (`--format`) pretty-prints the output using a Go template,
-    which allows you to customize the output format, or to obtain specific information
-    from the output. Refer to the [format command and log output](/config/formatting/)
-    page for details of the format.
+    `--format` 选项使用 Go 模板对输出进行美化，这让你可以自定义输出格式，
+    或从输出中提取特定信息。详见[格式化命令与日志输出](/config/formatting/)。
 
-    ### Get the server version
+    ### 获取服务端版本
 
     ```console
     $ docker version --format '{{.Server.Version}}'
@@ -177,9 +164,9 @@ examples: |-
     23.0.3
     ```
 
-    ### Get the client API version
+    ### 获取客户端 API 版本
 
-    The following example prints the API version that is used by the client:
+    下例打印客户端正在使用的 API 版本：
 
     ```console
     $ docker version --format '{{.Client.APIVersion}}'
@@ -187,11 +174,10 @@ examples: |-
     1.42
     ```
 
-    The version shown is the API version that is negotiated between the client
-    and the Docker Engine. Refer to [API version and version negotiation](#api-version-and-version-negotiation)
-    above for more information.
+    上述显示的是客户端与 Docker Engine 协商得到的 API 版本。
+    更多信息参见上文的[API 版本与版本协商](#api-version-and-version-negotiation)。
 
-    ### Dump raw JSON data
+    ### 导出原始 JSON 数据
 
     ```console
     $ docker version --format '{{json .}}'

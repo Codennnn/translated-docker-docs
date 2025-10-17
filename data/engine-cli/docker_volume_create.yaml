@@ -1,8 +1,8 @@
 command: docker volume create
-short: Create a volume
+short: 创建一个卷
 long: |-
-    Creates a new volume that containers can consume and store data in. If a name is
-    not specified, Docker generates a random name.
+    创建一个新的卷，供容器使用并存储数据。如果未指定名称，
+    Docker 会生成一个随机名称。
 usage: docker volume create [OPTIONS] [VOLUME]
 pname: docker volume
 plink: docker_volume.yaml
@@ -10,7 +10,7 @@ options:
     - option: availability
       value_type: string
       default_value: active
-      description: Cluster Volume availability (`active`, `pause`, `drain`)
+      description: 集群卷可用性（`active`、`pause`、`drain`）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -22,7 +22,7 @@ options:
       shorthand: d
       value_type: string
       default_value: local
-      description: Specify volume driver name
+      description: 指定卷驱动名称
       deprecated: false
       hidden: false
       experimental: false
@@ -31,7 +31,7 @@ options:
       swarm: false
     - option: group
       value_type: string
-      description: Cluster Volume group (cluster volumes)
+      description: 集群卷所属的组（Cluster Volumes）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -41,7 +41,7 @@ options:
       swarm: true
     - option: label
       value_type: list
-      description: Set metadata for a volume
+      description: 设置卷的元数据
       deprecated: false
       hidden: false
       experimental: false
@@ -51,7 +51,7 @@ options:
     - option: limit-bytes
       value_type: bytes
       default_value: "0"
-      description: Minimum size of the Cluster Volume in bytes
+      description: 集群卷的最小大小（字节）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -61,7 +61,7 @@ options:
       swarm: true
     - option: name
       value_type: string
-      description: Specify volume name
+      description: 指定卷名称
       deprecated: false
       hidden: true
       experimental: false
@@ -72,7 +72,7 @@ options:
       shorthand: o
       value_type: map
       default_value: map[]
-      description: Set driver specific options
+      description: 设置驱动特定选项
       details_url: '#opt'
       deprecated: false
       hidden: false
@@ -83,7 +83,7 @@ options:
     - option: required-bytes
       value_type: bytes
       default_value: "0"
-      description: Maximum size of the Cluster Volume in bytes
+      description: 集群卷的最大大小（字节）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -94,7 +94,7 @@ options:
     - option: scope
       value_type: string
       default_value: single
-      description: Cluster Volume access scope (`single`, `multi`)
+      description: 集群卷访问范围（`single`、`multi`）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -105,7 +105,7 @@ options:
     - option: secret
       value_type: map
       default_value: map[]
-      description: Cluster Volume secrets
+      description: 集群卷 secrets
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -117,7 +117,7 @@ options:
       value_type: string
       default_value: none
       description: |
-        Cluster Volume access sharing (`none`, `readonly`, `onewriter`, `all`)
+        集群卷访问共享（`none`、`readonly`、`onewriter`、`all`）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -127,7 +127,7 @@ options:
       swarm: true
     - option: topology-preferred
       value_type: list
-      description: A topology that the Cluster Volume would be preferred in
+      description: 集群卷的首选拓扑位置
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -137,7 +137,7 @@ options:
       swarm: true
     - option: topology-required
       value_type: list
-      description: A topology that the Cluster Volume must be accessible from
+      description: 集群卷必须可访问的拓扑位置
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -148,7 +148,7 @@ options:
     - option: type
       value_type: string
       default_value: block
-      description: Cluster Volume access type (`mount`, `block`)
+      description: 集群卷访问类型（`mount`、`block`）
       deprecated: false
       hidden: false
       min_api_version: "1.42"
@@ -161,6 +161,8 @@ inherited_options:
       value_type: bool
       default_value: "false"
       description: Print usage
+      
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -168,7 +170,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    Create a volume and then configure the container to use it:
+    创建一个卷，并配置容器使用它：
 
     ```console
     $ docker volume create hello
@@ -178,28 +180,24 @@ examples: |-
     $ docker run -d -v hello:/world busybox ls /world
     ```
 
-    The mount is created inside the container's `/world` directory. Docker doesn't
-    support relative paths for mount points inside the container.
+    该挂载会在容器的 `/world` 目录内创建。Docker 不支持容器内挂载点的相对路径。
 
-    Multiple containers can use the same volume. This is useful if two containers
-    need access to shared data. For example, if one container writes and the other
-    reads the data.
+    多个容器可以共用同一个卷。当两个容器需要访问共享数据时这很有用，
+    例如一个容器写入，另一个容器读取。
 
-    Volume names must be unique among drivers. This means you can't use the same
-    volume name with two different drivers. Attempting to create two volumes with
-    the same name results in an error:
+    卷名称在所有驱动间必须唯一。也就是说，不能在两个不同驱动上使用相同的卷名。
+    尝试创建同名的两个卷会导致错误：
 
     ```console
     A volume named  "hello"  already exists with the "some-other" driver. Choose a different volume name.
     ```
 
-    If you specify a volume name already in use on the current driver, Docker
-    assumes you want to reuse the existing volume and doesn't return an error.
+    如果你在当前驱动上指定了已存在的卷名，Docker 会认为你要复用该卷，且不会报错。
 
-    ### Driver-specific options (-o, --opt) {#opt}
+    ### 驱动特定选项（-o, --opt） {#opt}
 
-    Some volume drivers may take options to customize the volume creation. Use the
-    `-o` or `--opt` flags to pass driver options:
+    某些卷驱动可以通过额外选项来自定义卷的创建。使用 `-o` 或 `--opt`
+    将选项传递给驱动：
 
     ```console
     $ docker volume create --driver fake \
@@ -208,18 +206,17 @@ examples: |-
         foo
     ```
 
-    These options are passed directly to the volume driver. Options for
-    different volume drivers may do different things (or nothing at all).
+    这些选项会被直接传递给卷驱动。不同驱动对选项的支持与行为可能不同
+    （甚至可能不生效）。
 
-    The built-in `local` driver accepts no options on Windows. On Linux and with
-    Docker Desktop, the `local` driver accepts options similar to the Linux `mount`
-    command. You can provide multiple options by passing the `--opt` flag multiple
-    times. Some `mount` options (such as the `o` option) can take a comma-separated
-    list of options. Complete list of available mount options can be found
-    [here](https://man7.org/linux/man-pages/man8/mount.8.html).
+    内置的 `local` 驱动在 Windows 上不接受任何选项；在 Linux 与 Docker Desktop 上，
+    `local` 驱动接受与 Linux `mount` 命令类似的选项。可以多次传入 `--opt` 来提供多个选项。
+    部分 `mount` 选项（如 `o`）本身可以接收以逗号分隔的子选项列表。
+    可用挂载选项的完整列表见
+    [手册页](https://man7.org/linux/man-pages/man8/mount.8.html)。
 
-    For example, the following creates a `tmpfs` volume called `foo` with a size of
-    100 megabyte and `uid` of 1000.
+    例如，下面的命令创建一个名为 `foo` 的 `tmpfs` 卷，大小为 100 MB，
+    且 `uid` 为 1000。
 
     ```console
     $ docker volume create --driver local \
@@ -229,7 +226,7 @@ examples: |-
         foo
     ```
 
-    Another example that uses `btrfs`:
+    另一个使用 `btrfs` 的示例：
 
     ```console
     $ docker volume create --driver local \
@@ -238,8 +235,7 @@ examples: |-
         foo
     ```
 
-    Another example that uses `nfs` to mount the `/path/to/dir` in `rw` mode from
-    `192.168.1.1`:
+    再例如，使用 `nfs` 从 `192.168.1.1` 以 `rw` 模式挂载 `/path/to/dir`：
 
     ```console
     $ docker volume create --driver local \

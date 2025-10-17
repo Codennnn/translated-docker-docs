@@ -1,42 +1,36 @@
 command: docker container attach
 aliases: docker container attach, docker attach
 short: |
-    Attach local standard input, output, and error streams to a running container
+    将本地标准输入、输出和错误流附加到正在运行的容器
 long: |-
-    Use `docker attach` to attach your terminal's standard input, output, and error
-    (or any combination of the three) to a running container using the container's
-    ID or name. This lets you view its output or control it interactively, as
-    though the commands were running directly in your terminal.
+    使用 `docker attach`，可通过容器的 ID 或名称，将你终端的标准输入、标准输出和标准错误
+    （或三者任意组合）附加到一个正在运行的容器。这样你就可以查看容器的输出，或像在终端
+    直接运行命令一样对其进行交互式控制。
 
     > [!NOTE]
-    > The `attach` command displays the output of the container's `ENTRYPOINT` and
-    > `CMD` process. This can appear as if the attach command is hung when in fact
-    > the process may simply not be writing any output at that time.
+    > `attach` 命令会显示容器中 `ENTRYPOINT` 与 `CMD` 进程的输出。
+    > 如果这些进程此时未产生任何输出，`attach` 命令可能会看起来像是“卡住”了。
 
-    You can attach to the same contained process multiple times simultaneously,
-    from different sessions on the Docker host.
+    你可以在 Docker 主机上的不同会话中，同时多次附加到同一个容器进程。
 
-    To stop a container, use `CTRL-c`. This key sequence sends `SIGKILL` to the
-    container. If `--sig-proxy` is true (the default),`CTRL-c` sends a `SIGINT` to
-    the container. If the container was run with `-i` and `-t`, you can detach from
-    a container and leave it running using the `CTRL-p CTRL-q` key sequence.
+    要停止容器，请按 `CTRL-c`。该按键序列会向容器发送 `SIGKILL`。
+    如果 `--sig-proxy` 为 true（默认值），`CTRL-c` 会向容器发送 `SIGINT`。
+    如果容器是使用 `-i` 与 `-t` 运行的，你可以使用按键序列 `CTRL-p CTRL-q`
+    从容器分离，同时保持容器继续运行。
 
     > [!NOTE]
-    > A process running as PID 1 inside a container is treated specially by
-    > Linux: it ignores any signal with the default action. So, the process
-    > doesn't terminate on `SIGINT` or `SIGTERM` unless it's coded to do so.
+    > 在容器内以 PID 1 运行的进程在 Linux 中会被特殊对待：它会忽略默认
+    > 动作为终止的信号。因此，除非程序显式实现了处理逻辑，它不会因
+    > 收到 `SIGINT` 或 `SIGTERM` 而退出。
 
-    You can't redirect the standard input of a `docker attach` command while
-    attaching to a TTY-enabled container (using the `-i` and `-t` options).
+    当附加到启用 TTY 的容器（使用了 `-i` 与 `-t` 选项）时，无法重定向
+    `docker attach` 命令的标准输入。
 
-    While a client is connected to container's `stdio` using `docker attach`,
-    Docker uses a ~1MB memory buffer to maximize the throughput of the application.
-    Once this buffer is full, the speed of the API connection is affected, and so
-    this impacts the output process' writing speed. This is similar to other
-    applications like SSH. Because of this, it isn't recommended to run
-    performance-critical applications that generate a lot of output in the
-    foreground over a slow client connection. Instead, use the `docker logs`
-    command to get access to the logs.
+    当客户端通过 `docker attach` 连接到容器的 `stdio` 时，Docker 会使用约 1MB 的
+    内存缓冲区以最大化应用吞吐量。一旦缓冲区被填满，API 连接速度会受到影响，从而
+    影响输出进程的写入速度。这与 SSH 等应用的行为类似。因此，不建议在较慢的客户端
+    连接上以前台方式运行会产生大量输出的性能敏感型应用。访问日志时建议改用
+    `docker logs` 命令。
 usage: docker container attach [OPTIONS] CONTAINER
 pname: docker container
 plink: docker_container.yaml
@@ -44,6 +38,8 @@ options:
     - option: detach-keys
       value_type: string
       description: Override the key sequence for detaching a container
+      
+      description: 覆盖用于从容器分离的按键序列
       details_url: '#detach-keys'
       deprecated: false
       hidden: false
@@ -55,6 +51,8 @@ options:
       value_type: bool
       default_value: "false"
       description: Do not attach STDIN
+      
+      description: 不附加 STDIN
       deprecated: false
       hidden: false
       experimental: false
@@ -65,6 +63,8 @@ options:
       value_type: bool
       default_value: "true"
       description: Proxy all received signals to the process
+      
+      description: 将接收到的所有信号代理转发给该进程
       deprecated: false
       hidden: false
       experimental: false
@@ -76,6 +76,8 @@ inherited_options:
       value_type: bool
       default_value: "false"
       description: Print usage
+      
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -83,10 +85,10 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Attach to and detach from a running container
+    ### 附加到正在运行的容器并从中分离
 
-    The following example starts an Alpine container running `top` in detached mode,
-    then attaches to the container;
+    下面的示例会在分离模式下启动一个运行 `top` 的 Alpine 容器，
+    随后再附加到该容器；
 
     ```console
     $ docker run -d --name topdemo alpine top -b
@@ -100,10 +102,9 @@ examples: |-
         1     0 root     R     1700   0%   3   0% top -b
     ```
 
-    As the container was started without the `-i`, and `-t` options, signals are
-    forwarded to the attached process, which means that the default `CTRL-p CTRL-q`
-    detach key sequence produces no effect, but pressing `CTRL-c` terminates the
-    container:
+    由于容器启动时未使用 `-i` 与 `-t` 选项，信号会被转发到已附加的进程。
+    这意味着默认的 `CTRL-p CTRL-q` 分离按键序列不会生效，而按下 `CTRL-c`
+    会终止容器：
 
     ```console
     <...>
@@ -118,16 +119,14 @@ examples: |-
     96254a235bd6   alpine    "top -b"   44 seconds ago   Exited (130) 8 seconds ago             topdemo
     ```
 
-    Repeating the example above, but this time with the `-i` and `-t` options set;
+    重复上述示例，但这次启用 `-i` 与 `-t` 选项；
 
     ```console
     $ docker run -dit --name topdemo2 alpine /usr/bin/top -b
     ```
 
-    Now, when attaching to the container, and pressing the `CTRL-p CTRL-q` ("read
-    escape sequence"), the Docker CLI is handling the detach sequence, and the
-    `attach` command is detached from the container. Checking the container's status
-    with `docker ps` shows that the container is still running in the background:
+    现在在附加到容器后，按下 `CTRL-p CTRL-q`（“read escape sequence”），Docker CLI 会处理
+    分离序列，`attach` 命令会从容器分离。使用 `docker ps` 检查容器状态可见容器仍在后台运行：
 
     ```console
     $ docker attach topdemo2
@@ -145,10 +144,10 @@ examples: |-
     fde88b83c2c2   alpine    "top -b"   22 seconds ago   Up 21 seconds             topdemo2
     ```
 
-    ### Get the exit code of the container's command
+    ### 获取容器中命令的退出码
 
-    And in this second example, you can see the exit code returned by the `bash`
-    process is returned by the `docker attach` command to its caller too:
+    在第二个示例中可以看到，`bash` 进程返回的退出码也会由 `docker attach`
+    命令返回给其调用者：
 
     ```console
     $ docker run --name test -dit alpine
@@ -166,29 +165,26 @@ examples: |-
     a2fe3fd886db   alpine    "/bin/sh"   About a minute ago   Exited (13) 40 seconds ago             test
     ```
 
-    ### Override the detach sequence (--detach-keys) {#detach-keys}
+    ### 覆盖分离按键序列（--detach-keys） {#detach-keys}
 
-    Use the `--detach-keys` option to override the Docker key sequence for detach.
-    This is useful if the Docker default sequence conflicts with key sequence you
-    use for other applications. There are two ways to define your own detach key
-    sequence, as a per-container override or as a configuration property on  your
-    entire configuration.
+    使用 `--detach-keys` 选项可覆盖 Docker 的默认分离按键序列。
+    当 Docker 的默认按键与其它应用使用的按键冲突时，这将非常有用。
+    你可以通过两种方式定义自定义的分离按键：对单个容器进行覆盖，
+    或在全局配置中设置默认值。
 
-    To override the sequence for an individual container, use the
-    `--detach-keys="<sequence>"` flag with the `docker attach` command. The format of
-    the `<sequence>` is either a letter [a-Z], or the `ctrl-` combined with any of
-    the following:
+    要为某个容器单独覆盖，使用 `docker attach` 命令并加上
+    `--detach-keys="<sequence>"` 标志。`<sequence>` 的格式可以是一个字母 [a-Z]，
+    或 `ctrl-` 加上下列任意一个：
 
-    * `a-z` (a single lowercase alpha character )
-    * `@` (at sign)
-    * `[` (left bracket)
-    * `\\` (two backward slashes)
-    *  `_` (underscore)
-    * `^` (caret)
+    * `a-z`（单个小写字母）
+    * `@`（at 符号）
+    * `[`（左方括号）
+    * `\\`（两个反斜杠）
+    * `_`（下划线）
+    * `^`（脱字符）
 
-    These `a`, `ctrl-a`, `X`, or `ctrl-\\` values are all examples of valid key
-    sequences. To configure a different configuration default key sequence for all
-    containers, see [**Configuration file** section](/reference/cli/docker/#configuration-files).
+    例如，`a`、`ctrl-a`、`X` 或 `ctrl-\\` 都是有效的按键序列示例。要为所有容器
+    配置不同的默认分离按键序列，请参阅 [**Configuration file** 部分](/reference/cli/docker/#configuration-files)。
 deprecated: false
 hidden: false
 experimental: false

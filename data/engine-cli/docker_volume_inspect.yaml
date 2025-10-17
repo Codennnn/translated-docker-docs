@@ -1,11 +1,10 @@
 command: docker volume inspect
-short: Display detailed information on one or more volumes
+short: 显示一个或多个卷的详细信息
 long: |-
-    Returns information about a volume. By default, this command renders all results
-    in a JSON array. You can specify an alternate format to execute a
-    given template for each result. Go's
-    [text/template](https://pkg.go.dev/text/template) package describes all the
-    details of the format.
+    返回卷的相关信息。默认情况下，该命令会以 JSON 数组形式呈现所有结果。
+    你可以指定自定义的输出格式，对每个结果应用给定的模板。
+    Go 的 [text/template](https://pkg.go.dev/text/template) 包详细说明了
+    模板语法与格式细节。
 usage: docker volume inspect [OPTIONS] VOLUME [VOLUME...]
 pname: docker volume
 plink: docker_volume.yaml
@@ -14,10 +13,10 @@ options:
       shorthand: f
       value_type: string
       description: |-
-        Format output using a custom template:
-        'json':             Print in JSON format
-        'TEMPLATE':         Print output using the given Go template.
-        Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
+        使用自定义模板格式化输出：
+        'json'：             以 JSON 格式输出
+        'TEMPLATE'：         使用给定的 Go 模板渲染输出
+        使用模板格式化输出的更多信息，参阅 https://docs.docker.com/go/formatting/
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -30,6 +29,8 @@ inherited_options:
       value_type: bool
       default_value: "false"
       description: Print usage
+      
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -43,13 +44,13 @@ examples: |-
     myvolume
     ```
 
-    Use the `docker volume inspect` comment to inspect the configuration of the volume:
+    使用 `docker volume inspect` 命令查看该卷的配置信息：
 
     ```console
     $ docker volume inspect myvolume
     ```
 
-    The output is in JSON format, for example:
+    输出为 JSON 格式，例如：
 
     ```json
     [
@@ -65,10 +66,9 @@ examples: |-
     ]
     ```
 
-    ### Format the output (--format) {#format}
+    ### 格式化输出（--format） {#format}
 
-    Use the `--format` flag to format the output using a Go template, for example,
-    to print the `Mountpoint` property:
+    使用 `--format` 结合 Go 模板来格式化输出，例如打印 `Mountpoint` 属性：
 
     ```console
     $ docker volume inspect --format '{{ .Mountpoint }}' myvolume

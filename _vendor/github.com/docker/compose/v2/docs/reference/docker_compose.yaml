@@ -1,6 +1,6 @@
 command: docker compose
 short: Docker Compose
-long: Define and run multi-container applications with Docker
+long: 使用 Docker 定义并运行多容器应用
 usage: docker compose
 pname: docker
 plink: docker.yaml
@@ -80,7 +80,7 @@ options:
     - option: all-resources
       value_type: bool
       default_value: "false"
-      description: Include all resources, even those not used by services
+      description: 包含所有资源（即使未被任何服务使用）
       deprecated: false
       hidden: false
       experimental: false
@@ -91,7 +91,7 @@ options:
       value_type: string
       default_value: auto
       description: |
-        Control when to print ANSI control characters ("never"|"always"|"auto")
+        控制何时输出 ANSI 控制字符（"never"|"always"|"auto"）
       deprecated: false
       hidden: false
       experimental: false
@@ -101,7 +101,7 @@ options:
     - option: compatibility
       value_type: bool
       default_value: "false"
-      description: Run compose in backward compatibility mode
+      description: 以向后兼容模式运行 Compose
       deprecated: false
       hidden: false
       experimental: false
@@ -111,7 +111,7 @@ options:
     - option: dry-run
       value_type: bool
       default_value: "false"
-      description: Execute command in dry run mode
+      description: 以 Dry Run 模式执行命令（仅演示将要执行的步骤，不更改状态）
       deprecated: false
       hidden: false
       experimental: false
@@ -121,7 +121,7 @@ options:
     - option: env-file
       value_type: stringArray
       default_value: '[]'
-      description: Specify an alternate environment file
+      description: 指定备用的环境变量文件
       deprecated: false
       hidden: false
       experimental: false
@@ -132,7 +132,7 @@ options:
       shorthand: f
       value_type: stringArray
       default_value: '[]'
-      description: Compose configuration files
+      description: 指定一个或多个 Compose 配置文件
       deprecated: false
       hidden: false
       experimental: false
@@ -142,7 +142,7 @@ options:
     - option: no-ansi
       value_type: bool
       default_value: "false"
-      description: Do not print ANSI control characters (DEPRECATED)
+      description: 不输出 ANSI 控制字符（已弃用）
       deprecated: false
       hidden: true
       experimental: false
@@ -152,7 +152,7 @@ options:
     - option: parallel
       value_type: int
       default_value: "-1"
-      description: Control max parallelism, -1 for unlimited
+      description: 控制最大并行度，-1 表示不限制
       deprecated: false
       hidden: false
       experimental: false
@@ -162,7 +162,7 @@ options:
     - option: profile
       value_type: stringArray
       default_value: '[]'
-      description: Specify a profile to enable
+      description: 指定要启用的配置文件（profile）
       deprecated: false
       hidden: false
       experimental: false
@@ -171,7 +171,7 @@ options:
       swarm: false
     - option: progress
       value_type: string
-      description: Set type of progress output (auto, tty, plain, json, quiet)
+      description: 设置进度输出类型（auto、tty、plain、json、quiet）
       deprecated: false
       hidden: false
       experimental: false
@@ -181,8 +181,8 @@ options:
     - option: project-directory
       value_type: string
       description: |-
-        Specify an alternate working directory
-        (default: the path of the, first specified, Compose file)
+        指定备用工作目录
+        （默认：第一个被指定的 Compose 文件所在路径）
       deprecated: false
       hidden: false
       experimental: false
@@ -192,7 +192,7 @@ options:
     - option: project-name
       shorthand: p
       value_type: string
-      description: Project name
+      description: 项目名称
       deprecated: false
       hidden: false
       experimental: false
@@ -202,7 +202,7 @@ options:
     - option: verbose
       value_type: bool
       default_value: "false"
-      description: Show more output
+      description: 显示更详细的输出
       deprecated: false
       hidden: true
       experimental: false
@@ -213,7 +213,7 @@ options:
       shorthand: v
       value_type: bool
       default_value: "false"
-      description: Show the Docker Compose version information
+      description: 显示 Docker Compose 的版本信息
       deprecated: false
       hidden: true
       experimental: false
@@ -223,9 +223,9 @@ options:
     - option: workdir
       value_type: string
       description: |-
-        DEPRECATED! USE --project-directory INSTEAD.
-        Specify an alternate working directory
-        (default: the path of the, first specified, Compose file)
+        已弃用！请改用 --project-directory。
+        指定备用工作目录
+        （默认：第一个被指定的 Compose 文件所在路径）
       deprecated: false
       hidden: true
       experimental: false
@@ -233,21 +233,20 @@ options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Use `-f` to specify the name and path of one or more Compose files
-    Use the `-f` flag to specify the location of a Compose [configuration file](/reference/compose-file/).
+    ### 使用 `-f` 指定一个或多个 Compose 文件的名称与路径
+    使用 `-f` 标志指定 Compose [配置文件](/reference/compose-file/) 的位置。
 
-    #### Specifying multiple Compose files
-    You can supply multiple `-f` configuration files. When you supply multiple files, Compose combines them into a single
-    configuration. Compose builds the configuration in the order you supply the files. Subsequent files override and add
-    to their predecessors.
+    #### 同时指定多个 Compose 文件
+    你可以提供多个 `-f` 配置文件。提供多个文件时，Compose 会将它们合并为一个配置。
+    合并顺序与命令行中提供文件的顺序一致；后面的文件会覆盖并补充前面的配置。
 
-    For example, consider this command line:
+    例如，考虑如下命令：
 
     ```console
     $ docker compose -f compose.yaml -f compose.admin.yaml run backup_db
     ```
 
-    The `compose.yaml` file might specify a `webapp` service.
+    `compose.yaml` 可能定义了一个名为 `webapp` 的服务。
 
     ```yaml
     services:
@@ -258,8 +257,8 @@ examples: |-
         volumes:
           - "/data"
     ```
-    If the `compose.admin.yaml` also specifies this same service, any matching fields override the previous file.
-    New values, add to the `webapp` service configuration.
+    如果 `compose.admin.yaml` 也定义了同名服务，则相同的字段会覆盖前一个文件；
+    新增的字段会被添加到 `webapp` 服务配置中。
 
     ```yaml
     services:
@@ -269,42 +268,36 @@ examples: |-
           - DEBUG=1
     ```
 
-    When you use multiple Compose files, all paths in the files are relative to the first configuration file specified
-    with `-f`. You can use the `--project-directory` option to override this base path.
+    当你使用多个 Compose 文件时，文件中的所有相对路径都以第一个通过 `-f` 指定的配置文件所在目录为基准。
+    你可以通过 `--project-directory` 选项覆盖该基准路径。
 
-    Use a `-f` with `-` (dash) as the filename to read the configuration from stdin. When stdin is used all paths in the
-    configuration are relative to the current working directory.
+    将 `-f` 的文件名指定为 `-`（短横线）可以从标准输入（stdin）读取配置；当使用 stdin 时，
+    配置中的所有相对路径都以当前工作目录为基准。
 
-    The `-f` flag is optional. If you don’t provide this flag on the command line, Compose traverses the working directory
-    and its parent directories looking for a `compose.yaml` or `docker-compose.yaml` file.
+    `-f` 标志是可选的。如果未在命令行提供该标志，Compose 会在当前工作目录及其父目录中查找
+    `compose.yaml` 或 `docker-compose.yaml` 文件。
 
-    #### Specifying a path to a single Compose file
-    You can use the `-f` flag to specify a path to a Compose file that is not located in the current directory, either
-    from the command line or by setting up a `COMPOSE_FILE` environment variable in your shell or in an environment file.
+    #### 指定单个 Compose 文件的路径
+    你可以使用 `-f` 指定一个不在当前目录下的 Compose 文件路径，既可以在命令行直接指定，
+    也可以在 shell 或环境文件中设置 `COMPOSE_FILE` 环境变量。
 
-    For an example of using the `-f` option at the command line, suppose you are running the Compose Rails sample, and
-    have a `compose.yaml` file in a directory called `sandbox/rails`. You can use a command like `docker compose pull` to
-    get the postgres image for the db service from anywhere by using the `-f` flag as follows:
+    例如，假设你正在运行 Compose 的 Rails 示例，并且在 `sandbox/rails` 目录下有一个 `compose.yaml` 文件。
+    你可以在任意位置使用如下命令，通过 `-f` 拉取该示例中 db 服务所需的 postgres 镜像：
 
     ```console
     $ docker compose -f ~/sandbox/rails/compose.yaml pull db
     ```
 
-    ### Use `-p` to specify a project name
+    ### 使用 `-p` 指定项目名
 
-    Each configuration has a project name. Compose sets the project name using
-    the following mechanisms, in order of precedence:
-    - The `-p` command line flag
-    - The `COMPOSE_PROJECT_NAME` environment variable
-    - The top level `name:` variable from the config file (or the last `name:`
-    from a series of config files specified using `-f`)
-    - The `basename` of the project directory containing the config file (or
-    containing the first config file specified using `-f`)
-    - The `basename` of the current directory if no config file is specified
-    Project names must contain only lowercase letters, decimal digits, dashes,
-    and underscores, and must begin with a lowercase letter or decimal digit. If
-    the `basename` of the project directory or current directory violates this
-    constraint, you must use one of the other mechanisms.
+    每个配置都有一个项目名。Compose 按如下优先级设置项目名：
+    - 命令行标志 `-p`
+    - 环境变量 `COMPOSE_PROJECT_NAME`
+    - 配置文件顶层的 `name:`（或通过 `-f` 指定的多个配置文件中最后一个文件里的 `name:`）
+    - 包含配置文件的项目目录的 `basename`（或通过 `-f` 指定的第一个配置文件所在目录的 `basename`）
+    - 如果未指定配置文件，则使用当前目录的 `basename`
+    项目名只能包含小写字母、数字、短横线和下划线，并且必须以小写字母或数字开头。
+    如果项目目录或当前目录的 `basename` 不满足该约束，你必须改用上述其他方式之一设置项目名。
 
     ```console
     $ docker compose -p my_project ps -a
@@ -316,44 +309,43 @@ examples: |-
     demo_1  | 64 bytes from 127.0.0.1: seq=0 ttl=64 time=0.095 ms
     ```
 
-    ### Use profiles to enable optional services
+    ### 使用 profiles 启用可选服务
 
-    Use `--profile` to specify one or more active profiles
-    Calling `docker compose --profile frontend up` starts the services with the profile `frontend` and services
-    without any specified profiles.
-    You can also enable multiple profiles, e.g. with `docker compose --profile frontend --profile debug up` the profiles `frontend` and `debug` is enabled.
+    使用 `--profile` 指定一个或多个要启用的 profile。
+    运行 `docker compose --profile frontend up` 会启动带有 `frontend` profile 的服务，
+    同时也会启动未指定任何 profile 的服务。
+    你也可以启用多个 profile，例如 `docker compose --profile frontend --profile debug up` 会同时启用 `frontend` 和 `debug` 两个 profile。
 
-    Profiles can also be set by `COMPOSE_PROFILES` environment variable.
+    也可以通过环境变量 `COMPOSE_PROFILES` 设置 profiles。
 
-    ### Configuring parallelism
+    ### 配置并行度
 
-    Use `--parallel` to specify the maximum level of parallelism for concurrent engine calls.
-    Calling `docker compose --parallel 1 pull` pulls the pullable images defined in the Compose file
-    one at a time. This can also be used to control build concurrency.
+    使用 `--parallel` 指定对引擎并发调用时的最大并行度。
+    运行 `docker compose --parallel 1 pull` 会逐个拉取 Compose 文件中可拉取的镜像。
+    该选项也可用于控制构建时的并发度。
 
-    Parallelism can also be set by the `COMPOSE_PARALLEL_LIMIT` environment variable.
+    也可以通过环境变量 `COMPOSE_PARALLEL_LIMIT` 设置并行度。
 
-    ### Set up environment variables
+    ### 设置环境变量
 
-    You can set environment variables for various docker compose options, including the `-f`, `-p` and `--profiles` flags.
+    你可以通过环境变量为多种 docker compose 选项提供值，包括 `-f`、`-p` 与 `--profiles` 等。
 
-    Setting the `COMPOSE_FILE` environment variable is equivalent to passing the `-f` flag,
-    `COMPOSE_PROJECT_NAME` environment variable does the same as the `-p` flag,
-    `COMPOSE_PROFILES` environment variable is equivalent to the `--profiles` flag
-    and `COMPOSE_PARALLEL_LIMIT` does the same as the `--parallel` flag.
+    设置环境变量 `COMPOSE_FILE` 等价于传入 `-f`；
+    `COMPOSE_PROJECT_NAME` 等价于 `-p`；
+    `COMPOSE_PROFILES` 等价于 `--profiles`；
+    `COMPOSE_PARALLEL_LIMIT` 等价于 `--parallel`。
 
-    If flags are explicitly set on the command line, the associated environment variable is ignored.
+    如果在命令行显式传入了标志，与之对应的环境变量会被忽略。
 
-    Setting the `COMPOSE_IGNORE_ORPHANS` environment variable to `true` stops docker compose from detecting orphaned
-    containers for the project.
+    将环境变量 `COMPOSE_IGNORE_ORPHANS` 设为 `true` 可以阻止 docker compose 为项目检测孤立容器。
 
-    Setting the `COMPOSE_MENU` environment variable to `false` disables the helper menu when running `docker compose up`
-    in attached mode. Alternatively, you can also run `docker compose up --menu=false` to disable the helper menu.
+    将环境变量 `COMPOSE_MENU` 设为 `false` 可以在以附加模式运行 `docker compose up` 时禁用辅助菜单。
+    或者你也可以运行 `docker compose up --menu=false` 来禁用该菜单。
 
-    ### Use Dry Run mode to test your command
+    ### 使用 Dry Run 模式测试命令
 
-    Use `--dry-run` flag to test a command without changing your application stack state.
-    Dry Run mode shows you all the steps Compose applies when executing a command, for example:
+    使用 `--dry-run` 可以在不改变应用栈状态的情况下测试命令。
+    Dry Run 模式会显示 Compose 执行命令时将要采取的所有步骤，例如：
     ```console
     $ docker compose --dry-run up --build -d
     [+] Pulling 1/1
@@ -370,10 +362,10 @@ examples: |-
      ✔ DRY-RUN MODE -  Container nginx-golang-mysql-backend-1                                Started                                                                                                                                           0.0s
      ✔ DRY-RUN MODE -  Container nginx-golang-mysql-proxy-1                                  Started                                     Started
     ```
-    From the example above, you can see that the first step is to pull the image defined by `db` service, then build the `backend` service.
-    Next, the containers are created. The `db` service is started, and the `backend` and `proxy` wait until the `db` service is healthy before starting.
+    从上述示例可以看到，第一步是拉取由 `db` 服务定义的镜像，然后构建 `backend` 服务。
+    接着创建容器。`db` 服务启动后，`backend` 与 `proxy` 会在 `db` 服务变为健康状态后再启动。
 
-    Dry Run mode works with almost all commands. You cannot use Dry Run mode with a command that doesn't change the state of a Compose stack such as `ps`, `ls`, `logs` for example.
+    Dry Run 模式几乎适用于所有命令。但对于不会改变 Compose 栈状态的命令（如 `ps`、`ls`、`logs`），无法使用 Dry Run 模式。
 deprecated: false
 hidden: false
 experimental: false

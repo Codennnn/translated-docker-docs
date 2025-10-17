@@ -1,17 +1,14 @@
 command: docker buildx bake
 aliases: docker buildx bake, docker buildx f
-short: Build from a file
+short: 从文件构建
 long: |-
-    Bake is a high-level build command. Each specified target runs in parallel
-    as part of the build.
+    Bake 是一个高层构建命令。每个指定的目标都会作为构建的一部分并行执行。
 
-    Read [High-level build options with Bake](/build/bake/)
-    guide for introduction to writing bake files.
+    参见《[使用 Bake 的高阶构建选项](/build/bake/)》指南，了解如何编写 Bake 文件。
 
     > [!NOTE]
-    > `buildx bake` command may receive backwards incompatible features in the future
-    > if needed. We are looking for feedback on improving the command and extending
-    > the functionality further.
+    > 如有需要，`buildx bake` 命令未来可能引入向后不兼容的功能变更。
+    > 我们期待你的反馈，以进一步改进该命令并扩展其功能。
 usage: docker buildx bake [OPTIONS] [TARGET...]
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -19,7 +16,7 @@ options:
     - option: allow
       value_type: stringArray
       default_value: '[]'
-      description: Allow build to access specified resources
+      description: 允许构建访问指定资源
       details_url: '#allow'
       deprecated: false
       hidden: false
@@ -30,7 +27,7 @@ options:
     - option: call
       value_type: string
       default_value: build
-      description: Set method for evaluating build (`check`, `outline`, `targets`)
+      description: 设置评估构建的方法（`check`、`outline`、`targets`）
       details_url: '#call'
       deprecated: false
       hidden: false
@@ -40,7 +37,7 @@ options:
       swarm: false
     - option: check
       value_type: bool
-      description: Shorthand for `--call=check`
+      description: 等价于 `--call=check` 的简写
       details_url: '#check'
       deprecated: false
       hidden: false
@@ -52,7 +49,7 @@ options:
       shorthand: f
       value_type: stringArray
       default_value: '[]'
-      description: Build definition file
+      description: 构建定义文件
       details_url: '#file'
       deprecated: false
       hidden: false
@@ -62,7 +59,7 @@ options:
       swarm: false
     - option: list
       value_type: string
-      description: List targets or variables
+      description: 列出目标或变量
       details_url: '#list'
       deprecated: false
       hidden: false
@@ -73,7 +70,7 @@ options:
     - option: list-targets
       value_type: bool
       default_value: "false"
-      description: List available targets
+      description: 列出可用的目标
       deprecated: true
       hidden: true
       experimental: false
@@ -83,7 +80,7 @@ options:
     - option: list-variables
       value_type: bool
       default_value: "false"
-      description: List defined variables
+      description: 列出已定义的变量
       deprecated: true
       hidden: true
       experimental: false
@@ -93,7 +90,7 @@ options:
     - option: load
       value_type: bool
       default_value: "false"
-      description: Shorthand for `--set=*.output=type=docker`. Conditional.
+      description: 等价于 `--set=*.output=type=docker` 的简写（有条件）
       details_url: '#load'
       deprecated: false
       hidden: false
@@ -103,7 +100,7 @@ options:
       swarm: false
     - option: metadata-file
       value_type: string
-      description: Write build result metadata to a file
+      description: 将构建结果元数据写入文件
       details_url: '#metadata-file'
       deprecated: false
       hidden: false
@@ -114,7 +111,7 @@ options:
     - option: no-cache
       value_type: bool
       default_value: "false"
-      description: Do not use cache when building the image
+      description: 构建镜像时不使用缓存
       details_url: '#no-cache'
       deprecated: false
       hidden: false
@@ -125,7 +122,7 @@ options:
     - option: print
       value_type: bool
       default_value: "false"
-      description: Print the options without building
+      description: 仅打印构建选项而不执行构建
       details_url: '#print'
       deprecated: false
       hidden: false
@@ -137,7 +134,7 @@ options:
       value_type: string
       default_value: auto
       description: |
-        Set type of progress output (`auto`, `none`,  `plain`, `quiet`, `rawjson`, `tty`). Use plain to show container output
+        设置进度输出类型（`auto`、`none`、`plain`、`quiet`、`rawjson`、`tty`）。使用 plain 以显示容器输出
       details_url: '#progress'
       deprecated: false
       hidden: false
@@ -147,7 +144,7 @@ options:
       swarm: false
     - option: provenance
       value_type: string
-      description: Shorthand for `--set=*.attest=type=provenance`
+      description: 等价于 `--set=*.attest=type=provenance` 的简写
       details_url: '#provenance'
       deprecated: false
       hidden: false
@@ -158,7 +155,7 @@ options:
     - option: pull
       value_type: bool
       default_value: "false"
-      description: Always attempt to pull all referenced images
+      description: 始终尝试拉取所有引用的镜像
       details_url: '#pull'
       deprecated: false
       hidden: false
@@ -169,7 +166,7 @@ options:
     - option: push
       value_type: bool
       default_value: "false"
-      description: Shorthand for `--set=*.output=type=registry`. Conditional.
+      description: 等价于 `--set=*.output=type=registry` 的简写（有条件）
       details_url: '#push'
       deprecated: false
       hidden: false
@@ -179,7 +176,7 @@ options:
       swarm: false
     - option: sbom
       value_type: string
-      description: Shorthand for `--set=*.attest=type=sbom`
+      description: 等价于 `--set=*.attest=type=sbom` 的简写
       details_url: '#sbom'
       deprecated: false
       hidden: false
@@ -190,7 +187,7 @@ options:
     - option: set
       value_type: stringArray
       default_value: '[]'
-      description: Override target value (e.g., `targetpattern.key=value`)
+      description: 覆盖目标的值（例如：`targetpattern.key=value`）
       details_url: '#set'
       deprecated: false
       hidden: false
@@ -201,7 +198,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -213,7 +210,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -221,42 +218,32 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Allow extra privileged entitlement (--allow) {#allow}
+    ### 允许额外的特权授权（--allow） {#allow}
 
     ```text
     --allow=ENTITLEMENT[=VALUE]
     ```
 
-    Entitlements are designed to provide controlled access to privileged
-    operations. By default, Buildx and BuildKit operates with restricted
-    permissions to protect users and their systems from unintended side effects or
-    security risks. The `--allow` flag explicitly grants access to additional
-    entitlements, making it clear when a build or bake operation requires elevated
-    privileges.
+    授权（Entitlements）旨在为特权操作提供可控的访问。默认情况下，Buildx 与 BuildKit 以受限权限运行，
+    以保护用户及其系统免受意外副作用或安全风险。`--allow` 标志会显式授予额外授权，使当构建或 bake 操作
+    需要提升权限时更加清晰可见。
 
-    In addition to BuildKit's `network.host` and `security.insecure` entitlements
-    (see [`docker buildx build --allow`](/reference/cli/docker/buildx/build/#allow)),
-    Bake supports file system entitlements that grant granular control over file
-    system access. These are particularly useful when working with builds that need
-    access to files outside the default working directory.
+    除 BuildKit 的 `network.host` 与 `security.insecure` 授权外
+    （参见 [`docker buildx build --allow`](/reference/cli/docker/buildx/build/#allow)），
+    Bake 支持对文件系统的授权，从而对文件系统访问进行更精细的控制。
+    这在需要访问默认工作目录之外文件的构建场景中特别有用。
 
-    Bake supports the following filesystem entitlements:
+    Bake 支持以下文件系统授权：
 
-    - `--allow fs=<path|*>` - Grant read and write access to files outside of the
-      working directory.
-    - `--allow fs.read=<path|*>` - Grant read access to files outside of the
-      working directory.
-    - `--allow fs.write=<path|*>` - Grant write access to files outside of the
-      working directory.
+    - `--allow fs=<path|*>` - 授予对工作目录之外文件的读写权限。
+    - `--allow fs.read=<path|*>` - 授予对工作目录之外文件的读权限。
+    - `--allow fs.write=<path|*>` - 授予对工作目录之外文件的写权限。
 
-    The `fs` entitlements take a path value (relative or absolute) to a directory
-    on the filesystem. Alternatively, you can pass a wildcard (`*`) to allow Bake
-    to access the entire filesystem.
+    `fs` 授权接受一个目录路径（相对或绝对）。或者，你也可以传入通配符（`*`）以允许 Bake 访问整个文件系统。
 
-    ### Example: fs.read
+    ### 示例：fs.read
 
-    Given the following Bake configuration, Bake would need to access the parent
-    directory, relative to the Bake file.
+    在以下 Bake 配置中，Bake 需要访问相对于 Bake 文件的父目录。
 
     ```hcl
     target "app" {
@@ -264,9 +251,8 @@ examples: |-
     }
     ```
 
-    Assuming `docker buildx bake app` is executed in the same directory as the
-    `docker-bake.hcl` file, you would need to explicitly allow Bake to read from
-    the `../src` directory. In this case, the following invocations all work:
+    假设在与 `docker-bake.hcl` 文件相同的目录中执行 `docker buildx bake app`，
+    则需要显式允许 Bake 读取 `../src` 目录。在此情况下，以下命令均可：
 
     ```console
     $ docker buildx bake --allow fs.read=* app
@@ -274,10 +260,9 @@ examples: |-
     $ docker buildx bake --allow fs=* app
     ```
 
-    ### Example: fs.write
+    ### 示例：fs.write
 
-    The following `docker-bake.hcl` file requires write access to the `/tmp`
-    directory.
+    以下 `docker-bake.hcl` 文件需要对 `/tmp` 目录的写权限。
 
     ```hcl
     target "app" {
@@ -285,9 +270,8 @@ examples: |-
     }
     ```
 
-    Assuming `docker buildx bake app` is executed outside of the `/tmp` directory,
-    you would need to allow the `fs.write` entitlement, either by specifying the
-    path or using a wildcard:
+    假设在 `/tmp` 目录之外执行 `docker buildx bake app`，
+    则需要允许 `fs.write` 授权，可以通过指定路径或使用通配符：
 
     ```console
     $ docker buildx bake --allow fs=/tmp app
@@ -295,32 +279,30 @@ examples: |-
     $ docker buildx bake --allow fs.write=* app
     ```
 
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例（--builder） {#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    同 [`buildx --builder`](/reference/cli/docker/buildx/#builder)。
 
-    ### Invoke a frontend method (--call) {#call}
+    ### 调用前端方法（--call） {#call}
 
-    Same as [`build --call`](/reference/cli/docker/buildx/build/#call).
+    同 [`build --call`](/reference/cli/docker/buildx/build/#call)。
 
-    #### Call: check (--check) {#check}
+    #### Call: check（--check） {#check}
 
-    Same as [`build --check`](/reference/cli/docker/buildx/build/#check).
+    同 [`build --check`](/reference/cli/docker/buildx/build/#check)。
 
-    ### Specify a build definition file (-f, --file) {#file}
+    ### 指定构建定义文件（-f, --file） {#file}
 
-    Use the `-f` / `--file` option to specify the build definition file to use.
-    The file can be an HCL, JSON or Compose file. If multiple files are specified,
-    all are read and the build configurations are combined.
+    使用 `-f` / `--file` 指定要使用的构建定义文件。该文件可以是 HCL、JSON 或 Compose 文件。
+    如果指定了多个文件，它们将被读取并合并。
 
-    Alternatively, the environment variable `BUILDX_BAKE_FILE` can be used to specify the build definition to use.
-    This is mutually exclusive with `-f` / `--file`; if both are specified, the environment variable is ignored.
-    Multiple definitions can be specified by separating them with the system's path separator
-    (typically `;` on Windows and `:` elsewhere), but can be changed with `BUILDX_BAKE_PATH_SEPARATOR`.
+    也可以使用环境变量 `BUILDX_BAKE_FILE` 指定要使用的构建定义。
+    该变量与 `-f` / `--file` 互斥；如果同时指定，则环境变量会被忽略。
+    可以通过系统路径分隔符分隔多个定义（Windows 通常为 `;`，其他系统通常为 `:`），
+    也可以通过 `BUILDX_BAKE_PATH_SEPARATOR` 修改分隔符。
 
-    You can pass the names of the targets to build, to build only specific target(s).
-    The following example builds the `db` and `webapp-release` targets that are
-    defined in the `docker-bake.dev.hcl` file:
+    你可以通过传入目标名称，仅构建特定目标。如下示例构建 `docker-bake.dev.hcl` 中定义的
+    `db` 与 `webapp-release` 目标：
 
     ```hcl
     # docker-bake.dev.hcl
@@ -348,18 +330,15 @@ examples: |-
     $ docker buildx bake -f docker-bake.dev.hcl db webapp-release
     ```
 
-    See the [Bake file reference](/build/bake/reference/)
-    for more details.
+    更多详情参见 [Bake 文件参考](/build/bake/reference/)。
 
-    ### List targets and variables (--list) {#list}
+    ### 列出目标与变量（--list） {#list}
 
-    The `--list` flag displays all available targets or variables in the Bake
-    configuration, along with a description (if set using the `description`
-    property in the Bake file).
+    `--list` 会显示 Bake 配置中所有可用的目标或变量，以及其描述（如果在 Bake 文件中通过 `description` 设置）。
 
-    To list all targets:
+    列出所有目标：
 
-    ```console {title="List targets"}
+    ```console {title="列出目标"}
     $ docker buildx bake --list=targets
     TARGET              DESCRIPTION
     binaries
@@ -369,7 +348,7 @@ examples: |-
     validate-golangci   Validate .golangci.yml schema (does not run Go linter)
     ```
 
-    To list variables:
+    列出变量：
 
     ```console
     $ docker buildx bake --list=variables
@@ -380,35 +359,31 @@ examples: |-
     DEBUG         bool      false                Add debug symbols
     ```
 
-    Variable types will be shown when set using the `type` property in the Bake file.
+    变量类型会在使用 `type` 属性进行设置时显示。
 
-    By default, the output of `docker buildx bake --list` is presented in a table
-    format. Alternatively, you can use a long-form CSV syntax and specify a
-    `format` attribute to output the list in JSON.
+    默认情况下，`docker buildx bake --list` 的输出以表格形式展示。也可以使用长形式 CSV 语法并指定
+    `format` 属性，将输出以 JSON 形式呈现：
 
     ```console
     $ docker buildx bake --list=type=targets,format=json
     ```
 
-    ### Load images into Docker (--load) {#load}
+    ### 将镜像加载到 Docker（--load） {#load}
 
-    The `--load` flag is a convenience shorthand for adding an image export of type
-    `docker`:
+    `--load` 是添加 `docker` 类型镜像导出的便捷简写：
 
     ```console
     --load   ≈   --set=*.output=type=docker
     ```
 
-    However, its behavior is conditional:
+    其行为具有条件：
 
-    - If the build definition has no output defined, `--load` adds
-    `type=docker`.
-    - If the build definition’s outputs are `docker`, `image`, `registry`,
-    `oci`, `--load` will add a `type=docker` export if one is not already present.
-    - If the build definition contains `local` or `tar` outputs,
-    `--load` does nothing. It will not override those outputs.
+    - 如果构建定义未设置任何输出，`--load` 会添加 `type=docker`。
+    - 如果构建定义的输出为 `docker`、`image`、`registry`、`oci`，且尚未存在 `type=docker` 导出，`--load`
+      会添加一个 `type=docker` 导出。
+    - 如果构建定义包含 `local` 或 `tar` 输出，`--load` 不会生效，也不会覆盖这些输出。
 
-    For example, with the following bake file:
+    示例 bake 文件：
 
     ```hcl
     target "default" {
@@ -416,7 +391,7 @@ examples: |-
     }
     ```
 
-    With `--load`:
+    使用 `--load`：
 
     ```console
     $ docker buildx bake --load --print
@@ -429,12 +404,12 @@ examples: |-
     ]
     ```
 
-    The `tar` output remains unchanged.
+    `tar` 输出保持不变。
 
-    ### Write build results metadata to a file (--metadata-file) {#metadata-file}
+    ### 将构建结果元数据写入文件（--metadata-file） {#metadata-file}
 
-    Similar to [`buildx build --metadata-file`](/reference/cli/docker/buildx/build/#metadata-file) but
-    writes a map of results for each target such as:
+    类似于 [`buildx build --metadata-file`](/reference/cli/docker/buildx/build/#metadata-file)，但会为每个目标
+    写入一份结果映射，例如：
 
     ```hcl
     # docker-bake.hcl
@@ -495,26 +470,22 @@ examples: |-
     ```
 
     > [!NOTE]
-    > Build record [provenance](/build/metadata/attestations/slsa-provenance/#provenance-attestation-example)
-    > (`buildx.build.provenance`) includes minimal provenance by default. Set the
-    > `BUILDX_METADATA_PROVENANCE` environment variable to customize this behavior:
-    > * `min` sets minimal provenance (default).
-    > * `max` sets full provenance.
-    > * `disabled`, `false` or `0` does not set any provenance.
+    > 构建记录中的 [provenance](/build/metadata/attestations/slsa-provenance/#provenance-attestation-example)
+    >（`buildx.build.provenance`）默认仅包含最小溯源。可通过环境变量 `BUILDX_METADATA_PROVENANCE` 自定义：
+    > * `min`：最小溯源（默认）。
+    > * `max`：完整溯源。
+    > * `disabled`、`false` 或 `0`：不设置溯源。
 
     > [!NOTE]
-    > Build warnings (`buildx.build.warnings`) are not included by default. Set the
-    > `BUILDX_METADATA_WARNINGS` environment variable to `1` or `true` to
-    > include them.
+    > 构建警告（`buildx.build.warnings`）默认不包含。将环境变量 `BUILDX_METADATA_WARNINGS` 设为 `1` 或 `true` 可包含。
 
-    ### Don't use cache when building the image (--no-cache) {#no-cache}
+    ### 构建镜像时不使用缓存（--no-cache） {#no-cache}
 
-    Same as `build --no-cache`. Don't use cache when building the image.
+    等同于 `build --no-cache`。构建镜像时不使用缓存。
 
-    ### Print the options without building (--print) {#print}
+    ### 仅打印选项而不执行构建（--print） {#print}
 
-    Prints the resulting options of the targets desired to be built, in a JSON
-    format, without starting a build.
+    以 JSON 格式打印目标的最终构建选项，而不启动构建。
 
     ```console
     $ docker buildx bake -f docker-bake.hcl --print db
@@ -538,49 +509,48 @@ examples: |-
     }
     ```
 
-    ### Set type of progress output (--progress) {#progress}
+    ### 设置进度输出类型（--progress） {#progress}
 
-    Same as [`build --progress`](/reference/cli/docker/buildx/build/#progress).
+    同 [`build --progress`](/reference/cli/docker/buildx/build/#progress)。
 
-    ### Create provenance attestations (--provenance) {#provenance}
+    ### 生成溯源证明（--provenance） {#provenance}
 
-    Same as [`build --provenance`](/reference/cli/docker/buildx/build/#provenance).
+    同 [`build --provenance`](/reference/cli/docker/buildx/build/#provenance)。
 
-    ### Always attempt to pull a newer version of the image (--pull) {#pull}
+    ### 始终尝试拉取更新的镜像（--pull） {#pull}
 
-    Same as `build --pull`.
+    等同于 `build --pull`。
 
-    ### Push images to a registry (--push) {#push}
+    ### 将镜像推送到仓库（--push） {#push}
 
-    The `--push` flag follows the same logic as `--load`:
+    `--push` 遵循与 `--load` 相同的逻辑：
 
-    - If no outputs are defined, it adds a `type=image,push=true` export.
-    - For existing `image` outputs, it sets `push=true`.
-    - If outputs are set to `local` or `tar`, it does not override them.
+    - 若未定义任何输出，则添加 `type=image,push=true` 导出。
+    - 对已存在的 `image` 输出，设置 `push=true`。
+    - 若输出为 `local` 或 `tar`，则不会覆盖。
 
-    ### Create SBOM attestations (--sbom) {#sbom}
+    ### 生成 SBOM 证明（--sbom） {#sbom}
 
-    Same as [`build --sbom`](/reference/cli/docker/buildx/build/#sbom).
+    同 [`build --sbom`](/reference/cli/docker/buildx/build/#sbom)。
 
-    ### Override target configurations from command line (--set) {#set}
+    ### 从命令行覆盖目标配置（--set） {#set}
 
     ```
     --set targetpattern.key[.subkey]=value
     ```
 
-    Override target configurations from command line. The pattern matching syntax
-    is defined in https://golang.org/pkg/path/#Match.
+    从命令行覆盖目标配置。匹配语法见 https://golang.org/pkg/path/#Match。
 
     ```console
     $ docker buildx bake --set target.args.mybuildarg=value
     $ docker buildx bake --set target.platform=linux/arm64
-    $ docker buildx bake --set foo*.args.mybuildarg=value   # overrides build arg for all targets starting with 'foo'
-    $ docker buildx bake --set *.platform=linux/arm64       # overrides platform for all targets
-    $ docker buildx bake --set foo*.no-cache                # bypass caching only for targets starting with 'foo'
-    $ docker buildx bake --set target.platform+=linux/arm64 # appends 'linux/arm64' to the platform list
+    $ docker buildx bake --set foo*.args.mybuildarg=value   # 覆盖所有以 'foo' 开头目标的构建参数
+    $ docker buildx bake --set *.platform=linux/arm64       # 覆盖所有目标的平台
+    $ docker buildx bake --set foo*.no-cache                # 仅对以 'foo' 开头的目标跳过缓存
+    $ docker buildx bake --set target.platform+=linux/arm64 # 将 'linux/arm64' 追加到平台列表
     ```
 
-    You can override the following fields:
+    可覆盖以下字段：
 
     * `annotations`
     * `attest`
@@ -605,7 +575,7 @@ examples: |-
     * `tags`
     * `target`
 
-    You can append using `+=` operator for the following fields:
+    以下字段可使用 `+=` 运算符进行追加：
 
     * `annotations`¹
     * `attest`¹
@@ -620,7 +590,7 @@ examples: |-
     * `tags`
 
     > [!NOTE]
-    > ¹ These fields already append by default.
+    > ¹ 这些字段默认即为追加。
 deprecated: false
 hidden: false
 experimental: false

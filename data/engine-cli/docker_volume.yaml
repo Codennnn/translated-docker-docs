@@ -1,8 +1,8 @@
 command: docker volume
-short: Manage volumes
+short: 管理卷
 long: |-
-    Manage volumes. You can use subcommands to create, inspect, list, remove, or
-    prune volumes.
+    管理卷。你可以使用子命令来创建、查看、列出、删除或
+    清理未使用的卷。
 usage: docker volume COMMAND
 pname: docker
 plink: docker.yaml
@@ -25,6 +25,8 @@ inherited_options:
       value_type: bool
       default_value: "false"
       description: Print usage
+      
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false

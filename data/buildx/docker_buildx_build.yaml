@@ -1,7 +1,7 @@
 command: docker buildx build
 aliases: docker build, docker builder build, docker image build, docker buildx b
-short: Start a build
-long: The `docker buildx build` command starts a build using BuildKit.
+short: 启动一次构建
+long: "`docker buildx build` 命令使用 BuildKit 启动构建。"
 usage: docker buildx build [OPTIONS] PATH | URL | -
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -9,7 +9,7 @@ options:
     - option: add-host
       value_type: stringSlice
       default_value: '[]'
-      description: 'Add a custom host-to-IP mapping (format: `host:ip`)'
+      description: '添加自定义主机名到 IP 的映射（格式：`host:ip`）'
       details_url: '#add-host'
       deprecated: false
       hidden: false
@@ -21,7 +21,7 @@ options:
       value_type: stringArray
       default_value: '[]'
       description: |
-        Allow extra privileged entitlement (e.g., `network.host`, `security.insecure`, `device`)
+        允许额外的特权授权（例如 `network.host`、`security.insecure`、`device`）
       details_url: '#allow'
       deprecated: false
       hidden: false
@@ -32,7 +32,7 @@ options:
     - option: annotation
       value_type: stringArray
       default_value: '[]'
-      description: Add annotation to the image
+      description: 为镜像添加注解
       details_url: '#annotation'
       deprecated: false
       hidden: false
@@ -43,7 +43,7 @@ options:
     - option: attest
       value_type: stringArray
       default_value: '[]'
-      description: 'Attestation parameters (format: `type=sbom,generator=image`)'
+      description: '证明参数（格式：`type=sbom,generator=image`）'
       details_url: '#attest'
       deprecated: false
       hidden: false
@@ -54,7 +54,7 @@ options:
     - option: build-arg
       value_type: stringArray
       default_value: '[]'
-      description: Set build-time variables
+      description: 设置构建时变量
       details_url: '#build-arg'
       deprecated: false
       hidden: false
@@ -65,7 +65,7 @@ options:
     - option: build-context
       value_type: stringArray
       default_value: '[]'
-      description: Additional build contexts (e.g., name=path)
+      description: 额外的构建上下文（例如 `name=path`）
       details_url: '#build-context'
       deprecated: false
       hidden: false
@@ -77,7 +77,7 @@ options:
       value_type: stringArray
       default_value: '[]'
       description: |
-        External cache sources (e.g., `user/app:cache`, `type=local,src=path/to/dir`)
+        外部缓存源（例如 `user/app:cache`，`type=local,src=path/to/dir`）
       details_url: '#cache-from'
       deprecated: false
       hidden: false
@@ -89,7 +89,7 @@ options:
       value_type: stringArray
       default_value: '[]'
       description: |
-        Cache export destinations (e.g., `user/app:cache`, `type=local,dest=path/to/dir`)
+        缓存导出目标（例如 `user/app:cache`，`type=local,dest=path/to/dir`）
       details_url: '#cache-to'
       deprecated: false
       hidden: false
@@ -100,7 +100,7 @@ options:
     - option: call
       value_type: string
       default_value: build
-      description: Set method for evaluating build (`check`, `outline`, `targets`)
+      description: 设置用于评估构建的方法（`check`、`outline`、`targets`）
       details_url: '#call'
       deprecated: false
       hidden: false
@@ -110,7 +110,7 @@ options:
       swarm: false
     - option: cgroup-parent
       value_type: string
-      description: Set the parent cgroup for the `RUN` instructions during build
+      description: 为构建期间的 `RUN` 指令设置父 cgroup
       details_url: '#cgroup-parent'
       deprecated: false
       hidden: false
@@ -120,7 +120,7 @@ options:
       swarm: false
     - option: check
       value_type: bool
-      description: Shorthand for `--call=check`
+      description: 等同于 `--call=check` 的简写
       details_url: '#check'
       deprecated: false
       hidden: false
@@ -131,7 +131,7 @@ options:
     - option: compress
       value_type: bool
       default_value: "false"
-      description: Compress the build context using gzip
+      description: 使用 gzip 压缩构建上下文
       deprecated: false
       hidden: true
       experimental: false
@@ -141,7 +141,7 @@ options:
     - option: cpu-period
       value_type: int64
       default_value: "0"
-      description: Limit the CPU CFS (Completely Fair Scheduler) period
+      description: 限制 CPU CFS（完全公平调度器）周期
       deprecated: false
       hidden: true
       experimental: false
@@ -151,7 +151,7 @@ options:
     - option: cpu-quota
       value_type: int64
       default_value: "0"
-      description: Limit the CPU CFS (Completely Fair Scheduler) quota
+      description: 限制 CPU CFS（完全公平调度器）配额
       deprecated: false
       hidden: true
       experimental: false
@@ -162,7 +162,7 @@ options:
       shorthand: c
       value_type: int64
       default_value: "0"
-      description: CPU shares (relative weight)
+      description: CPU 共享（相对权重）
       deprecated: false
       hidden: true
       experimental: false
@@ -171,7 +171,7 @@ options:
       swarm: false
     - option: cpuset-cpus
       value_type: string
-      description: CPUs in which to allow execution (`0-3`, `0,1`)
+      description: 允许执行的 CPU 集（如 `0-3`、`0,1`）
       deprecated: false
       hidden: true
       experimental: false
@@ -180,7 +180,7 @@ options:
       swarm: false
     - option: cpuset-mems
       value_type: string
-      description: MEMs in which to allow execution (`0-3`, `0,1`)
+      description: 允许执行的内存节点（MEM）（如 `0-3`、`0,1`）
       deprecated: false
       hidden: true
       experimental: false
@@ -190,7 +190,7 @@ options:
     - option: file
       shorthand: f
       value_type: string
-      description: 'Name of the Dockerfile (default: `PATH/Dockerfile`)'
+      description: 'Dockerfile 文件名（默认：`PATH/Dockerfile`）'
       details_url: '#file'
       deprecated: false
       hidden: false
@@ -201,7 +201,7 @@ options:
     - option: force-rm
       value_type: bool
       default_value: "false"
-      description: Always remove intermediate containers
+      description: 始终删除中间容器
       deprecated: false
       hidden: true
       experimental: false
@@ -210,7 +210,7 @@ options:
       swarm: false
     - option: iidfile
       value_type: string
-      description: Write the image ID to a file
+      description: 将镜像 ID 写入文件
       deprecated: false
       hidden: false
       experimental: false
@@ -219,7 +219,7 @@ options:
       swarm: false
     - option: isolation
       value_type: string
-      description: Container isolation technology
+      description: 容器隔离技术
       deprecated: false
       hidden: true
       experimental: false
@@ -229,7 +229,7 @@ options:
     - option: label
       value_type: stringArray
       default_value: '[]'
-      description: Set metadata for an image
+      description: 为镜像设置元数据
       deprecated: false
       hidden: false
       experimental: false
@@ -239,7 +239,7 @@ options:
     - option: load
       value_type: bool
       default_value: "false"
-      description: Shorthand for `--output=type=docker`
+      description: 等同于 `--output=type=docker` 的简写
       details_url: '#load'
       deprecated: false
       hidden: false
@@ -250,7 +250,7 @@ options:
     - option: memory
       shorthand: m
       value_type: string
-      description: Memory limit
+      description: 内存限制
       deprecated: false
       hidden: true
       experimental: false
@@ -260,7 +260,7 @@ options:
     - option: memory-swap
       value_type: string
       description: |
-        Swap limit equal to memory plus swap: `-1` to enable unlimited swap
+        Swap 限制等于内存与交换区之和：`-1` 表示不限制
       deprecated: false
       hidden: true
       experimental: false
@@ -269,7 +269,7 @@ options:
       swarm: false
     - option: metadata-file
       value_type: string
-      description: Write build result metadata to a file
+      description: 将构建结果的元数据写入文件
       details_url: '#metadata-file'
       deprecated: false
       hidden: false
@@ -280,7 +280,7 @@ options:
     - option: network
       value_type: string
       default_value: default
-      description: Set the networking mode for the `RUN` instructions during build
+      description: 设置构建期间 `RUN` 指令的网络模式
       details_url: '#network'
       deprecated: false
       hidden: false
@@ -291,7 +291,7 @@ options:
     - option: no-cache
       value_type: bool
       default_value: "false"
-      description: Do not use cache when building the image
+      description: 构建镜像时不使用缓存
       deprecated: false
       hidden: false
       experimental: false
@@ -301,7 +301,7 @@ options:
     - option: no-cache-filter
       value_type: stringArray
       default_value: '[]'
-      description: Do not cache specified stages
+      description: 不缓存指定阶段
       details_url: '#no-cache-filter'
       deprecated: false
       hidden: false
@@ -313,7 +313,7 @@ options:
       shorthand: o
       value_type: stringArray
       default_value: '[]'
-      description: 'Output destination (format: `type=local,dest=path`)'
+      description: '输出目的地（格式：`type=local,dest=path`）'
       details_url: '#output'
       deprecated: false
       hidden: false
@@ -324,7 +324,7 @@ options:
     - option: platform
       value_type: stringArray
       default_value: '[]'
-      description: Set target platform for build
+      description: 设置构建的目标平台
       details_url: '#platform'
       deprecated: false
       hidden: false
@@ -334,7 +334,7 @@ options:
       swarm: false
     - option: print
       value_type: string
-      description: Print result of information request (e.g., outline, targets)
+      description: 打印信息请求的结果（例如 outline、targets）
       deprecated: false
       hidden: true
       experimental: false
@@ -345,7 +345,7 @@ options:
       value_type: string
       default_value: auto
       description: |
-        Set type of progress output (`auto`, `none`,  `plain`, `quiet`, `rawjson`, `tty`). Use plain to show container output
+        设置进度输出类型（`auto`、`none`、`plain`、`quiet`、`rawjson`、`tty`）。使用 `plain` 显示容器输出
       details_url: '#progress'
       deprecated: false
       hidden: false
@@ -355,7 +355,7 @@ options:
       swarm: false
     - option: provenance
       value_type: string
-      description: Shorthand for `--attest=type=provenance`
+      description: 等同于 `--attest=type=provenance` 的简写
       details_url: '#provenance'
       deprecated: false
       hidden: false
@@ -366,7 +366,7 @@ options:
     - option: pull
       value_type: bool
       default_value: "false"
-      description: Always attempt to pull all referenced images
+      description: 始终尝试拉取所有被引用的镜像
       deprecated: false
       hidden: false
       experimental: false
@@ -376,7 +376,7 @@ options:
     - option: push
       value_type: bool
       default_value: "false"
-      description: Shorthand for `--output=type=registry`
+      description: 等同于 `--output=type=registry` 的简写
       details_url: '#push'
       deprecated: false
       hidden: false
@@ -388,7 +388,7 @@ options:
       shorthand: q
       value_type: bool
       default_value: "false"
-      description: Suppress the build output and print image ID on success
+      description: 压制构建输出，仅在成功时打印镜像 ID
       deprecated: false
       hidden: false
       experimental: false
@@ -398,7 +398,7 @@ options:
     - option: rm
       value_type: bool
       default_value: "true"
-      description: Remove intermediate containers after a successful build
+      description: 构建成功后删除中间容器
       deprecated: false
       hidden: true
       experimental: false
@@ -407,7 +407,7 @@ options:
       swarm: false
     - option: sbom
       value_type: string
-      description: Shorthand for `--attest=type=sbom`
+      description: 等同于 `--attest=type=sbom` 的简写
       details_url: '#sbom'
       deprecated: false
       hidden: false
@@ -419,7 +419,7 @@ options:
       value_type: stringArray
       default_value: '[]'
       description: |
-        Secret to expose to the build (format: `id=mysecret[,src=/local/secret]`)
+        向构建暴露的机密（格式：`id=mysecret[,src=/local/secret]`）
       details_url: '#secret'
       deprecated: false
       hidden: false
@@ -430,7 +430,7 @@ options:
     - option: security-opt
       value_type: stringSlice
       default_value: '[]'
-      description: Security options
+      description: 安全选项
       deprecated: false
       hidden: true
       experimental: false
@@ -440,7 +440,7 @@ options:
     - option: shm-size
       value_type: bytes
       default_value: "0"
-      description: Shared memory size for build containers
+      description: 构建容器的共享内存大小
       details_url: '#shm-size'
       deprecated: false
       hidden: false
@@ -451,7 +451,7 @@ options:
     - option: squash
       value_type: bool
       default_value: "false"
-      description: Squash newly built layers into a single new layer
+      description: 将新构建的多层压缩为单层
       deprecated: false
       hidden: true
       experimental: false
@@ -462,7 +462,7 @@ options:
       value_type: stringArray
       default_value: '[]'
       description: |
-        SSH agent socket or keys to expose to the build (format: `default|<id>[=<socket>|<key>[,<key>]]`)
+        向构建暴露的 SSH 代理套接字或密钥（格式：`default|<id>[=<socket>|<key>[,<key>]]`）
       details_url: '#ssh'
       deprecated: false
       hidden: false
@@ -474,7 +474,7 @@ options:
       shorthand: t
       value_type: stringArray
       default_value: '[]'
-      description: 'Name and optionally a tag (format: `name:tag`)'
+      description: '名称及可选标签（格式：`name:tag`）'
       details_url: '#tag'
       deprecated: false
       hidden: false
@@ -484,7 +484,7 @@ options:
       swarm: false
     - option: target
       value_type: string
-      description: Set the target build stage to build
+      description: 设置要构建的目标阶段
       details_url: '#target'
       deprecated: false
       hidden: false
@@ -495,7 +495,7 @@ options:
     - option: ulimit
       value_type: ulimit
       default_value: '[]'
-      description: Ulimit options
+      description: Ulimit 选项
       details_url: '#ulimit'
       deprecated: false
       hidden: false
@@ -506,7 +506,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -518,7 +518,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -526,167 +526,150 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Add entries to container hosts file (--add-host) {#add-host}
+    ### 向容器 hosts 文件添加条目（--add-host）{#add-host}
 
-    You can add other hosts into a build container's `/etc/hosts` file by using one
-    or more `--add-host` flags. This example adds static addresses for hosts named
-    `my-hostname` and `my_hostname_v6`:
+    你可以通过一个或多个 `--add-host` 标志，将其他主机写入构建容器的 `/etc/hosts` 文件。
+    下例为主机名 `my-hostname` 与 `my_hostname_v6` 添加固定地址：
 
     ```console
     $ docker buildx build --add-host my_hostname=8.8.8.8 --add-host my_hostname_v6=2001:4860:4860::8888 .
     ```
 
-    If you need your build to connect to services running on the host, you can use
-    the special `host-gateway` value for `--add-host`. In the following example,
-    build containers resolve `host.docker.internal` to the host's gateway IP.
+    如果构建过程需要访问宿主机上的服务，可以在 `--add-host` 中使用特殊值 `host-gateway`。
+    下面的示例让构建容器把 `host.docker.internal` 解析为宿主机网关 IP：
 
     ```console
     $ docker buildx build --add-host host.docker.internal=host-gateway .
     ```
 
-    You can wrap an IPv6 address in square brackets.
-    `=` and `:` are both valid separators.
-    Both formats in the following example are valid:
+    IPv6 地址可以用方括号包裹。
+    `=` 与 `:` 都是合法的分隔符。
+    下面两种写法都有效：
 
     ```console
     $ docker buildx build --add-host my-hostname:10.180.0.1 --add-host my-hostname_v6=[2001:4860:4860::8888] .
     ```
 
-    ### Create annotations (--annotation) {#annotation}
+    ### 创建注解（--annotation）{#annotation}
 
     ```text
     --annotation="key=value"
     --annotation="[type:]key=value"
     ```
 
-    Add OCI annotations to the image index, manifest, or descriptor.
-    The following example adds the `foo=bar` annotation to the image manifests:
+    向镜像索引（image index）、清单（manifest）或描述符（descriptor）添加 OCI 注解。
+    下面的示例把注解 `foo=bar` 添加到镜像清单：
 
     ```console
     $ docker buildx build -t TAG --annotation "foo=bar" --push .
     ```
 
-    You can optionally add a type prefix to specify the level of the annotation. By
-    default, the image manifest is annotated. The following example adds the
-    `foo=bar` annotation the image index instead of the manifests:
+    你可以选择添加类型前缀来指定注解的作用层级。默认情况下会注解镜像清单。
+    下面示例将 `foo=bar` 注解添加到镜像索引，而不是清单：
 
     ```console
     $ docker buildx build -t TAG --annotation "index:foo=bar" --push .
     ```
 
-    You can specify multiple types, separated by a comma (,) to add the annotation
-    to multiple image components. The following example adds the `foo=bar`
-    annotation to image index, descriptors, manifests:
+    你也可以用英文逗号（,）分隔多个类型，让同一注解应用于多个镜像组件。
+    下面示例把 `foo=bar` 注解同时添加到镜像索引、描述符与清单：
 
     ```console
     $ docker buildx build -t TAG --annotation "index,manifest,manifest-descriptor:foo=bar" --push .
     ```
 
-    You can also specify a platform qualifier in square brackets (`[os/arch]`) in
-    the type prefix, to apply the annotation to a subset of manifests with the
-    matching platform. The following example adds the `foo=bar` annotation only to
-    the manifest with the `linux/amd64` platform:
+    你还可以在类型前缀中使用方括号（`[os/arch]`）指定平台限定，只对匹配平台的清单添加注解。
+    下面示例仅为 `linux/amd64` 平台的清单添加 `foo=bar` 注解：
 
     ```console
     $ docker buildx build -t TAG --annotation "manifest[linux/amd64]:foo=bar" --push .
     ```
 
-    Wildcards are not supported in the platform qualifier; you can't specify a type
-    prefix like `manifest[linux/*]` to add annotations only to manifests which has
-    `linux` as the OS platform.
+    平台限定不支持通配符；例如不能使用 `manifest[linux/*]` 这样的前缀来匹配所有 `linux` 平台。
 
-    For more information about annotations, see
-    [Annotations](/build/building/annotations/).
+    了解更多注解的用法，参见
+    [注解](/build/building/annotations/)。
 
-    ### Create attestations (--attest) {#attest}
+    ### 创建证明（--attest）{#attest}
 
     ```text
     --attest=type=sbom,...
     --attest=type=provenance,...
     ```
 
-    Create [image attestations](/build/metadata/attestations/).
-    BuildKit currently supports:
+    创建[镜像证明（attestations）](/build/metadata/attestations/)。
+    当前 BuildKit 支持：
 
     - `sbom` - Software Bill of Materials.
 
-      Use `--attest=type=sbom` to generate an SBOM for an image at build-time.
-      Alternatively, you can use the [`--sbom` shorthand](#sbom).
+      使用 `--attest=type=sbom` 在构建时为镜像生成 SBOM。
+      也可使用[`--sbom` 简写](#sbom)。
 
-      For more information, see [here](/build/metadata/attestations/sbom/).
+      了解更多，见[此处](/build/metadata/attestations/sbom/)。
 
     - `provenance` - SLSA Provenance
 
-      Use `--attest=type=provenance` to generate provenance for an image at
-      build-time. Alternatively, you can use the [`--provenance` shorthand](#provenance).
+      使用 `--attest=type=provenance` 在构建时为镜像生成来源证明（provenance）。
+      也可使用[`--provenance` 简写](#provenance)。
 
-      By default, a minimal provenance attestation will be created for the build
-      result, which will only be attached for images pushed to registries.
+      默认情况下，会为构建结果创建最小化的来源证明，并且只在镜像被推送到仓库时附加。
 
-      For more information, see [here](/build/metadata/attestations/slsa-provenance/).
+      了解更多，见[此处](/build/metadata/attestations/slsa-provenance/)。
 
-    ### Allow extra privileged entitlement (--allow) {#allow}
+    ### 允许额外的特权授权（--allow）{#allow}
 
     ```text
     --allow=ENTITLEMENT
     ```
 
-    Allow extra privileged entitlement. List of entitlements:
+    允许额外的特权授权。可用的授权包括：
 
-    - `network.host` - Allows executions with host networking.
-    - `security.insecure` - Allows executions without sandbox. See
-      [related Dockerfile extensions](/reference/dockerfile/#run---security).
-    - `device` - Allows access to Container Device Interface (CDI) devices.
-       - `--allow device` - Grants access to all devices.
-       - `--allow device=kind|name` - Grants access to a specific device.
-       - `--allow device=kind|name,alias=kind|name` - Grants access to a specific device, with optional aliasing.
+    - `network.host` - 允许以宿主机网络执行。
+    - `security.insecure` - 允许在无沙箱的情况下执行。参见
+      [相关 Dockerfile 扩展](/reference/dockerfile/#run---security)。
+    - `device` - 允许访问 CDI（Container Device Interface）设备。
+       - `--allow device` - 允许访问所有设备。
+       - `--allow device=kind|name` - 仅允许访问指定设备。
+       - `--allow device=kind|name,alias=kind|name` - 仅允许访问指定设备，并可指定别名。
 
-    For entitlements to be enabled, the BuildKit daemon also needs to allow them
-    with `--allow-insecure-entitlement` (see [`create --buildkitd-flags`](/reference/cli/docker/buildx/create/#buildkitd-flags)).
+    要启用这些授权，BuildKit 守护进程也必须通过 `--allow-insecure-entitlement` 允许对应的权限
+    （参见 [`create --buildkitd-flags`](/reference/cli/docker/buildx/create/#buildkitd-flags)）。
 
     ```console
     $ docker buildx create --use --name insecure-builder --buildkitd-flags '--allow-insecure-entitlement security.insecure'
     $ docker buildx build --allow security.insecure .
     ```
 
-    ### Set build-time variables (--build-arg) {#build-arg}
+    ### 设置构建时变量（--build-arg）{#build-arg}
 
-    You can use `ENV` instructions in a Dockerfile to define variable values. These
-    values persist in the built image. Often persistence isn't what you want. Users
-    want to specify variables differently depending on which host they build an
-    image on.
+    你可以在 Dockerfile 中使用 `ENV` 指令定义变量值，这些值会持久化到生成的镜像中。
+    但很多场景并不需要持久化，用户希望能根据构建所在主机以不同方式指定变量。
 
-    A good example is `http_proxy` or source versions for pulling intermediate
-    files. The `ARG` instruction lets Dockerfile authors define values that users
-    can set at build-time using the  `--build-arg` flag:
+    一个常见场景是设置 `http_proxy`，或用于拉取中间文件的源版本。
+    `ARG` 指令允许 Dockerfile 作者定义可在构建时通过 `--build-arg` 传入的参数：
 
     ```console
     $ docker buildx build --build-arg HTTP_PROXY=http://10.20.30.2:1234 --build-arg FTP_PROXY=http://40.50.60.5:4567 .
     ```
 
-    This flag allows you to pass the build-time variables that are
-    accessed like regular environment variables in the `RUN` instruction of the
-    Dockerfile. These values don't persist in the intermediate or final images
-    like `ENV` values do. You must add `--build-arg` for each build argument.
+    该标志用于传递构建时变量，在 `RUN` 指令中可像常规环境变量一样访问。
+    与 `ENV` 不同，这些值不会持久化到中间或最终镜像中。每个构建参数都需单独使用一次 `--build-arg`。
 
-    Using this flag doesn't alter the output you see when the build process echoes the`ARG` lines from the
-    Dockerfile.
+    使用该标志不会改变构建过程回显 Dockerfile 中 `ARG` 行时的输出。
 
-    For detailed information on using `ARG` and `ENV` instructions, see the
-    [Dockerfile reference](/reference/dockerfile/).
+    关于 `ARG` 与 `ENV` 的更多信息，参见
+    [Dockerfile 参考](/reference/dockerfile/)。
 
-    You can also use the `--build-arg` flag without a value, in which case the daemon
-    propagates the value from the local environment into the Docker container it's building:
+    也可以不给 `--build-arg` 指定值，此时守护进程会将本地环境中的变量值传入构建容器：
 
     ```console
     $ export HTTP_PROXY=http://10.20.30.2:1234
     $ docker buildx build --build-arg HTTP_PROXY .
     ```
 
-    This example is similar to how `docker run -e` works. Refer to the [`docker run` documentation](/reference/cli/docker/container/run/#env)
-    for more information.
+    该用法与 `docker run -e` 类似。更多信息参见 [`docker run` 文档](/reference/cli/docker/container/run/#env)。
 
-    There are also useful built-in build arguments, such as:
+    还提供了一些实用的内置构建参数，例如：
 
     * `BUILDKIT_CONTEXT_KEEP_GIT_DIR=<bool>`: trigger git context to keep the `.git` directory
     * `BUILDKIT_INLINE_CACHE=<bool>`: inline cache metadata to image config or not
@@ -696,18 +679,19 @@ examples: |-
     $ docker buildx build --build-arg BUILDKIT_MULTI_PLATFORM=1 .
     ```
 
-    Learn more about the built-in build arguments in the [Dockerfile reference docs](/reference/dockerfile/#buildkit-built-in-build-args).
+    更多内置构建参数说明见
+    [Dockerfile 参考文档](/reference/dockerfile/#buildkit-built-in-build-args)。
 
-    ### Additional build contexts (--build-context) {#build-context}
+    ### 额外构建上下文（--build-context）{#build-context}
 
     ```text
     --build-context=name=VALUE
     ```
 
-    Define additional build context with specified contents. In Dockerfile the context can be accessed when `FROM name` or `--from=name` is used.
-    When Dockerfile defines a stage with the same name it is overwritten.
+    定义带有指定内容的额外构建上下文。在 Dockerfile 中使用 `FROM name` 或 `--from=name` 即可访问。
+    若 Dockerfile 中存在同名阶段，则会被该上下文覆盖。
 
-    The value can be a:
+    取值可以是：
 
     - local source directory
     - [local OCI layout compliant directory](https://github.com/opencontainers/image-spec/blob/main/image-layout.md)
@@ -715,20 +699,20 @@ examples: |-
     - Git URL
     - HTTP URL
 
-    #### Use a local path {#local-path}
+    #### 使用本地路径 {#local-path}
 
-    Expose a secondary local source directory:
+    暴露一个次级本地源目录：
 
     ```console
     $ docker buildx build --build-context project=path/to/project/source .
     # docker buildx build --build-context project=https://github.com/myuser/project.git .
     ```
 
-    #### Use a container image {#docker-image}
+    #### 使用容器镜像 {#docker-image}
 
-    Use the `docker-image://` scheme.
+    使用 `docker-image://` 协议。
 
-    Replace `alpine:latest` with a pinned one:
+    将 `alpine:latest` 替换为固定版本：
 
     ```console
     $ docker buildx build --build-context alpine=docker-image://alpine@sha256:0123456789 .
@@ -740,13 +724,12 @@ examples: |-
     COPY --from=project myfile /
     ```
 
-    #### Use an OCI layout directory as build context {#source-oci-layout}
+    #### 使用 OCI layout 目录作为构建上下文 {#source-oci-layout}
 
-    Use the `oci-layout:///` scheme.
+    使用 `oci-layout:///` 协议。
 
-    Source an image from a local
-    [OCI layout compliant directory](https://github.com/opencontainers/image-spec/blob/main/image-layout.md),
-    either by tag, or by digest:
+    从本地[符合 OCI layout 的目录](https://github.com/opencontainers/image-spec/blob/main/image-layout.md)
+    获取镜像，可通过标签或摘要指定：
 
     ```console
     $ docker buildx build --build-context foo=oci-layout:///path/to/local/layout:<tag>
@@ -762,36 +745,32 @@ examples: |-
     FROM foo
     ```
 
-    The OCI layout directory must be compliant with the [OCI layout specification](https://github.com/opencontainers/image-spec/blob/main/image-layout.md).
+    该目录必须符合 [OCI layout 规范](https://github.com/opencontainers/image-spec/blob/main/image-layout.md)。
 
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例（--builder）{#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    等同于 [`buildx --builder`](/reference/cli/docker/buildx/#builder)。
 
-    ### Use an external cache source for a build (--cache-from) {#cache-from}
+    ### 使用外部缓存源（--cache-from）{#cache-from}
 
     ```text
     --cache-from=[NAME|type=TYPE[,KEY=VALUE]]
     ```
 
-    Use an external cache source for a build. Supported types are:
+    为构建使用外部缓存源。支持的类型包括：
 
-    - [`registry`](/build/cache/backends/registry/)
-      can import cache from a cache manifest or (special) image configuration on the
-      registry.
-    - [`local`](/build/cache/backends/local/) can
-      import cache from local files previously exported with `--cache-to`.
-    - [`gha`](/build/cache/backends/gha/)
-      can import cache from a previously exported cache with `--cache-to` in your
-      GitHub repository.
-    - [`s3`](/build/cache/backends/s3/)
-      can import cache from a previously exported cache with `--cache-to` in your
-      S3 bucket.
-    - [`azblob`](/build/cache/backends/azblob/)
-      can import cache from a previously exported cache with `--cache-to` in your
-      Azure bucket.
+    - [`registry`](/build/cache/backends/registry/)：
+      可从仓库中的缓存清单或（特殊）镜像配置导入缓存。
+    - [`local`](/build/cache/backends/local/)：
+      可从先前通过 `--cache-to` 导出的本地文件导入缓存。
+    - [`gha`](/build/cache/backends/gha/)：
+      可从仓库中先前通过 `--cache-to` 导出的缓存导入（GitHub Actions Cache）。
+    - [`s3`](/build/cache/backends/s3/)：
+      可从 S3 bucket 中先前通过 `--cache-to` 导出的缓存导入。
+    - [`azblob`](/build/cache/backends/azblob/)：
+      可从 Azure 存储中先前通过 `--cache-to` 导出的缓存导入。
 
-    If no type is specified, `registry` exporter is used with a specified reference.
+    若未指定类型，则按给定引用使用 `registry` 导入器。
 
     ```console
     $ docker buildx build --cache-from=user/app:cache .
@@ -803,29 +782,23 @@ examples: |-
     ```
 
     > [!NOTE]
-    > More info about cache exporters and available attributes can be found in the
-    > [Cache storage backends documentation](/build/cache/backends/)
+    > 更多关于缓存导入/导出器及可用属性，参见
+    > [缓存存储后端文档](/build/cache/backends/)
 
-    ### Export build cache to an external cache destination (--cache-to) {#cache-to}
+    ### 将构建缓存导出到外部目标（--cache-to）{#cache-to}
 
     ```text
     --cache-to=[NAME|type=TYPE[,KEY=VALUE]]
     ```
 
-    Export build cache to an external cache destination. Supported types are:
+    将构建缓存导出到外部缓存目标。支持的类型包括：
 
-    - [`registry`](/build/cache/backends/registry/) exports
-      build cache to a cache manifest in the registry.
-    - [`local`](/build/cache/backends/local/) exports
-      cache to a local directory on the client.
-    - [`inline`](/build/cache/backends/inline/) writes the
-      cache metadata into the image configuration.
-    - [`gha`](/build/cache/backends/gha/) exports cache
-      through the GitHub Actions Cache service API.
-    - [`s3`](/build/cache/backends/s3/) exports cache to a
-      S3 bucket.
-    - [`azblob`](/build/cache/backends/azblob/) exports
-      cache to an Azure bucket.
+    - [`registry`](/build/cache/backends/registry/)：将构建缓存导出为仓库中的缓存清单。
+    - [`local`](/build/cache/backends/local/)：将缓存导出到客户端本地目录。
+    - [`inline`](/build/cache/backends/inline/)：将缓存元数据写入镜像配置。
+    - [`gha`](/build/cache/backends/gha/)：通过 GitHub Actions Cache API 导出缓存。
+    - [`s3`](/build/cache/backends/s3/)：导出到 S3 bucket。
+    - [`azblob`](/build/cache/backends/azblob/)：导出到 Azure 存储。
 
     ```console
     $ docker buildx build --cache-to=user/app:cache .
@@ -837,25 +810,22 @@ examples: |-
     ```
 
     > [!NOTE]
-    > More info about cache exporters and available attributes can be found in the
-    > [Cache storage backends documentation](/build/cache/backends/)
+    > 更多关于缓存导入/导出器及可用属性，参见
+    > [缓存存储后端文档](/build/cache/backends/)
 
-    ### Invoke a frontend method (--call) {#call}
+    ### 调用前端方法（--call）{#call}
 
     ```text
     --call=[build|check|outline|targets]
     ```
 
-    BuildKit frontends can support alternative modes of executions for builds,
-    using frontend methods. Frontend methods are a way to change or extend the
-    behavior of a build invocation, which lets you, for example, inspect, validate,
-    or generate alternative outputs from a build.
+    BuildKit 前端（frontend）可以通过“方法”支持不同的构建执行模式。
+    这些方法用于改变或扩展构建行为，例如进行检查、验证，或生成不同的输出。
 
-    The `--call` flag for `docker buildx build` lets you specify the frontend
-    method that you want to execute. If this flag is unspecified, it defaults to
-    executing the build and evaluating [build checks](/reference/build-checks/).
+    `docker buildx build` 的 `--call` 标志用于指定要执行的前端方法。
+    未指定时，默认执行构建并评估[构建检查](/reference/build-checks/)。
 
-    For Dockerfiles, the available methods are:
+    对于 Dockerfile，支持以下方法：
 
     | Command                        | Description                                                                                                         |
     | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
@@ -865,9 +835,8 @@ examples: |-
     | `targets`                      | List all the build targets in the Dockerfile.                                                                       |
     | `subrequests.describe`         | List all the frontend methods that the current frontend supports.                                                   |
 
-    Note that other frontends may implement these or other methods.
-    To see the list of available methods for the frontend you're using,
-    use `--call=subrequests.describe`.
+    其他前端可能实现相同或不同的方法。
+    使用 `--call=subrequests.describe` 可查看当前前端支持的方法列表。
 
     ```console
     $ docker buildx build -q --call=subrequests.describe .
@@ -878,14 +847,11 @@ examples: |-
     subrequests.describe 1.0.0   List available subrequest types
     ```
 
-    #### Descriptions
+    #### 描述
 
-    The [`--call=targets`](#call-targets) and [`--call=outline`](#call-outline)
-    methods include descriptions for build targets and arguments, if available.
-    Descriptions are generated from comments in the Dockerfile. A comment on the
-    line before a `FROM` instruction becomes the description of a build target, and
-    a comment before an `ARG` instruction the description of a build argument. The
-    comment must lead with the name of the stage or argument, for example:
+    若可用，[`--call=targets`](#call-targets) 与 [`--call=outline`](#call-outline) 会包含构建目标和参数的描述。
+    这些描述来自 Dockerfile 注释：`FROM` 前一行的注释成为目标阶段的描述，`ARG` 前的注释成为参数描述。
+    注释需以阶段或参数名开头，例如：
 
     ```dockerfile
     # syntax=docker/dockerfile:1
@@ -897,8 +863,7 @@ examples: |-
     FROM golang:${GO_VERSION} AS base-builder
     ```
 
-    When you run `docker buildx build --call=outline`, the output includes the
-    descriptions, as follows:
+    运行 `docker buildx build --call=outline` 后，输出会包含这些描述：
 
     ```console
     $ docker buildx build -q --call=outline .
@@ -910,14 +875,13 @@ examples: |-
     GO_VERSION   1.22    sets the Go version for the build
     ```
 
-    For more examples on how to write Dockerfile docstrings,
-    check out [the Dockerfile for Docker docs](https://github.com/docker/docs/blob/main/Dockerfile).
+    更多编写 Dockerfile 文档注释的示例，参见
+    [Docker 文档项目的 Dockerfile](https://github.com/docker/docs/blob/main/Dockerfile)。
 
-    #### Call: check (--check) {#check}
+    #### 调用：check（--check）{#check}
 
-    The `check` method evaluates build checks without executing the build. The
-    `--check` flag is a convenient shorthand for `--call=check`. Use the `check`
-    method to validate the build configuration before starting the build.
+    `check` 方法在不执行构建的情况下评估构建检查。
+    `--check` 是 `--call=check` 的便捷写法。用它可在开始构建前验证配置。
 
     ```console
     $ docker buildx build -q --check https://github.com/docker/docs.git
@@ -934,16 +898,13 @@ examples: |-
     --------------------
     ```
 
-    Using `--check` without specifying a target evaluates the entire Dockerfile.
-    If you want to evaluate a specific target, use the `--target` flag.
+    未指定目标时，`--check` 会评估整个 Dockerfile；如需仅评估特定目标，请配合 `--target` 使用。
 
-    #### Call: outline
+    #### 调用：outline
 
-    The `outline` method prints the name of the specified target (or the default
-    target, if `--target` isn't specified), and the build arguments that the target
-    consumes, along with their default values, if set.
+    `outline` 打印指定目标（未指定则为默认目标）的名称，以及该目标可用的构建参数及其默认值（如有）。
 
-    The following example shows the default target `release` and its build arguments:
+    示例：默认目标 `release` 及其构建参数如下：
 
     ```console
     $ docker buildx build -q --call=outline https://github.com/docker/docs.git
@@ -959,7 +920,7 @@ examples: |-
     PAGEFIND_VERSION   1.1.0
     ```
 
-    This means that the `release` target is configurable using these build arguments:
+    这意味着可以通过以下构建参数配置 `release` 目标：
 
     ```console
     $ docker buildx build \
@@ -971,12 +932,10 @@ examples: |-
       --target release https://github.com/docker/docs.git
     ```
 
-    #### Call: targets
+    #### 调用：targets
 
-    The `targets` method lists all the build targets in the Dockerfile. These are
-    the stages that you can build using the `--target` flag. It also indicates the
-    default target, which is the target that will be built when you don't specify a
-    target.
+    `targets` 列出 Dockerfile 中全部构建目标（阶段），这些阶段都可以用 `--target` 指定构建。
+    同时会标明默认目标（未指定目标时构建该目标）。
 
     ```console
     $ docker buildx build -q --call=targets https://github.com/docker/docs.git
@@ -1001,37 +960,35 @@ examples: |-
     release (default) is an empty scratch image with only compiled assets
     ```
 
-    ### Use a custom parent cgroup (--cgroup-parent) {#cgroup-parent}
+    ### 使用自定义父 cgroup（--cgroup-parent）{#cgroup-parent}
 
-    When you run `docker buildx build` with the `--cgroup-parent` option,
-    the daemon runs the containers used in the build with the
-    [corresponding `docker run` flag](/reference/cli/docker/container/run/#cgroup-parent).
+    使用 `--cgroup-parent` 运行 `docker buildx build` 时，守护进程会按
+    [`docker run` 对应标志](/reference/cli/docker/container/run/#cgroup-parent)
+    为构建所用容器设置父 cgroup。
 
-    ### Specify a Dockerfile (-f, --file) {#file}
+    ### 指定 Dockerfile（-f, --file）{#file}
 
     ```console
     $ docker buildx build -f <filepath> .
     ```
 
-    Specifies the filepath of the Dockerfile to use.
-    If unspecified, a file named `Dockerfile` at the root of the build context is used by default.
+    指定要使用的 Dockerfile 路径。
+    未指定时，默认使用构建上下文根目录下的 `Dockerfile`。
 
-    To read a Dockerfile from stdin, you can use `-` as the argument for `--file`.
+    若需从 stdin 读取 Dockerfile，可将 `-` 作为 `--file` 的参数。
 
     ```console
     $ cat Dockerfile | docker buildx build -f - .
     ```
 
-    ### Load the single-platform build result to `docker images` (--load) {#load}
+    ### 将单平台构建结果加载到 `docker images`（--load）{#load}
 
-    Shorthand for [`--output=type=docker`](#docker). Will automatically load the
-    single-platform build result to `docker images`.
+    等同于 [`--output=type=docker`](#docker)。会自动把单平台构建结果加载到 `docker images`。
 
-    ### Write build result metadata to a file (--metadata-file) {#metadata-file}
+    ### 将构建结果元数据写入文件（--metadata-file）{#metadata-file}
 
-    To output build metadata such as the image digest, pass the `--metadata-file` flag.
-    The metadata will be written as a JSON object to the specified file. The
-    directory of the specified file must already exist and be writable.
+    如需输出镜像摘要等构建元数据，请使用 `--metadata-file`。
+    元数据会以 JSON 对象形式写入指定文件。该文件所在目录必须已存在且可写。
 
     ```console
     $ docker buildx build --load --metadata-file metadata.json .
@@ -1071,27 +1028,26 @@ examples: |-
     > `BUILDX_METADATA_WARNINGS` environment variable to `1` or `true` to
     > include them.
 
-    ### Set the networking mode for the RUN instructions during build (--network) {#network}
+    ### 为构建时的 RUN 指令设置网络模式（--network）{#network}
 
-    Available options for the networking mode are:
+    可选的网络模式包括：
 
     - `default` (default): Run in the default network.
     - `none`: Run with no network access.
     - `host`: Run in the host’s network environment.
 
-    Find more details in the [Dockerfile reference](/reference/dockerfile/#run---network).
+    详情参见 [Dockerfile 参考](/reference/dockerfile/#run---network)。
 
-    ### Ignore build cache for specific stages (--no-cache-filter) {#no-cache-filter}
+    ### 指定阶段忽略构建缓存（--no-cache-filter）{#no-cache-filter}
 
-    The `--no-cache-filter` lets you specify one or more stages of a multi-stage
-    Dockerfile for which build cache should be ignored. To specify multiple stages,
-    use a comma-separated syntax:
+    `--no-cache-filter` 可为多阶段 Dockerfile 指定一个或多个阶段不使用构建缓存。
+    指定多个阶段时使用逗号分隔：
 
     ```console
     $ docker buildx build --no-cache-filter stage1,stage2,stage3 .
     ```
 
-    For example, the following Dockerfile contains four stages:
+    例如，下述 Dockerfile 包含四个阶段：
 
     - `base`
     - `install`
@@ -1122,39 +1078,34 @@ examples: |-
     ENTRYPOINT ["bun", "run", "index.js"]
     ```
 
-    To ignore the cache for the `install` stage:
+    忽略 `install` 阶段的缓存：
 
     ```console
     $ docker buildx build --no-cache-filter install .
     ```
 
-    To ignore the cache the `install` and `release` stages:
+    同时忽略 `install` 与 `release` 阶段的缓存：
 
     ```console
     $ docker buildx build --no-cache-filter install,release .
     ```
 
-    The arguments for the `--no-cache-filter` flag must be names of stages.
+    `--no-cache-filter` 的实参必须是阶段名称。
 
-    ### Set the export action for the build result (-o, --output) {#output}
+    ### 设置构建结果的导出方式（-o, --output）{#output}
 
     ```text
     -o, --output=[PATH,-,type=TYPE[,KEY=VALUE]
     ```
 
-    Sets the export action for the build result. The default output, when using the
-    `docker` [build driver](/build/builders/drivers/), is a container
-    image exported to the local image store. The `--output` flag makes this step
-    configurable allows export of results directly to the client's filesystem, an
-    OCI image tarball, a registry, and more.
+    设置构建结果的导出方式。使用 `docker` [构建驱动](/build/builders/drivers/) 时，
+    默认将结果镜像导出到本地镜像存储。
+    `--output` 允许将结果直接导出到客户端文件系统、OCI 镜像 tar、镜像仓库等。
 
-    Buildx with `docker` driver only supports the local, tarball, and image
-    [exporters](/build/exporters/). The `docker-container`
-    driver supports all exporters.
+    在 `docker` 驱动下，仅支持本地、tar 与 image 这几类
+    [导出器](/build/exporters/)。`docker-container` 驱动支持全部导出器。
 
-    If you only specify a filepath as the argument to `--output`, Buildx uses the
-    local exporter. If the value is `-`, Buildx uses the `tar` exporter and writes
-    the output to stdout.
+    仅传入文件路径时使用本地导出器；若值为 `-`，则使用 `tar` 导出器并写入 stdout。
 
     ```console
     $ docker buildx build -o . .
@@ -1165,7 +1116,7 @@ examples: |-
     $ docker buildx build -t tonistiigi/foo -o type=registry
     ```
 
-    You can export multiple outputs by repeating the flag.
+    可多次使用该标志导出多个输出。
 
     Supported exported types are:
 
@@ -1178,11 +1129,10 @@ examples: |-
 
     #### `local`
 
-    The `local` export type writes all result files to a directory on the client. The
-    new files will be owned by the current user. On multi-platform builds, all results
-    will be put in subdirectories by their platform.
+    `local` 将所有结果文件写入客户端目录，文件所有者为当前用户。
+    在多平台构建场景下，结果会按平台置于子目录。
 
-    Attribute key:
+    属性键：
 
     - `dest` - destination directory where files will be written
 
@@ -1191,10 +1141,10 @@ examples: |-
 
     #### `tar`
 
-    The `tar` export type writes all result files as a single tarball on the client.
-    On multi-platform builds all results will be put in subdirectories by their platform.
+    `tar` 将所有结果文件打包为一个 tarball。
+    在多平台构建场景下，结果会按平台置于子目录。
 
-    Attribute key:
+    属性键：
 
     - `dest` - destination path where tarball will be written. “-” writes to stdout.
 
@@ -1203,11 +1153,10 @@ examples: |-
 
     #### `oci`
 
-    The `oci` export type writes the result image or manifest list as an [OCI image
-    layout](https://github.com/opencontainers/image-spec/blob/v1.0.1/image-layout.md)
-    tarball on the client.
+    `oci` 将结果镜像或清单列表以 [OCI image layout](https://github.com/opencontainers/image-spec/blob/v1.0.1/image-layout.md)
+    tarball 的形式导出。
 
-    Attribute key:
+    属性键：
 
     - `dest` - destination path where tarball will be written. “-” writes to stdout.
 
@@ -1216,15 +1165,13 @@ examples: |-
 
     #### `docker`
 
-    The `docker` export type writes the single-platform result image as a [Docker image
-    specification](https://github.com/docker/docker/blob/v20.10.2/image/spec/v1.2.md)
-    tarball on the client. Tarballs created by this exporter are also OCI compatible.
+    `docker` 将单平台结果镜像导出为 [Docker image specification](https://github.com/docker/docker/blob/v20.10.2/image/spec/v1.2.md)
+    tarball；该 tarball 也兼容 OCI。
 
-    The default image store in Docker Engine doesn't support loading multi-platform
-    images. You can enable the containerd image store, or push multi-platform images
-    is to directly push to a registry, see [`registry`](#registry).
+    Docker Engine 默认镜像存储不支持直接加载多平台镜像。
+    你可以启用 containerd 镜像存储，或直接推送到镜像仓库，参见 [`registry`](#registry)。
 
-    Attribute keys:
+    属性键：
 
     - `dest` - destination path where tarball will be written. If not specified,
       the tar will be loaded automatically to the local image store.
@@ -1235,11 +1182,10 @@ examples: |-
 
     #### `image`
 
-    The `image` exporter writes the build result as an image or a manifest list. When
-    using `docker` driver the image will appear in `docker images`. Optionally, image
-    can be automatically pushed to a registry by specifying attributes.
+    `image` 将构建结果写为镜像或清单列表。在 `docker` 驱动下，镜像会出现在 `docker images` 中。
+    也可通过属性配置实现自动推送到镜像仓库。
 
-    Attribute keys:
+    属性键：
 
     - `name` - name (references) for the new image.
     - `push` - Boolean to automatically push the image.
@@ -1249,47 +1195,39 @@ examples: |-
 
     #### `registry`
 
-    The `registry` exporter is a shortcut for `type=image,push=true`.
+    `registry` 导出器等价于 `type=image,push=true`。
 
     For more information, see
     [Image and registry exporters](/build/exporters/image-registry/).
 
-    ### Set the target platforms for the build (--platform) {#platform}
+    ### 设置构建的目标平台（--platform）{#platform}
 
     ```text
     --platform=value[,value]
     ```
 
-    Set the target platform for the build. All `FROM` commands inside the Dockerfile
-    without their own `--platform` flag will pull base images for this platform and
-    this value will also be the platform of the resulting image.
+    设置构建的目标平台。Dockerfile 中未显式指定 `--platform` 的所有 `FROM` 指令，
+    都会按该平台拉取基础镜像；最终产物也将使用该平台。
 
-    The default value is the platform of the BuildKit daemon where the build runs.
-    The value takes the form of `os/arch` or `os/arch/variant`. For example,
-    `linux/amd64` or `linux/arm/v7`. Additionally, the `--platform` flag also supports
-    a special `local` value, which tells BuildKit to use the platform of the BuildKit
-    client that invokes the build.
+    默认值为执行构建的 BuildKit 守护进程的平台。
+    取值格式为 `os/arch` 或 `os/arch/variant`，例如 `linux/amd64`、`linux/arm/v7`。
+    此外还支持特殊值 `local`，表示使用发起构建的 BuildKit 客户端的平台。
 
-    When using `docker-container` driver with `buildx`, this flag can accept multiple
-    values as an input separated by a comma. With multiple values the result will be
-    built for all of the specified platforms and joined together into a single manifest
-    list.
+    在 `docker-container` 驱动下，该标志可接收多个以逗号分隔的平台值，
+    将为所有指定平台进行构建，并合并为单一清单列表（manifest list）。
 
-    If the `Dockerfile` needs to invoke the `RUN` command, the builder needs runtime
-    support for the specified platform. In a clean setup, you can only execute `RUN`
-    commands for your system architecture.
-    If your kernel supports [`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc)
-    launchers for secondary architectures, buildx will pick them up automatically.
-    Docker Desktop releases come with `binfmt_misc` automatically configured for `arm64`
-    and `arm` architectures. You can see what runtime platforms your current builder
-    instance supports by running `docker buildx inspect --bootstrap`.
+    如果 `Dockerfile` 需要执行 `RUN`，构建器必须具备目标平台的运行时支持。
+    在默认环境中通常只能为当前系统架构执行 `RUN`。
+    如果内核启用了面向其他架构的 [`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc) 启动器，
+    buildx 会自动使用它们。
+    Docker Desktop 默认为 `arm64` 与 `arm` 配置了 `binfmt_misc`。
+    运行 `docker buildx inspect --bootstrap` 可查看当前构建器支持的平台。
 
-    Inside a `Dockerfile`, you can access the current platform value through
-    `TARGETPLATFORM` build argument. Refer to the [Dockerfile reference](/reference/dockerfile/#automatic-platform-args-in-the-global-scope)
-    for the full description of automatic platform argument variants .
+    在 `Dockerfile` 中，可通过构建参数 `TARGETPLATFORM` 访问当前平台值。
+    详见 [Dockerfile 参考](/reference/dockerfile/#automatic-platform-args-in-the-global-scope)。
 
-    You can find the formatting definition for the platform specifier in the
-    [containerd source code](https://github.com/containerd/containerd/blob/v1.4.3/platforms/platforms.go#L63).
+    平台标识的格式定义可参考
+    [containerd 源码](https://github.com/containerd/containerd/blob/v1.4.3/platforms/platforms.go#L63)。
 
     ```console
     $ docker buildx build --platform=linux/arm64 .
@@ -1297,23 +1235,23 @@ examples: |-
     $ docker buildx build --platform=darwin .
     ```
 
-    ### Set type of progress output (--progress) {#progress}
+    ### 设置进度输出类型（--progress）{#progress}
 
     ```text
     --progress=VALUE
     ```
 
-    Set type of progress output. Supported values are:
-    - `auto` (default): Uses the `tty` mode if the client is a TTY, or `plain` otherwise
-    - `tty`: An interactive stream of the output with color and redrawing
-    - `plain`: Prints the raw build progress in a plaintext format
-    - `quiet`: Suppress the build output and print image ID on success (same as `--quiet`)
-    - `rawjson`: Prints the raw build progress as JSON lines
+    设置进度输出的类型。可选值：
+    - `auto`（默认）：若客户端是 TTY 则使用 `tty`，否则使用 `plain`
+    - `tty`：彩色并可重绘的交互式输出流
+    - `plain`：以纯文本展示原始构建进度
+    - `quiet`：压制构建输出，成功时仅打印镜像 ID（等同 `--quiet`）
+    - `rawjson`：以 JSON 行输出原始构建进度
 
     > [!NOTE]
-    > You can also use the `BUILDKIT_PROGRESS` environment variable to set its value.
+    > 也可以通过环境变量 `BUILDKIT_PROGRESS` 设置该值。
 
-    The following example uses `plain` output during the build:
+    下例展示在构建时启用 `plain` 输出：
 
     ```console
     $ docker buildx build --load --progress=plain .
@@ -1329,79 +1267,63 @@ examples: |-
     ```
 
     > [!NOTE]
-    > Check also the [`BUILDKIT_COLORS`](/build/building/variables/#buildkit_colors)
-    > environment variable for modifying the colors of the terminal output.
+    > 还可通过环境变量 [`BUILDKIT_COLORS`](/build/building/variables/#buildkit_colors)
+    > 修改终端输出颜色。
 
-    The `rawjson` output marshals the solve status events from BuildKit to JSON lines.
-    This mode is designed to be read by an external program.
+    `rawjson` 会将 BuildKit 的求解状态事件序列化为 JSON 行，主要供外部程序读取。
 
-    ### Create provenance attestations (--provenance) {#provenance}
+    ### 创建来源证明（--provenance）{#provenance}
 
-    Shorthand for [`--attest=type=provenance`](#attest), used to configure
-    provenance attestations for the build result. For example,
-    `--provenance=mode=max` can be used as an abbreviation for
-    `--attest=type=provenance,mode=max`.
+    等同于 [`--attest=type=provenance`](#attest)，用于为构建结果配置来源证明。
+    例如，`--provenance=mode=max` 等价于 `--attest=type=provenance,mode=max`。
 
-    Additionally, `--provenance` can be used with Boolean values to enable or disable
-    provenance attestations. For example, `--provenance=false` disables all provenance attestations,
-    while `--provenance=true` enables all provenance attestations.
+    此外，`--provenance` 也可接收布尔值以启用或禁用来源证明：
+    `--provenance=false` 禁用所有来源证明，`--provenance=true` 则全部启用。
 
-    By default, a minimal provenance attestation will be created for the build
-    result. Note that the default image store in Docker Engine doesn't support
-    attestations. Provenance attestations only persist for images pushed directly
-    to a registry if you use the default image store. Alternatively, you can switch
-    to using the containerd image store.
+    默认会为构建结果创建最小化的来源证明。
+    注意：Docker Engine 默认镜像存储不支持证明；在使用默认存储时，只有直接推送到仓库的镜像才会保留证明。
+    或者你可以改用 containerd 镜像存储。
 
-    For more information about provenance attestations, see
-    [here](/build/metadata/attestations/slsa-provenance/).
+    了解更多来源证明，见[此处](/build/metadata/attestations/slsa-provenance/)。
 
-    ### Push the build result to a registry (--push) {#push}
+    ### 将构建结果推送到仓库（--push）{#push}
 
-    Shorthand for [`--output=type=registry`](#registry). Will automatically push the
-    build result to registry.
+    等同于 [`--output=type=registry`](#registry)。会自动将构建结果推送到仓库。
 
-    ### Create SBOM attestations (--sbom) {#sbom}
+    ### 创建 SBOM 证明（--sbom）{#sbom}
 
-    Shorthand for [`--attest=type=sbom`](#attest), used to configure SBOM
-    attestations for the build result. For example,
-    `--sbom=generator=<user>/<generator-image>` can be used as an abbreviation for
-    `--attest=type=sbom,generator=<user>/<generator-image>`.
+    等同于 [`--attest=type=sbom`](#attest)，用于为构建结果配置 SBOM 证明。
+    例如，`--sbom=generator=<user>/<generator-image>` 等价于
+    `--attest=type=sbom,generator=<user>/<generator-image>`。
 
-    Additionally, `--sbom` can be used with Boolean values to enable or disable
-    SBOM attestations. For example, `--sbom=false` disables all SBOM attestations.
+    此外，`--sbom` 也可接收布尔值以启用或禁用 SBOM 证明，例如 `--sbom=false`。
 
-    Note that the default image store in Docker Engine doesn't support
-    attestations. Provenance attestations only persist for images pushed directly
-    to a registry if you use the default image store. Alternatively, you can switch
-    to using the containerd image store.
+    注意：Docker Engine 默认镜像存储不支持证明；使用默认存储时，只有直接推送到仓库的镜像才会保留证明。
+    或者改用 containerd 镜像存储。
 
     For more information, see [here](/build/metadata/attestations/sbom/).
 
-    ### Secret to expose to the build (--secret) {#secret}
+    ### 向构建暴露的机密（--secret）{#secret}
 
     ```text
     --secret=[type=TYPE[,KEY=VALUE]
     ```
 
-    Exposes secrets (authentication credentials, tokens) to the build.
-    A secret can be mounted into the build using a `RUN --mount=type=secret` mount in the
-    [Dockerfile](/reference/dockerfile/#run---mounttypesecret).
-    For more information about how to use build secrets, see
-    [Build secrets](/build/building/secrets/).
+    向构建暴露机密（认证凭据、令牌等）。
+    可在 [Dockerfile](/reference/dockerfile/#run---mounttypesecret) 中通过 `RUN --mount=type=secret`
+    挂载机密。更多用法见[构建机密](/build/building/secrets/)。
 
     Supported types are:
 
     - [`type=file`](#typefile)
     - [`type=env`](#typeenv)
 
-    Buildx attempts to detect the `type` automatically if unset. If an environment
-    variable with the same key as `id` is set, then Buildx uses `type=env` and the
-    variable value becomes the secret. If no such environment variable is set, and
-    `type` is not set, then Buildx falls back to `type=file`.
+    未显式设置 `type` 时，Buildx 会尝试自动识别：若存在与 `id` 同名的环境变量，则使用 `type=env` 并取其值；
+    否则回退到 `type=file`。
 
     #### `type=file`
 
-    Source a build secret from a file.
+    从文件读取构建机密。
 
     ##### `type=file` synopsis
 
@@ -1418,8 +1340,7 @@ examples: |-
 
     ###### `type=file` usage
 
-    In the following example, `type=file` is automatically detected because no
-    environment variable matching `aws` (the ID) is set.
+    下例中由于未设置名为 `aws` 的环境变量，因此自动识别为 `type=file`：
 
     ```console
     $ docker buildx build --secret id=aws,src=$HOME/.aws/credentials .
@@ -1435,7 +1356,7 @@ examples: |-
 
     #### `type=env`
 
-    Source a build secret from an environment variable.
+    从环境变量读取构建机密。
 
     ##### `type=env` synopsis
 
@@ -1452,8 +1373,7 @@ examples: |-
 
     ##### `type=env` usage
 
-    In the following example, `type=env` is automatically detected because an
-    environment variable matching `id` is set.
+    下例中由于设置了与 `id` 同名的环境变量，因此自动识别为 `type=env`：
 
     ```console
     $ SECRET_TOKEN=token docker buildx build --secret id=SECRET_TOKEN .
@@ -1467,53 +1387,45 @@ examples: |-
       yarn run test
     ```
 
-    In the following example, the build argument `SECRET_TOKEN` is set to contain
-    the value of the environment variable `API_KEY`.
+    下例将环境变量 `API_KEY` 的值注入到构建参数 `SECRET_TOKEN`：
 
     ```console
     $ API_KEY=token docker buildx build --secret id=SECRET_TOKEN,env=API_KEY .
     ```
 
-    You can also specify the name of the environment variable with `src` or `source`:
+    也可以通过 `src` 或 `source` 指定环境变量名：
 
     ```console
     $ API_KEY=token docker buildx build --secret type=env,id=SECRET_TOKEN,src=API_KEY .
     ```
 
     > [!NOTE]
-    > Specifying the environment variable name with `src` or `source`, you are
-    > required to set `type=env` explicitly, or else Buildx assumes that the secret
-    > is `type=file`, and looks for a file with the name of `src` or `source` (in
-    > this case, a file named `API_KEY` relative to the location where the `docker
-    > buildx build` command was executed.
+    > 当通过 `src` 或 `source` 指定环境变量名时，必须显式设置 `type=env`。
+    > 否则 Buildx 会认为机密是 `type=file`，并尝试读取同名文件（此处为 `API_KEY`）。
 
-    ### Shared memory size for build containers (--shm-size) {#shm-size}
+    ### 构建容器的共享内存大小（--shm-size）{#shm-size}
 
-    Sets the size of the shared memory allocated for build containers when using
-    `RUN` instructions.
+    设置在执行 `RUN` 指令时，构建容器可用的共享内存大小。
 
-    The format is `<number><unit>`. `number` must be greater than `0`. Unit is
-    optional and can be `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g`
-    (gigabytes). If you omit the unit, the system uses bytes.
+    格式为 `<number><unit>`：`number` 必须大于 `0`；`unit` 可选，取值为 `b`（字节）、`k`（KB）、
+    `m`（MB）、`g`（GB）。若省略单位则按字节计算。
 
     > [!NOTE]
-    > In most cases, it is recommended to let the builder automatically determine
-    > the appropriate configurations. Manual adjustments should only be considered
-    > when specific performance tuning is required for complex build scenarios.
+    > 通常建议由构建器自动确定合适配置；
+    > 仅在复杂构建需要特定性能调优时再考虑手动调整。
 
-    ### SSH agent socket or keys to expose to the build (--ssh) {#ssh}
+    ### 向构建暴露 SSH 代理套接字或密钥（--ssh）{#ssh}
 
     ```text
     --ssh=default|<id>[=<socket>|<key>[,<key>]]
     ```
 
-    This can be useful when some commands in your Dockerfile need specific SSH
-    authentication (e.g., cloning a private repository).
+    当 Dockerfile 中的某些命令需要特定 SSH 认证（例如克隆私有仓库）时，这将很有用。
 
-    `--ssh` exposes SSH agent socket or keys to the build and can be used with the
-    [`RUN --mount=type=ssh` mount](/reference/dockerfile/#run---mounttypessh).
+    `--ssh` 会将 SSH 代理套接字或密钥暴露给构建，可配合
+    [`RUN --mount=type=ssh`](/reference/dockerfile/#run---mounttypessh) 使用。
 
-    Example to access Gitlab using an SSH agent socket:
+    通过 SSH agent socket 访问 GitLab 的示例：
 
     ```dockerfile
     # syntax=docker/dockerfile:1
@@ -1528,37 +1440,33 @@ examples: |-
     ```console
     $ eval $(ssh-agent)
     $ ssh-add ~/.ssh/id_rsa
-    (Input your passphrase here)
+    (此处输入你的密钥口令)
     $ docker buildx build --ssh default=$SSH_AUTH_SOCK .
     ```
 
-    ### Tag an image (-t, --tag) {#tag}
+    ### 为镜像打标签（-t, --tag）{#tag}
 
     ```console
     $ docker buildx build -t docker/apache:2.0 .
     ```
 
-    This examples builds in the same way as the previous example, but it then tags the resulting
-    image. The repository name will be `docker/apache` and the tag `2.0`.
+    这与前一个示例的构建方式相同，但随后会为生成的镜像打标签。
+    仓库名为 `docker/apache`，标签为 `2.0`。
 
     [Read more about valid tags](/reference/cli/docker/image/tag/).
 
-    You can apply multiple tags to an image. For example, you can apply the `latest`
-    tag to a newly built image and add another tag that references a specific
-    version.
+    你可以为镜像添加多个标签。例如，给新构建镜像打上 `latest`，同时再加一个指向特定版本的标签。
 
-    For example, to tag an image both as `docker/fedora-jboss:latest` and
-    `docker/fedora-jboss:v2.1`, use the following:
+    例如，同时打上 `docker/fedora-jboss:latest` 与 `docker/fedora-jboss:v2.1`：
 
     ```console
     $ docker buildx build -t docker/fedora-jboss:latest -t docker/fedora-jboss:v2.1 .
     ```
 
-    ### Specifying target build stage (--target) {#target}
+    ### 指定目标构建阶段（--target）{#target}
 
-    When building a Dockerfile with multiple build stages, use the `--target`
-    option to specify an intermediate build stage by name as a final stage for the
-    resulting image. The builder skips commands after the target stage.
+    针对包含多个构建阶段的 Dockerfile，可用 `--target` 按名称指定某个中间阶段作为最终产物阶段；
+    构建器会跳过该阶段之后的指令。
 
     ```dockerfile
     FROM debian AS build-env
@@ -1572,25 +1480,22 @@ examples: |-
     $ docker buildx build -t mybuildimage --target build-env .
     ```
 
-    ### Set ulimits (--ulimit) {#ulimit}
+    ### 设置 ulimit（--ulimit）{#ulimit}
 
-    `--ulimit` overrides the default ulimits of build's containers when using `RUN`
-    instructions and are specified with a soft and hard limit as such:
-    `<type>=<soft limit>[:<hard limit>]`, for example:
+    `--ulimit` 用于在执行 `RUN` 指令时覆盖构建容器的默认 ulimit，
+    以 `<type>=<soft limit>[:<hard limit>]` 的形式指定，例如：
 
     ```console
     $ docker buildx build --ulimit nofile=1024:1024 .
     ```
 
     > [!NOTE]
-    > If you don't provide a `hard limit`, the `soft limit` is used
-    > for both values. If no `ulimits` are set, they're inherited from
-    > the default `ulimits` set on the daemon.
+    > 若未提供 `hard limit`，则使用 `soft limit` 作为软/硬限制。
+    > 未显式设置时，将继承守护进程的默认 `ulimits`。
 
     > [!NOTE]
-    > In most cases, it is recommended to let the builder automatically determine
-    > the appropriate configurations. Manual adjustments should only be considered
-    > when specific performance tuning is required for complex build scenarios.
+    > 通常建议由构建器自动确定合适配置；
+    > 仅在复杂构建需要特定性能调优时再考虑手动调整。
 deprecated: false
 hidden: false
 experimental: false

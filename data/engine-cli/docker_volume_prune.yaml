@@ -1,8 +1,8 @@
 command: docker volume prune
-short: Remove unused local volumes
+short: 删除未使用的本地卷
 long: |-
-    Remove all unused local volumes. Unused local volumes are those which are not
-    referenced by any containers. By default, it only removes anonymous volumes.
+    删除所有未使用的本地卷。未使用的本地卷是指未被任何容器引用的卷。
+    默认情况下，仅删除匿名卷。
 usage: docker volume prune [OPTIONS]
 pname: docker volume
 plink: docker_volume.yaml
@@ -11,7 +11,7 @@ options:
       shorthand: a
       value_type: bool
       default_value: "false"
-      description: Remove all unused volumes, not just anonymous ones
+      description: 删除所有未使用的卷，而不仅仅是匿名卷
       details_url: '#all'
       deprecated: false
       hidden: false
@@ -22,7 +22,7 @@ options:
       swarm: false
     - option: filter
       value_type: filter
-      description: Provide filter values (e.g. `label=<label>`)
+      description: 提供筛选条件（例如 `label=<label>`）
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -34,7 +34,7 @@ options:
       shorthand: f
       value_type: bool
       default_value: "false"
-      description: Do not prompt for confirmation
+      description: 不提示确认
       deprecated: false
       hidden: false
       experimental: false
@@ -45,7 +45,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -65,23 +65,22 @@ examples: |-
     Total reclaimed space: 36 B
     ```
 
-    ### Filtering (--all, -a) {#all}
+    ### 过滤（--all, -a） {#all}
 
-    Use the `--all` flag to prune both unused anonymous and named volumes.
+    使用 `--all` 标志同时清理未使用的匿名卷和具名卷。
 
-    ### Filtering (--filter) {#filter}
+    ### 过滤（--filter） {#filter}
 
-    The filtering flag (`--filter`) format is of "key=value". If there is more
-    than one filter, then pass multiple flags (e.g., `--filter "foo=bar" --filter "bif=baz"`)
+    过滤标志（`--filter`）的格式为 "key=value"。如果需要多个过滤条件，
+    则传入多个标志（例如 `--filter "foo=bar" --filter "bif=baz"`）。
 
-    The currently supported filters are:
+    当前支持的过滤器如下：
 
-    * label (`label=<key>`, `label=<key>=<value>`, `label!=<key>`, or `label!=<key>=<value>`) - only remove volumes with (or without, in case `label!=...` is used) the specified labels.
+    * label（`label=<key>`、`label=<key>=<value>`、`label!=<key>` 或 `label!=<key>=<value>`）— 仅删除带有（或在使用 `label!=...` 时不带有）指定标签的卷。
 
-    The `label` filter accepts two formats. One is the `label=...` (`label=<key>` or `label=<key>=<value>`),
-    which removes volumes with the specified labels. The other
-    format is the `label!=...` (`label!=<key>` or `label!=<key>=<value>`), which removes
-    volumes without the specified labels.
+    `label` 过滤器接受两种格式：其一是 `label=...`（`label=<key>` 或 `label=<key>=<value>`），
+    用于删除带有指定标签的卷；其二是 `label!=...`（`label!=<key>` 或 `label!=<key>=<value>`），
+    用于删除不带有指定标签的卷。
 deprecated: false
 hidden: false
 min_api_version: "1.25"
