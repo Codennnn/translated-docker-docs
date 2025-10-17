@@ -1,175 +1,163 @@
 ---
-title: Manage your billing information
+title: 管理你的账单信息
 weight: 30
-description: Learn how to update your billing information in Docker Hub
+description: 了解如何在 Docker Hub 中更新账单信息
 keywords: payments, billing, subscription, invoices, update billing email, change billing address, VAT ID, Docker billing account
 ---
 
-You can update the billing information for your personal account or for an
-organization. When you update your billing information, these changes apply to
-future billing invoices. The email address you provide for a billing account is
-where Docker sends all invoices and other billing related communications.
+你可以为个人账号或组织更新账单信息。账单信息更新后，只会影响后续生成的发票。你在账单账户中填写的电子邮箱将用于接收 Docker 发送的所有发票与其他计费相关通知。
 
 > [!NOTE]
 >
-> Existing invoices, whether paid or unpaid, cannot be updated.
-Changes only apply to future invoices.
+> 已开具的发票（无论是否已支付）均无法更改。变更仅适用于后续发票。
 
 {{% include "tax-compliance.md" %}}
 
-## Manage billing information
+## 管理账单信息
 
-### Personal account
+### 个人账号
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To update your billing information:
+更新账单信息：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. Select **Billing information** from the left-hand navigation.
-1. On your billing information card, select **Change**.
-1. Update your billing contact and billing address information.
-1. Optional. To add or update a VAT ID, select the **I'm purchasing as a business** checkbox and enter your Tax ID.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧导航选择 **Billing information**。
+1. 在账单信息卡片上选择 **Change**。
+1. 更新账单联系人与账单地址。
+1. 可选：如需添加或更新 VAT ID，勾选 **I'm purchasing as a business**，并填写你的 Tax ID。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
-1. Select **Update**.
+1. 选择 **Update**。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To update your billing information:
+更新账单信息：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select **Billing Address** and enter your updated billing information.
-1. Optional. To add or update a VAT ID, enter your **Tax ID/VAT**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Billing Address** 并填写更新后的账单信息。
+1. 可选：如需添加或更新 VAT ID，填写你的 **Tax ID/VAT**。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
-1. Select **Submit**.
+1. 选择 **Submit**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Organization
+### 组织
 
 > [!NOTE]
 >
-> You must be an organization owner to make changes to the billing information.
+> 只有组织所有者可以更改账单信息。
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To update your billing information:
+更新账单信息：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. Select **Billing information** from the left-hand navigation.
-1. On your billing information card, select **Change**.
-1. Update your billing contact and billing address information.
-1. Optional. To add or update a VAT ID, select the **I'm purchasing as a business** checkbox and enter your Tax ID.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧导航选择 **Billing information**。
+1. 在账单信息卡片上选择 **Change**。
+1. 更新账单联系人与账单地址。
+1. 可选：如需添加或更新 VAT ID，勾选 **I'm purchasing as a business**，并填写你的 Tax ID。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
-1. Select **Update**.
+1. 选择 **Update**。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To update your billing information:
+更新账单信息：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select **Billing Address**.
-1. Optional. To add or update a VAT ID, enter your **Tax ID/VAT**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Billing Address**。
+1. 可选：如需添加或更新 VAT ID，填写你的 **Tax ID/VAT**。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
-1. Select **Submit**.
+1. 选择 **Submit**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Update your billing email address
+## 更新接收账单的邮箱地址
 
-Docker sends the following billing-related emails:
+Docker 会发送以下计费相关邮件：
 
-- Confirmations (new subscriptions, paid invoices)
-- Notifications (card failure, card expiration)
-- Reminders (subscription renewal)
+- 确认类（新订阅、发票已支付）
+- 通知类（银行卡失败、卡片过期）
+- 提醒类（订阅续费）
 
-You can update the email address that receives billing invoices at any time.
+你可以随时更新接收账单发票的邮箱地址。
 
-### Personal account
+### 个人账号
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To update your billing email address:
+更新接收账单的邮箱地址：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. Select **Billing information** from the left-hand navigation.
-1. On your billing information card, select **Change**.
-1. Update your billing contact information and select **Update**.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧导航选择 **Billing information**。
+1. 在账单信息卡片上选择 **Change**。
+1. 更新账单联系人邮箱并选择 **Update**。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To update your billing email address:
+更新接收账单的邮箱地址：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select **Billing Address**.
-1. Update the email address in the **Billing contact** section.
-1. Select **Submit**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Billing Address**。
+1. 在 **Billing contact** 区域更新邮箱地址。
+1. 选择 **Submit**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Organizations
+### 组织
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To update your billing email address:
+更新接收账单的邮箱地址：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select
-your organization.
-1. Select **Billing**.
-1. Select **Billing information** from the left-hand navigation.
-1. On your billing information card, select **Change**.
-1. Update your billing contact information and select **Update**.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧导航选择 **Billing information**。
+1. 在账单信息卡片上选择 **Change**。
+1. 更新账单联系人邮箱并选择 **Update**。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To update your billing email address:
+更新接收账单的邮箱地址：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select the name of the organization.
-1. Select **Billing Address**.
-1. Update the email address in the **Billing contact** section.
-1. Select **Submit**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择组织名称。
+1. 选择 **Billing Address**。
+1. 在 **Billing contact** 区域更新邮箱地址。
+1. 选择 **Submit**。
 
 {{< /tab >}}
 {{< /tabs >}}

@@ -1,7 +1,7 @@
 ---
-title: Recover your Docker account
-description: Recover your Docker account and manage two-factor authentication recovery codes
-keywords: account recovery, two-factor authentication, 2FA, recovery code, docker hub security
+title: 找回你的 Docker 账号
+description: 找回 Docker 账号并管理双重身份验证的恢复代码
+keywords: 账号找回, 双重身份验证, 2FA, 恢复代码, Docker Hub 安全
 aliases:
  - /docker-hub/2fa/recover-hub-account/
  - /security/for-developers/2fa/recover-hub-account/
@@ -9,26 +9,26 @@ aliases:
 weight: 20
 ---
 
-This page explains how to recover your Docker account and manage recovery codes for two-factor authentication.
+本文介绍如何找回你的 Docker 账号，以及如何管理双重身份验证（2FA）的恢复代码。
 
-## Generate a new recovery code
+## 生成新的恢复代码
 
-If you lost your two-factor authentication recovery code but still have access to your Docker Hub account, you can generate a new recovery code.
+如果你遗失了 2FA 恢复代码，但仍可登录 Docker Hub 账号，则可以生成新的恢复代码。
 
-1. Sign in to your [Docker account](https://app.docker.com/login) with your username and password.
-1. Select your avatar and from the drop-down menu, select **Account settings**.
-1. Select **2FA**.
-1. Enter your password, then select **Confirm**.
-1. Select **Generate new code**.
+1. 使用用户名与密码登录你的 [Docker 账号](https://app.docker.com/login)。
+1. 点击头像，从下拉菜单中选择 **Account settings**（账号设置）。
+1. 选择 **2FA**。
+1. 输入密码并选择 **Confirm**（确认）。
+1. 选择 **Generate new code**（生成新代码）。
 
-This generates a new code. Select the visibility icon to view the code. Save your recovery code and store it somewhere safe.
+系统会为你生成新的恢复代码。点击可见性图标以查看代码。请保存并妥善保管该代码。
 
-## Recover your account without access
+## 无法访问时找回账号
 
-If you lost access to both your two-factor authentication application and your recovery code:
+如果你同时无法使用身份验证器应用，也没有恢复代码：
 
-1. Sign in to your [Docker account](https://app.docker.com/login) with your username and password.
-1. Select **I've lost my authentication device** and **I've lost my recovery code**.
-1. Complete the [Contact Support form](https://hub.docker.com/support/contact/?category=2fa-lockout).
+1. 使用用户名与密码登录你的 [Docker 账号](https://app.docker.com/login)。
+1. 选择 **I've lost my authentication device**（我丢失了验证设备）与 **I've lost my recovery code**（我丢失了恢复代码）。
+1. 填写并提交 [联系支持表单](https://hub.docker.com/support/contact/?category=2fa-lockout)。
 
-You must enter the primary email address associated with your Docker ID in the Contact Support form for recovery instructions.
+你必须在联系支持表单中填写与你 Docker ID 绑定的主邮箱地址，以便接收找回账号的后续指引。

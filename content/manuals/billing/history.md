@@ -1,188 +1,164 @@
 ---
-title: View billing history
+title: 查看账单历史
 weight: 40
-description: Learn how to view and download billing history, manage invoices, and check your subscription renewal date.
+description: 了解如何查看与下载账单历史、管理发票并查看订阅续费日期。
 keywords: payments, billing, subscription, invoices, renewals, invoice management, billing administration, download invoices, VAT, billing support, Docker billing
 aliases:
     - /billing/core-billing/history/
 ---
 
-Learn how you can view your billing history, manage your invoices, and verify
-your renewal date. All monthly and annual subscriptions are automatically
-renewed at the end of the term using the original form of payment.
+本文介绍如何查看账单历史、管理发票以及确认续费日期。所有月度与年度订阅都会在周期结束时，使用原付款方式自动续订。
 
 {{% include "tax-compliance.md" %}}
 
-## Invoices
+## 发票
 
-Your invoice includes the following:
+发票包含以下信息：
 
-- Invoice number
-- Date of issue
-- Date due
-- Your "Bill to" information
-- Amount due (in USD)
-- Description of your order, quantity if applicable, unit price, and
-amount (in USD)
+- 发票编号
+- 开具日期
+- 到期日期
+- “Bill to”（付款方）信息
+- 应付金额（USD）
+- 订单描述、（如适用）数量、单价与金额（USD）
 
-The information listed in the **Bill to** section of your invoice is based on
-your billing information. Not all fields are required. The billing information
-includes the following:
+发票中 **Bill to** 区域的信息来自你的账单信息，并非所有字段都必填。账单信息包括：
 
-- Name (required): The name of the administrator or company
-- Email address (required): The email address that receives all billing-related
-emails for the account
-- Address (required)
-- Phone number
-- Tax ID or VAT
+- 名称（必填）：管理员或公司名称
+- 邮箱地址（必填）：用于接收该账号所有计费相关邮件的邮箱
+- 地址（必填）
+- 电话号码
+- 税号或 VAT
 
-You can’t change an invoice once it's been issued. When you update your billing
-information, this change won't update an existing invoice. If you need to
-update your billing information, make sure you do so before your subscription
-renewal date when your invoice is finalized. For more information, see
-[Update the billing information](details.md).
+发票一旦开具便无法更改。更新账单信息不会影响已开具的发票。如果需要变更账单信息，请务必在订阅续费（发票最终生成）之前完成。参见[更新账单信息](details.md)。
 
-### View renewal date
+### 查看续费日期
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-You receive your invoice when the subscription renews. To verify your renewal
-date, sign in to [Docker Billing](https://app.docker.com/billing). Your renewal
-date and amount are displayed on your subscription card.
+订阅续费时你会收到发票。要查看续费日期，请登录 [Docker Billing](https://app.docker.com/billing)。续费日期与金额会显示在订阅卡片上。
 
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-You receive your invoice when the subscription renews. To verify your renewal
-date:
+订阅续费时你会收到发票。要查看续费日期：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your user avatar to open the drop-down menu.
-1. Select **Billing**.
-1. Select the user or organization account to view the billing details. Here
-you can find your renewal date and the renewal amount.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 点击用户头像打开下拉菜单。
+1. 选择 **Billing**。
+1. 选择用户或组织账号查看计费详情，其中包含续费日期与金额。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Include your VAT number on your invoice
+### 在发票上包含 VAT 编号
 
 > [!NOTE]
 >
-> If the VAT number field is not available, complete the
-[Contact Support form](https://hub.docker.com/support/contact/). This field may
-need to be manually added.
+> 若页面中未显示 VAT 编号字段，请填写[联系支持表单](https://hub.docker.com/support/contact/)。该字段可能需要人工添加。
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To add or update your VAT number:
+添加或更新 VAT 编号：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and choose your
-organization.
-1. Select **Billing**.
-1. Select **Billing information** from the left-hand menu.
-1. Select **Change** on your billing information card.
-1. Ensure the **I'm purchasing as a business** checkbox is checked.
-1. Enter your VAT number in the Tax ID section.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧菜单选择 **Billing information**。
+1. 在账单信息卡片上选择 **Change**。
+1. 勾选 **I'm purchasing as a business**。
+1. 在 Tax ID 区域输入你的 VAT 编号。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
 1. Select **Update**.
 
-Your VAT number will be included on your next invoice.
+你的 VAT 编号将显示在下一张发票上。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To add or update your VAT number:
+添加或更新 VAT 编号：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select the **Billing address** link.
-1. In the **Billing Information** section, select **Update information**.
-1. Enter your VAT number in the Tax ID section.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Billing address** 链接。
+1. 在 **Billing Information** 区域选择 **Update information**。
+1. 在 Tax ID 区域输入你的 VAT 编号。
 
     > [!IMPORTANT]
     >
-    > Your VAT number must include your country prefix. For example, if you are
-    entering a VAT number for Germany, you would enter `DE123456789`.
+    > VAT 编号必须包含国家前缀。例如，德国应填写 `DE123456789`。
 
 1. Select **Save**.
 
-Your VAT number will be included on your next invoice.
+你的 VAT 编号将显示在下一张发票上。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## View billing history
+## 查看账单历史
 
-You can view the billing history and download past invoices for a personal
-account or organization.
+你可以为个人账号或组织查看账单历史并下载历史发票。
 
-### Personal account
+### 个人账号
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To view billing history:
+查看账单历史：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and choose your
-organization.
-1. Select **Billing**.
-1. Select **Invoices** from the left-hand menu.
-1. Optional. Select the **Invoice number** to open invoice details.
-1. Optional. Select the **Download** button to download an invoice.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧菜单选择 **Invoices**。
+1. 可选：点击 **Invoice number** 查看发票详情。
+1. 可选：点击 **Download** 下载发票。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To view billing history:
+查看账单历史：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select the **Payment methods and billing history** link.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Payment methods and billing history** 链接。
 
-You can find your past invoices in the **Invoice History** section, where
-you can download an invoice.
+历史发票位于 **Invoice History** 区域，可在其中下载。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Organization
+### 组织
 
 > [!NOTE]
 >
-> You must be an owner of the organization to view the billing history.
+> 只有组织所有者可以查看账单历史。
 
 {{< tabs >}}
 {{< tab name="Docker subscription" >}}
 
-To view billing history:
+查看账单历史：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Billing**.
-1. Select **Invoices** from the left-hand menu.
-1. Optional. Select the **invoice number** to open invoice details.
-1. Optional. Select the **download** button to download an invoice.
+1. 登录 [Docker Home](https://app.docker.com/)，选择你的组织。
+1. 选择 **Billing**。
+1. 在左侧菜单选择 **Invoices**。
+1. 可选：点击 **invoice number** 查看发票详情。
+1. 可选：点击 **download** 下载发票。
 
 {{< /tab >}}
 {{< tab name="Legacy Docker subscription" >}}
 
-To view billing history:
+查看账单历史：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select your organization, then select **Billing**.
-1. Select the **Payment methods and billing history** link.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择你的组织，然后选择 **Billing**。
+1. 选择 **Payment methods and billing history** 链接。
 
-You can find your past invoices in the **Invoice History** section, where you
-can download an invoice.
+历史发票位于 **Invoice History** 区域，可在其中下载。
 
 {{< /tab >}}
 {{< /tabs >}}
