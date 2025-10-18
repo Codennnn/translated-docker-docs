@@ -1,13 +1,13 @@
 command: docker container prune
-short: Remove all stopped containers
-long: Removes all stopped containers.
+short: 清理所有已停止的容器
+long: 清理所有已停止的容器。
 usage: docker container prune [OPTIONS]
 pname: docker container
 plink: docker_container.yaml
 options:
     - option: filter
       value_type: filter
-      description: Provide filter values (e.g. `until=<timestamp>`)
+      description: 提供过滤器取值（例如 `until=<timestamp>`）
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -19,7 +19,7 @@ options:
       shorthand: f
       value_type: bool
       default_value: "false"
-      description: Do not prompt for confirmation
+      description: 不提示确认（强制执行）
       deprecated: false
       hidden: false
       experimental: false
@@ -30,7 +30,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -38,7 +38,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Prune containers
+    ### 清理容器
 
     ```console
     $ docker container prune
@@ -51,34 +51,20 @@ examples: |-
     Total reclaimed space: 212 B
     ```
 
-    ### Filtering (--filter) {#filter}
+    ### 过滤器 (--filter) {#filter}
 
-    The filtering flag (`--filter`) format is of "key=value". If there is more
-    than one filter, then pass multiple flags (e.g., `--filter "foo=bar" --filter "bif=baz"`)
+    过滤选项（`--filter`）的格式为 "key=value"。如需指定多个过滤条件，请传入多个 `--filter` 标志（例如 `--filter "foo=bar" --filter "bif=baz"`）。
 
-    The currently supported filters are:
+    当前支持的过滤器包括：
 
-    * until (`<timestamp>`) - only remove containers created before given timestamp
-    * label (`label=<key>`, `label=<key>=<value>`, `label!=<key>`, or `label!=<key>=<value>`) - only remove containers with (or without, in case `label!=...` is used) the specified labels.
+    * until (`<timestamp>`) —— 仅清理在指定时间戳之前创建的容器。
+    * label（`label=<key>`、`label=<key>=<value>`、`label!=<key>` 或 `label!=<key>=<value>`）—— 仅清理具有（或在使用 `label!=...` 时不具有）指定标签的容器。
 
-    The `until` filter can be Unix timestamps, date formatted
-    timestamps, or Go duration strings supported by [ParseDuration](https://pkg.go.dev/time#ParseDuration) (e.g. `10m`, `1h30m`) computed
-    relative to the daemon machine’s time. Supported formats for date
-    formatted time stamps include RFC3339Nano, RFC3339, `2006-01-02T15:04:05`,
-    `2006-01-02T15:04:05.999999999`, `2006-01-02T07:00`, and `2006-01-02`. The local
-    timezone on the daemon will be used if you do not provide either a `Z` or a
-    `+-00:00` timezone offset at the end of the timestamp. When providing Unix
-    timestamps enter seconds[.nanoseconds], where seconds is the number of seconds
-    that have elapsed since January 1, 1970 (midnight UTC/GMT), not counting leap
-    seconds (aka Unix epoch or Unix time), and the optional .nanoseconds field is a
-    fraction of a second no more than nine digits long.
+    `until` 过滤器可接受 Unix 时间戳、日期格式的时间戳，或由 [ParseDuration](https://pkg.go.dev/time#ParseDuration) 支持的 Go 时长字符串（例如 `10m`、`1h30m`）。这些值均以守护进程所在机器的时间为基准进行计算。支持的日期时间格式包括 RFC3339Nano、RFC3339、`2006-01-02T15:04:05`、`2006-01-02T15:04:05.999999999`、`2006-01-02T07:00` 和 `2006-01-02`。如果未在时间戳末尾提供 `Z` 或 `+-00:00` 时区偏移，将使用守护进程的本地时区。提供 Unix 时间戳时，请输入 `seconds[.nanoseconds]`，其中 `seconds` 为自 1970-01-01 00:00:00 UTC（不含闰秒，亦称 Unix epoch/Unix time）以来经过的秒数，`.nanoseconds` 为可选的纳秒小数部分（最多 9 位）。
 
-    The `label` filter accepts two formats. One is the `label=...` (`label=<key>` or `label=<key>=<value>`),
-    which removes containers with the specified labels. The other
-    format is the `label!=...` (`label!=<key>` or `label!=<key>=<value>`), which removes
-    containers without the specified labels.
+    `label` 过滤器支持两种形式：其一为 `label=...`（`label=<key>` 或 `label=<key>=<value>`），用于清理带有指定标签的容器；其二为 `label!=...`（`label!=<key>` 或 `label!=<key>=<value>`），用于清理不带指定标签的容器。
 
-    The following removes containers created more than 5 minutes ago:
+    以下示例清理创建时间早于 5 分钟的容器：
 
     ```console
     $ docker ps -a --format 'table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}'
@@ -100,7 +86,7 @@ examples: |-
     61b9efa71024        busybox             "sh"                2017-01-04 13:23:33 -0800 PST   Exited (0) 44 seconds ago
     ```
 
-    The following removes containers created before `2017-01-04T13:10:00`:
+    以下示例清理创建时间早于 `2017-01-04T13:10:00` 的容器：
 
     ```console
     $ docker ps -a --format 'table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}'

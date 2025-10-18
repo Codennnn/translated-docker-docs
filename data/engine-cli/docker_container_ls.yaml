@@ -1,7 +1,7 @@
 command: docker container ls
 aliases: docker container ls, docker container list, docker container ps, docker ps
-short: List containers
-long: List containers
+short: 列出容器
+long: 列出容器
 usage: docker container ls [OPTIONS]
 pname: docker container
 plink: docker_container.yaml
@@ -10,7 +10,7 @@ options:
       shorthand: a
       value_type: bool
       default_value: "false"
-      description: Show all containers (default shows just running)
+      description: 显示所有容器（默认仅显示运行中）
       details_url: '#all'
       deprecated: false
       hidden: false
@@ -21,7 +21,7 @@ options:
     - option: filter
       shorthand: f
       value_type: filter
-      description: Filter output based on conditions provided
+      description: 根据指定条件过滤输出
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -32,12 +32,12 @@ options:
     - option: format
       value_type: string
       description: |-
-        Format output using a custom template:
-        'table':            Print output in table format with column headers (default)
-        'table TEMPLATE':   Print output in table format using the given Go template
-        'json':             Print in JSON format
-        'TEMPLATE':         Print output using the given Go template.
-        Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
+        使用自定义模板格式化输出：
+        'table'：            以带列标题的表格格式打印输出（默认）
+        'table TEMPLATE'：   使用给定的 Go 模板以表格格式打印输出
+        'json'：             以 JSON 格式打印
+        'TEMPLATE'：         使用给定的 Go 模板打印输出。
+        关于使用模板格式化输出的更多信息，请参阅 https://docs.docker.com/go/formatting/
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -49,7 +49,7 @@ options:
       shorthand: "n"
       value_type: int
       default_value: "-1"
-      description: Show n last created containers (includes all states)
+      description: 显示最近创建的 n 个容器（包含所有状态）
       deprecated: false
       hidden: false
       experimental: false
@@ -60,7 +60,7 @@ options:
       shorthand: l
       value_type: bool
       default_value: "false"
-      description: Show the latest created container (includes all states)
+      description: 显示最近创建的容器（包含所有状态）
       deprecated: false
       hidden: false
       experimental: false
@@ -70,7 +70,7 @@ options:
     - option: no-trunc
       value_type: bool
       default_value: "false"
-      description: Don't truncate output
+      description: 不截断输出
       details_url: '#no-trunc'
       deprecated: false
       hidden: false
@@ -82,7 +82,7 @@ options:
       shorthand: q
       value_type: bool
       default_value: "false"
-      description: Only display container IDs
+      description: 仅显示容器 ID
       deprecated: false
       hidden: false
       experimental: false
@@ -93,7 +93,7 @@ options:
       shorthand: s
       value_type: bool
       default_value: "false"
-      description: Display total file sizes
+      description: 显示磁盘占用大小
       details_url: '#size'
       deprecated: false
       hidden: false
@@ -105,7 +105,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -113,9 +113,9 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Do not truncate output (--no-trunc) {#no-trunc}
+    ### 不截断输出 (--no-trunc) {#no-trunc}
 
-    Running `docker ps --no-trunc` showing 2 linked containers.
+    运行 `docker ps --no-trunc`，显示 2 个已链接的容器。
 
     ```console
     $ docker ps --no-trunc
@@ -125,22 +125,19 @@ examples: |-
     9ca9747b233100676a48cc7806131586213fa5dab86dd1972d6a8732e3a84a4d crosbymichael/redis:latest   /redis-server --dir    33 minutes ago       Up 33 minutes       6379/tcp            redis,webapp/db
     ```
 
-    ### Show both running and stopped containers (-a, --all) {#all}
+    ### 同时显示运行中与已停止的容器 (-a, --all) {#all}
 
-    The `docker ps` command only shows running containers by default. To see all
-    containers, use the `--all` (or `-a`) flag:
+    默认情况下，`docker ps` 只显示运行中的容器。若要查看所有容器，请使用 `--all`（或 `-a`）标志：
 
     ```console
     $ docker ps -a
     ```
 
-    `docker ps` groups exposed ports into a single range if possible. E.g., a
-    container that exposes TCP ports `100, 101, 102` displays `100-102/tcp` in
-    the `PORTS` column.
+    如果可以，`docker ps` 会将暴露的端口合并为一个连续范围。例如，一个容器暴露了 TCP 端口 `100, 101, 102`，则会在 `PORTS` 列显示为 `100-102/tcp`。
 
-    ### Show disk usage by container (--size) {#size}
+    ### 按容器显示磁盘占用 (--size) {#size}
 
-    The `docker ps --size` (or `-s`) command displays two different on-disk-sizes for each container:
+    命令 `docker ps --size`（或 `-s`）会为每个容器显示两种不同的磁盘大小：
 
     ```console
     $ docker ps --size
@@ -149,10 +146,10 @@ examples: |-
     e90b8831a4b8   nginx          "/bin/bash -c 'mkdir "   11 weeks ago   Up 4 hours           my_nginx     35.58 kB (virtual 109.2 MB)
     00c6131c5e30   telegraf:1.5   "/entrypoint.sh"         11 weeks ago   Up 11 weeks          my_telegraf  0 B (virtual 209.5 MB)
     ```
-      * The "size" information shows the amount of data (on disk) that is used for the _writable_ layer of each container
-      * The "virtual size" is the total amount of disk-space used for the read-only _image_ data used by the container and the writable layer.
+      * “size” 表示每个容器可写层在磁盘上占用的数据量
+      * “virtual size” 表示容器所用的只读 _image_ 数据与可写层的总磁盘占用。
 
-    For more information, refer to the [container size on disk](/engine/storage/drivers/#container-size-on-disk) section.
+    更多信息请参见 [container size on disk](/engine/storage/drivers/#container-size-on-disk) 小节。
 
 
     ### Filtering (--filter) {#filter}

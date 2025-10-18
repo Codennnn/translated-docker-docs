@@ -1,7 +1,7 @@
 command: docker container restart
 aliases: docker container restart, docker restart
-short: Restart one or more containers
-long: Restart one or more containers
+short: 重启一个或多个容器
+long: 重启一个或多个容器
 usage: docker container restart [OPTIONS] CONTAINER [CONTAINER...]
 pname: docker container
 plink: docker_container.yaml
@@ -9,7 +9,7 @@ options:
     - option: signal
       shorthand: s
       value_type: string
-      description: Signal to send to the container
+      description: 发送给容器的信号
       details_url: '#signal'
       deprecated: false
       hidden: false
@@ -21,7 +21,7 @@ options:
       value_type: int
       default_value: "0"
       description: |
-        Seconds to wait before killing the container (deprecated: use --timeout)
+        在强制终止容器前等待的秒数（已弃用：请使用 --timeout）
       deprecated: true
       hidden: true
       experimental: false
@@ -32,7 +32,7 @@ options:
       shorthand: t
       value_type: int
       default_value: "0"
-      description: Seconds to wait before killing the container
+      description: 在强制终止容器前等待的秒数
       details_url: '#timeout'
       deprecated: false
       hidden: false
@@ -44,7 +44,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印使用帮助
       deprecated: false
       hidden: true
       experimental: false
@@ -57,35 +57,27 @@ examples: |-
     ```
 
 
-    ### Stop container with signal (-s, --signal) {#signal}
+    ### 使用信号停止容器 (-s, --signal) {#signal}
 
-    The `--signal` flag sends the system call signal to the container to exit.
-    This signal can be a signal name in the format `SIG<NAME>`, for instance
-    `SIGKILL`, or an unsigned number that matches a position in the kernel's
-    syscall table, for instance `9`. Refer to [signal(7)](https://man7.org/linux/man-pages/man7/signal.7.html)
-    for available signals.
+    `--signal` 选项会向容器发送系统调用信号以使其退出。
+    该信号可以是格式为 `SIG<NAME>` 的信号名（例如 `SIGKILL`），
+    也可以是与内核系统调用表中的位置相匹配的无符号数字（例如 `9`）。
+    可用信号请参阅 [signal(7)](https://man7.org/linux/man-pages/man7/signal.7.html)。
 
-    The default signal to use is defined by the image's [`StopSignal`](https://github.com/opencontainers/image-spec/blob/v1.1.0/config.md),
-    which can be set through the [`STOPSIGNAL`](/reference/dockerfile/#stopsignal)
-    Dockerfile instruction when building the image, or configured using the
-    [`--stop-signal`](/reference/cli/docker/container/run/#stop-signal)
-    option when creating the container. If no signal is configured for the
-    container, `SIGTERM` is used as default.
+    默认信号由镜像的 [`StopSignal`](https://github.com/opencontainers/image-spec/blob/v1.1.0/config.md) 定义，
+    可在构建镜像时通过 Dockerfile 指令 [`STOPSIGNAL`](/reference/dockerfile/#stopsignal) 设置，
+    或在创建容器时通过 [`--stop-signal`](/reference/cli/docker/container/run/#stop-signal) 选项进行配置。
+    如果未为容器配置信号，则默认使用 `SIGTERM`。
 
-    ### Stop container with timeout (-t, --timeout) {#timeout}
+    ### 使用超时停止容器 (-t, --timeout) {#timeout}
 
-    The `--timeout` flag sets the number of seconds to wait for the container
-    to stop after sending the pre-defined (see [`--signal`](#signal)) system call signal.
-    If the container does not exit after the timeout elapses, it's forcibly killed
-    with a `SIGKILL` signal.
+    `--timeout` 选项用于在发送预定义的系统调用信号（见 [`--signal`](#signal)）后，
+    设置等待容器停止的秒数。若超时后容器仍未退出，将以 `SIGKILL` 强制终止。
 
-    If you set `--timeout` to `-1`, no timeout is applied, and the daemon
-    waits indefinitely for the container to exit.
+    当将 `--timeout` 设为 `-1` 时，不应用超时，守护进程将无限期等待容器退出。
 
-    The default timeout can be specified using the [`--stop-timeout`](/reference/cli/docker/container/run/#stop-timeout)
-    option when creating the container. If no default is configured for the container,
-    the Daemon determines the default, and is 10 seconds for Linux containers, and
-    30 seconds for Windows containers.
+    创建容器时可通过 [`--stop-timeout`](/reference/cli/docker/container/run/#stop-timeout) 选项指定默认超时时间。
+    如果未为容器配置默认值，则由守护进程决定：Linux 容器默认 10 秒，Windows 容器默认 30 秒。
 deprecated: false
 hidden: false
 experimental: false

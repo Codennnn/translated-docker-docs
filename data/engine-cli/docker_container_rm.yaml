@@ -1,7 +1,7 @@
 command: docker container rm
 aliases: docker container rm, docker container remove, docker rm
-short: Remove one or more containers
-long: Remove one or more containers
+short: 删除一个或多个容器
+long: 删除一个或多个容器
 usage: docker container rm [OPTIONS] CONTAINER [CONTAINER...]
 pname: docker container
 plink: docker_container.yaml
@@ -10,7 +10,7 @@ options:
       shorthand: f
       value_type: bool
       default_value: "false"
-      description: Force the removal of a running container (uses SIGKILL)
+      description: 强制删除正在运行的容器（使用 SIGKILL 信号）
       details_url: '#force'
       deprecated: false
       hidden: false
@@ -22,7 +22,7 @@ options:
       shorthand: l
       value_type: bool
       default_value: "false"
-      description: Remove the specified link
+      description: 删除指定的链接
       details_url: '#link'
       deprecated: false
       hidden: false
@@ -34,7 +34,7 @@ options:
       shorthand: v
       value_type: bool
       default_value: "false"
-      description: Remove anonymous volumes associated with the container
+      description: 删除与容器关联的匿名卷
       details_url: '#volumes'
       deprecated: false
       hidden: false
@@ -46,7 +46,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印使用说明
       deprecated: false
       hidden: true
       experimental: false
@@ -54,9 +54,9 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Remove a container
+    ### 删除容器
 
-    This removes the container referenced under the link `/redis`.
+    该命令会删除名为 `/redis` 的容器。
 
     ```console
     $ docker rm /redis
@@ -64,12 +64,11 @@ examples: |-
     /redis
     ```
 
-    ### Remove a link specified with `--link` on the default bridge network (--link) {#link}
+    ### 删除默认桥接网络上通过 `--link` 指定的链接 (--link) {#link}
 
-    This removes the underlying link between `/webapp` and the `/redis`
-    containers on the default bridge network, removing all network communication
-    between the two containers. This does not apply when `--link` is used with
-    user-specified networks.
+    该命令会删除默认桥接网络上 `/webapp` 和 `/redis` 容器之间的底层链接,
+    移除两个容器之间的所有网络通信。注意,当 `--link` 用于用户自定义网络时,
+    此操作不适用。
 
     ```console
     $ docker rm --link /webapp/redis
@@ -77,9 +76,9 @@ examples: |-
     /webapp/redis
     ```
 
-    ### Force-remove a running container (--force) {#force}
+    ### 强制删除正在运行的容器 (--force) {#force}
 
-    This command force-removes a running container.
+    该命令会强制删除正在运行的容器。
 
     ```console
     $ docker rm --force redis
@@ -87,50 +86,45 @@ examples: |-
     redis
     ```
 
-    The main process inside the container referenced under the link `redis` will receive
-    `SIGKILL`, then the container will be removed.
+    名为 `redis` 的容器内的主进程将收到 `SIGKILL` 信号,然后容器会被删除。
 
-    ### Remove all stopped containers
+    ### 删除所有已停止的容器
 
-    Use the [`docker container prune`](/reference/cli/docker/container/prune/) command to remove all
-    stopped containers, or refer to the [`docker system prune`](/reference/cli/docker/system/prune/)
-    command to remove unused containers in addition to other Docker resources, such
-    as (unused) images and networks.
+    使用 [`docker container prune`](/reference/cli/docker/container/prune/) 命令可以删除所有
+    已停止的容器,或者参考 [`docker system prune`](/reference/cli/docker/system/prune/)
+    命令来删除未使用的容器以及其他 Docker 资源,例如未使用的镜像和网络。
 
-    Alternatively, you can use the `docker ps` with the `-q` / `--quiet` option to
-    generate a list of container IDs to remove, and use that list as argument for
-    the `docker rm` command.
+    另一种方法是使用 `docker ps` 命令配合 `-q` / `--quiet` 选项来生成要删除的容器 ID 列表,
+    然后将该列表作为 `docker rm` 命令的参数。
 
-    Combining commands can be more flexible, but is less portable as it depends
-    on features provided by the shell, and the exact syntax may differ depending on
-    what shell is used. To use this approach on Windows, consider using PowerShell
-    or Bash.
+    组合命令的方式更加灵活,但可移植性较差,因为它依赖于 shell 提供的功能,
+    并且具体语法可能因使用的 shell 而异。如果在 Windows 上使用此方法,
+    建议使用 PowerShell 或 Bash。
 
-    The example below uses `docker ps -q` to print the IDs of all containers that
-    have exited (`--filter status=exited`), and removes those containers with
-    the `docker rm` command:
+    下面的示例使用 `docker ps -q` 打印所有已退出容器的 ID(`--filter status=exited`),
+    然后使用 `docker rm` 命令删除这些容器:
 
     ```console
     $ docker rm $(docker ps --filter status=exited -q)
     ```
 
-    Or, using the `xargs` Linux utility:
+    或者,使用 Linux 的 `xargs` 工具:
 
     ```console
     $ docker ps --filter status=exited -q | xargs docker rm
     ```
 
-    ### Remove a container and its volumes (-v, --volumes) {#volumes}
+    ### 删除容器及其卷 (-v, --volumes) {#volumes}
 
     ```console
     $ docker rm --volumes redis
     redis
     ```
 
-    This command removes the container and any volumes associated with it.
-    Note that if a volume was specified with a name, it will not be removed.
+    该命令会删除容器以及与其关联的所有卷。
+    注意,如果卷是通过名称指定的,则不会被删除。
 
-    ### Remove a container and selectively remove volumes
+    ### 删除容器并选择性地删除卷
 
     ```console
     $ docker create -v awesome:/foo -v /bar --name hello redis
@@ -139,9 +133,8 @@ examples: |-
     $ docker rm -v hello
     ```
 
-    In this example, the volume for `/foo` remains intact, but the volume for
-    `/bar` is removed. The same behavior holds for volumes inherited with
-    `--volumes-from`.
+    在此示例中,`/foo` 对应的卷会保留,但 `/bar` 对应的卷会被删除。
+    对于通过 `--volumes-from` 继承的卷,也遵循相同的行为。
 deprecated: false
 hidden: false
 experimental: false
