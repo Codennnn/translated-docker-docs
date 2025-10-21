@@ -1,83 +1,63 @@
 ---
-title: Optimize Docker Offload usage
-linktitle: Optimize usage
+title: 优化 Docker Offload 使用
+linktitle: 优化使用
 weight: 40
-description: Learn how to optimize your Docker Offload usage.
-keywords: cloud, optimize, performance, caching, cost efficiency
+description: 了解如何优化 Docker Offload 的使用。
+keywords: 云端, 优化, 性能, 缓存, 成本效率
 ---
 
-Docker Offload runs your builds remotely, not on the machine where you invoke the
-build. This means that files must be transferred from your local system to the
-cloud over the network.
+Docker Offload 在远程运行您的构建，而不是在您调用构建的机器上。这意味着文件必须通过网络从本地系统传输到云端。
 
-Transferring files over the network introduces higher latency and lower
-bandwidth compared to local transfers. To reduce these effects, Docker Offload
-includes several performance optimizations:
+与本地传输相比，通过网络传输文件会引入更高的延迟和更低的带宽。为了减少这些影响，Docker Offload 包含了多项性能优化：
 
-- It uses attached storage volumes for build cache, which makes reading and writing cache fast.
-- When pulling build results back to your local machine, it only transfers layers that changed since the previous build.
+- 它使用附加的存储卷进行构建缓存，使缓存读写速度更快。
+- 当将构建结果拉回本地机器时，它只传输自上次构建以来发生变化的层。
 
-Even with these optimizations, large projects or slower network connections can
-lead to longer transfer times. Here are several ways to optimize your build
-setup for Docker Offload:
+即使有这些优化，大型项目或较慢的网络连接也可能导致更长的传输时间。以下是几种优化 Docker Offload 构建设置的方法：
 
-- [Use `.dockerignore` files](#dockerignore-files)
-- [Choose slim base images](#slim-base-images)
-- [Use multi-stage builds](#multi-stage-builds)
-- [Fetch remote files during the build](#fetch-remote-files-in-build)
-- [Leverage multi-threaded tools](#multi-threaded-tools)
+- [使用 `.dockerignore` 文件](#dockerignore-文件)
+- [选择精简基础镜像](#精简基础镜像)
+- [使用多阶段构建](#多阶段构建)
+- [在构建过程中获取远程文件](#在构建过程中获取远程文件)
+- [利用多线程工具](#利用多线程工具)
 
-For general Dockerfile tips, see [Building best practices](/manuals/build/building/best-practices.md).
+有关 Dockerfile 的一般技巧，请参阅[构建最佳实践](/manuals/build/building/best-practices.md)。
 
-## dockerignore files
+## dockerignore 文件
 
-A [`.dockerignore` file](/manuals/build/concepts/context.md#dockerignore-files)
-lets you specify which local files should *not* be included in the build
-context. Files excluded by these patterns won’t be uploaded to Docker Offload
-during a build.
+[`.dockerignore` 文件](/manuals/build/concepts/context.md#dockerignore-文件)允许您指定哪些本地文件*不应*包含在构建上下文中。被这些模式排除的文件在构建过程中不会上传到 Docker Offload。
 
-Typical items to ignore:
+通常应忽略的项目：
 
-- `.git` – avoids transferring your version history. (Note: you won’t be able to run `git` commands in the build.)
-- Build artifacts or locally generated binaries.
-- Dependency folders such as `node_modules`, if those are restored in the build
-  process.
+- `.git` - 避免传输版本历史记录。（注意：您将无法在构建中运行 `git` 命令。）
+- 构建工件或本地生成的二进制文件。
+- 依赖文件夹（如 `node_modules`），如果这些文件夹在构建过程中会被恢复。
 
-As a rule of thumb, your `.dockerignore` should be similar to your `.gitignore`.
+作为经验法则，您的 `.dockerignore` 应该与您的 `.gitignore` 类似。
 
-## Slim base images
+## 精简基础镜像
 
-Smaller base images in your `FROM` instructions can reduce final image size and
-improve build performance. The [`alpine`](https://hub.docker.com/_/alpine) image
-is a good example of a minimal base.
+在 `FROM` 指令中使用更小的基础镜像可以减少最终镜像大小并提高构建性能。[`alpine`](https://hub.docker.com/_/alpine) 镜像是最小基础镜像的一个很好的例子。
 
-For fully static binaries, you can use [`scratch`](https://hub.docker.com/_/scratch), which is an empty base image.
+对于完全静态的二进制文件，您可以使用 [`scratch`](https://hub.docker.com/_/scratch)，它是一个空的基础镜像。
 
-## Multi-stage builds
+## 多阶段构建
 
-[Multi-stage builds](/build/building/multi-stage/) let you separate build-time
-and runtime environments in your Dockerfile. This not only reduces the size of
-the final image but also allows for parallel stage execution during the build.
+[多阶段构建](/build/building/multi-stage/)允许您在 Dockerfile 中分离构建时和运行时环境。这不仅减少了最终镜像的大小，还允许在构建过程中并行执行各个阶段。
 
-Use `COPY --from` to copy files from earlier stages or external images. This
-approach helps minimize unnecessary layers and reduce final image size.
+使用 `COPY --from` 从早期阶段或外部镜像复制文件。这种方法有助于最小化不必要的层并减少最终镜像大小。
 
-## Fetch remote files in build
+## 在构建过程中获取远程文件
 
-When possible, download large files from the internet during the build itself
-instead of bundling them in your local context. This avoids network transfer
-from your client to Docker Offload.
+尽可能在构建过程中从互联网下载大文件，而不是将它们打包在本地上下文中。这样可以避免从客户端到 Docker Offload 的网络传输。
 
-You can do this using:
+您可以使用以下方式实现：
 
-- The Dockerfile [`ADD` instruction](/reference/dockerfile/#add)
-- `RUN` commands like `wget`, `curl`, or `rsync`
+- Dockerfile [`ADD` 指令](/reference/dockerfile/#add)
+- `RUN` 命令，如 `wget`、`curl` 或 `rsync`
 
-### Multi-threaded tools
+### 利用多线程工具
 
-Some build tools, such as `make`, are single-threaded by default. If the tool
-supports it, configure it to run in parallel. For example, use `make --jobs=4`
-to run four jobs simultaneously.
+一些构建工具（如 `make`）默认是单线程的。如果工具支持，请将其配置为并行运行。例如，使用 `make --jobs=4` 同时运行四个作业。
 
-Taking advantage of available CPU resources in the cloud can significantly
-improve build time.
+充分利用云环境中可用的 CPU 资源可以显著缩短构建时间。

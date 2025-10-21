@@ -1,8 +1,8 @@
 ---
-description: Learn how Just-in-Time provisioning works with your SSO connection.
-keywords: user provisioning, just-in-time provisioning, JIT, autoprovision, Docker Admin, admin, security
-title: Just-in-Time provisioning
-linkTitle: Just-in-Time
+description: 了解即时供应 (JIT) 如何与您的 SSO 连接协同工作。
+keywords: 用户供应, 即时供应, JIT, 自动供应, Docker 管理员, 管理员, 安全
+title: 即时供应
+linkTitle: 即时供应
 weight: 10
 aliases:
  - /security/for-admins/provisioning/just-in-time/
@@ -10,80 +10,80 @@ aliases:
 
 {{< summary-bar feature_name="SSO" >}}
 
-Just-in-Time (JIT) provisioning streamlines user onboarding by automatically creating and updating user accounts during SSO authentication. This eliminates manual account creation and ensures users have immediate access to your organization's resources. JIT verifies that users belong to the organization and assigns them to the appropriate teams based on your identity provider (IdP) configuration. When you create your SSO connection, JIT provisioning is turned on by default.
+即时供应 (Just-in-Time, JIT) 通过在 SSO 身份验证期间自动创建和更新用户账户，简化了用户入职流程。这种方式无需手动创建账户，确保用户能够立即访问组织资源。JIT 会验证用户是否属于组织，并根据您的身份提供商 (IdP) 配置将用户分配到相应团队。创建 SSO 连接时，JIT 供应默认启用。
 
-This page explains how JIT provisioning works, SSO authentication flows, and how to disable JIT provisioning.
+本文档将介绍 JIT 供应的工作原理、SSO 身份验证流程以及如何禁用 JIT 供应。
 
-## Prerequisites
+## 先决条件
 
-Before you begin, you must have:
+开始之前，您必须具备：
 
-- SSO configured for your organization
-- Administrator access to Docker Home and your identity provider
+- 已为组织配置 SSO
+- 拥有 Docker Home 和身份提供商的管理员访问权限
 
-## SSO authentication with JIT provisioning enabled
+## 启用 JIT 供应的 SSO 身份验证
 
-When a user signs in with SSO and you have JIT provisioning enabled, the following steps occur automatically:
+当用户使用 SSO 登录且您已启用 JIT 供应时，系统会自动执行以下步骤：
 
-1. The system checks if a Docker account exists for the user's email address.
+1. 系统检查该用户的电子邮件地址是否已存在 Docker 账户。
 
-    - If an account exists: The system uses the existing account and updates the user's full name if necessary.
-    - If no account exists: A new Docker account is created using basic user attributes (email, name, and surname). A unique username is generated based on the user's email, name, and random numbers to ensure all usernames are unique across the platform.
+    - 如果账户存在：系统使用现有账户，并在必要时更新用户的全名。
+    - 如果账户不存在：系统使用基本用户属性（电子邮件、名字和姓氏）创建新的 Docker 账户。系统会基于用户的电子邮件、姓名和随机数生成唯一用户名，确保平台上所有用户名都是唯一的。
 
-2. The system checks for any pending invitations to the SSO organization.
+2. 系统检查是否有待处理的 SSO 组织邀请。
 
-    - Invitation found: The invitation is automatically accepted.
-    - Invitation includes a specific group: The user is added to that group within the SSO organization.
+    - 找到邀请：系统自动接受邀请。
+    - 邀请包含特定组：用户将被添加到 SSO 组织内的相应组中。
 
-3. The system verifies if the IdP has shared group mappings during authentication.
+3. 系统验证身份提供商在身份验证期间是否共享了组映射。
 
-    - Group mappings provided: The user is assigned to the relevant organizations and teams.
-    - No group mappings provided: The system checks if the user is already part of the organization. If not, the user is added to the default organization and team configured in the SSO connection.
+    - 提供了组映射：用户将被分配到相关组织和团队。
+    - 未提供组映射：系统检查用户是否已是组织成员。如果不是，用户将被添加到 SSO 连接中配置的默认组织和团队。
 
-The following graphic provides an overview of SSO authentication with JIT enabled:
+下图概述了启用 JIT 的 SSO 身份验证流程：
 
-   ![JIT provisioning enabled workflow](../images/jit-enabled-flow.svg)
+   ![启用 JIT 供应的工作流程](../images/jit-enabled-flow.svg)
 
-## SSO authentication with JIT provisioning disabled
+## 禁用 JIT 供应的 SSO 身份验证
 
-When JIT provisioning is disabled, the following actions occur during SSO authentication:
+当 JIT 供应被禁用时，SSO 身份验证期间会发生以下操作：
 
-1. The system checks if a Docker account exists for the user's email address.
+1. 系统检查该用户的电子邮件地址是否已存在 Docker 账户。
 
-    - If an account exists: The system uses the existing account and updates the user's full name if necessary.
-    - If no account exists: A new Docker account is created using basic user attributes (email, name, and surname). A unique username is generated based on the user's email, name, and random numbers to ensure all usernames are unique across the platform.
+    - 如果账户存在：系统使用现有账户，并在必要时更新用户的全名。
+    - 如果账户不存在：系统使用基本用户属性（电子邮件、名字和姓氏）创建新的 Docker 账户。系统会基于用户的电子邮件、姓名和随机数生成唯一用户名，确保平台上所有用户名都是唯一的。
 
-2. The system checks for any pending invitations to the SSO organization.
+2. 系统检查是否有待处理的 SSO 组织邀请。
 
-   - Invitation found: If the user is a member of the organization or has a pending invitation, sign-in is successful, and the invitation is automatically accepted.
-   - No invitation found: If the user is not a member of the organization and has no pending invitation, the sign-in fails, and an `Access denied` error appears. The user must contact an administrator to be invited to the organization.
+   - 找到邀请：如果用户是组织成员或有待处理的邀请，登录成功，系统自动接受邀请。
+   - 未找到邀请：如果用户不是组织成员且没有待处理的邀请，登录失败，并显示"访问被拒绝"错误。用户必须联系管理员以获得组织邀请。
 
-With JIT disabled, group mapping is only available if you have [SCIM enabled](scim/#enable-scim-in-docker). If SCIM is not enabled, users won't be auto-provisioned to groups.
+禁用 JIT 后，只有在启用 [SCIM](scim/#enable-scim-in-docker) 的情况下才能使用组映射。如果未启用 SCIM，用户将不会自动分配到组中。
 
-The following graphic provides an overview of SSO authentication with JIT disabled:
+下图概述了禁用 JIT 的 SSO 身份验证流程：
 
-![JIT provisioning disabled workflow](../images/jit-disabled-flow.svg)
+![禁用 JIT 供应的工作流程](../images/jit-disabled-flow.svg)
 
-## Disable JIT provisioning
+## 禁用 JIT 供应
 
 > [!WARNING]
 >
-> Disabling JIT provisioning may disrupt your users' access and workflows. With JIT disabled, users will not be automatically added to your organization. Users must already be a member of the organization or have a pending invitation to successfully sign in through SSO. To auto-provision users with JIT disabled, [use SCIM](./scim.md).
+> 禁用 JIT 供应可能会影响用户的访问和工作流程。禁用 JIT 后，用户不会自动添加到您的组织中。用户必须已经是组织成员或有待处理的邀请才能通过 SSO 成功登录。要在禁用 JIT 的情况下自动供应用户，请[使用 SCIM](./scim.md)。
 
-You may want to disable JIT provisioning for reasons such as the following:
+您可能因以下原因想要禁用 JIT 供应：
 
-- You have multiple organizations, have SCIM enabled, and want SCIM to be the source of truth for provisioning
-- You want to control and restrict usage based on your organization's security configuration, and want to use SCIM to provision access
+- 您拥有多个组织，已启用 SCIM，并希望 SCIM 成为供应的权威来源
+- 您希望根据组织的安全配置控制和限制使用，并使用 SCIM 来供应访问权限
 
-Users are provisioned with JIT by default. If you enable SCIM, you can disable JIT:
+用户默认通过 JIT 进行供应。如果启用 SCIM，您可以禁用 JIT：
 
-1. Go to [Docker Home](https://app.docker.com/) and select your organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. In the **SSO connections** table, select the **Action** icon, then select **Disable JIT provisioning**.
-1. Select **Disable** to confirm.
+1. 访问 [Docker Home](https://app.docker.com/)，从左上角的账户下拉菜单中选择您的组织。
+1. 选择**管理控制台**，然后选择**SSO 和 SCIM**。
+1. 在**SSO 连接**表中，选择**操作**图标，然后选择**禁用 JIT 供应**。
+1. 选择**禁用**进行确认。
 
-## Next steps
+## 进一步阅读
 
-- Configure [SCIM provisioning](/manuals/enterprise/security/provisioning/scim.md) for advanced user management.
-- Set up [group mapping](/manuals/enterprise/security/provisioning/group-mapping.md) to automatically assign users to teams.
-- Review [Troubleshoot provisioning](/manuals/enterprise/troubleshoot/troubleshoot-provisioning.md).
+- 配置 [SCIM 供应](/manuals/enterprise/security/provisioning/scim.md) 以实现高级用户管理。
+- 设置[组映射](/manuals/enterprise/security/provisioning/group-mapping.md)以自动将用户分配到团队。
+- 查看[供应故障排除](/manuals/enterprise/troubleshoot/troubleshoot-provisioning.md)。

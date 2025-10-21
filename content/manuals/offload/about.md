@@ -1,126 +1,81 @@
 ---
-title: About Docker Offload
-linktitle: About
+title: 关于 Docker Offload
+linktitle: 关于
 weight: 15
-description: Learn about Docker Offload, its features, and how it works.
-keywords: cloud, build, remote builder
+description: 了解 Docker Offload 的功能、特性及其工作原理。
+keywords: 云端, 构建, 远程构建器
 ---
 
-Docker Offload is a fully managed service for building and running containers in
-the cloud using the Docker tools you already know, including Docker Desktop, the
-Docker CLI, and Docker Compose. It extends your local development workflow into a
-scalable, cloud-powered environment, so you can offload compute-heavy tasks,
-accelerate builds, and securely manage container workloads across the software
-lifecycle.
+Docker Offload 是一项完全托管的服务，允许您使用熟悉的 Docker 工具（包括 Docker Desktop、Docker CLI 和 Docker Compose）在云端构建和运行容器。它将您的本地开发工作流扩展到可扩展的云端环境，使您能够将计算密集型任务转移到云端，加速构建过程，并在整个软件生命周期中安全地管理容器工作负载。
 
-Docker Offload also supports GPU-accelerated instances, allowing you to
-containerize and run compute-intensive workloads such as Docker Model Runner and
-other machine learning or data processing tasks that benefit from GPU.
+Docker Offload 还支持 GPU 加速实例，让您能够容器化并运行计算密集型工作负载，如 Docker Model Runner 以及其他受益于 GPU 加速的机器学习或数据处理任务。
 
-## Key features
+## 主要功能
 
-Docker Offload includes the following capabilities to support modern container
-workflows:
+Docker Offload 包含以下功能，以支持现代容器工作流：
 
-- Cloud-based builds: Execute builds on remote, fully managed BuildKit instances
-- GPU acceleration: Use NVIDIA L4 GPU-backed environments for machine learning,
-  media processing, and other compute-intensive workloads.
-- Ephemeral cloud runners: Automatically provision and tear down cloud
-  environments for each container session.
-- Shared build cache: Speed up build times across machines and teammates with a
-  smart, shared cache layer.
-- Hybrid workflows: Seamlessly transition between local and remote execution
-  using Docker Desktop or CLI.
-- Secure communication: Use encrypted tunnels between Docker Desktop and cloud
-  environments with support for secure secrets and image pulling.
-- Port forwarding and bind mounts: Retain a local development experience even
-  when running containers in the cloud.
-- VDI-friendly: Use Docker Offload in virtual desktop environments or systems that
-  don't support nested virtualization.
+- **云端构建**：在远程完全托管的 BuildKit 实例上执行构建
+- **GPU 加速**：使用支持 NVIDIA L4 GPU 的环境进行机器学习、媒体处理和其他计算密集型工作负载
+- **临时云运行器**：为每个容器会话自动配置和拆除云环境
+- **共享构建缓存**：通过智能共享缓存层加速多台机器和团队成员之间的构建速度
+- **混合工作流**：使用 Docker Desktop 或 CLI 在本地和远程执行之间无缝切换
+- **安全通信**：在 Docker Desktop 和云环境之间使用加密隧道，支持安全密钥和镜像拉取
+- **端口转发和绑定挂载**：即使在云端运行容器，也能保持本地开发体验
+- **VDI 友好**：在虚拟桌面环境或不支持嵌套虚拟化的系统中使用 Docker Offload
 
-## Why use Docker Offload?
+## 为何使用 Docker Offload？
 
-Docker Offload is designed to support modern development teams working across
-local and cloud environments. It helps you:
+Docker Offload 专为在本地和云环境中工作的现代开发团队而设计。它可以帮助您：
 
-- Offload heavy builds and runs to fast, scalable infrastructure
-- Accelerate feedback loops in development and testing
-- Run containers that require more resources than your local setup can provide
-- Build and run AI apps with instant access to GPU-powered environments
-- Use Docker Compose to manage complex, multi-service apps that need cloud
-  resources
-- Maintain consistent environments without managing custom infrastructure
-- Develop efficiently in restricted or low-powered environments like VDIs
+- 将繁重的构建和运行任务转移到快速、可扩展的基础设施上
+- 加速开发和测试过程中的反馈循环
+- 运行需要比本地环境更多资源的容器
+- 构建和运行 AI 应用程序，即时访问支持 GPU 的环境
+- 使用 Docker Compose 管理需要云资源的复杂多服务应用程序
+- 保持环境一致性，无需管理自定义基础设施
+- 在受限或低功耗环境（如 VDI）中高效开发
 
-Docker Offload is ideal for high-velocity development workflows
-that need the flexibility of the cloud without sacrificing the simplicity of
-local tools.
+Docker Offload 是高速开发工作流的理想选择，既能提供云端的灵活性，又不牺牲本地工具的简洁性。
 
-## How Docker Offload works
+## Docker Offload 的工作原理
 
-Docker Offload replaces the need to build or run containers locally by connecting
-Docker Desktop to secure, dedicated cloud resources.
+Docker Offload 通过将 Docker Desktop 连接到安全的专用云资源，替代了在本地构建或运行容器的需求。
 
-### Building with Docker Offload
+### 使用 Docker Offload 进行构建
 
-When you use Docker Offload for builds, the `docker buildx build` command sends
-the build request to a remote BuildKit instance in the cloud, instead of
-executing it locally. Your workflow stays the same, only the execution
-environment changes.
+当您使用 Docker Offload 进行构建时，`docker buildx build` 命令会将构建请求发送到云端的远程 BuildKit 实例，而不是在本地执行。您的工作流程保持不变，只是执行环境发生了变化。
 
-The build runs on infrastructure provisioned and managed by Docker:
+构建在由 Docker 配置和管理的基础设施上运行：
 
-- Each cloud builder is an isolated Amazon EC2 instance with its own EBS volume
-- Remote builders use a shared cache to speed up builds across machines and
-  teammates
-- Build results are encrypted in transit and sent to your specified destination
-  (such as a registry or local image store)
+- 每个云构建器都是一个独立的 Amazon EC2 实例，拥有自己的 EBS 卷
+- 远程构建器使用共享缓存加速多台机器和团队成员之间的构建
+- 构建结果在传输过程中加密，并发送到您指定的目标（如仓库或本地镜像存储）
 
-Docker Offload manages the lifecycle of builders automatically. There's no need to
-provision or maintain infrastructure.
+Docker Offload 自动管理构建器的生命周期，无需配置或维护基础设施。
 
 > [!NOTE]
 >
-> Docker Offload builders are currently hosted in the United States East region. Users in
-> other regions may experience increased latency.
+> Docker Offload 构建器目前托管在美国东部区域。其他地区的用户可能会遇到较高的延迟。
 
-### Running containers with Docker Offload
+### 使用 Docker Offload 运行容器
 
-When you use Docker Offload to run containers, a Docker Desktop creates a secure
-SSH tunnel to a Docker daemon running in the cloud. Your containers are started
-and managed entirely in that remote environment.
+当您使用 Docker Offload 运行容器时，Docker Desktop 会创建一个安全 SSH 隧道，连接到在云端运行的 Docker 守护进程。您的容器完全在该远程环境中启动和管理。
 
-Here's what happens:
+具体过程如下：
 
-1. Docker Desktop connects to the cloud and triggers container creation.
-2. Docker Offload pulls the required images and starts containers in the cloud.
-3. The connection stays open while the containers run.
-4. When the containers stop running, the environment shuts down and is cleaned
-   up automatically.
+1. Docker Desktop 连接到云端并触发容器创建。
+2. Docker Offload 拉取所需镜像并在云端启动容器。
+3. 容器运行期间，连接保持打开状态。
+4. 当容器停止运行时，环境会自动关闭并清理。
 
-This setup avoids the overhead of running containers locally and enables fast,
-reliable containers even on low-powered machines, including machines that do not
-support nested virtualization. This makes Docker Offload ideal for developers
-using environments such as virtual desktops, cloud-hosted development machines,
-or older hardware.
+这种设置避免了在本地运行容器的开销，即使在低功耗机器（包括不支持嵌套虚拟化的机器）上也能实现快速、可靠的容器运行。这使得 Docker Offload 成为使用虚拟桌面、云端托管开发机或旧硬件的开发者的理想选择。
 
-Docker Offload also supports GPU-accelerated workloads. Containers that require
-GPU access can run on cloud instances provisioned with NVIDIA L4 GPUs for
-efficient AI inferencing, media processing, and general-purpose GPU
-acceleration. This enables compute-heavy workflows such as model evaluation,
-image processing, and hardware-accelerated CI tests to run seamlessly in the
-cloud.
+Docker Offload 还支持 GPU 加速工作负载。需要 GPU 访问的容器可以在配置了 NVIDIA L4 GPU 的云实例上运行，以实现高效的 AI 推理、媒体处理和通用 GPU 加速。这使得模型评估、图像处理和硬件加速 CI 测试等计算密集型工作流能够在云端无缝运行。
 
-Despite running remotely, features like bind mounts and port forwarding continue
-to work seamlessly, providing a local-like experience from within Docker Desktop
-and the CLI.
+尽管在远程运行，绑定挂载和端口转发等功能仍然可以无缝工作，从 Docker Desktop 和 CLI 中提供类似本地的体验。
 
-Docker Offload provisions an ephemeral cloud environment for each session. The
-environment remains active while you are interacting with Docker Desktop or
-actively using containers. If no activity is detected for about 5 minutes, the
-session shuts down automatically. This includes any containers, images, or
-volumes in that environment, which are deleted when the session ends.
+Docker Offload 为每个会话配置一个临时云环境。当您与 Docker Desktop 交互或主动使用容器时，环境保持活跃状态。如果检测到约 5 分钟内无活动，会话将自动关闭。这包括该环境中的任何容器、镜像或卷，它们会在会话结束时被删除。
 
-## What's next
+## 下一步
 
-Get hands-on with Docker Offload by following the [Docker Offload quickstart](/offload/quickstart/).
+按照 [Docker Offload 快速入门指南](/offload/quickstart/) 亲身体验 Docker Offload。

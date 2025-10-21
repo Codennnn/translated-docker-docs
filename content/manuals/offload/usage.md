@@ -1,87 +1,69 @@
 ---
-title: Docker Offload usage and billing
-linktitle: Usage & billing
+title: Docker Offload 使用与计费
+linktitle: 使用与计费
 weight: 30
-description: Learn about Docker Offload usage and how to monitor your cloud resources.
-keywords: cloud, usage, cloud minutes, shared cache, top repositories, cloud builder, Docker Offload
+description: 了解 Docker Offload 的使用情况以及如何监控您的云资源。
+keywords: 云, 使用, 云分钟, 共享缓存, 热门仓库, 云构建器, Docker Offload
 ---
 
 {{< summary-bar feature_name="Docker Offload" >}}
 
 > [!NOTE]
 >
-> All free trial usage granted for the Docker Offload Beta expire after 90
-> days from the time they are granted. To continue using Docker Offload after
-> your usage expires, you can enable on-demand usage at [Docker Home
-> Billing](https://app.docker.com/billing).
+> Docker Offload Beta 版本授予的所有免费试用额度将在授予后 90 天内过期。使用额度过期后，如需继续使用 Docker Offload，您可以在 [Docker Home 计费](https://app.docker.com/billing)页面启用按需使用。
 
-## Docker Offload billing
+## Docker Offload 计费
 
-For Docker Offload, you can view and configure billing on the **Docker Offload**
-page in [Docker Home Billing](https://app.docker.com/billing). On this page, you
-can:
+对于 Docker Offload，您可以在 [Docker Home 计费](https://app.docker.com/billing)页面的 **Docker Offload** 部分查看和配置计费信息。在此页面，您可以：
 
-- View your included usage
-- View rates for cloud resources
-- Enable or disable on-demand usage
-- Add or change payment methods
+- 查看您的包含使用量
+- 查看云资源的费率
+- 启用或禁用按需使用
+- 添加或更改付款方式
 
-For more general information about billing, see [Billing](../billing/_index.md).
+有关计费的更多常规信息，请参阅 [计费](../billing/_index.md)。
 
-## Docker Offload overview
+## Docker Offload 概览
 
-The Docker Offload overview page in Docker Home provides visibility into
-how you or your team is using cloud resources to build and run containers.
+Docker Home 中的 Docker Offload 概览页面提供了关于您或团队如何使用云资源来构建和运行容器的可见性。
 
-To view the **Overview** page:
+要查看 **概览** 页面：
 
-1. Sign in to [Docker Home](https://app.docker.com/).
-2. Select the account for which you want to manage Docker Offload.
-3. Select **Offload** > **Overview**.
+1. 登录 [Docker Home](https://app.docker.com/)。
+2. 选择要管理 Docker Offload 的账户。
+3. 选择 **Offload** > **概览**。
 
-The following sections describe the available widgets on **Overview**.
+以下部分描述了 **概览** 页面上的可用小部件。
 
-### Offload minutes
+### Offload 分钟数
 
-This widget shows the total number of offload minutes used over time. Offload
-minutes represent the time spent running builds and containers in the Offload
-environment. You can use this chart to:
+此小部件显示随时间推移使用的 Offload 分钟总数。Offload 分钟数表示在 Offload 环境中运行构建和容器所花费的时间。您可以使用此图表来：
 
-- Track your Offload usage trends over time.
-- Spot spikes in usage, which may indicate CI changes or build issues.
-- Estimate usage against your subscription limits.
+- 跟踪您的 Offload 使用趋势。
+- 发现使用量激增，这可能表示 CI 变更或构建问题。
+- 估算相对于订阅限制的使用量。
 
-### Build cache usage
+### 构建缓存使用情况
 
-This widget displays data about cache re-use across all builds, helping you
-understand how effectively Docker Offload is using the build cache. It
-provides insight into:
+此小部件显示所有构建中缓存重用的数据，帮助您了解 Docker Offload 使用构建缓存的效果。它提供了以下洞察：
 
-- The percentage of cache hits vs. misses.
-- How much estimated build time is saved by reusing cache layers.
-- Opportunities to improve cache efficiency by tuning your Dockerfiles or build
-  strategy.
+- 缓存命中与未命中的百分比。
+- 通过重用缓存层节省的预估构建时间。
+- 通过调整 Dockerfile 或构建策略来提高缓存效率的机会。
 
-### Top repositories built
+### 热门构建仓库
 
-This widget highlights the repositories with the highest build activity for
-Docker Offload. This widget helps you understand which projects consume the most
-cloud resources and how efficiently they're being built.
+此小部件突出显示 Docker Offload 中构建活动最频繁的仓库。此小部件帮助您了解哪些项目消耗最多的云资源以及它们的构建效率。
 
-It includes both aggregated metrics and per-repository details to give you a
-comprehensive view.
+它包括聚合指标和每个仓库的详细信息，为您提供全面的视图。
 
-Use this widget to:
+使用此小部件可以：
 
-- Identify build hotspots: See which repositories are consuming the most build
-  time and resources.
-- Spot trends: Monitor how build activity evolves across your projects.
-- Evaluate efficiency: Check which repositories benefit most from cache re-use.
-- Target improvements: Flag repositories with low cache hits or high failure
-  rates for optimization.
+- 识别构建热点：查看哪些仓库消耗最多的构建时间和资源。
+- 发现趋势：监控跨项目的构建活动演变。
+- 评估效率：检查哪些仓库从缓存重用中受益最多。
+- 针对性改进：标记缓存命中率低或失败率高的仓库以进行优化。
 
-### Top 10 images
+### 前 10 个镜像
 
-This widget shows the top 10 images used in Docker Offload in run sessions. It
-provides insight into which images are most frequently used, helping you
-understand your team's container usage patterns.
+此小部件显示 Docker Offload 运行会话中使用最多的前 10 个镜像。它提供了关于哪些镜像使用最频繁的洞察，帮助您了解团队的容器使用模式。

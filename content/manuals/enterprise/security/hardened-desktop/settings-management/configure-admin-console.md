@@ -1,8 +1,8 @@
 ---
-title: Configure Settings Management with the Admin Console
-linkTitle: Use the Admin Console
-description: Configure and enforce Docker Desktop settings across your organization using the Docker Admin Console
-keywords: admin console, settings management, policy configuration, enterprise controls, docker desktop
+title: 使用管理控制台配置设置管理
+linkTitle: 使用管理控制台
+description: 使用 Docker 管理控制台在整个组织内配置并强制执行 Docker Desktop 设置
+keywords: 管理控制台, 设置管理, 策略配置, 企业控制, docker desktop
 weight: 20
 aliases:
  - /security/for-admins/hardened-desktop/settings-management/configure-admin-console/
@@ -10,100 +10,97 @@ aliases:
 
 {{< summary-bar feature_name="Admin Console" >}}
 
-Use the Docker Admin Console to create and manage settings policies for Docker Desktop across your organization. Settings policies let you standardize configurations, enforce security requirements, and maintain consistent Docker Desktop environments.
+使用 Docker 管理控制台为整个组织的 Docker Desktop 创建和管理设置策略。设置策略让您能够标准化配置、强制执行安全要求，并保持一致的 Docker Desktop 环境。
 
-## Prerequisites
+## 先决条件
 
-Before you begin, make sure you have:
+在开始之前，请确保您具备以下条件：
 
-- [Docker Desktop 4.37.1 or later](/manuals/desktop/release-notes.md) installed
-- [A verified domain](/manuals/enterprise/security/single-sign-on/configure.md#step-one-add-and-verify-your-domain)
-- [Enforced sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md) for your organization
-- A Docker Business subscription
+- 安装了 [Docker Desktop 4.37.1 或更高版本](/manuals/desktop/release-notes.md)
+- [已验证的域](/manuals/enterprise/security/single-sign-on/configure.md#step-one-add-and-verify-your-domain)
+- 为您的组织[强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)
+- Docker Business 订阅
 
 > [!IMPORTANT]
 >
-> You must add users to your verified domain for settings to take effect.
+> 您必须将用户添加到已验证的域，设置才能生效。
 
-## Create a settings policy
+## 创建设置策略
 
-To create a new settings policy:
+要创建新的设置策略：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select
-your organization.
-1. Select **Admin Console**, then **Desktop Settings Management**.
-1. Select **Create a settings policy**.
-1. Provide a name and optional description.
+1. 登录 [Docker Home](https://app.docker.com/) 并选择您的组织。
+1. 选择**管理控制台**，然后选择**Desktop 设置管理**。
+1. 选择**创建设置策略**。
+1. 提供名称和可选描述。
 
       > [!TIP]
       >
-      > You can upload an existing `admin-settings.json` file to pre-fill the form.
-      Admin Console policies override local `admin-settings.json` files.
+      > 您可以上传现有的 `admin-settings.json` 文件来预填充表单。
+      管理控制台策略会覆盖本地 `admin-settings.json` 文件。
 
-1. Choose who the policy applies to:
-   - All users
-   - Specific users
+1. 选择策略应用对象：
+   - 所有用户
+   - 特定用户
 
       > [!NOTE]
       >
-      > User-specific policies override global default policies. Test your policy with a small group before applying it organization-wide.
+      > 用户特定策略会覆盖全局默认策略。在组织范围内应用策略之前，请先在小范围内测试。
 
-1. Configure each setting using a state:
-   - **User-defined**: Users can change the setting.
-   - **Always enabled**: Setting is on and locked.
-   - **Enabled**: Setting is on but can be changed.
-   - **Always disabled**: Setting is off and locked.
-   - **Disabled**: Setting is off but can be changed.
+1. 使用状态配置每个设置：
+   - **用户定义**：用户可以更改设置。
+   - **始终启用**：设置已开启并锁定。
+   - **启用**：设置已开启但可以更改。
+   - **始终禁用**：设置已关闭并锁定。
+   - **禁用**：设置已关闭但可以更改。
 
       > [!TIP]
       >
-      > For a complete list of configurable settings, supported platforms, and configuration methods, see the [Settings reference](settings-reference.md).
+      > 有关可配置设置的完整列表、支持的平台和配置方法，请参阅[设置参考](settings-reference.md)。
 
-1. Select **Create** to save your policy.
+1. 选择**创建**以保存您的策略。
 
-## Apply the policy
+## 应用策略
 
-Settings policies take effect after Docker Desktop restarts and users sign in.
+设置策略在 Docker Desktop 重启且用户登录后生效。
 
-For new installations:
+对于新安装：
 
-1. Launch Docker Desktop.
-1. Sign in with your Docker account.
+1. 启动 Docker Desktop。
+1. 使用您的 Docker 账户登录。
 
-For existing installations:
+对于现有安装：
 
-1. Quit Docker Desktop completely.
-1. Relaunch Docker Desktop.
+1. 完全退出 Docker Desktop。
+1. 重新启动 Docker Desktop。
 
 > [!IMPORTANT]
 >
-> Users must fully quit and reopen Docker Desktop. Restarting from the Docker Desktop menu isn't sufficient.
+> 用户必须完全退出并重新打开 Docker Desktop。从 Docker Desktop 菜单重启是不够的。
 
-Docker Desktop checks for policy updates when it launches and every 60 minutes while running.
+Docker Desktop 在启动时和运行期间每 60 分钟检查一次策略更新。
 
-## Verify applied settings
+## 验证已应用的设置
 
-After you apply policies:
+应用策略后：
 
-- Docker Desktop displays most settings as greyed out
-- Some settings, particularly Enhanced Container Isolation configurations,
-may not appear in the GUI
-- You can verify all applied settings by checking the [`settings-store.json`
-file](/manuals/desktop/settings-and-maintenance/settings.md) on your system
+- Docker Desktop 将大多数设置显示为灰色
+- 某些设置，特别是增强容器隔离配置，可能不会显示在 GUI 中
+- 您可以通过检查系统上的 [`settings-store.json` 文件](/manuals/desktop/settings-and-maintenance/settings.md)来验证所有已应用的设置
 
-## Manage existing policies
+## 管理现有策略
 
-From the **Desktop Settings Management** page in the Admin Console, use the **Actions** menu to:
+在管理控制台的**Desktop 设置管理**页面上，使用**操作**菜单来：
 
-- Edit or delete an existing settings policy
-- Export a settings policy as an `admin-settings.json` file
-- Promote a user-specific policy to be the new global default
+- 编辑或删除现有设置策略
+- 将设置策略导出为 `admin-settings.json` 文件
+- 将用户特定策略提升为新的全局默认策略
 
-## Roll back policies
+## 回滚策略
 
-To roll back a settings policy:
+要回滚设置策略：
 
-- Complete rollback: Delete the entire policy.
-- Partial rollback: Set specific settings to **User-defined**.
+- 完全回滚：删除整个策略。
+- 部分回滚：将特定设置设置为**用户定义**。
 
-When you roll back settings, users regain control over those settings configurations.
+当您回滚设置时，用户将重新获得对这些设置配置的控制权。

@@ -1,7 +1,7 @@
 ---
-title: Group mapping
-description: Automate team membership by syncing identity provider groups with Docker teams
-keywords: Group Mapping, SCIM, Docker Admin, admin, security, team management, user provisioning, identity provider
+title: 组映射
+description: 通过同步身份提供商组与 Docker 团队来自动化团队成员资格
+keywords: 组映射, SCIM, Docker 管理员, 管理员, 安全, 团队管理, 用户配置, 身份提供商
 aliases:
 - /admin/company/settings/group-mapping/
 - /admin/organization/security-settings/group-mapping/
@@ -13,181 +13,179 @@ weight: 30
 
 {{< summary-bar feature_name="SSO" >}}
 
-Group mapping automatically synchronizes user groups from your identity provider (IdP) with teams in your Docker organization. For example, when you add a developer to the "backend-team" group in your IdP, they're automatically added to the corresponding team in Docker
+组映射自动将您的身份提供商（IdP）中的用户组与 Docker 组织中的团队进行同步。例如，当您将开发人员添加到 IdP 中的"backend-team"组时，他们会自动被添加到 Docker 中对应的团队。
 
-This page explains how group mapping works, and how to set up group mapping.
+本页面解释组映射的工作原理以及如何设置组映射。
 
 > [!TIP]
 >
-> Group mapping is ideal for adding users to multiple organizations or multiple teams within one organization. If you don't need to set up multi-organization or multi-team assignment, SCIM [user-level attributes](scim.md#set-up-role-mapping) may be a better fit for your needs.
+> 组映射非常适合将用户添加到多个组织或一个组织内的多个团队。如果您不需要设置多组织或多团队分配，SCIM [用户级属性](scim.md#set-up-role-mapping)可能更适合您的需求。
 
-## Prerequisites
+## 先决条件
 
-Before you being, you must have:
+开始之前，您必须具备：
 
-- SSO configured for your organization
-- Administrator access to Docker Home and your identity provider
+- 已为您的组织配置 SSO
+- 对 Docker Home 和身份提供商的管理员访问权限
 
-## How group mapping works
+## 组映射工作原理
 
-Group mapping keeps your Docker teams synchronized with your IdP groups through these key components:
+组映射通过以下关键组件使您的 Docker 团队与 IdP 组保持同步：
 
-- Authentication flow: When users sign in through SSO, your IdP shares user attributes with Docker including email, name, and group memberships.
-- Automatic updates: Docker uses these attributes to create or update user profiles and manage team assignments based on IdP group changes.
-- Unique identification: Docker uses email addresses as unique identifiers, so each Docker account must have a unique email address.
-- Team synchronization: Users' team memberships in Docker automatically reflect changes made in your IdP groups.
+- 身份验证流程：当用户通过 SSO 登录时，您的 IdP 会与 Docker 共享用户属性，包括电子邮件、姓名和组成员资格。
+- 自动更新：Docker 使用这些属性创建或更新用户配置文件，并根据 IdP 组的更改管理团队分配。
+- 唯一标识：Docker 使用电子邮件地址作为唯一标识符，因此每个 Docker 帐户必须具有唯一的电子邮件地址。
+- 团队同步：用户在 Docker 中的团队成员资格会自动反映在您的 IdP 组中所做的更改。
 
-## Set up group mapping
+## 设置组映射
 
-Group mapping setup involves configuring your identity provider to share group
-information with Docker. This requires:
+组映射设置涉及配置您的身份提供商以与 Docker 共享组信息。这需要：
 
-- Creating groups in your IdP using Docker's naming format
-- Configuring attributes so your IdP sends group data during authentication
-- Adding users to the appropriate groups
-- Testing the connection to ensure groups sync properly
+- 使用 Docker 的命名格式在 IdP 中创建组
+- 配置属性，使您的 IdP 在身份验证期间发送组数据
+- 将用户添加到适当的组
+- 测试连接以确保组正确同步
 
-You can use group mapping with SSO only, or with both SSO and SCIM for enhanced
-user lifecycle management.
+您可以仅将组映射与 SSO 一起使用，或者将组映射与 SSO 和 SCIM 一起使用以增强用户生命周期管理。
 
-### Group naming format
+### 组命名格式
 
-Create groups in your IdP using the format: `organization:team`.
+使用格式 `organization:team` 在您的 IdP 中创建组。
 
-For example:
+例如：
 
-- For the "developers" team in the "moby" organization: `mobdy:developers`
-- For multi-organization access: `moby:backend` and `whale:desktop`
+- 对于 "moby" 组织中的 "developers" 团队：`moby:developers`
+- 对于多组织访问：`moby:backend` 和 `whale:desktop`
 
-Docker creates teams automatically if they don't already exist when groups sync.
+当组同步时，如果团队不存在，Docker 会自动创建团队。
 
-### Supported attributes
+### 支持的属性
 
-| Attribute | Description |
+| 属性 | 描述 |
 |:--------- | :---------- |
-| `id` | Unique ID of the group in UUID format. This attribute is read-only. |
-| `displayName` | Name of the group following the group mapping format: `organization:team`. |
-| `members` | A list of users that are members of this group. |
-| `members(x).value` | Unique ID of the user that is a member of this group. Members are referenced by ID. |
+| `id` | 组的唯一 ID，UUID 格式。此属性为只读。 |
+| `displayName` | 组的名称，遵循组映射格式：`organization:team`。 |
+| `members` | 属于此组的用户列表。 |
+| `members(x).value` | 属于此组的用户的唯一 ID。成员通过 ID 引用。 |
 
-## Configure group mapping with SSO
+## 使用 SSO 配置组映射
 
-Use group mapping with SSO connections that use the SAML authentication method.
+将组映射与使用 SAML 身份验证方法的 SSO 连接一起使用。
 
 > [!NOTE]
 >
-> Group mapping with SSO isn't supported with the Azure AD (OIDC) authentication method. SCIM isn't required for these configurations.
+> 使用 SSO 的组映射不支持 Azure AD (OIDC) 身份验证方法。这些配置不需要 SCIM。
 
 {{< tabs >}}
 {{< tab name="Okta" >}}
 
-The user interface for your IdP may differ slightly from the following steps. Refer to the [Okta documentation](https://help.okta.com/oie/en-us/content/topics/apps/define-group-attribute-statements.htm) to verify.
+您的身份提供商的用户界面可能与以下步骤略有不同。请参考 [Okta 文档](https://help.okta.com/oie/en-us/content/topics/apps/define-group-attribute-statements.htm)进行验证。
 
-To set up group mapping:
+要设置组映射：
 
-1. Sign in to Okta and open your application.
-1. Navigate to the **SAML Settings** page for your application.
-1. In the **Group Attribute Statements (optional)** section, configure like the following:
-   - **Name**: `groups`
-   - **Name format**: `Unspecified`
-   - **Filter**: `Starts with` + `organization:` where `organization` is the name of your organization
-   The filter option will filter out the groups that aren't affiliated with your Docker organization.
-1. Create your groups by selecting **Directory**, then **Groups**.
-1. Add your groups using the format `organization:team` that matches the names of your organization(s) and team(s) in Docker.
-1. Assign users to the group(s) that you create.
+1. 登录 Okta 并打开您的应用程序。
+1. 导航到应用程序的 **SAML Settings**（SAML 设置）页面。
+1. 在 **Group Attribute Statements (optional)**（组属性语句（可选））部分，按如下方式配置：
+   - **Name**（名称）：`groups`
+   - **Name format**（名称格式）：`Unspecified`（未指定）
+   - **Filter**（过滤器）：`Starts with`（以...开头）+ `organization:`，其中 `organization` 是您的组织名称
+   此过滤器选项将过滤掉与您的 Docker 组织无关的组。
+1. 选择 **Directory**（目录），然后选择 **Groups**（组）来创建您的组。
+1. 使用 `organization:team` 格式添加您的组，该格式匹配 Docker 中您的组织和团队的名称。
+1. 将用户分配给您创建的组。
 
-The next time you sync your groups with Docker, your users will map to the Docker groups you defined.
+下次与 Docker 同步组时，您的用户将映射到您定义的 Docker 组。
 
 {{< /tab >}}
 {{< tab name="Entra ID" >}}
 
-The user interface for your IdP may differ slightly from the following steps. Refer to the [Entra ID documentation](https://learn.microsoft.com/en-us/azure/active-directory/app-provisioning/customize-application-attributes) to verify.
+您的身份提供商的用户界面可能与以下步骤略有不同。请参考 [Entra ID 文档](https://learn.microsoft.com/en-us/azure/active-directory/app-provisioning/customize-application-attributes)进行验证。
 
-To set up group mapping:
+要设置组映射：
 
-1. Sign in to Entra ID and open your application.
-1. Select **Manage**, then **Single sign-on**.
-1. Select **Add a group claim**.
-1. In the Group Claims section, select **Groups assigned to the application** with the source attribute **Cloud-only group display names (Preview)**.
-1. Select **Advanced options**, then the **Filter groups** option.
-1. Configure the attribute like the following:
-   - **Attribute to match**: `Display name`
-   - **Match with**: `Contains`
-   - **String**: `:`
-1. Select **Save**.
-1. Select **Groups**, **All groups**, then **New group** to create your group(s).
-1. Assign users to the group(s) that you create.
+1. 登录 Entra ID 并打开您的应用程序。
+1. 选择 **Manage**（管理），然后选择 **Single sign-on**（单点登录）。
+1. 选择 **Add a group claim**（添加组声明）。
+1. 在组声明部分，选择 **Groups assigned to the application**（分配给应用程序的组），源属性为 **Cloud-only group display names (Preview)**（仅云组显示名称（预览））。
+1. 选择 **Advanced options**（高级选项），然后选择 **Filter groups**（过滤组）选项。
+1. 按如下方式配置属性：
+   - **Attribute to match**（要匹配的属性）：`Display name`（显示名称）
+   - **Match with**（匹配方式）：`Contains`（包含）
+   - **String**（字符串）：`:`
+1. 选择 **Save**（保存）。
+1. 选择 **Groups**（组）、**All groups**（所有组），然后选择 **New group**（新建组）来创建您的组。
+1. 将用户分配给您创建的组。
 
-The next time you sync your groups with Docker, your users will map to the Docker groups you defined.
+下次与 Docker 同步组时，您的用户将映射到您定义的 Docker 组。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Configure group mapping with SCIM
+## 使用 SCIM 配置组映射
 
-Use group mapping with SCIM for more advanced user lifecycle management. Before you begin, make sure you [set up SCIM](./scim.md#enable-scim) first.
+将组映射与 SCIM 一起使用以实现更高级的用户生命周期管理。开始之前，请确保您已[设置 SCIM](./scim.md#enable-scim)。
 
 {{< tabs >}}
 {{< tab name="Okta" >}}
 
-The user interface for your IdP may differ slightly from the following steps. Refer to the [Okta documentation](https://help.okta.com/en-us/Content/Topics/users-groups-profiles/usgp-enable-group-push.htm) to verify.
+您的身份提供商的用户界面可能与以下步骤略有不同。请参考 [Okta 文档](https://help.okta.com/en-us/Content/Topics/users-groups-profiles/usgp-enable-group-push.htm)进行验证。
 
-To set up your groups:
+要设置您的组：
 
-1. Sign in to Okta and open your application.
-1. Select **Applications**, then **Provisioning**, and **Integration**.
-1. Select **Edit** to enable groups on your connection, then select **Push groups**.
-1. Select **Save**. Saving this configuration will add the **Push Groups** tab to your application.
-1. Create your groups by navigating to **Directory** and selecting **Groups**.
-1. Add your groups using the format `organization:team` that matches the names of your organization(s) and team(s) in Docker.
-1. Assign users to the group(s) that you create.
-1. Return to the **Integration** page, then select the **Push Groups** tab to open the view where you can control and manage how groups are provisioned.
-1. Select **Push Groups**, then **Find groups by rule**.
-1. Configure the groups by rule like the following:
-    - Enter a rule name, for example `Sync groups with Docker Hub`
-    - Match group by name, for example starts with `docker:` or contains `:` for multi-organization
-    - If you enable **Immediately push groups by rule**, sync will happen as soon as there's a change to the group or group assignments. Enable this if you don't want to manually push groups.
+1. 登录 Okta 并打开您的应用程序。
+1. 选择 **Applications**（应用程序），然后选择 **Provisioning**（配置）和 **Integration**（集成）。
+1. 选择 **Edit**（编辑）以在连接上启用组，然后选择 **Push groups**（推送组）。
+1. 选择 **Save**（保存）。保存此配置会将 **Push Groups**（推送组）选项卡添加到您的应用程序。
+1. 通过导航到 **Directory**（目录）并选择 **Groups**（组）来创建您的组。
+1. 使用 `organization:team` 格式添加您的组，该格式匹配 Docker 中您的组织和团队的名称。
+1. 将用户分配给您创建的组。
+1. 返回 **Integration**（集成）页面，然后选择 **Push Groups**（推送组）选项卡，打开您可以控制和管理如何配置组的视图。
+1. 选择 **Push Groups**（推送组），然后选择 **Find groups by rule**（按规则查找组）。
+1. 按如下方式配置组规则：
+    - 输入规则名称，例如 `Sync groups with Docker Hub`（与 Docker Hub 同步组）
+    - 按名称匹配组，例如以 `docker:` 开头或包含 `:` 用于多组织
+    - 如果启用 **Immediately push groups by rule**（立即按规则推送组），则一旦组或组分配发生更改，就会发生同步。如果您不想手动推送组，请启用此选项。
 
-Find your new rule under **By rule** in the **Pushed Groups** column. The groups that match that rule are listed in the groups table on the right-hand side.
+在 **Pushed Groups**（推送的组）列的 **By rule**（按规则）下找到您的新规则。匹配该规则的组列在右侧的组表中。
 
-To push the groups from this table:
+要从此表推送组：
 
-1. Select **Group in Okta**.
-1. Select the **Push Status** drop-down.
-1. Select **Push Now**.
+1. 选择 **Group in Okta**（Okta 中的组）。
+1. 选择 **Push Status**（推送状态）下拉菜单。
+1. 选择 **Push Now**（立即推送）。
 
 {{< /tab >}}
 {{< tab name="Entra ID" >}}
 
-The user interface for your IdP may differ slightly from the following steps. Refer to the [Entra ID documentation](https://learn.microsoft.com/en-us/azure/active-directory/app-provisioning/customize-application-attributes) to verify.
+您的身份提供商的用户界面可能与以下步骤略有不同。请参考 [Entra ID 文档](https://learn.microsoft.com/en-us/azure/active-directory/app-provisioning/customize-application-attributes)进行验证。
 
-Complete the following before configuring group mapping:
+在配置组映射之前，请完成以下操作：
 
-1. Sign in to Entra ID and go to your application.
-1. In your application, select **Provisioning**, then **Mappings**.
-1. Select **Provision Microsoft Entra ID Groups**.
-1. Select **Show advanced options**, then **Edit attribute list**.
-1. Update the `externalId` type to `reference`, then select the **Multi-Value** checkbox and choose the referenced object attribute `urn:ietf:params:scim:schemas:core:2.0:Group`.
-1. Select **Save**, then **Yes** to confirm.
-1. Go to **Provisioning**.
-1. Toggle **Provision Status** to **On**, then select **Save**.
+1. 登录 Entra ID 并转到您的应用程序。
+1. 在您的应用程序中，选择 **Provisioning**（配置），然后选择 **Mappings**（映射）。
+1. 选择 **Provision Microsoft Entra ID Groups**（配置 Microsoft Entra ID 组）。
+1. 选择 **Show advanced options**（显示高级选项），然后选择 **Edit attribute list**（编辑属性列表）。
+1. 将 `externalId` 类型更新为 `reference`（引用），然后选择 **Multi-Value**（多值）复选框并选择引用的对象属性 `urn:ietf:params:scim:schemas:core:2.0:Group`。
+1. 选择 **Save**（保存），然后选择 **Yes**（是）进行确认。
+1. 转到 **Provisioning**（配置）。
+1. 将 **Provision Status**（配置状态）切换为 **On**（开），然后选择 **Save**（保存）。
 
-Next, set up group mapping:
+接下来，设置组映射：
 
-1. Go to the application overview page.
-1. Under **Provision user accounts**, select **Get started**.
-1. Select **Add user/group**.
-1. Create your group(s) using the `organization:team` format.
-1. Assign the group to the provisioning group.
-1. Select **Start provisioning** to start the sync.
+1. 转到应用程序概述页面。
+1. 在 **Provision user accounts**（配置用户帐户）下，选择 **Get started**（入门）。
+1. 选择 **Add user/group**（添加用户/组）。
+1. 使用 `organization:team` 格式创建您的组。
+1. 将组分配给配置组。
+1. 选择 **Start provisioning**（开始配置）以开始同步。
 
-To verify, select **Monitor**, then **Provisioning logs** to see that your groups were provisioned successfully. In your Docker organization, you can check that the groups were correctly provisioned and the members were added to the appropriate teams.
+要验证，请选择 **Monitor**（监控），然后选择 **Provisioning logs**（配置日志）以查看您的组是否已成功配置。在您的 Docker 组织中，您可以检查组是否已正确配置以及成员是否已添加到适当的团队。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-Once complete, a user who signs in to Docker through SSO is automatically added to the organizations and teams mapped in the IdP.
+完成后，通过 SSO 登录 Docker 的用户会自动添加到 IdP 中映射的组织和团队。
 
 > [!TIP]
 >
-> [Enable SCIM](scim.md) to take advantage of automatic user provisioning and de-provisioning. If you don't enable SCIM users are only automatically provisioned. You have to de-provision them manually.
+> [启用 SCIM](scim.md)以利用自动用户配置和取消配置。如果您不启用 SCIM，用户只会被自动配置。您必须手动取消配置他们。

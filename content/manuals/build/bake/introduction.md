@@ -74,7 +74,7 @@ target "myapp" {
 > 想在 VS Code 中获得更好的 Bake 文件编辑体验？
 > 试试 [Docker VS Code 扩展（Beta）](https://marketplace.visualstudio.com/items?itemName=docker.docker)，提供语法检查、代码导航与漏洞扫描。
 
-## 后续步骤
+## 进一步阅读
 
 继续了解 Bake 的用法：
 

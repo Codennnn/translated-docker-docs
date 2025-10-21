@@ -1,1114 +1,1083 @@
 ---
-title: Settings reference
-linkTitle: Settings reference
-description: Complete reference for all Docker Desktop settings and configuration options
-keywords: docker desktop settings, configuration reference, admin controls, settings management
+title: 设置参考
+linkTitle: 设置参考
+description: Docker Desktop 所有设置和配置选项的完整参考指南
+keywords: docker desktop 设置, 配置参考, 管理员控制, 设置管理
 aliases:
  - /security/for-admins/hardened-desktop/settings-management/settings-reference/
 ---
 
-This reference documents all Docker Desktop settings and configuration options. Use this to understand setting behavior across different configuration methods and platforms. It is organized to match the Docker Desktop GUI structure.
+本参考文档详细介绍了 Docker Desktop 的所有设置和配置选项，帮助您了解不同配置方法和平台上的设置行为。文档结构按照 Docker Desktop 图形界面的布局组织。
 
-Each setting includes:
+每个设置包含以下信息：
 
-- Default and accepted values
-- Platform compatibility
-- Configuration methods (Docker Desktop GUI, Admin Console, `admin-settings.json` file, or CLI)
-- Enterprise security recommendations where applicable
+- 默认值和可接受值
+- 平台兼容性
+- 配置方法（Docker Desktop 图形界面、管理控制台、`admin-settings.json` 文件或命令行界面）
+- 企业安全建议（如适用）
 
-## General settings
+## 常规设置
 
-### Start Docker Desktop when you sign in to your computer
+### 登录计算机时自动启动 Docker Desktop
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Automatic startup of Docker Desktop when the user logs in to their computer.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Ensure Docker Desktop is always available after system boot.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** 用户登录计算机时自动启动 Docker Desktop。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 确保 Docker Desktop 在系统启动后始终可用。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Open Docker Dashboard when Docker Desktop starts
+### Docker Desktop 启动时打开 Docker 仪表板
 
-| Default value | Accepted values            | Format |
+| 默认值 | 可接受值            | 格式 |
 |---------------|----------------------------|--------|
-| `false`      | `true`, `false`  | Boolean   |
+| `false`      | `true`, `false`  | 布尔值   |
 
-- **Description:** Whether the Docker Dashboard opens automatically when Docker Desktop launches.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Provide immediate access to containers, images, and volumes after startup.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** Docker Desktop 启动时是否自动打开 Docker 仪表板。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 启动后立即访问容器、镜像和卷。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Choose theme for Docker Desktop
+### 选择 Docker Desktop 主题
 
-| Default value | Accepted values            | Format |
+| 默认值 | 可接受值            | 格式 |
 |---------------|----------------------------|--------|
-| `system`      | `light`, `dark`, `system`  | Enum   |
+| `system`      | `light`, `dark`, `system`  | 枚举   |
 
-- **Description:** Visual appearance of the Docker Desktop interface.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Customize interface appearance to match user preferences or system theme.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** Docker Desktop 界面的视觉外观。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 根据用户偏好或系统主题自定义界面外观。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Configure shell completions
+### 配置 Shell 自动补全
 
-| Default value | Accepted values         | Format |
+| 默认值 | 可接受值         | 格式 |
 |---------------|-------------------------|--------|
-| `integrated`  | `integrated`, `system`  | String |
+| `integrated`  | `integrated`, `system`  | 字符串 |
 
-- **Description:** How Docker CLI auto-completion integrates with the user's shell.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control whether Docker modifies shell configuration files for auto-completion.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** Docker CLI 自动补全与用户 Shell 的集成方式。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 控制是否让 Docker 修改 Shell 配置文件以实现自动补全。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Choose container terminal
+### 选择容器终端
 
-| Default value | Accepted values         | Format |
+| 默认值 | 可接受值         | 格式 |
 |---------------|-------------------------|--------|
-| `integrated`  | `integrated`, `system`  | String |
+| `integrated`  | `integrated`, `system`  | 字符串 |
 
-- **Description:** Default terminal used when launching Docker CLI from Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Set preferred terminal application for Docker CLI interactions.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** 从 Docker Desktop 启动 Docker CLI 时使用的默认终端。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 为 Docker CLI 交互设置首选终端应用程序。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Enable Docker terminal
+### 启用 Docker 终端
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Access to Docker Desktop's integrated terminal feature. If
-the value is set to `false`, users can't use the Docker terminal to interact
-with the host machine and execute commands directly from Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Allow or restrict developer access to the built-in terminal for host system interaction.
-- **Configure this setting with:**
-    - **General** setting in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `desktopTerminalEnabled` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
+- **说明：** 访问 Docker Desktop 的集成终端功能。如果值设置为 `false`，用户无法使用 Docker 终端与主机交互并直接从 Docker Desktop 执行命令。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 允许或限制开发者使用内置终端进行主机系统交互。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `desktopTerminalEnabled` 设置
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting to limit host access.
+> 在加固环境中，禁用并锁定此设置以限制主机访问。
 
-### Enable Docker Debug by default
+### 默认启用 Docker 调试
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Whether debug logging is turned on by default for Docker CLI commands.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Provide verbose output for troubleshooting and support scenarios.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** 是否默认为 Docker CLI 命令启用调试日志。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 为故障排除和支持场景提供详细输出。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Include VM in Time Machine backup
+### 在 Time Machine 备份中包含虚拟机
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Whether the Docker Desktop virtual machine is included in macOS Time Machine backups.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Balance backup completeness with backup size and performance.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** Docker Desktop 虚拟机是否包含在 macOS Time Machine 备份中。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}}
+- **使用场景：** 平衡备份完整性与备份大小和性能。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Use containerd for pulling and storing images
+### 使用 containerd 拉取和存储镜像
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Image storage backend used by Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Improve image handling performance and enable containerd-native features.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** Docker Desktop 使用的镜像存储后端。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 提高镜像处理性能并启用 containerd 原生功能。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
-### Choose Virtual Machine Manager
+### 选择虚拟机管理器
 
 #### Docker VMM
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-#### Apple Virtualization framework
+#### Apple 虚拟化框架
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Use Apple Virtualization Framework to run Docker containers.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Improve VM performance on Apple Silicon.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** 使用 Apple 虚拟化框架运行 Docker 容器。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}}
+- **使用场景：** 在 Apple Silicon 上提高虚拟机性能。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
 
 #### Rosetta
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Use Rosetta to emulate `amd64` on Apple Silicon. If value
-is set to `true`, Docker Desktop turns on Rosetta to accelerate
-x86_64/amd64 binary emulation on Apple Silicon.
-- **OS:** {{< badge color=blue text="Mac only" >}} 13+
-- **Use case:** Run Intel-based containers on Apple Silicon hosts.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management:`useVirtualizationFrameworkRosetta` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Use Rosetta for x86_64/amd64 emulation on Apple Silicon** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **说明：** 使用 Rosetta 在 Apple Silicon 上模拟 `amd64`。如果值设置为 `true`，Docker Desktop 会开启 Rosetta 以加速在 Apple Silicon 上的 x86_64/amd64 二进制模拟。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}} 13+
+- **使用场景：** 在 Apple Silicon 主机上运行基于 Intel 的容器。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规**设置中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `useVirtualizationFrameworkRosetta` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **在 Apple Silicon 上使用 Rosetta 进行 x86_64/amd64 模拟** 设置
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting so only ARM-native
-images are permitted.
+> 在加固环境中，禁用并锁定此设置，以便只允许 ARM 原生镜像。
 
 > [!NOTE]
 >
-> Rosetta requires enabling Apple Virtualization framework.
+> Rosetta 需要启用 Apple 虚拟化框架。
 
 #### QEMU
 
 > [!WARNING]
 >
-> QEMU has been deprecated in Docker Desktop versions 4.44 and later. For more information, see the [blog announcement](https://www.docker.com/blog/docker-desktop-for-mac-qemu-virtualization-option-to-be-deprecated-in-90-days/)
+> QEMU 在 Docker Desktop 4.44 及更高版本中已被弃用。更多信息，请参阅 [博客公告](https://www.docker.com/blog/docker-desktop-for-mac-qemu-virtualization-option-to-be-deprecated-in-90-days/)
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-### Choose file sharing implementation
+### 选择文件共享实现方式
 
 #### VirtioFS
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Use VirtioFS for fast, native file sharing between host and
-containers. If value is set to `true`, VirtioFS is set as the file sharing
-mechanism. If both VirtioFS and gRPC are set to `true`, VirtioFS takes
-precedence.
-- **OS:** {{< badge color=blue text="Mac only" >}} 12.5+
-- **Use case:** Achieve better file system performance and compatibility on modern macOS.
-- **Configure this setting with:**
-    - **General settings** in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `useVirtualizationFrameworkVirtioFS` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Use VirtioFS for file sharing** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **说明：** 使用 VirtioFS 实现主机和容器之间的快速、原生文件共享。如果值设置为 `true`，VirtioFS 被设置为文件共享机制。如果 VirtioFS 和 gRPC 都设置为 `true`，VirtioFS 优先。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}} 12.5+
+- **使用场景：** 在现代 macOS 上实现更好的文件系统性能和兼容性。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规设置**中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `useVirtualizationFrameworkVirtioFS` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **使用 VirtioFS 进行文件共享** 设置
 
 > [!NOTE]
 >
-> In hardened environments, enable and lock this setting for macOS 12.5 and
-later.
+> 在加固环境中，对于 macOS 12.5 及更高版本，启用并锁定此设置。
 
 #### gRPC FUSE
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Enable gRPC FUSE for macOS file sharing. If value is set to
-`true`, gRPC Fuse is set as the file sharing mechanism.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Alternative file sharing with improved performance over legacy osxfs.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `useGrpcfuse` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Use gRPC FUSE for file sharing** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **说明：** 启用 gRPC FUSE 进行 macOS 文件共享。如果值设置为 `true`，gRPC FUSE 被设置为文件共享机制。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}}
+- **使用场景：** 提供比传统 osxfs 性能更好的替代文件共享方案。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规设置**中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `useGrpcfuse` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **使用 gRPC FUSE 进行文件共享** 设置
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting.
+> 在加固环境中，禁用并锁定此设置。
 
 #### osxfs
 
-| Default value | Accepted values | Format  |
+| 默认值 | 可接受值 | 格式  |
 | ------------- | --------------- | ------- |
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Use the original osxfs file sharing driver for macOS. When
-set to true, Docker Desktop uses osxfs instead of VirtioFS or gRPC FUSE to mount
-host directories into containers.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Compatibility with legacy tooling that requires the original file sharing implementation.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **说明：** 使用原始的 osxfs 文件共享驱动程序进行 macOS 文件共享。当设置为 true 时，Docker Desktop 使用 osxfs 而不是 VirtioFS 或 gRPC FUSE 将主机目录挂载到容器中。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}}
+- **使用场景：** 与需要原始文件共享实现的旧工具兼容。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规设置**中
 
-### Send usage statistics
+### 发送使用统计信息
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `true`        | `true`, `false` | Boolean |
+| `true`        | `true`, `false` | 布尔值 |
 
-- **Description:** Controls whether Docker Desktop collects and sends local
-usage statistics and crash reports to Docker. This setting affects telemetry
-gathered from the Docker Desktop application itself. It does not affect
-server-side telemetry collected via Docker Hub or other backend services, such
-as sign in timestamps, pulls, or builds.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Help Docker improve the product based on usage patterns.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `analyticsEnabled` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Send usage statistics** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **说明：** 控制 Docker Desktop 是否收集并向 Docker 发送本地使用统计信息和崩溃报告。此设置影响从 Docker Desktop 应用程序本身收集的遥测数据。它不影响通过 Docker Hub 或其他后端服务（如登录时间戳、拉取或构建）收集的服务器端遥测数据。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 帮助 Docker 根据使用模式改进产品。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规设置**中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `analyticsEnabled` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **发送使用统计信息** 设置
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting. This allows you
-to control all your data flows and collect support logs via secure channels
-if needed.
+> 在加固环境中，禁用并锁定此设置。这允许您控制所有数据流，并在需要时通过安全通道收集支持日志。
 
 > [!NOTE]
 >
-> Organizations using the Insights Dashboard may need this setting enabled to
-ensure that developer activity is fully visible. If users opt out and the
-setting is not locked, their activity may be excluded from analytics
-views.
+> 使用 Insights Dashboard 的组织可能需要启用此设置，以确保开发者活动完全可见。如果用户选择退出且设置未被锁定，他们的活动可能会被排除在分析视图之外。
 
-### Use Enhanced Container Isolation
+### 使用增强容器隔离
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Advanced container security through Linux user namespaces and additional isolation.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Prevent containers from modifying Docker Desktop VM configuration or accessing sensitive host areas.
-- **Configure this setting with:**
-    - **General settings** in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enhancedContainerIsolation` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Enable enhanced container isolation** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
-
-> [!NOTE]
->
-> In hardened environments, disable and lock this setting. This allows you
-to control all your data flows and collect support logs via secure channels
-if needed.
-
-### Show CLI hints
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `true`       | `true`, `false` | Boolean  |
-
-- **Description:** Display of helpful CLI suggestions in the terminal when using Docker commands.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Help users discover Docker CLI features through contextual tips.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-
-### Enable Scout image analysis
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
-
-- **Description:** Docker Scout SBOM generation and vulnerability scanning for container images.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Turn on vulnerability scanning and software bill of materials analysis.
-- **Configure this setting with:**
-    - **General settings** in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `sbomIndexing` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **SBOM indexing** settings in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **说明：** 通过 Linux 用户命名空间和额外隔离实现高级容器安全。
+- **操作系统：** {{< badge color=blue text="所有" >}}
+- **使用场景：** 防止容器修改 Docker Desktop VM 配置或访问敏感主机区域。
+- **配置方式：**
+    - 在 [Docker Desktop 图形界面](/manuals/desktop/settings-and-maintenance/settings.md)的**常规设置**中
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enhancedContainerIsolation` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **启用增强容器隔离** 设置
 
 > [!NOTE]
 >
-> In hardened environments, enable and lock this setting to ensure compliance scanning is always available.
+> 在加固环境中，禁用并锁定此设置。这允许您控制所有数据流，并在需要时通过安全通道收集支持日志。
 
-### Enable background Scout SBOM indexing
+### 显示 CLI 提示
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`        | `true`, `false` | Boolean  |
+| `true`       | `true`, `false` | 布尔值  |
 
-- **Description:** Automatic SBOM indexing for images without requiring user interaction.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Keep image metadata current by indexing during idle time or after image operations.
-- **Configure this setting with:**
-    - **General settings** in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 在使用 Docker 命令时，在终端中显示有用的 CLI 建议。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 通过上下文提示帮助用户发现 Docker CLI 功能。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **常规** 设置
+
+### 启用 Scout 镜像分析
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `true`        | `true`, `false` | 布尔值  |
+
+- **描述：** 为容器镜像生成 Docker Scout SBOM 并进行漏洞扫描。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 启用漏洞扫描和软件物料清单分析。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **常规设置**
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `sbomIndexing` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **SBOM 索引** 设置
 
 > [!NOTE]
 >
-> In hardened environments, enable and lock this setting for continuous security analysis.
+> 在加固环境中，启用并锁定此设置以确保合规扫描始终可用。
 
-### Automatically check configuration
+### 启用后台 Scout SBOM 索引
 
-| Default value         | Accepted values | Format  |
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`        | `true`, `false` | 布尔值  |
+
+- **描述：** 自动为镜像进行 SBOM 索引，无需用户交互。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 通过在空闲时间或镜像操作后进行索引，保持镜像元数据最新。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **常规设置**
+
+> [!NOTE]
+>
+> 在加固环境中，启用并锁定此设置以进行持续的安全分析。
+
+### 自动检查配置
+
+| 默认值         | 可接受值 | 格式  |
 |-----------------------|-----------------|---------|
-| `CurrentSettingsVersions` | Integer         | Integer |
+| `CurrentSettingsVersions` | 整数         | 整数 |
 
-- **Description:** Regular verification that Docker Desktop configuration hasn't been modified by external applications.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Track configuration versions for compatibility and change detection.
-- **Configure this setting with:**
-    - **General** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `configurationFileVersion` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
+- **描述：** 定期验证 Docker Desktop 配置是否未被外部应用程序修改。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 跟踪配置版本以进行兼容性和更改检测。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **常规** 设置
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `configurationFileVersion` 设置
 
-## Resources settings
+## 资源设置
 
-### CPU limit
+### CPU 限制
 
-| Default value                                 | Accepted values | Format  |
+| 默认值                                 | 可接受值 | 格式  |
 |-----------------------------------------------|-----------------|---------|
-| Number of logical CPU cores available on host | Integer         | Integer |
+| 主机上可用的逻辑 CPU 核心数 | 整数         | 整数 |
 
-- **Description:** Number of CPU cores allocated to the Docker Desktop virtual machine.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Balance Docker performance with host system resource availability.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 分配给 Docker Desktop 虚拟机的 CPU 核心数。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 平衡 Docker 性能与主机系统资源可用性。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### Memory limit
+### 内存限制
 
-| Default value              | Accepted values | Format  |
+| 默认值              | 可接受值 | 格式  |
 |---------------------------|-----------------|---------|
-| Based on system resources | Integer         | Integer |
+| 基于系统资源 | 整数         | 整数 |
 
-- **Description:** Amount of RAM (in MiB) allocated to the Docker Desktop virtual machine.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control memory allocation to optimize performance for both Docker and host applications.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 分配给 Docker Desktop 虚拟机的 RAM 量（以 MiB 为单位）。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制内存分配以优化 Docker 和主机应用程序的性能。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### Swap
+### 交换空间
 
-| Default value | Accepted values | Format  |
+| 默认值 | 可接受值 | 格式  |
 |---------------|-----------------|---------|
-| `1024`        | Integer         | Integer |
+| `1024`        | 整数         | 整数 |
 
-- **Description:** Amount of swap space (in MiB) available to the Docker virtual machine.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Extend available memory for container workloads when physical RAM is limited.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** Docker 虚拟机可用的交换空间量（以 MiB 为单位）。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 当物理 RAM 有限时，扩展容器工作负载的可用内存。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### Disk usage limit
+### 磁盘使用限制
 
-| Default value                  | Accepted values | Format  |
+| 默认值                  | 可接受值 | 格式  |
 |-------------------------------|-----------------|---------|
-| Default disk size of machine. | Integer         | Integer |
+| 机器的默认磁盘大小。 | 整数         | 整数 |
 
-- **Description:** Maximum disk space (in MiB) allocated for Docker Desktop data.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Prevent Docker from consuming excessive disk space on the host system.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 为 Docker Desktop 数据分配的最大磁盘空间（以 MiB 为单位）。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 防止 Docker 在主机系统上消耗过多的磁盘空间。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### Disk image location
+### 磁盘镜像位置
 
-| Default value                                                                 | Accepted values | Format |
+| 默认值                                                                 | 可接受值 | 格式 |
 |--------------------------------------------------|-----------------|--------|
-| macOS: `~/Library/Containers/com.docker.docker/Data/vms/0`  <br> Windows: `%USERPROFILE%\AppData\Local\Docker\wsl\data` | File path       | String |
+| macOS: `~/Library/Containers/com.docker.docker/Data/vms/0`  <br> Windows: `%USERPROFILE%\AppData\Local\Docker\wsl\data` | 文件路径       | 字符串 |
 
-- **Description:** File system path where Docker Desktop stores virtual machine data.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Move Docker data to custom storage locations for performance or space management.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** Docker Desktop 存储虚拟机数据的文件系统路径。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 将 Docker 数据移动到自定义存储位置以进行性能或空间管理。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### Enable Resource Saver
+### 启用资源节省器
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Automatic pausing of Docker Desktop when idle to conserve system resources.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Reduce CPU and memory usage when Docker Desktop isn't actively being used.
-- **Configure this setting with:**
-    - **Advanced** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 当空闲时自动暂停 Docker Desktop 以节省系统资源。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 当 Docker Desktop 未被主动使用时减少 CPU 和内存使用。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **高级** 资源设置
 
-### File sharing directories
+### 文件共享目录
 
-| Default value                           | Accepted values                 | Format                  |
+| 默认值                           | 可接受值                 | 格式                  |
 |----------------------------------------|---------------------------------|--------------------------|
-| Varies by OS                           | List of file paths as strings   | Array list of strings   |
+| 因操作系统而异                           | 字符串形式的文件路径列表   | 字符串数组列表   |
 
-- **Description:** Host directories that can be mounted into containers as volumes.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Define which host directories containers can access for development workflows.
-- **Configure this setting with:**
-    - **File sharing** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `filesharingAllowedDirectories` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Allowed file sharing directories** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 可以作为卷挂载到容器中的主机目录。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 定义容器可以访问的主机目录，用于开发工作流。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **文件共享** 资源设置
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `filesharingAllowedDirectories` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **允许的文件共享目录** 设置
 
 > [!NOTE]
 >
-> In hardened environments, lock to an explicit allowlist and disable end-user
-edits.
+> 在加固环境中，锁定到明确的允许列表并禁用最终用户编辑。
 
-### Proxy exclude
+### 代理排除
 
-| Default value | Accepted values    | Format |
+| 默认值 | 可接受值    | 格式 |
 |---------------|--------------------|--------|
-| `""`          | List of addresses  | String |
+| `""`          | 地址列表  | 字符串 |
 
-- **Description:** Network addresses that containers should bypass when using proxy settings.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Define proxy exceptions for internal services or specific domains.
-- **Configure this setting with:**
-    - **Proxies** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `proxy` setting with `manual` and `exclude` modes in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Proxy** section in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 容器在使用代理设置时应绕过的网络地址。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 为内部服务或特定域定义代理例外。
+- **配置方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md) 中的 **代理** 资源设置
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `proxy` 设置，使用 `manual` 和 `exclude` 模式
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **代理** 部分
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting to maintain strict proxy control.
+> 在加固环境中，禁用并锁定此设置以保持严格的代理控制。
 
-### Docker subnet
+### Docker 子网
 
-| Default value     | Accepted values | Format |
+| 默认值     | 可接受值 | 格式     |
 |-------------------|-----------------|--------|
-| `192.168.65.0/24` | IP address      | String |
+| `192.168.65.0/24` | IP 地址      | 字符串     |
 
-- **Description:** Overrides the network range used for vpnkit DHCP/DNS for
-`*.docker.internal`.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Customize the subnet used for Docker container networking.
-- **Configure this setting with:**
-    - Settings Management: `vpnkitCIDR` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **VPN Kit CIDR** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 覆盖用于 `*.docker.internal` 的 vpnkit DHCP/DNS 的网络范围。
+- **操作系统：** {{< badge color=blue text="仅 Mac" >}}
+- **使用场景：** 自定义用于 Docker 容器网络的子网。
+- **配置方式：**
+    - 设置管理：在 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `vpnkitCIDR` 设置
+    - 设置管理：在 [管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的 **VPN Kit CIDR** 设置
 
-### Use kernel networking for UDP
+### 为 UDP 使用内核网络
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Use the host’s kernel network stack for UDP traffic instead of Docker’s virtual network driver. This enables faster and more direct UDP communication, but may bypass some container isolation features.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Improve performance for UDP-intensive applications like real-time media, DNS, or gaming.
-- **Configure this setting with:**
-    - **Network** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 使用主机的内核网络堆栈处理 UDP 流量，而不是 Docker 的虚拟网络驱动程序。 这可以实现更快、更直接的 UDP 通信，但可能会绕过一些容器隔离功能。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 提高实时媒体、DNS 或游戏等 UDP 密集型应用程序的性能。
+- **配置此设置的方式：**
+    - **网络**资源设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
-### Enable host networking
+### 启用主机网络
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Experimental support for containers to use the host network stack directly.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Allow containers to bypass Docker's network isolation for specific scenarios.
-- **Configure this setting with:**
-    - **Network** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 实验性支持，允许容器直接使用主机的网络堆栈。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 允许容器在特定场景下绕过 Docker 的网络隔离。
+- **配置此设置的方式：**
+    - **网络**资源设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
-### Networking mode
+### 网络模式
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `dual-stack` | `ipv4only`, `ipv6only` | String  |
+| `dual-stack` | `ipv4only`, `ipv6only` | 字符串  |
 
-- **Description:** Default IP protocol used when Docker creates new networks.
-- **OS:** {{< badge color=blue text="Windows and Mac" >}}
-- **Use case:** Align with network infrastructure that supports only IPv4 or IPv6.
-- **Configure this setting with:**
-    - **Network** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `defaultNetworkingMode` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Default network IP mode** in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** Docker 创建新网络时使用的默认 IP 协议。
+- **操作系统：** {{< badge color=blue text="Windows 和 Mac" >}}
+- **使用场景：** 与仅支持 IPv4 或 IPv6 的网络基础设施保持一致。
+- **配置此设置的方式：**
+    - **网络**资源设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `defaultNetworkingMode` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**默认网络 IP 模式**
+
+更多信息，请参阅[网络](/manuals/desktop/features/networking.md#networking-mode-and-dns-behaviour-for-mac-and-windows)。
+
+#### 抑制 IPv4/IPv6 的 DNS 解析
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `auto` | `ipv4`, `ipv6`, `none` | 字符串  |
+
+- **描述：** 过滤不支持的 DNS 记录类型。需要 Docker Desktop 4.43 及更高版本。
+- **操作系统：** {{< badge color=blue text="Windows 和 Mac" >}}
+- **使用场景：** 控制 Docker 如何过滤返回给容器的 DNS 记录，在仅支持 IPv4 或 IPv6 的环境中提高可靠性。
+- **配置此设置的方式：**
+    - **网络**资源设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `dnsInhibition` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**DNS 过滤行为**
 
 For more information, see [Networking](/manuals/desktop/features/networking.md#networking-mode-and-dns-behaviour-for-mac-and-windows).
 
-#### Inhibit DNS resolution for IPv4/IPv6
+### 启用 WSL 引擎
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `auto` | `ipv4`, `ipv6`, `none` | String  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Filters unsupported DNS record types. Requires Docker Desktop
-version 4.43 and up.
-- **OS:** {{< badge color=blue text="Windows and Mac" >}}
-- **Use case:** Control how Docker filters DNS records returned to containers, improving reliability in environments where only IPv4 or IPv6 is supported.
-- **Configure this setting with:**
-    - **Network** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `dnsInhibition` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **DNS filtering behavior** in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
-
-For more information, see [Networking](/manuals/desktop/features/networking.md#networking-mode-and-dns-behaviour-for-mac-and-windows).
-
-### Enable WSL engine
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
-
-- **Description:** If the value is set to `true`, Docker Desktop uses the WSL2
-based engine. This overrides anything that may have been set at installation
-using the `--backend=<backend name>` flag.
-- **OS:** {{< badge color=blue text="Windows only" >}} + WSL
-- **Use case:** Run Linux containers on Windows using the WSL 2 backend for better performance.
-- **Configure this setting with:**
-    - **WSL Integration** Resources settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `wslEngineEnabled` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Windows Subsystem for Linux (WSL) Engine** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 如果值设置为 `true`，Docker Desktop 使用基于 WSL2 的引擎。这会覆盖安装时可能使用 `--backend=<backend name>` 标志设置的任何内容。
+- **操作系统：** {{< badge color=blue text="仅 Windows" >}} + WSL
+- **使用场景：** 使用 WSL 2 后端在 Windows 上运行 Linux 容器以获得更好的性能。
+- **配置此设置的方式：**
+    - **WSL 集成**资源设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `wslEngineEnabled` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**Windows 子系统 for Linux (WSL) 引擎**设置
 
 > [!NOTE]
 >
-> In hardened environments, enable and lock this setting for improved security and performance.
+> 在加固环境中，启用并锁定此设置以提高安全性和性能。
 
-## Docker Engine settings
+## Docker 引擎设置
 
-The Docker Engine settings let you configure low-level daemon settings through a raw JSON object. These settings are passed directly to the dockerd process that powers container management in Docker Desktop.
+Docker 引擎设置允许您通过原始 JSON 对象配置低级守护进程设置。这些设置直接传递给为 Docker Desktop 中的容器管理提供支持的 dockerd 进程。
 
-| Key                   | Example                     | Description                                        | Accepted values / Format       | Default |
+| 键                    | 示例                        | 描述                                        | 可接受值 / 格式       | 默认值 |
 | --------------------- | --------------------------- | -------------------------------------------------- | ------------------------------ | ------- |
-| `debug`               | `true`                      | Enable verbose logging in the Docker daemon        | Boolean                        | `false` |
-| `experimental`        | `true`                      | Enable experimental Docker CLI and daemon features | Boolean                        | `false` |
-| `insecure-registries` | `["myregistry.local:5000"]` | Allow pulling from HTTP registries without TLS     | Array of strings (`host:port`) | `[]`    |
-| `registry-mirrors`    | `["https://mirror.gcr.io"]` | Define alternative registry endpoints              | Array of URLs                  | `[]`    |
+| --------------------- | --------------------------- | -------------------------------------------------- | ------------------------------ | ------- |
+| `debug`               | `true`                      | 在 Docker 守护进程中启用详细日志        | 布尔值                        | `false` |
+| `experimental`        | `true`                      | 启用实验性 Docker CLI 和守护进程功能 | 布尔值                        | `false` |
+| `insecure-registries` | `["myregistry.local:5000"]` | 允许从没有 TLS 的 HTTP 注册表拉取     | 字符串数组 (`host:port`) | `[]`    |
+| `registry-mirrors`    | `["https://mirror.gcr.io"]` | 定义替代注册表端点              | URL 数组                  | `[]`    |
 
-- **Description:** Customize the behavior of the Docker daemon using a structured JSON config passed directly to dockerd.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Configure registry access, enable debug logging, or turn on experimental features.
-- **Configure this setting with:**
-    - **Docker Engine** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 使用直接传递给 dockerd 的结构化 JSON 配置自定义 Docker 守护进程的行为。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 配置注册表访问、启用调试日志或打开实验性功能。
+- **配置此设置的方式：**
+    - **Docker 引擎**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
 > [!NOTE]
 >
-> In hardened environments, provide a vetted configuration and lock it to prevent
-unauthorized daemon modifications.
+> 在加固环境中，提供经过审查的配置并锁定它以防止
+未经授权的守护进程修改。
 
 > [!IMPORTANT]
 >
-> Values for this setting are passed as-is to the Docker daemon. Invalid or unsupported fields may prevent Docker Desktop from starting.
+> 此设置的值按原样传递给 Docker 守护进程。无效或不支持的字段可能会阻止 Docker Desktop 启动。
 
-## Builders settings
+## 构建器设置
 
-Builders settings lets you manage Buildx builder instances for advanced image-building scenarios, including multi-platform builds and custom backends.
+构建器设置允许您管理 Buildx 构建器实例，用于高级镜像构建场景，包括多平台构建和自定义后端。
 
-| Key         | Example                          | Description                                                                | Accepted values / Format  | Default   |
+| 键         | 示例                          | 描述                                                                | 可接受值 / 格式  | 默认值   |
 | ----------- | -------------------------------- | -------------------------------------------------------------------------- | ------------------------- | --------- |
-| `name`      | `"my-builder"`                   | Name of the builder instance                                               | String                    | —         |
-| `driver`    | `"docker-container"`             | Backend used by the builder (`docker`, `docker-container`, `remote`, etc.) | String                    | `docker`  |
-| `platforms` | `["linux/amd64", "linux/arm64"]` | Target platforms supported by the builder                                  | Array of platform strings | Host arch |
+| `name`      | `"my-builder"`                   | 构建器实例的名称                                               | 字符串                    | —         |
+| `driver`    | `"docker-container"`             | 构建器使用的后端 (`docker`, `docker-container`, `remote`, 等) | 字符串                    | `docker`  |
+| `platforms` | `["linux/amd64", "linux/arm64"]` | 构建器支持的目标平台                                  | 平台字符串数组 | 主机架构 |
 
-- **Description:** Buildx builder instances for advanced image building scenarios.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Set up cross-platform builds, remote builders, or custom build environments.
-- **Configure this setting with:**
-    - **Builders** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-
-> [!NOTE]
->
-> Builder definitions are structured as an array of objects, each describing a builder instance. Conflicting or unsupported configurations may cause build errors.
-
-## AI settings
-
-### Enable Docker Model Runner
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
-
-- **Description:** Docker Model Runner functionality for running AI models in containers.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Run and manage AI/ML models using Docker infrastructure.
-- **Configure this setting with:**
-    - **AI** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableInference` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Enable Docker Model Runner** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
-
-#### Enable host-side TCP support
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
-
-- **Description:** TCP connectivity for Docker Model Runner services.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Allow external applications to connect to Model Runner via TCP.
-- **Configure this setting with:**
-    - **AI** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableInferenceTCP` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Host-side TCP support** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 用于高级镜像构建场景的 Buildx 构建器实例。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 设置跨平台构建、远程构建器或自定义构建环境。
+- **配置此设置的方式：**
+    - **构建器**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
 > [!NOTE]
 >
-> This setting requires Docker Model Runner setting to be enabled first.
+> 构建器定义被结构化为对象数组，每个对象描述一个构建器实例。冲突或不支持的配置可能会导致构建错误。
 
-##### Port
+## AI 设置
 
-| Default value | Accepted values | Format  |
+### 启用 Docker 模型运行器
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `true`        | `true`, `false` | 布尔值  |
+
+- **描述：** 用于在容器中运行 AI 模型的 Docker 模型运行器功能。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 使用 Docker 基础设施运行和管理 AI/ML 模型。
+- **配置此设置的方式：**
+    - **AI**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableInference` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**启用 Docker 模型运行器**设置
+
+#### 启用主机端 TCP 支持
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
+
+- **描述：** Docker 模型运行器服务的 TCP 连接。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 允许外部应用程序通过 TCP 连接到模型运行器。
+- **配置此设置的方式：**
+    - **AI**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableInferenceTCP` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**主机端 TCP 支持**设置
+
+> [!NOTE]
+>
+> 此设置需要先启用 Docker 模型运行器设置。
+
+##### 端口
+
+| 默认值 | 可接受值 | 格式  |
 |---------------|-----------------|---------|
-| 12434         | Integer         | Integer |
+| 12434         | Integer         | 整数 |
 
-- **Description:** Specific port used for Model Runner TCP connections.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Customize the port for Model Runner TCP connectivity.
-- **Configure this setting with:**
-    - **AI** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableInferenceTCPPort` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Host-side TCP port** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 用于模型运行器 TCP 连接的特定端口。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 自定义模型运行器 TCP 连接的端口。
+- **配置此设置的方式：**
+    - **AI**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableInferenceTCPPort` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**主机端 TCP 端口**设置
 
 > [!NOTE]
 >
-> This setting requires Docker Model Runner and host-side TCP support settings to be enabled first.
+> 此设置需要先启用 Docker 模型运行器和主机端 TCP 支持设置。
 
-##### CORS Allowed Origins
+##### CORS 允许的源
 
-| Default value | Accepted values                                                                 | Format |
+| 默认值 | 可接受值                                                                 | 格式 |
 |---------------|---------------------------------------------------------------------------------|--------|
-| Empty string  | Empty string to deny all,`*` to accept all, or a list of comma-separated values | String |
+| 空字符串  | 空字符串拒绝所有，`*` 接受所有，或逗号分隔的值列表 | 字符串 |
 
-- **Description:** Cross-origin resource sharing settings for Model Runner web integration.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Allow web applications to connect to Model Runner services.
-- **Configure this setting with:**
-    - **AI** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableInferenceCORS` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **CORS Allowed Origins** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 模型运行器 Web 集成的跨源资源共享设置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 允许 Web 应用程序连接到模型运行器服务。
+- **配置此设置的方式：**
+    - **AI**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableInferenceCORS` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**CORS 允许的源**设置
+
+> [!NOTE]
+> 此设置需要先启用 Docker 模型运行器和主机端 TCP 支持设置。
+
+#### 启用 GPU 支持的推理
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
+
+- **描述：** GPU 支持的推理。
+- **操作系统：** {{< badge color=blue text="仅限 Windows" >}}
+- **使用场景：** 启用 GPU 支持的推理。其他组件将下载到 ~/.docker/bin/inference。
+- **配置此设置的方式：**
+    - **AI**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableInferenceGPUVariant` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**启用 GPU 支持的推理**设置
+
+## Kubernetes 设置
+
+### 启用 Kubernetes
+
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
+
+- **描述：** 本地 Kubernetes 集群与 Docker Desktop 集成。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 提供本地 Kubernetes 开发环境用于测试和开发。
+- **配置此设置的方式：**
+    - **Kubernetes**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `kubernetes` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**允许 Kubernetes**设置
 
 > [!NOTE]
 >
-> This setting requires Docker Model Runner and host-side TCP support settings to be enabled first.
-
-#### Enable GPU-backed inference
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
-
-- **Description:** GPU-backed inference.
-- **OS:** {{< badge color=blue text="Windows only" >}}
-- **Use case:** Enable GPU-backed inference. Additional components will be downloaded to ~/.docker/bin/inference.
-- **Configure this setting with:**
-    - **AI** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableInferenceGPUVariant` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Enable GPU-backed inference** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
-
-## Kubernetes settings
-
-### Enable Kubernetes
-
-| Default value | Accepted values | Format   |
-|---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
-
-- **Description:** Local Kubernetes cluster integration with Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Provide local Kubernetes development environment for testing and development.
-- **Configure this setting with:**
-    - **Kubernetes** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `kubernetes` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Allow Kubernetes** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
-
-> [!NOTE]
->
-> In hardened environments, disable and lock this setting unless Kubernetes development is specifically required.
+> 在强化环境中，除非特别需要 Kubernetes 开发，否则禁用并锁定此设置。
 
 > [!IMPORTANT]
 >
-> When Kubernetes is enabled through Settings Management policies, only the
-`kubeadm` cluster provisioning method is supported. The `kind` provisioning
-method is not yet supported by Settings Management.
+> 当通过设置管理策略启用 Kubernetes 时，仅支持
+`kubeadm` 集群配置方法。设置管理尚不支持 `kind` 配置
+方法。
 
-### Choose cluster provisioning method
+### 选择集群配置方法
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `kubeadm`     | `kubeadm`, `kind`  | String |
+| `kubeadm`     | `kubeadm`, `kind`  | 字符串 |
 
-- **Description:** Kubernetes cluster topology and node configuration.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Choose between single-node (`kubeadm`) or multi-node (`kind`)` cluster configurations for different development needs.
-- **Configure this setting with:**
-    - **Kubernetes** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** Kubernetes 集群拓扑和节点配置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 在单节点 (`kubeadm`) 或多节点 (`kind`) 集群配置之间选择，以满足不同的开发需求。
+- **配置此设置的方式：**
+    - **Kubernetes**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
-### Kubernetes node count (kind provisioning)
+### Kubernetes 节点数 (kind 配置)
 
-| Default value | Accepted values | Format  |
+| 默认值 | 可接受值 | 格式  |
 |---------------|-----------------|---------|
-| `1`           | Integer         | Integer |
+| `1`           | Integer         | 整数 |
 
-- **Description:** Number of nodes in multi-node Kubernetes clusters.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Scale cluster size for testing distributed applications or cluster features.
-- **Configure this setting with:**
-    - **Kubernetes** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 多节点 Kubernetes 集群中的节点数。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 扩展集群大小以测试分布式应用程序或集群功能。
+- **配置此设置的方式：**
+    - **Kubernetes**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
-### Kubernetes node version (kind provisioning)
+### Kubernetes 节点版本 (kind 配置)
 
-| Default value | Accepted values               | Format |
+| 默认值 | 可接受值               | 格式 |
 |---------------|-------------------------------|--------|
-| `1.31.1`      | Semantic version (e.g., 1.29.1) | String |
+| `1.31.1`      | Semantic version (e.g., 1.29.1) | 字符串 |
 
-- **Description:** Kubernetes version used for cluster nodes.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Pin specific Kubernetes versions for consistency or compatibility requirements.
-- **Configure this setting with:**
-    - **Kubernetes** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 用于集群节点的 Kubernetes 版本。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 固定特定的 Kubernetes 版本以保持一致性或满足兼容性要求。
+- **配置此设置的方式：**
+    - **Kubernetes**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
-### Show system containers
+### 显示系统容器
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Visibility of Kubernetes system containers in Docker Desktop Dashboard.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Allow developers to view and debug kube-system containers.
-- **Configure this setting with:**
-    - **Kubernetes** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** Kubernetes 系统容器在 Docker Desktop 仪表板中的可见性。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 允许开发人员查看和调试 kube-system 容器。
+- **配置此设置的方式：**
+    - **Kubernetes**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting to reduce interface complexity.
+> 在强化环境中，禁用并锁定此设置以减少界面复杂性。
 
-## Software updates settings
+## 软件更新设置
 
-### Automatically check for updates
+### 自动检查更新
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Whether Docker Desktop checks for and notifies about available updates. If the
-value is set to `true`, checking for updates and notifications about Docker
-Desktop updates are disabled.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control update notifications and automatic version checking.
-- **Configure this setting with:**
-    - Settings Management: `disableUpdate` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Disable update** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** Docker Desktop 是否检查并通知可用更新。如果
+值设置为 `true`，则禁用检查更新和关于 Docker
+Desktop 更新的通知。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制更新通知和自动版本检查。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `disableUpdate` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**禁用更新**设置
 
 > [!NOTE]
 >
-> In hardened environments, enable this setting and lock. This guarantees that
-only internally vetted versions are installed.
+> 在强化环境中，启用此设置并锁定。这保证了
+仅安装经过内部审查的版本。
 
-### Always download updates
+### 始终下载更新
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Automatic downloading of Docker Desktop updates when they become available.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Manage bandwidth usage and control when updates are downloaded.
-- **Configure this setting with:**
-    - **Software updates** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: **Disable updates** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** Docker Desktop 更新可用时自动下载。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 管理带宽使用并控制何时下载更新。
+- **配置此设置的方式：**
+    - **软件更新**设置，位于[Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**禁用更新**设置
 
-### Automatically update components
+### 自动更新组件
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Allow Docker Desktop to automatically update components that don't require a restart.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Automatically updates key Docker Desktop components such as Docker Compose, Docker Scout, the Docker CLI.
-- **Configure this setting with:**
-    - **General settings** in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md#software-updates)
-    - Settings Management: `silentModulesUpdate` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Automatically update components** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 允许 Docker Desktop 自动更新不需要重启的组件。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 自动更新关键的 Docker Desktop 组件，如 Docker Compose、Docker Scout、Docker CLI。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md#software-updates)中的**常规设置**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `silentModulesUpdate` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**自动更新组件**设置
 
-## Extensions settings
+## 扩展设置
 
-### Enable Docker extensions
+### 启用 Docker 扩展
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Access to Docker Extensions marketplace and installed extensions.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control whether users can install and run Docker Extensions.
-- **Configure this setting with:**
-    - **Extensions** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `extensionsEnabled` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Allow Extensions** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 访问 Docker 扩展市场和已安装的扩展。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制用户是否可以安装和运行 Docker 扩展。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**扩展设置**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `extensionsEnabled` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**允许扩展**设置
 
 > [!NOTE]
 >
-> In hardened environments, disable and lock this setting. This prevents
-third-party or unvetted plugins from being installed.
+> 在强化环境中，禁用并锁定此设置。这可以防止
+> 安装第三方或未经审查的插件。
 
-### Allow only extensions distributed through the Docker Marketplace
+### 仅允许通过 Docker Marketplace 分发的扩展
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Restriction of Docker Extensions to only those available through the official marketplace.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Prevent installation of third-party or locally developed extensions.
-- **Configure this setting with:**
-    - **Extensions** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 将 Docker 扩展限制为仅可通过官方市场获取的扩展。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 防止安装第三方或本地开发的扩展。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**扩展设置**
 
-### Show Docker Extensions system containers
+### 显示 Docker 扩展系统容器
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Visibility of system containers used by Docker Extensions in the container list.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Help developers troubleshoot extension issues by viewing underlying containers.
-- **Configure this setting with:**
-    - **Extensions** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** Docker 扩展使用的系统容器在容器列表中的可见性。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 帮助开发者通过查看底层容器来排查扩展问题。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**扩展设置**
 
-## Beta features settings
+## Beta 功能设置
 
 > [!IMPORTANT]
 >
-> For Docker Desktop versions 4.41 and earlier, these settings were under the **Experimental features** tab on the **Features in development** page.
+> 对于 Docker Desktop 4.41 及更早版本，这些设置位于**开发中功能**页面的**实验性功能**选项卡下。
 
-### Enable Docker AI
+### 启用 Docker AI
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Docker AI features including "Ask Gordon" functionality.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Turn on AI-powered assistance and recommendations within Docker Desktop.
-- **Configure this setting with:**
-    - **Beta** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableDockerAI` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Enable Docker AI** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** Docker AI 功能，包括"询问 Gordon"功能。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 在 Docker Desktop 中启用 AI 驱动的辅助和建议。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**Beta 设置**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableDockerAI` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**启用 Docker AI**设置
 
-### Enable Docker MCP Toolkit
+### 启用 Docker MCP 工具包
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`       | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Enable [Docker MCP Toolkit](/manuals/ai/mcp-catalog-and-toolkit/_index.md) in Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Turn on MCP toolkit features for AI model development workflows.
-- **Configure this setting with:**
-    - **Beta** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableDockerMCPToolkit` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
+- **描述：** 在 Docker Desktop 中启用 [Docker MCP 工具包](/manuals/ai/mcp-catalog-and-toolkit/_index.md)。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 为 AI 模型开发工作流启用 MCP 工具包功能。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**Beta 设置**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableDockerMCPToolkit` 设置
 
-### Enable Docker Offload
+### 启用 Docker 卸载
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Enable [Docker Offload](/offload/) in Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Offload building and running containers to the cloud.
-- **Configure this setting with:**
-    - **Beta** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `enableCloud` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Enable Docker Cloud** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 在 Docker Desktop 中启用 [Docker 卸载](/offload/)。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 将构建和运行容器卸载到云端。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**Beta 设置**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enableCloud` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**启用 Docker 云**设置
 
-### Enable Wasm
+### 启用 Wasm
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Enable [Wasm](/manuals/desktop/features/wasm.md) to run Wasm workloads.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Run WebAssembly applications and modules within Docker containers.
-- **Configure this setting with:**
-    - **Beta** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 启用 [Wasm](/manuals/desktop/features/wasm.md) 以运行 Wasm 工作负载。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 在 Docker 容器内运行 WebAssembly 应用程序和模块。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**Beta 设置**
 
-## Notifications settings
+## 通知设置
 
-### Status updates on tasks and processes
+### 任务和进程的状态更新
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** General informational messages displayed within Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control visibility of operational status messages and process updates.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 在 Docker Desktop 中显示的一般信息性消息。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制操作状态消息和进程更新的可见性。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-### Recommendations from Docker
+### Docker 的推荐
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Promotional content and feature recommendations displayed in Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Manage exposure to Docker marketing content and feature promotions.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 在 Docker Desktop 中显示的推广内容和功能推荐。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 管理对 Docker 营销内容和功能推广的曝光。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-### Docker announcements
+### Docker 公告
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** General announcements and news displayed within Docker Desktop.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control visibility of Docker-wide announcements and important updates.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 在 Docker Desktop 中显示的一般公告和新闻。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制 Docker 范围内的公告和重要更新的可见性。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-### Docker surveys
+### Docker 调查
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Survey invitations and feedback requests displayed to users.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Manage user participation in Docker product feedback and research.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 显示给用户的调查邀请和反馈请求。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 管理用户对 Docker 产品反馈和研究的参与。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-### Docker Scout notification pop-ups
+### Docker Scout 通知弹窗
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** In-application notifications from Docker Scout vulnerability scanning.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Control visibility of vulnerability scan results and security recommendations.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 来自 Docker Scout 漏洞扫描的应用程序内通知。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 控制漏洞扫描结果和安全建议的可见性。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-### Docker Scout OS notifications
+### Docker Scout 操作系统通知
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Operating system-level notifications from Docker Scout.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Receive Scout security alerts through the system notification center.
-- **Configure this setting with:**
-    - **Notifications** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 来自 Docker Scout 的操作系统级别通知。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 通过系统通知中心接收 Scout 安全警报。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**通知设置**
 
-## Advanced settings
+## 高级设置
 
-### Configure installation of Docker CLI
+### 配置 Docker CLI 的安装
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `system`      | File path       | String   |
+| `system`      | 文件路径       | 字符串   |
 
-- **Description:** File system location where Docker CLI binaries are installed.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Customize CLI installation location for compliance or tooling integration requirements.
-- **Configure this setting with:**
-    - **Advanced** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 安装 Docker CLI 二进制文件的文件系统位置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 为合规性或工具集成要求自定义 CLI 安装位置。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**高级**设置
 
-### Allow the default Docker socket to be used
+### 允许使用默认 Docker 套接字
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** By default, enhanced container isolation blocks bind-mounting
-the Docker Engine socket into containers
-(e.g., `docker run -v /var/run/docker.sock:/var/run/docker.sock ...`). This lets
-you relax this in a controlled way. See ECI Configuration for more info.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Support Docker-in-Docker scenarios, CI agents, or tools like Testcontainers while maintaining Enhanced Container Isolation.
-- **Configure this setting with:**
-    - **Advanced** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
-    - Settings Management: `dockerSocketMount` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
+- **描述：** 默认情况下，增强容器隔离会阻止将 Docker Engine 套接字绑定挂载到容器中（例如，`docker run -v /var/run/docker.sock:/var/run/docker.sock ...`）。这允许您以受控方式放宽此限制。有关更多信息，请参阅 ECI 配置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 支持 Docker-in-Docker 场景、CI 代理或 Testcontainers 等工具，同时保持增强容器隔离。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**高级**设置
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `dockerSocketMount` 设置
 
-### Allow privileged port mapping
+### 允许特权端口映射
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Permission to bind container ports to privileged ports (1-1024) on the host.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Allow containers to use standard service ports like HTTP (80) or HTTPS (443).
-- **Configure this setting with:**
-    - **Advanced** settings in [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)
+- **描述：** 允许将容器端口绑定到主机上的特权端口（1-1024）的权限。
+- **操作系统：** {{< badge color=blue text="仅限 Mac" >}}
+- **使用场景：** 允许容器使用标准服务端口，如 HTTP (80) 或 HTTPS (443)。
+- **配置此设置的方式：**
+    - [Docker Desktop GUI](/manuals/desktop/settings-and-maintenance/settings.md)中的**高级**设置
 
-## Settings only available with Settings Management
+## 仅通过设置管理可用的设置
 
-The following settings aren’t shown in the Docker Desktop GUI. You can only configure them using Settings Management with the Admin Console or the `admin-settings.json` file.
+以下设置不在 Docker Desktop GUI 中显示。您只能通过管理控制台或 `admin-settings.json` 文件的设置管理来配置它们。
 
-### Enable Docker Cloud GPU Support
+### 启用 Docker Cloud GPU 支持
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `true`        | `true`, `false` | Boolean  |
+| `true`        | `true`, `false` | 布尔值  |
 
-- **Description:** Enable GPU support for Docker Cloud features.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Configure this setting with:**
-    - Settings Management: **Enable Docker Cloud GPU Support** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md
+- **描述：** 为 Docker Cloud 功能启用 GPU 支持。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **配置此设置的方式：**
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**启用 Docker Cloud GPU 支持**设置
 
-### Block `docker load`
+### 阻止 `docker load`
 
-| Default value | Accepted values | Format |
-|---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Prevent users from loading local Docker images using the `docker load` command.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Enforce image provenance by requiring all images to come from registries.
-- **Configure this setting with:**
-    - Settings Management: `blockDockerLoad` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Block Docker Load** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 阻止用户使用 `docker load` 命令加载本地 Docker 镜像。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 通过要求所有镜像来自注册表来强制执行镜像来源。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `blockDockerLoad` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**阻止 Docker 加载**设置
 
 > [!NOTE]
 >
 > In hardened environments, enable and lock this setting. This forces all images
 to come from your secure, scanned registry.
 
-### Hide onboarding survey
+### 隐藏入门调查
 
-| Default value | Accepted values | Format |
-|---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Prevent the onboarding survey from being shown to new users.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Configure this setting with:**
-    - Settings Management: `displayedOnboarding` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Hide onboarding survey** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 阻止向新用户显示入门调查。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `displayedOnboarding` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**隐藏入门调查**设置
 
-### Expose Docker API on TCP 2375
+### 在 TCP 2375 上暴露 Docker API
 
-| Default value | Accepted values | Format |
-|---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| 默认值 | 可接受值 | 格式   |
+|---------------|-----------------|----------|
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Exposes the Docker API over an unauthenticated TCP socket on port 2375. Only recommended for isolated and protected environments.
-- **OS:** {{< badge color=blue text="Windows only" >}}
-- **Use case:** Support legacy integrations that require TCP API access.
-- **Configure this setting with:**
-    - Settings Management: `exposeDockerAPIOnTCP2375` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Expose Docker API** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 在端口 2375 上通过未经身份验证的 TCP 套接字暴露 Docker API。仅推荐用于隔离和受保护的环境。
+- **操作系统：** {{< badge color=blue text="仅限 Windows" >}}
+- **使用场景：** 支持需要 TCP API 访问的旧版集成。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `exposeDockerAPIOnTCP2375`
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**暴露 Docker API**设置
 
 > [!NOTE]
 >
 > In hardened environments, disable and lock this setting. This ensures the
 Docker API is only reachable via the secure internal socket.
 
-### Air-gapped container proxy
+### 隔离环境容器代理
 
-| Default value | Accepted values | Format      |
+| 默认值 | 可接受值 | 格式      |
 | ------------- | --------------- | ----------- |
-| See example   | Object          | JSON object |
+| 参见示例   | 对象          | JSON 对象 |
 
-- **Description:** HTTP/HTTPS proxy configuration for containers in air-gapped environments.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Provide controlled network access for containers in offline or restricted network environments.
-- **Configure this setting with:**
-    - Settings Management: `containersProxy` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Containers proxy** section in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 隔离环境中容器的 HTTP/HTTPS 代理配置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 为离线或受限网络环境中的容器提供受控的网络访问。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `containersProxy` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**容器代理**部分
 
 #### Example
 
@@ -1124,18 +1093,18 @@ Docker API is only reachable via the secure internal socket.
 }
 ```
 
-### Docker socket access control (ECI exceptions)
+### Docker 套接字访问控制（ECI 例外）
 
-| Default value | Accepted values | Format      |
+| 默认值 | 可接受值 | 格式      |
 | ------------- | --------------- | ----------- |
-| -           | Object          | JSON object |
+| -           | 对象          | JSON 对象 |
 
-- **Description:** Specific images and commands allowed to use the Docker socket when Enhanced Container Isolation is active.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Support tools like Testcontainers, LocalStack, or CI systems that need Docker socket access while maintaining security.
-- Configure this setting with:
-    - Settings Management: `enhancedContainerIsolation` > `dockerSocketMount` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Command list** in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 当增强容器隔离处于活动状态时，允许使用 Docker 套接字的特定镜像和命令。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 支持需要 Docker 套接字访问的工具，如 Testcontainers、LocalStack 或 CI 系统，同时保持安全性。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `enhancedContainerIsolation` > `dockerSocketMount`
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**命令列表**
 
 #### Example
 
@@ -1158,117 +1127,112 @@ Docker API is only reachable via the secure internal socket.
 }
 ```
 
-### Allow beta features
+### 允许 Beta 功能
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `false`       | `true`, `false` | Boolean  |
+| `false`       | `true`, `false` | 布尔值  |
 
-- **Description:** Access to Docker Desktop features in public beta.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Provide early access to features in development for testing and feedback.
-- **Configure this setting with:**
-    - Settings Management: `allowBetaFeatures` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Access beta features**
+- **描述：** 访问处于公开 Beta 阶段的 Docker Desktop 功能。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 提供对开发中功能的早期访问，以便测试和反馈。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `allowBetaFeatures` 设置
+    - 设置管理：**访问 Beta 功能**
 
 > [!NOTE]
 >
 > In hardened environments, disable and lock this setting.
 
-### Docker daemon options (Linux or Windows)
+### Docker 守护进程选项（Linux 或 Windows）
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `{}`          | JSON object     | Stringified JSON |
+| `{}`          | JSON 对象     | 字符串化 JSON |
 
-- **Description:** Override the Docker daemon configuration used in Linux or Windows containers.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Configure advanced daemon options without modifying local configuration files.
-- **Configure this setting with:**
-    - Settings Management: `linuxVM.dockerDaemonOptions` or `windowsContainers.dockerDaemonOptions` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
+- **描述：** 覆盖 Linux 或 Windows 容器中使用的 Docker 守护进程配置。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 配置高级守护进程选项，而无需修改本地配置文件。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `linuxVM.dockerDaemonOptions` 或 `windowsContainers.dockerDaemonOptions`
 
 > [!NOTE]
 >
 > In hardened environments, provide a vetted JSON config and lock it so no
 overrides are possible.
 
-### VPNKit CIDR
+### VPNkit CIDR
 
-| Default value     | Accepted values | Format |
+| 默认值     | 可接受值 | 格式 |
 |-------------------|-----------------|--------|
-| `192.168.65.0/24` | CIDR notation   | String |
+| `192.168.65.0/24` | CIDR 表示法   | 字符串 |
 
-- **Description:** Network subnet used for Docker Desktop's internal VPNKit DHCP/DNS services.
-- **OS:** {{< badge color=blue text="Mac only" >}}
-- **Use case:** Prevent IP address conflicts in environments with overlapping network subnets.
-- **Configure this setting with:**
-    - Settings Management: `vpnkitCIDR` setting in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **VPN Kit CIDR** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 用于 Docker Desktop 内部 VPNKit DHCP/DNS 服务的网络子网。
+- **操作系统：** {{< badge color=blue text="仅限 Mac" >}}
+- **使用场景：** 防止具有重叠网络子网的环境中的 IP 地址冲突。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `vpnkitCIDR` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**VPN Kit CIDR**设置
 
 > [!NOTE]
 >
 > In hardened environments, lock to an approved, non-conflicting CIDR.
 
-### Enable Kerberos and NTLM authentication
+### 启用 Kerberos 和 NTLM 身份验证
 
-| Default value | Accepted values | Format |
+| 默认值 | 可接受值 | 格式 |
 |---------------|-----------------|--------|
-| `false`       | `true`, `false` | Boolean |
+| `false`       | `true`, `false` | 布尔值 |
 
-- **Description:** Enterprise proxy authentication support for Kerberos and NTLM protocols.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Use case:** Support enterprise proxy servers that require Kerberos or NTLM authentication.
-- **Configure this setting with:**
-    - Settings Management: `proxy.enableKerberosNtlm` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Kerberos NTLM** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 企业代理身份验证支持 Kerberos 和 NTLM 协议。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 支持需要 Kerberos 或 NTLM 身份验证的企业代理服务器。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `proxy.enableKerberosNtlm`
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**Kerberos NTLM**设置
 
-### PAC file URL
+### PAC 文件 URL
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `""`          | PAC file URL    | String   |
+| `""`          | PAC 文件 URL    | 字符串   |
 
-- **Description:** Specifies a PAC file URL. For example, `"pac": "http://proxy/proxy.pac"`.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Configure this setting with:**
-    - Settings Management: `pac` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **PAC file** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 指定 PAC 文件 URL。例如，`"pac": "http://proxy/proxy.pac"`。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `pac`
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**PAC 文件**设置
 
-### Embedded PAC script
+### 嵌入式 PAC 脚本
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `""`          | Embedded PAC script  | String   |
+| `""`          | 嵌入式 PAC 脚本  | 字符串   |
 
-- **Description:** Specifies an embedded PAC (Proxy Auto-Config) script. For example, `"embeddedPac": "function FindProxyForURL(url, host) { return \"DIRECT\"; }"`.
-- **OS:** {{< badge color=blue text="All" >}}
-- **Configure this setting with:**
-    - Settings Management: `embeddedPac` in the [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Embedded PAC script** setting in the [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 指定嵌入式 PAC（代理自动配置）脚本。例如，`"embeddedPac": "function FindProxyForURL(url, host) { return \"DIRECT\"; }"`。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `embeddedPac`
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**嵌入式 PAC 脚本**设置
 
 
-### Custom Kubernetes image repository
+### 自定义 Kubernetes 镜像仓库
 
-| Default value | Accepted values | Format   |
+| 默认值 | 可接受值 | 格式   |
 |---------------|-----------------|----------|
-| `""`          | Registry URL    | String   |
+| `""`          | 注册表 URL    | 字符串   |
 
-- **Description**: Registry used for Kubernetes control plane images instead of Docker Hub. This allows Docker Desktop to pull Kubernetes system
-images from a private registry or mirror instead of Docker Hub. This setting
-overrides the `[registry[:port]/][namespace]` portion of image names.
-- **OS**: {{< badge color=blue text="All" >}}
-- **Use case**: Support air-gapped environments or when Docker Hub access is restricted.
-- **Configure this setting with**:
-    - Settings Management: `KubernetesImagesRepository` settings in the
-    [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)
-    - Settings Management: **Kubernetes Images Repository** setting in the
-    [Admin Console](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)
+- **描述：** 用于 Kubernetes 控制平面镜像的注册表，而不是 Docker Hub。这允许 Docker Desktop 从私有注册表或镜像而不是 Docker Hub 拉取 Kubernetes 系统镜像。此设置会覆盖镜像名称的 `[registry[:port]/][namespace]` 部分。
+- **操作系统：** {{< badge color=blue text="全部" >}}
+- **使用场景：** 支持隔离环境或当 Docker Hub 访问受限时。
+- **配置此设置的方式：**
+    - 设置管理：[`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md)中的 `KubernetesImagesRepository` 设置
+    - 设置管理：[管理控制台](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)中的**Kubernetes 镜像仓库**设置
 
 > [!NOTE]
 >
-> Images must be mirrored from Docker Hub with matching tags. Required images depend on the cluster provisioning method.
+> 镜像必须从 Docker Hub 镜像，并带有匹配的标签。所需镜像取决于集群配置方法。
 
 > [!IMPORTANT]
 >
-> When using custom image repositories with Enhanced Container Isolation, add these images to the ECI allowlist: `[imagesRepository]/desktop-cloud-provider-kind:*` and
-`[imagesRepository]/desktop-containerd-registry-mirror:*`.
+> 将自定义镜像仓库与增强容器隔离一起使用时，请将这些镜像添加到 ECI 允许列表：`[imagesRepository]/desktop-cloud-provider-kind:*` 和 `[imagesRepository]/desktop-containerd-registry-mirror:*`。

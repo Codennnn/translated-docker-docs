@@ -1,8 +1,8 @@
 ---
-title: Manage single sign-on
-linkTitle: Manage
-description: Learn how to manage Single Sign-On for your organization or company.
-keywords: manage, single sign-on, SSO, sign-on, admin console, admin, security, domains, connections, users, provisioning
+title: 管理单点登录
+linkTitle: 管理
+description: 了解如何为您的组织或公司管理单点登录。
+keywords: 管理, 单点登录, SSO, 登录, 管理控制台, 管理员, 安全, 域, 连接, 用户, 配置
 aliases:
 - /admin/company/settings/sso-management/
 - /single-sign-on/manage/
@@ -11,123 +11,108 @@ aliases:
 
 {{< summary-bar feature_name="SSO" >}}
 
-This page covers how to manage single sign-on (SSO) after initial setup,
-including managing domains, connections, users, and provisioning
-settings.
+本页面介绍在完成初始设置后如何管理单点登录（SSO），包括管理域、连接、用户和配置设置。
 
-## Manage domains
+## 管理域
 
-### Add a domain
+### 添加域
 
-To add a domain to an existing SSO connection:
+要向现有 SSO 连接添加域：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company or
-organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. In the SSO connections table, select the **Actions** menu for your
-connection, then select **Edit connection**.
-1. Select **Next** to navigate to the domains section.
-1. In the **Domains** section, select **Add domain**.
-1. Enter the domain you want to add to the connection.
-1. Select **Next** to confirm or change the connected organizations.
-1. Select **Next** to confirm or change the default organization and
-team provisioning selections.
-1. Review the connection details and select **Update connection**.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司或组织。
+1. 选择 **管理控制台**，然后选择 **SSO 和 SCIM**。
+1. 在 SSO 连接表中，选择您连接的 **操作** 菜单，然后选择 **编辑连接**。
+1. 选择 **下一步** 导航到域部分。
+1. 在 **域** 部分，选择 **添加域**。
+1. 输入您要添加到连接的域名。
+1. 选择 **下一步** 确认或更改已连接的组织。
+1. 选择 **下一步** 确认或更改默认组织和团队配置选择。
+1. 查看连接详细信息，然后选择 **更新连接**。
 
-### Remove a domain from an SSO connection
+### 从 SSO 连接中移除域
 
 > [!IMPORTANT]
 >
-> If you use multiple identity providers with the same domain, you must remove the domain from each SSO connection individually.
+> 如果您使用多个身份提供程序处理同一个域，必须从每个 SSO 连接中单独移除该域。
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company or organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. In the **SSO connections** table, select the **Actions** menu for your connection, then
-**Edit connection**.
-1. Select **Next** to navigate to the domains section.
-1. In the **Domain** section, select the **X** icon next to the domain
-you want to remove.
-1. Select **Next** to confirm or change the connected organizations.
-1. Select **Next** to confirm or change the default organization and
-team provisioning selections.
-1. Review the connection details and select **Update connection**.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司或组织。
+1. 选择 **管理控制台**，然后选择 **SSO 和 SCIM**。
+1. 在 **SSO 连接** 表中，选择您连接的 **操作** 菜单，然后选择 **编辑连接**。
+1. 选择 **下一步** 导航到域部分。
+1. 在 **域** 部分，选择要移除的域旁边的 **X** 图标。
+1. 选择 **下一步** 确认或更改已连接的组织。
+1. 选择 **下一步** 确认或更改默认组织和团队配置选择。
+1. 查看连接详细信息，然后选择 **更新连接**。
 
 > [!NOTE]
 >
-> When you re-add a domain, Docker assigns a new TXT record value. You must complete domain verification again with the new TXT record.
+> 当您重新添加域时，Docker 会分配一个新的 TXT 记录值。您必须使用新的 TXT 记录再次完成域验证。
 
-## Manage SSO connections
+## 管理 SSO 连接
 
-### View connections
+### 查看连接
 
-To view all configured SSO connections:
+要查看所有已配置的 SSO 连接：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company or organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. View all configured connections in the **SSO connections** table.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司或组织。
+1. 选择 **管理控制台**，然后选择 **SSO 和 SCIM**。
+1. 在 **SSO 连接** 表中查看所有已配置的连接。
 
-### Edit a connection
+### 编辑连接
 
-To modify an existing SSO connection:
+要修改现有 SSO 连接：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company or organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. In the **SSO connections** table, select the **Actions** menu for your connection, then
-**Edit connection**.
-1. Follow the on-screen instructions to modify your connection settings.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司或组织。
+1. 选择 **管理控制台**，然后选择 **SSO 和 SCIM**。
+1. 在 **SSO 连接** 表中，选择您连接的 **操作** 菜单，然后选择 **编辑连接**。
+1. 按照屏幕上的说明修改您的连接设置。
 
-### Delete a connection
+### 删除连接
 
-To remove an SSO connection:
+要移除 SSO 连接：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company or organization from the top-left account drop-down.
-1. Select **Admin Console**, then **SSO and SCIM**.
-1. In the **SSO connections** table, select the **Actions** menu for your connection, then
-**Delete connection**.
-1. Follow the on-screen instructions to confirm the deletion.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司或组织。
+1. 选择 **管理控制台**，然后选择 **SSO 和 SCIM**。
+1. 在 **SSO 连接** 表中，选择您连接的 **操作** 菜单，然后选择 **删除连接**。
+1. 按照屏幕上的说明确认删除操作。
 
 > [!WARNING]
 >
-> Deleting an SSO connection removes access for all users who authenticate through
-that connection.
+> 删除 SSO 连接将移除所有通过该连接进行身份验证的用户的访问权限。
 
-## Manage users and provisioning
+## 管理用户和配置
 
-Docker automatically provisions users through Just-in-Time (JIT) provisioning when they sign in via SSO. You can also manually manage users and configure different provisioning methods.
+当用户通过 SSO 登录时，Docker 会通过即时（JIT）配置自动配置用户。您也可以手动管理用户并配置不同的配置方法。
 
-### How provisioning works
+### 配置工作原理
 
-Docker supports the following provisioning methods:
+Docker 支持以下配置方法：
 
-- JIT provisioning (default): Users are automatically added to your organization
-when they sign in via SSO
-- SCIM provisioning: Sync users and groups from your identity provider to Docker
-- Group mapping: Sync user groups from your identity provider with teams in your Docker organization
-- Manual provisioning: Turn off automatic provisioning and manually invite users
+- JIT 配置（默认）：用户通过 SSO 登录时自动添加到您的组织
+- SCIM 配置：将用户和组从身份提供程序同步到 Docker
+- 组映射：将用户组从身份提供程序与 Docker 组织中的团队同步
+- 手动配置：关闭自动配置并手动邀请用户
 
-For more information on provisioning methods, see [Provision users](/manuals/enterprise/security/provisioning/_index.md).
+有关配置方法的更多信息，请参阅[配置用户](/manuals/enterprise/security/provisioning/_index.md)。
 
-### Add guest users
+### 添加访客用户
 
-To invite users who don't authenticate through your identity provider:
+要邀请不通过身份提供程序进行身份验证的用户：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select
-your organization.
-1. Select **Members**.
-1. Select **Invite**.
-1. Follow the on-screen instructions to invite the user.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的组织。
+1. 选择 **成员**。
+1. 选择 **邀请**。
+1. 按照屏幕上的说明邀请用户。
 
-The user receives an email invitation and can create a Docker account or sign
-in with their existing account.
+用户会收到一封电子邮件邀请，可以创建 Docker 账户或使用其现有账户登录。
 
-### Remove users
+### 移除用户
 
-To remove a user from your organization:
+要从您的组织中移除用户：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select
-your organization.
-1. Select **Members**.
-1. Find the user you want to remove and select the **Actions** menu next to their name.
-1. Select **Remove** and confirm the removal.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的组织。
+1. 选择 **成员**。
+1. 找到要移除的用户，选择其名称旁边的 **操作** 菜单。
+1. 选择 **移除** 并确认移除操作。
 
-The user loses access to your organization immediately upon removal.
+用户在移除后立即失去对您组织的访问权限。

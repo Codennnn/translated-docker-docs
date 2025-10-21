@@ -267,6 +267,6 @@ $ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker
 
 任何你修改过的配置文件需要手动删除。
 
-## 后续步骤
+## 进一步阅读
 
 - 继续阅读 [Linux 安装后的步骤](linux-postinstall.md)。

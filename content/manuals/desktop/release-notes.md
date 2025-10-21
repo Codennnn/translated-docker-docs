@@ -1,8 +1,8 @@
 ---
-description: Find the Docker Desktop release notes for Mac, Linux, and Windows.
+description: 查找适用于 Mac、Linux 和 Windows 的 Docker Desktop 发布说明。
 keywords: Docker desktop, release notes, linux, mac, windows
-title: Docker Desktop release notes
-linkTitle: Release notes
+title: Docker Desktop 发布说明
+linkTitle: 发布说明
 tags: [Release notes]
 toc_max: 2
 aliases:
@@ -18,17 +18,17 @@ weight: 220
 outputs: ["HTML", "markdown", "RSS"]
 type: "desktop-release"
 ---
-{{< rss-button feed="/desktop/release-notes/index.xml" text="Subscribe to Docker Desktop RSS feed" >}}
+{{< rss-button feed="/desktop/release-notes/index.xml" text="订阅 Docker Desktop RSS 订阅源" >}}
 
 <!-- vale off -->
 
-This page contains information about the new features, improvements, known issues, and bug fixes in Docker Desktop releases.
+本页面包含 Docker Desktop 各版本发布的新功能、改进、已知问题和错误修复信息。
 
-Releases are gradually rolled out to ensure quality control. If the latest version is not yet available to you, allow some time — updates typically become available within a week of the release date.
+为确保质量控制，Docker Desktop 采用逐步发布的方式。如果最新版本尚未对您开放，请耐心等待 — 更新通常在发布日期后的一周内可用。
 
-Docker Desktop versions older than 6 months from the latest release are not available for download. Previous release notes are available in our [documentation repository](https://github.com/docker/docs/tree/main/content/manuals/desktop/previous-versions).
+距离最新发布超过 6 个月的 Docker Desktop 版本将不再提供下载。以往的发布说明可在我们的[文档仓库](https://github.com/docker/docs/tree/main/content/manuals/desktop/previous-versions)中查看。
 
-For more frequently asked questions, see the [FAQs](/manuals/desktop/troubleshoot-and-support/faqs/releases.md).
+更多常见问题，请参阅[常见问题解答](/manuals/desktop/troubleshoot-and-support/faqs/releases.md)。
 
 ## 4.48.0
 

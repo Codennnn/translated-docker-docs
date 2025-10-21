@@ -1,141 +1,138 @@
 ---
-title: Organization access tokens
-linkTitle: Organization access tokens
-description: Create and manage organization access tokens to securely authenticate automated systems and CI/CD pipelines with Docker Hub
-keywords: organization access tokens, OAT, docker hub security, programmatic access, automation
+title: 组织访问令牌
+linkTitle: 组织访问令牌
+description: 创建和管理组织访问令牌，为自动化系统和 CI/CD 管道提供安全的 Docker Hub 身份验证
+keywords: 组织访问令牌, OAT, docker hub 安全, 程序化访问, 自动化
 aliases:
  - /security/for-admins/access-tokens/
 ---
 
 {{< summary-bar feature_name="OATs" >}}
 
-Organization access tokens (OATs) provide secure, programmatic access to Docker Hub for automated systems, CI/CD pipelines, and other business-critical tasks. Unlike personal access tokens tied to individual users, OATs are associated with your organization and can be managed by any organization owner.
+组织访问令牌（Organization Access Tokens，简称 OATs）为自动化系统、CI/CD 管道和其他关键业务任务提供安全的程序化 Docker Hub 访问。与绑定到个人用户的个人访问令牌不同，OATs 与您的组织关联，可由任何组织所有者管理。
 
 > [!WARNING]
 >
-> Organization access tokens are incompatible with Docker Desktop, Image Access Management, and Registry Access Management. If you use these features, use [personal access tokens](/manuals/security/access-tokens.md) instead.
+> 组织访问令牌与 Docker Desktop、镜像访问管理和仓库访问管理不兼容。如果您使用这些功能，请改用[个人访问令牌](/manuals/security/access-tokens.md)。
 
-## Who should use organization access tokens?
+## 谁应该使用组织访问令牌？
 
-Use OATs for automated systems that need Docker Hub access without depending on individual user accounts:
+为需要 Docker Hub 访问但不依赖个人用户账户的自动化系统使用 OATs：
 
-- CI/CD pipelines: Build and deployment systems that push and pull images
-- Production systems: Applications that pull images during deployment
-- Monitoring tools: Systems that need to check repository status or pull images
-- Backup systems: Tools that periodically pull images for archival
-- Integration services: Third-party tools that integrate with your Docker Hub repositories
+- CI/CD 管道：构建和部署系统，用于推送和拉取镜像
+- 生产系统：在部署期间拉取镜像的应用程序
+- 监控工具：需要检查仓库状态或拉取镜像的系统
+- 备份系统：定期拉取镜像进行归档的工具
+- 集成服务：与您的 Docker Hub 仓库集成的第三方工具
 
-## Key benefits
+## 主要优势
 
-Benefits of using organization access tokens include:
+使用组织访问令牌的优势包括：
 
-- Organizational ownership: Not tied to individual users who might leave the company
-- Shared management: All organization owners can create and manage OATs
-- Separate usage limits: OATs have their own Docker Hub rate limits, not counting against personal accounts
-- Better security audit: Track when tokens were last used and identify suspicious activity
-- Granular permissions: Limit access to specific repositories and operations
+- 组织所有权：不绑定可能离开公司的个人用户
+- 共享管理：所有组织所有者都可以创建和管理 OATs
+- 独立使用限制：OATs 有自己的 Docker Hub 速率限制，不计入个人账户
+- 更好的安全审计：跟踪令牌最后使用时间并识别可疑活动
+- 细粒度权限：限制对特定仓库和操作的访问
 
-## Prerequisites
+## 先决条件
 
-To create and use organization access tokens, you must have:
+要创建和使用组织访问令牌，您必须具备：
 
-- A Docker Team or Business subscription
-- Owner permissions
-- Repositories you want to grant access to
+- Docker Team 或 Business 订阅
+- 所有者权限
+- 要授予访问权限的仓库
 
-## Create an organization access token
+## 创建组织访问令牌
 
-Owners can create tokens with these limits:
+所有者可以创建具有以下限制的令牌：
 
-- Team subscription: Up to 10 OATs per organization
-- Business subscription: Up to 100 OATs per organization
+- Team 订阅：每个组织最多 10 个 OATs
+- Business 订阅：每个组织最多 100 个 OATs
 
-Expired tokens count toward your total limit.
+已过期的令牌计入您的总限制。
 
-To create an OAT:
+要创建 OAT：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Admin Console**, then **Access tokens**.
-1. Select **Generate access token**.
-1. Configure token details:
-    - Label: Descriptive name indicating the token's purpose
-    - Description (optional): Additional details
-    - Expiration date: When the token should expire
-1. Expand the **Repository** drop-down to set access permissions:
-    1. Optional. Select **Read public repositories** for access to public repositories.
-    1. Select **Add repository** and choose a repository from the drop-down.
-    1. Set permissions for each repository: **Image Pull** or **Image Push**.
-    1. Add up to 50 repositories as needed.
-1. Optional. Configure organization management permissions by expanding the **Organization** drop-down and selecting the **Allow management access to this organization's resources**:
-    - **Member Edit**: Edit members of the organization
-    - **Member Read**: Read members of the organization
-    - **Invite Edit**: Invite members to the organization
-    - **Invite Read**: Read invites to the organization
-    - **Group Edit**: Edit groups of the organization
-    - **Group Read**: Read groups of the organization
-1. Select **Generate token**. Copy the token that appears on the screen and save it. You won't be able to retrieve the token once you exit the screen.
+1. 登录 [Docker Home](https://app.docker.com/) 并选择您的组织。
+1. 选择 **Admin Console**（管理控制台），然后选择 **Access tokens**（访问令牌）。
+1. 选择 **Generate access token**（生成访问令牌）。
+1. 配置令牌详细信息：
+    - 标签：指示令牌用途的描述性名称
+    - 描述（可选）：其他详细信息
+    - 过期日期：令牌应过期的时间
+1. 展开 **Repository**（仓库）下拉菜单以设置访问权限：
+    1. 可选。选择 **Read public repositories**（读取公共仓库）以访问公共仓库。
+    1. 选择 **Add repository**（添加仓库）并从下拉菜单中选择一个仓库。
+    1. 为每个仓库设置权限：**Image Pull**（镜像拉取）或 **Image Push**（镜像推送）。
+    1. 根据需要添加最多 50 个仓库。
+1. 可选。通过展开 **Organization**（组织）下拉菜单并选择 **Allow management access to this organization's resources**（允许管理此组织的资源）来配置组织管理权限：
+    - **Member Edit**（成员编辑）：编辑组织的成员
+    - **Member Read**（成员读取）：读取组织的成员
+    - **Invite Edit**（邀请编辑）：邀请成员加入组织
+    - **Invite Read**（邀请读取）：读取组织的邀请
+    - **Group Edit**（组编辑）：编辑组织的组
+    - **Group Read**（组读取）：读取组织的组
+1. 选择 **Generate token**（生成令牌）。复制屏幕上显示的令牌并保存它。一旦退出屏幕，您将无法检索该令牌。
 
 > [!IMPORTANT]
 >
-> Treat organization access tokens like passwords. Store them securely in a credential manager and never commit them to source code repositories.
+> 像对待密码一样对待组织访问令牌。将它们安全存储在凭据管理器中，切勿将其提交到源代码仓库。
 
-## Use organization access tokens
+## 使用组织访问令牌
 
-Sign in to the Docker CLI using your organization access token:
+使用您的组织访问令牌登录 Docker CLI：
 
 ```console
 $ docker login --username <YOUR_ORGANIZATION_NAME>
-Password: [paste your OAT here]
+Password: [在此处粘贴您的 OAT]
 ```
 
-When prompted for a password, enter your organization access token.
+当提示输入密码时，输入您的组织访问令牌。
 
-## Modify existing tokens
+## 修改现有令牌
 
-To manage existing tokens:
+要管理现有令牌：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Admin Console**, then **Access tokens**.
-1. Select the actions menu in the token row, you can:
-    - **Edit**
-    - **Deactivate**
-    - **Delete**
-1. Select **Save** after making changes to a token.
+1. 登录 [Docker Home](https://app.docker.com/) 并选择您的组织。
+1. 选择 **Admin Console**（管理控制台），然后选择 **Access tokens**（访问令牌）。
+1. 选择令牌行中的操作菜单，您可以：
+    - **Edit**（编辑）
+    - **Deactivate**（停用）
+    - **Delete**（删除）
+1. 对令牌进行更改后选择 **Save**（保存）。
 
-## Migrate from service accounts
+## 从服务账户迁移
 
-[Enhanced Service Account add-ons](/manuals/docker-hub/service-accounts.md)
-are deprecated and no longer available for
-new purchases as of December 10, 2024.
+[增强型服务账户附加组件](/manuals/docker-hub/service-accounts.md)
+已弃用，自 2024 年 12 月 10 日起不再可供新购买。
 
-Organization access tokens provide a
-modern, secure replacement with additional benefits:
+组织访问令牌提供了
+具有额外优势的现代、安全替代方案：
 
-| Feature | Service accounts | Organization access tokens |
+| 功能 | 服务账户 | 组织访问令牌 |
 |---------|------------------|----------------------------|
-| Authentication | Username/password | Organization name + token |
-| Cost | Tiered add-on pricing | Included with subscription |
-| Management | Individual account-based | Organization owner managed |
-| Repository access | Full account access | Granular repository permissions |
-| Security | Basic password auth | Token-based with expiration |
-| Rate limits | Separate tiered limits | Organization subscription limits |
+| 身份验证 | 用户名/密码 | 组织名称 + 令牌 |
+| 成本 | 分层附加组件定价 | 包含在订阅中 |
+| 管理 | 基于个人账户 | 组织所有者管理 |
+| 仓库访问 | 完整账户访问 | 细粒度仓库权限 |
+| 安全性 | 基本密码身份验证 | 基于令牌且有过期时间 |
+| 速率限制 | 分层独立限制 | 组织订阅限制 |
 
-### Migration steps
+### 迁移步骤
 
-To migrate from service accounts to OATs, use the following steps:
+要从服务账户迁移到 OATs，请使用以下步骤：
 
-1. Document current service accounts and their purposes.
-1. Generate organization access tokens with appropriate repository permissions.
-1. Replace service account credentials in your systems.
-1. Validate all automated workflows work correctly.
-1. Remove deprecated service account credentials.
+1. 记录当前服务账户及其用途。
+1. 生成具有适当仓库权限的组织访问令牌。
+1. 在您的系统中替换服务账户凭据。
+1. 验证所有自动化工作流程是否正常工作。
+1. 删除已弃用的服务账户凭据。
 
-## Organization access token best practices
+## 组织访问令牌最佳实践
 
-- Regular token rotation: Set reasonable expiration dates and rotate tokens regularly to minimize security risks.
-- Principle of least privilege: Grant only the minimum repository access and permissions needed for each use case.
-- Monitor token usage: Regularly review when tokens were last used to identify unused or suspicious tokens.
-- Secure storage: Store tokens in secure credential management systems, never in plain text or source code.
-- Immediate revocation: Deactivate or delete tokens immediately if they're compromised or no longer needed.
+- 定期令牌轮换：设置合理的过期日期并定期轮换令牌，以最小化安全风险。
+- 最小权限原则：仅授予每个用例所需的最小仓库访问权限和权限。
+- 监控令牌使用情况：定期审查令牌最后使用时间，以识别未使用或可疑的令牌。
+- 安全存储：将令牌存储在安全的凭据管理系统中，切勿以明文形式或源代码中存储。
+- 立即撤销：如果令牌被泄露或不再需要，立即停用或删除令牌。

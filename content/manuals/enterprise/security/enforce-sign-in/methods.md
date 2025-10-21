@@ -1,8 +1,8 @@
 ---
-title: Configure sign-in enforcement
-linkTitle: Configure
-description: Configure sign-in enforcement for Docker Desktop using registry keys, configuration profiles, plist files, or registry.json files
-keywords: authentication, registry.json, configure, enforce sign-in, docker desktop, security, .plist, registry key, mac, windows, linux
+title: 配置强制登录
+linkTitle: 配置
+description: 使用注册表项、配置文件、plist 文件或 registry.json 文件配置 Docker Desktop 的强制登录功能
+keywords: 身份验证, registry.json, 配置, 强制登录, docker desktop, 安全, .plist, 注册表项, mac, windows, linux
 tags: [admin]
 aliases:
  - /security/for-admins/enforce-sign-in/methods/
@@ -10,90 +10,88 @@ aliases:
 
 {{< summary-bar feature_name="Enforce sign-in" >}}
 
-You can enforce sign-in for Docker Desktop using several methods. Choose the method that best fits your organization's infrastructure and security requirements.
+您可以使用多种方法强制 Docker Desktop 用户登录。请选择最适合您组织基础设施和安全要求的方法。
 
-## Choose your method
+## 选择适合的方法
 
-| Method | Platform |
+| 方法 | 平台 |
 |:-------|:---------|
-| Registry key | Windows only |
-| Configuration profiles | macOS only |
-| `plist` file | macOS only |
-| `registry.json` | All platforms |
+| 注册表项 | 仅限 Windows |
+| 配置文件 | 仅限 macOS |
+| `plist` 文件 | 仅限 macOS |
+| `registry.json` | 所有平台 |
 
 > [!TIP]
 >
-> For macOS, configuration profiles offer the highest security because they're
-protected by Apple's System Integrity Protection (SIP).
+> 对于 macOS，配置文件提供最高的安全性，因为它们受到 Apple 系统完整性保护（SIP）的保护。
 
-## Windows: Registry key method
+## Windows：注册表项方法
 
 {{< tabs >}}
-{{< tab name="Manual setup" >}}
+{{< tab name="手动设置" >}}
 
-To configure the registry key method manually:
+手动配置注册表项方法：
 
-1. Create the registry key:
+1. 创建注册表项：
 
    ```console
    $ HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Docker\Docker Desktop
    ```
-1. Create a multi-string value name `allowedOrgs`.
-1. Use your organization names as string data:
-   - Use lowercase letters only
-   - Add each organization on a separate line
-   - Do not use spaces or commas as separators
-1. Restart Docker Desktop.
-1. Verify the `Sign in required!` prompt appears in Docker Desktop.
+1. 创建一个多字符串值，名称为 `allowedOrgs`。
+1. 使用您的组织名称作为字符串数据：
+   - 仅使用小写字母
+   - 每个组织单独一行
+   - 不要使用空格或逗号作为分隔符
+1. 重启 Docker Desktop。
+1. 验证 Docker Desktop 中是否出现"需要登录！"提示。
 
 > [!IMPORTANT]
 >
-> You can add multiple organizations with Docker Desktop version 4.36 and later.
-With version 4.35 and earlier, adding multiple organizations causes sign-in
-enforcement to fail silently.
+> Docker Desktop 4.36 及更高版本支持添加多个组织。
+在 4.35 及更早版本中，添加多个组织会导致强制登录静默失败。
 
 {{< /tab >}}
-{{< tab name="Group Policy deployment" >}}
+{{< tab name="组策略部署" >}}
 
-Deploy the registry key across your organization using Group Policy:
+使用组策略在组织中部署注册表项：
 
-1. Create a registry script with the required key structure.
-1. In Group Policy Management, create or edit a GPO.
-1. Navigate to **Computer Configuration** > **Preferences** > **Windows Settings** > **Registry**.
-1. Right-click **Registry** > **New** > **Registry Item**.
-1. Configure the registry item:
-   - Action: **Update**
-   - Path: `HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Docker\Docker Desktop`
-   - Value name: `allowedOrgs`
-   - Value data: Your organization names
-1. Link the GPO to the target Organizational Unit.
-1. Test on a small group using `gpupdate/force`.
-1. Deploy organization-wide after verification.
+1. 创建包含所需键结构的注册表脚本。
+1. 在组策略管理中，创建或编辑 GPO。
+1. 导航到**计算机配置** > **首选项** > **Windows 设置** > **注册表**。
+1. 右键单击**注册表** > **新建** > **注册表项**。
+1. 配置注册表项：
+   - 操作：**更新**
+   - 路径：`HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Docker\Docker Desktop`
+   - 值名称：`allowedOrgs`
+   - 值数据：您的组织名称
+1. 将 GPO 链接到目标组织单位。
+1. 使用 `gpupdate/force` 在小范围内测试。
+1. 验证后在整个组织内部署。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## macOS: Configuration profiles method (recommended)
+## macOS：配置文件方法（推荐）
 
-{{< summary-bar feature_name="Config profiles" >}}
+{{< summary-bar feature_name="Enforce sign-in" >}}
 
-Configuration profiles provide the most secure enforcement method for macOS, as they're protected by Apple's System Integrity Protection.
+配置文件为 macOS 提供最安全的强制执行方法，因为它们受到 Apple 系统完整性保护的保护。
 
-The payload is a dictionary of key-values. Docker Desktop supports the following keys:
+有效载荷是一个键值字典。Docker Desktop 支持以下键：
 
-- `allowedOrgs`: Sets a list of organizations in one single string, where each organization is separated by a semi-colon.
+- `allowedOrgs`：在一个字符串中设置组织列表，每个组织用分号分隔。
 
-In Docker Desktop version 4.48 and later, the following keys are also supported: 
+在 Docker Desktop 4.48 及更高版本中，还支持以下键： 
 
-- `overrideProxyHTTP`: Sets the URL of the HTTP proxy that must be used for outgoing HTTP requests.
-- `overrideProxyHTTPS`: Sets the URL of the HTTP proxy that must be used for outgoing HTTPS requests.
-- `overrideProxyExclude`: Bypasses proxy settings for the specified hosts and domains. Uses a comma-separated list.
-- `overrideProxyPAC`: Sets the file path where the PAC file is located. It has precedence over the remote PAC file on the selected proxy.
-- `overrideProxyEmbeddedPAC`: Sets the content of an in-memory PAC file. It has precedence over `overrideProxyPAC`.
+- `overrideProxyHTTP`：设置用于传出 HTTP 请求的 HTTP 代理 URL。
+- `overrideProxyHTTPS`：设置用于传出 HTTPS 请求的 HTTP 代理 URL。
+- `overrideProxyExclude`：绕过指定主机和域的代理设置。使用逗号分隔的列表。
+- `overrideProxyPAC`：设置 PAC 文件所在的文件路径。它的优先级高于所选代理上的远程 PAC 文件。
+- `overrideProxyEmbeddedPAC`：设置内存中 PAC 文件的内容。它的优先级高于 `overrideProxyPAC`。
 
-Overriding at least one of the proxy settings via Configuration profiles will automatically lock the settings as they're managed by macOS. 
+通过配置文件覆盖至少一个代理设置将自动锁定这些设置，因为它们由 macOS 管理。 
 
-1. Create a file named `docker.mobileconfig` with this content:
+1. 创建名为 `docker.mobileconfig` 的文件，内容如下：
    ```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -141,22 +139,22 @@ Overriding at least one of the proxy settings via Configuration profiles will au
       </dict>
     </plist>
    ```
-1. Replace placeholders:
-   - Change `com.yourcompany.docker.config` to your company identifier
-   - Replace `Your Company Name` with your organization name
-   - Update the `allowedOrgs` value with your organization names (separated by semicolons)
-1. Deploy the profile using your MDM solution.
-1. Verify the profile appears in **System Settings** > **General** > **Device Management** under **Device (Managed)** profiles.
+1. 替换占位符：
+   - 将 `com.yourcompany.docker.config` 更改为您的公司标识符
+   - 将 `Your Company Name` 替换为您的组织名称
+   - 更新 `allowedOrgs` 值为您的组织名称（用分号分隔）
+1. 使用您的 MDM 解决方案部署配置文件。
+1. 验证配置文件是否出现在**系统设置** > **通用** > **设备管理**下的**设备（托管）**配置文件中。
 
-## macOS: plist file method
+## macOS：plist 文件方法
 
-Use this alternative method for macOS with Docker Desktop version 4.32 and later.
+此替代方法适用于 Docker Desktop 4.32 及更高版本的 macOS。
 
 {{< tabs >}}
-{{< tab name="Manual creation" >}}
+{{< tab name="手动创建" >}}
 
-1. Create the file `/Library/Application Support/com.docker.docker/desktop.plist`.
-1. Add this content, replacing `myorg1` and `myorg2` with your organization names:
+1. 创建文件 `/Library/Application Support/com.docker.docker/desktop.plist`。
+1. 添加以下内容，将 `myorg1` 和 `myorg2` 替换为您的组织名称：
    ```xml
    <?xml version="1.0" encoding="UTF-8"?>
    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -170,74 +168,74 @@ Use this alternative method for macOS with Docker Desktop version 4.32 and later
      </dict>
    </plist>
    ```
-1. Set file permissions to prevent editing by non-administrator users.
-1. Restart Docker Desktop.
-1. Verify the `Sign in required!` prompt appears in Docker Desktop.
+1. 设置文件权限以防止非管理员用户编辑。
+1. 重启 Docker Desktop。
+1. 验证 Docker Desktop 中是否出现"需要登录！"提示。
 
 {{< /tab >}}
-{{< tab name="Shell script deployment" >}}
+{{< tab name="Shell 脚本部署" >}}
 
-Create and deploy a script for organization-wide distribution:
+创建并部署脚本以在组织内部分发：
 
 ```bash
 #!/bin/bash
 
-# Create directory if it doesn't exist
+# 如果目录不存在则创建
 sudo mkdir -p "/Library/Application Support/com.docker.docker"
 
-# Write the plist file
+# 写入 plist 文件
 sudo defaults write "/Library/Application Support/com.docker.docker/desktop.plist" allowedOrgs -array "myorg1" "myorg2"
 
-# Set appropriate permissions
+# 设置适当的权限
 sudo chmod 644 "/Library/Application Support/com.docker.docker/desktop.plist"
 sudo chown root:admin "/Library/Application Support/com.docker.docker/desktop.plist"
 ```
 
-Deploy this script using SSH, remote support tools, or your preferred deployment method.
+使用 SSH、远程支持工具或您偏好的部署方法部署此脚本。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## All platforms: registry.json method
+## 所有平台：registry.json 方法
 
-The registry.json method works across all platforms and offers flexible deployment options.
+registry.json 方法适用于所有平台，并提供灵活的部署选项。
 
-### File locations
+### 文件位置
 
-Create the `registry.json` file at the appropriate location:
+在适当的位置创建 `registry.json` 文件：
 
-| Platform | Location |
+| 平台 | 位置 |
 | --- | --- |
 | Windows | `/ProgramData/DockerDesktop/registry.json` |
 | Mac | `/Library/Application Support/com.docker.docker/registry.json` |
 | Linux | `/usr/share/docker-desktop/registry/registry.json` |
 
-### Basic setup
+### 基本设置
 
 {{< tabs >}}
-{{< tab name="Manual creation" >}}
+{{< tab name="手动创建" >}}
 
-1. Ensure users are members of your Docker organization.
-1. Create the `registry.json` file at the appropriate location for your platform.
-1. Add this content, replacing organization names with your own:
+1. 确保用户是您的 Docker 组织的成员。
+1. 在适合您平台的位置创建 `registry.json` 文件。
+1. 添加以下内容，将组织名称替换为您自己的：
       ```json
       {
          "allowedOrgs": ["myorg1", "myorg2"]
       }
       ```
-1. Set file permissions to prevent user editing.
-1. Restart Docker Desktop.
-1. Verify the `Sign in required!` prompt appears in Docker Desktop.
+1. 设置文件权限以防止用户编辑。
+1. 重启 Docker Desktop。
+1. 验证 Docker Desktop 中是否出现"需要登录！"提示。
 
 > [!TIP]
 >
-> If users have issues starting Docker Desktop after enforcing sign-in,
-they may need to update to the latest version.
+> 如果用户在强制登录后启动 Docker Desktop 时遇到问题，
+他们可能需要更新到最新版本。
 
 {{< /tab >}}
-{{< tab name="Command line setup" >}}
+{{< tab name="命令行设置" >}}
 
-#### Windows (PowerShell as Administrator)
+#### Windows（以管理员身份运行 PowerShell）
 
 ```shell
 Set-Content /ProgramData/DockerDesktop/registry.json '{"allowedOrgs":["myorg1","myorg2"]}'
@@ -258,9 +256,9 @@ echo '{"allowedOrgs":["myorg1","myorg2"]}' | sudo tee /usr/share/docker-desktop/
 ```
 
 {{< /tab >}}
-{{< tab name="Installation-time setup" >}}
+{{< tab name="安装时设置" >}}
 
-Create the registry.json file during Docker Desktop installation:
+在 Docker Desktop 安装过程中创建 registry.json 文件：
 
 #### Windows
 
@@ -268,7 +266,7 @@ Create the registry.json file during Docker Desktop installation:
 # PowerShell
 Start-Process '.\Docker Desktop Installer.exe' -Wait 'install --allowed-org=myorg'
 
-# Command Prompt
+# 命令提示符
 "Docker Desktop Installer.exe" install --allowed-org=myorg
 ```
 
@@ -283,25 +281,25 @@ sudo hdiutil detach /Volumes/Docker
 {{< /tab >}}
 {{< /tabs >}}
 
-## Method precedence
+## 方法优先级
 
-When multiple configuration methods exist on the same system, Docker Desktop uses this precedence order:
+当同一系统上存在多种配置方法时，Docker Desktop 使用以下优先级顺序：
 
-1. Registry key (Windows only)
-2. Configuration profiles (macOS only)
-3. plist file (macOS only)
-4. registry.json file
+1. 注册表项（仅限 Windows）
+2. 配置文件（仅限 macOS）
+3. plist 文件（仅限 macOS）
+4. registry.json 文件
 
 > [!IMPORTANT]
 >
-> Docker Desktop version 4.36 and later supports multiple organizations in a single configuration. Earlier versions (4.35 and below) fail silently when multiple organizations are specified.
+> Docker Desktop 4.36 及更高版本支持在单个配置中添加多个组织。早期版本（4.35 及以下）在指定多个组织时会静默失败。
 
-## Troubleshoot sign-in enforcement
+## 强制登录故障排除
 
-If sign-in enforcement doesn't work:
+如果强制登录不起作用：
 
-- Verify file locations and permissions
-- Check that organization names use lowercase letters
-- Restart Docker Desktop or reboot the system
-- Confirm users are members of the specified organizations
-- Update Docker Desktop to the latest version
+- 验证文件位置和权限
+- 检查组织名称是否使用小写字母
+- 重启 Docker Desktop 或重启系统
+- 确认用户是指定组织的成员
+- 将 Docker Desktop 更新到最新版本

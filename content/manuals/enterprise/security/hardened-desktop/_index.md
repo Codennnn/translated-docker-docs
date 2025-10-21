@@ -1,31 +1,31 @@
 ---
-title: Hardened Docker Desktop
-linkTitle: Hardened Docker Desktop
-description: Security features that help organizations secure developer environments without impacting productivity
-keywords: security, hardened desktop, enhanced container isolation, registry access management, settings management, admins, docker desktop, image access management, air-gapped containers
+title: 强化版 Docker Desktop
+linkTitle: 强化版 Docker Desktop
+description: 帮助组织在不影响生产力的情况下保护开发者环境的安全功能
+keywords: 安全, 强化版桌面, 增强容器隔离, 注册表访问管理, 设置管理, 管理员, docker desktop, 镜像访问管理, 空隙容器
 tags: [admin]
 aliases:
  - /desktop/hardened-desktop/
  - /security/for-admins/hardened-desktop/
 grid:
-  - title: "Settings Management"
-    description: Learn how Settings Management can secure your developers' workflows.
+  - title: "设置管理"
+    description: 了解设置管理如何保护您开发者的工作流程。
     icon: shield_locked
     link: /enterprise/security/hardened-desktop/settings-management/
-  - title: "Enhanced Container Isolation"
-    description: Understand how Enhanced Container Isolation can prevent container attacks.
+  - title: "增强容器隔离"
+    description: 了解增强容器隔离如何防止容器攻击。
     icon: "security"
     link: /enterprise/security/hardened-desktop/enhanced-container-isolation/
-  - title: "Registry Access Management"
-    description: Control the registries developers can access while using Docker Desktop.
+  - title: "注册表访问管理"
+    description: 控制开发者在使用 Docker Desktop 时可以访问的注册表。
     icon: "home_storage"
     link: /enterprise/security/hardened-desktop/registry-access-management/
-  - title: "Image Access Management"
-    description: Control the images developers can pull from Docker Hub.
+  - title: "镜像访问管理"
+    description: 控制开发者可以从 Docker Hub 拉取的镜像。
     icon: "photo_library"
     link: /enterprise/security/hardened-desktop/image-access-management/
-  - title: "Air-Gapped Containers"
-    description: Restrict containers from accessing unwanted network resources.
+  - title: "空隙容器"
+    description: 限制容器访问不需要的网络资源。
     icon: "vpn_lock"
     link: /enterprise/security/hardened-desktop/air-gapped-containers/
 weight: 60
@@ -33,29 +33,29 @@ weight: 60
 
 {{< summary-bar feature_name="Hardened Docker Desktop" >}}
 
-Hardened Docker Desktop provides a collection of security features designed to strengthen developer environments without compromising productivity or developer experience.
+强化版 Docker Desktop 提供了一系列安全功能，旨在加强开发者环境，同时不影响生产力或开发者体验。
 
-With Hardened Docker Desktop, you can enforce strict security policies that prevent developers and containers from bypassing organizational controls. You can also enhance container isolation to protect against security threats like malicious payloads that might breach the Docker Desktop Linux VM or underlying host system.
+通过强化版 Docker Desktop，您可以实施严格的安全策略，防止开发者和容器绕过组织控制。您还可以增强容器隔离，以防范可能突破 Docker Desktop Linux 虚拟机或底层主机系统的安全威胁，如恶意负载。
 
-## Who should use Hardened Docker Desktop?
+## 谁应该使用强化版 Docker Desktop？
 
-Hardened Docker Desktop is ideal for security-focused organizations that:
+强化版 Docker Desktop 非常适合注重安全的组织，这些组织：
 
-- Don't provide root or administrator access to developers' machines
-- Want centralized control over Docker Desktop configurations
-- Must meet specific compliance requirements
+- 不向开发者的机器提供 root 或管理员访问权限
+- 希望对 Docker Desktop 配置进行集中控制
+- 必须满足特定的合规性要求
 
-## How Hardened Docker Desktop works
+## 强化版 Docker Desktop 的工作原理
 
-Hardened Docker Desktop features work independently and together to create a defense-in-depth security strategy. They protect developer workstations against attacks across multiple layers, including Docker Desktop configuration, container image management, and container runtime security:
+强化版 Docker Desktop 功能可以独立工作，也可以协同工作，创建深度防御安全策略。它们在多个层面保护开发者工作站免受攻击，包括 Docker Desktop 配置、容器镜像管理和容器运行时安全：
 
-- Registry Access Management and Image Access Management prevent access to unauthorized container registries and image types, reducing exposure to malicious payloads
-- Enhanced Container Isolation runs containers without root privileges inside a Linux user namespace, limiting the impact of malicious containers
-- Air-gapped containers let you configure network restrictions for containers, preventing malicious containers from accessing your organization's internal network resources
-- Settings Management locks down Docker Desktop configurations to enforce company policies and prevent developers from introducing insecure settings, whether intentionally or accidentally
+- 注册表访问管理和镜像访问管理可防止访问未经授权的容器注册表和镜像类型，减少暴露于恶意负载的风险
+- 增强容器隔离在 Linux 用户命名空间内以非 root 权限运行容器，限制恶意容器的影响
+- 空隙容器允许您为容器配置网络限制，防止恶意容器访问组织的内部网络资源
+- 设置管理锁定 Docker Desktop 配置，以强制执行公司策略，防止开发者（无论是有意还是无意）引入不安全的设置
 
-## Next steps
+## 后续步骤
 
-Explore Hardened Docker Desktop features to understand how they can strengthen your organization's security posture:
+探索强化版 Docker Desktop 功能，了解它们如何加强您组织的安全态势：
 
 {{< grid >}}

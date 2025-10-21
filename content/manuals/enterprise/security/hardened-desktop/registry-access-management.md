@@ -1,7 +1,7 @@
 ---
-title: Registry Access Management
-description: Control access to approved container registries with Registry Access Management for secure Docker Desktop usage
-keywords: registry access management, container registry, security controls, docker business, admin controls
+title: 仓库访问管理
+description: 使用仓库访问管理控制对已批准容器仓库的访问，确保 Docker Desktop 安全使用
+keywords: 仓库访问管理, 容器仓库, 安全控制, docker 商业版, 管理员控制
 tags: [admin]
 aliases:
  - /desktop/hardened-desktop/registry-access-management/
@@ -14,117 +14,111 @@ weight: 30
 
 {{< summary-bar feature_name="Registry access management" >}}
 
-Registry Access Management (RAM) lets administrators control which container registries developers can access through Docker Desktop. This DNS-level filtering ensures developers only pull and push images from approved registries, improving supply chain security.
+仓库访问管理（RAM）允许管理员控制开发人员通过 Docker Desktop 可以访问哪些容器仓库。这种 DNS 级别的过滤确保开发人员只能从已批准的仓库拉取和推送镜像，从而提高供应链安全性。
 
-RAM works with all registry types including cloud services, on-premises registries, and registry mirrors. You can allow any hostname or domain, but must include redirect domains (like `s3.amazonaws.com` for some registries) in your allowlist.
+RAM 适用于所有类型的仓库，包括云服务、本地仓库和仓库镜像。您可以允许任何主机名或域名，但必须在白名单中包含重定向域名（如某些仓库的 `s3.amazonaws.com`）。
 
-## Supported registries
+## 支持的仓库
 
-Registry Access Management works with any container registry, including:
+仓库访问管理适用于任何容器仓库，包括：
 
- - Docker Hub (allowed by default)
-- Cloud registries: Amazon ECR, Google Container Registry, Azure Container Registry
-- Git-based registries: GitHub Container Registry, GitLab Container Registry
-- On-premises solutions: Nexus, Artifactory, Harbor
-- Registry mirrors: Including Docker Hub mirrors
+- Docker Hub（默认允许）
+- 云仓库：Amazon ECR、Google Container Registry、Azure Container Registry
+- 基于 Git 的仓库：GitHub Container Registry、GitLab Container Registry
+- 本地解决方案：Nexus、Artifactory、Harbor
+- 仓库镜像：包括 Docker Hub 镜像
 
-## Prerequisites
+## 先决条件
 
-Before configuring Registry Access Management, you must:
+在配置仓库访问管理之前，您必须：
 
-- [Enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md) to ensure users authenticate with your organization
-- Use [personal access tokens (PATs)](/manuals/security/access-tokens.md) for authentication (Organization access tokens aren't supported)
-- Have a Docker Business subscription
-
-> [!IMPORTANT]
->
-> Registry Access Management only takes effect when users are signed in to Docker Desktop with organization credentials.
-
-## Configure registry permissions
-
-To configure registry permissions:
-
-1. Sign in to [Docker Home](https://app.docker.com) and select your organization from the top-left account drop-down.
-1. Select **Admin Console**, then **Registry access**.
-1. Use the **toggle** to enable registry access. By default, Docker Hub is enabled
-in the registry list.
-1. To add additional registries, select **Add registry** and provide
-a **Registry address** and **Registry nickname**.
-1. Select **Create**. You can add up to 100 registries.
-1. Verify your registry appears in the registry list and select **Save changes**.
-
-Changes can take up to 24 hours to take effect. To apply them sooner,
-have developers sign out and back in to Docker Desktop.
+- [强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)以确保用户使用您的组织身份进行身份验证
+- 使用[个人访问令牌 (PAT)](/manuals/security/access-tokens.md)进行身份验证（不支持组织访问令牌）
+- 拥有 Docker Business 订阅
 
 > [!IMPORTANT]
 >
-> Starting with Docker Desktop 4.36, if a developer belongs to multiple organizations with different RAM policies, only the policy for the first organization in the configuration file is enforced.
+> 仓库访问管理仅在用户使用组织凭据登录 Docker Desktop 时生效。
+
+## 配置仓库权限
+
+要配置仓库权限：
+
+1. 登录 [Docker Home](https://app.docker.com) 并从左上角的账户下拉菜单中选择您的组织。
+1. 选择 **管理控制台**，然后选择 **仓库访问**。
+1. 使用**切换开关**启用仓库访问。默认情况下，Docker Hub 在仓库列表中已启用。
+1. 要添加其他仓库，选择 **添加仓库** 并提供**仓库地址**和**仓库昵称**。
+1. 选择 **创建**。您最多可以添加 100 个仓库。
+1. 确认您的仓库出现在仓库列表中，然后选择 **保存更改**。
+
+更改可能需要最多 24 小时才能生效。要更快应用更改，请让开发人员退出并重新登录 Docker Desktop。
+
+> [!IMPORTANT]
+>
+> 从 Docker Desktop 4.36 开始，如果开发人员属于多个具有不同 RAM 策略的组织，则仅强制执行配置文件中第一个组织的策略。
 
 > [!TIP]
 >
-> RAM restrictions also apply to Dockerfile `ADD` instructions that fetch content via URL. Include trusted registry domains in your allowlist when using `ADD` with URLs.
+> RAM 限制也适用于通过 URL 获取内容的 Dockerfile `ADD` 指令。使用带有 URL 的 `ADD` 时，请将受信任的仓库域包含在您的白名单中。
 ><br><br>
-> RAM is designed for container registries, not general-purpose URLs like package mirrors or storage services. Adding too many domains may cause errors or hit system limits.
+> RAM 专为容器仓库设计，不适用于像包镜像或存储服务这样的通用 URL。添加过多域可能会导致错误或达到系统限制。
 
+## 验证限制是否生效
 
-## Verify restrictions are working
+用户使用其组织凭据登录 Docker Desktop 后，仓库访问管理立即生效。
 
-After users sign in to Docker Desktop with their organization credentials, Registry Access Management takes effect immediately.
-
-When users try to pull from a blocked registry:
+当用户尝试从被阻止的仓库拉取时：
 
 ```console
 $ docker pull blocked-registry.com/image:tag
 Error response from daemon: registry access to blocked-registry.com is not allowed
 ```
 
-Allowed registry access works normally:
+允许的仓库访问正常工作：
 
 ```console
 $ docker pull allowed-registry.com/image:tag
-# Pull succeeds
+# 拉取成功
 ```
 
-Registry restrictions apply to all Docker operations including pulls, pushes,
-and builds that reference external registries.
+仓库限制适用于所有 Docker 操作，包括拉取、推送以及引用外部仓库的构建。
 
-## Registry limits and platform constraints
+## 仓库限制和平台约束
 
-Registry Access Management has these limits and platform-specific behaviors:
+仓库访问管理具有以下限制和平台特定行为：
 
-- Maximum allowlist size: 100 registries or domains per organization
-- DNS-based filtering: Restrictions work at the hostname level, not IP addresses
-- Redirect domains required: Must include all domains a registry redirects to (CDN endpoints, storage services)
-- Windows containers: Windows image operations aren't restricted by default. Turn on **Use proxy for Windows Docker daemon** in Docker Desktop settings to apply restrictions
-- WSL 2 requirements: Requires Linux kernel 5.4 or later, restrictions apply to all WSL 2 distributions
+- 最大白名单大小：每个组织 100 个仓库或域
+- 基于 DNS 的过滤：限制在主机名级别工作，而非 IP 地址
+- 需要重定向域：必须包含仓库重定向到的所有域（CDN 端点、存储服务）
+- Windows 容器：默认情况下，Windows 镜像操作不受限制。在 Docker Desktop 设置中打开 **为 Windows Docker 守护进程使用代理** 以应用限制
+- WSL 2 要求：需要 Linux 内核 5.4 或更高版本，限制适用于所有 WSL 2 发行版
 
-## Build and deployment restrictions
+## 构建和部署限制
 
-These scenarios are not restricted by Registry Access Management:
+以下场景不受仓库访问管理限制：
 
-- Docker buildx with Kubernetes driver
-- Docker buildx with custom docker-container driver
-- Some Docker Debug and Kubernetes image pulls (even if Docker Hub is blocked)
-- Images previously cached by registry mirrors may still be blocked if the source registry is restricted
+- 使用 Kubernetes 驱动程序的 Docker buildx
+- 使用自定义 docker-container 驱动程序的 Docker buildx
+- 某些 Docker Debug 和 Kubernetes 镜像拉取（即使 Docker Hub 被阻止）
+- 如果源仓库受限，之前由仓库镜像缓存的镜像可能仍被阻止
 
-## Security bypass considerations
+## 安全绕过注意事项
 
-Users can potentially bypass Registry Access Management through:
+用户可能通过以下方式绕过仓库访问管理：
 
-- Local proxies or DNS manipulation
-- Signing out of Docker Desktop (unless sign-in is enforced)
-- Network-level modifications outside Docker Desktop's control
+- 本地代理或 DNS 操作
+- 退出 Docker Desktop（除非强制登录）
+- Docker Desktop 控制之外的网络级修改
 
-To maximize security effectiveness:
+为了最大化安全效果：
 
-- [Enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md) to prevent bypass through sign-out
-- Implement additional network-level controls for complete protection
-- Use Registry Access Management as part of a broader security strategy
+- [强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)以防止通过退出登录绕过
+- 实施额外的网络级控制以获得全面保护
+- 将仓库访问管理作为更广泛安全策略的一部分使用
 
-## Registry allowlist best practices
+## 仓库白名单最佳实践
 
-- Include all registry domains: Some registries redirect to multiple
-domains. For AWS ECR, include:
+- 包含所有仓库域：某些仓库会重定向到多个域。对于 AWS ECR，包括：
 
     ```text
     your-account.dkr.ecr.us-west-2.amazonaws.com
@@ -132,14 +126,14 @@ domains. For AWS ECR, include:
     s3.amazonaws.com
     ```
 
-- Practice regular allowlist maintenance:
-    - Remove unused registries periodically
-    - Add newly approved registries as needed
-    - Update domain names that may have changed
-    - Monitor registry usage through Docker Desktop analytics
-- Test configuration changes:
-    - Verify registry access after making allowlist updates
-    - Check that all necessary redirect domains are included
-    - Ensure development workflows aren't disrupted
-    - Combine with [Enhanced Container Isolation](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md) for comprehensive protection
+- 定期维护白名单：
+    - 定期删除未使用的仓库
+    - 根据需要添加新批准的仓库
+    - 更新可能已更改的域名
+    - 通过 Docker Desktop 分析监控仓库使用情况
+- 测试配置更改：
+    - 在白名单更新后验证仓库访问
+    - 检查是否包含所有必要的重定向域
+    - 确保开发工作流程不被中断
+    - 与[增强容器隔离](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/_index.md)结合使用以获得全面保护
     

@@ -1,64 +1,63 @@
 ---
-title: Enable Enhanced Container Isolation
-linkTitle: Enable ECI
-description: Enable Enhanced Container Isolation to secure containers in Docker Desktop
-keywords: enhanced container isolation, enable eci, container security, docker desktop setup
+title: 启用增强容器隔离
+linkTitle: 启用 ECI
+description: 启用增强容器隔离以保护 Docker Desktop 中的容器安全
+keywords: 增强容器隔离, 启用 eci, 容器安全, docker desktop 设置
 weight: 15
 ---
 
 {{< summary-bar feature_name="Hardened Docker Desktop" >}}
 
-ECI prevents malicious containers from compromising Docker Desktop while maintaining full developer productivity.
+ECI 可防止恶意容器破坏 Docker Desktop，同时保持完整的开发人员生产力。
 
-This page shows you how to turn on Enhanced Container Isolation (ECI) and verify it's working correctly.
+本页面介绍如何启用增强容器隔离（ECI）并验证其是否正常工作。
 
-## Prerequisites
+## 先决条件
 
-Before you begin, you must have:
+在开始之前，您必须具备：
 
-- A Docker Business subscription
-- Docker Desktop 4.13 or later
-- [Enforced sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md) (for administrators managing organization-wide settings only)
+- Docker Business 订阅
+- Docker Desktop 4.13 或更高版本
+- [强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)（仅适用于管理组织范围设置的管理员）
 
-## Enable Enhanced Container Isolation
+## 启用增强容器隔离
 
-### For developers
+### 面向开发人员
 
-Turn on ECI in your Docker Desktop settings:
+在 Docker Desktop 设置中启用 ECI：
 
-1. Sign in to your organization in Docker Desktop. Your organization must have
-a Docker Business subscription.
-1. Stop and remove all existing containers:
+1. 在 Docker Desktop 中登录您的组织。您的组织必须具有 Docker Business 订阅。
+1. 停止并删除所有现有容器：
 
     ```console
     $ docker stop $(docker ps -q)
     $ docker rm $(docker ps -aq)
     ```
 
-1. In Docker Desktop, go to **Settings** > **General**.
-1. Select the **Use Enhanced Container Isolation** checkbox.
-1. Select **Apply and restart**.
+1. 在 Docker Desktop 中，转到 **设置** > **常规**。
+1. 选择 **使用增强容器隔离** 复选框。
+1. 选择 **应用并重启**。
 
 > [!IMPORTANT]
 >
-> ECI doesn't protect containers created before turning on the feature. Remove existing containers before turning on ECI.
+> ECI 不会保护在启用该功能之前创建的容器。在启用 ECI 之前，请删除现有容器。
 
-### For administrators
+### 面向管理员
 
-Configure Enhanced Container Isolation organization-wide using Settings Management:
+使用设置管理在组织范围内配置增强容器隔离：
 
 {{< tabs >}}
-{{< tab name="Admin Console" >}}
+{{< tab name="管理控制台" >}}
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your organization from the top-left account drop-down.
-1. Go to **Admin Console** > **Desktop Settings Management**.
-1. [Create or edit a setting policy](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md).
-1. Set **Enhanced Container Isolation** to **Always enabled**.
+1. 登录 [Docker Home](https://app.docker.com) 并从左上角账户下拉菜单中选择您的组织。
+1. 转到 **管理控制台** > **桌面设置管理**。
+1. [创建或编辑设置策略](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)。
+1. 将 **增强容器隔离** 设置为 **始终启用**。
 
 {{< /tab >}}
-{{< tab name="JSON file" >}}
+{{< tab name="JSON 文件" >}}
 
-1. Create an [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md) and add:
+1. 创建一个 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md) 并添加：
 
       ```json
       {
@@ -70,100 +69,96 @@ Configure Enhanced Container Isolation organization-wide using Settings Manageme
       }
       ```
 
-1. Configure the following as needed:
-    - `"value": true`: Turns on ECI by default (required)
-    - `"locked": true`: Prevents developers from turning off ECI
-    - `"locked": false`: Allows developers to control the setting
+1. 根据需要配置以下选项：
+    - `"value": true`：默认启用 ECI（必需）
+    - `"locked": true`：防止开发人员关闭 ECI
+    - `"locked": false`：允许开发人员控制该设置
 
 {{< /tab >}}
 {{< /tabs >}}
 
-### Apply the configuration
+### 应用配置
 
-For ECI settings to take effect:
+要使 ECI 设置生效：
 
-- New installations: Users launch Docker Desktop and sign in
-- Existing installations: Users must fully quit Docker Desktop and relaunch
+- **新安装**：用户启动 Docker Desktop 并登录
+- **现有安装**：用户必须完全退出 Docker Desktop 并重新启动
 
 > [!IMPORTANT]
 >
-> Restarting from the Docker Desktop menu isn't sufficient. Users must completely quit and reopen Docker Desktop.
+> 从 Docker Desktop 菜单重启是不够的。用户必须完全退出并重新打开 Docker Desktop。
 
-You can also configure [Docker socket mount permissions](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/config.md) for trusted images that need Docker API access.
+您还可以为需要 Docker API 访问的可信镜像配置 [Docker 套接字挂载权限](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/config.md)。
 
-## Verify Enhanced Container Isolation is active
+## 验证增强容器隔离是否激活
 
-After turning on ECI, verify it's working correctly using these methods.
+启用 ECI 后，使用这些方法验证其是否正常工作。
 
-### Check user namespace mapping
+### 检查用户命名空间映射
 
-Run a container and examine the user namespace mapping:
+运行容器并检查用户命名空间映射：
 
 ```console
 $ docker run --rm alpine cat /proc/self/uid_map
 ```
 
-With ECI turned on:
+启用 ECI 时：
 
 ```text
 0     100000      65536
 ```
 
-This shows the container's root user (0) maps to an unprivileged user (100000) in the Docker Desktop VM, with a range of 64K user IDs. Each container gets an exclusive user ID range for isolation.
+这表明容器的 root 用户（0）映射到 Docker Desktop VM 中的一个非特权用户（100000），范围为 64K 个用户 ID。每个容器都会获得一个独占的用户 ID 范围以实现隔离。
 
-With ECI turned off:
+关闭 ECI 时：
 
 ```text
 0          0 4294967295
 ```
 
-This shows the container root user (0) maps directly to the VM root user (0), providing less isolation.
+这表明容器的 root 用户（0）直接映射到 VM 的 root 用户（0），提供的隔离较少。
 
-### Check container runtime
+### 检查容器运行时
 
-Verify the container runtime being used:
+验证正在使用的容器运行时：
 
 ```console
 $ docker inspect --format='{{.HostConfig.Runtime}}' <container_name>
 ```
 
-With ECI turned on, it turns `sysbox-runc`. With ECI turned off, it returns
-`runc`.
+启用 ECI 时，它返回 `sysbox-runc`。关闭 ECI 时，它返回 `runc`。
 
-### Test security restrictions
+### 测试安全限制
 
-Verify that ECI security restrictions are active.
+验证 ECI 安全限制是否激活。
 
-Test namespace sharing:
+测试命名空间共享：
 
 ```console
 $ docker run -it --rm --pid=host alpine
 ```
 
-With ECI turned on, this command fails with an error about Sysbox containers
-not being able to share namespaces with the host.
+启用 ECI 时，此命令会失败，并显示关于 Sysbox 容器无法与主机共享命名空间的错误。
 
-Test Docker socket access:
+测试 Docker 套接字访问：
 
 ```console
 $ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock alpine
 ```
 
-With ECI turned on, this command fails unless you've configured Docker socket exceptions for trusted images.
+启用 ECI 时，除非您已为可信镜像配置了 Docker 套接字异常，否则此命令会失败。
 
-## What users see with enforced ECI
+## 强制启用 ECI 时用户看到的内容
 
-When administrators enforce Enhanced Container Isolation through
-Settings Management:
+当管理员通过设置管理强制启用增强容器隔离时：
 
-- The **Use Enhanced Container Isolation** setting appears turned on in
-Docker Desktop settings.
-- If set to `"locked": true`, the setting is locked and greyed out.
-- All new containers automatically use Linux user namespaces.
-- Existing development workflows continue to work without modification.
-- Users see `sysbox-runc` as the container runtime in `docker inspect` output.
+- **使用增强容器隔离** 设置在 Docker Desktop 设置中显示为已启用。
+- 如果设置为 `"locked": true`，该设置将被锁定并显示为灰色。
+- 所有新容器自动使用 Linux 用户命名空间。
+- 现有开发工作流程无需修改即可继续工作。
+- 用户在 `docker inspect` 输出中看到 `sysbox-runc` 作为容器运行时。
 
-## Next steps
+## 后续步骤
 
-- Review [Configure Docker socket exceptions and advanced settings](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/config.md).
-- Review [Enhanced Container Isolation limitations](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md).
+- 查看[配置 Docker 套接字异常和高级设置](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/config.md)。
+- 查看[增强容器隔离限制](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md)。

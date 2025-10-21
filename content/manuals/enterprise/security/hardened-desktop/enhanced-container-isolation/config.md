@@ -1,8 +1,8 @@
 ---
-title: Configure Docker socket exceptions and advanced settings
-linkTitle: Configure advanced settings
-description: Configure Docker socket exceptions and advanced settings for Enhanced Container Isolation
-keywords: enhanced container isolation, docker socket, configuration, testcontainers, admin settings
+title: 配置 Docker 套接字异常和高级设置
+linkTitle: 配置高级设置
+description: 配置增强容器隔离的 Docker 套接字异常和高级设置
+keywords: 增强容器隔离, docker 套接字, 配置, testcontainers, 管理员设置
 aliases:
  - /desktop/hardened-desktop/enhanced-container-isolation/config/
  - /security/for-admins/hardened-desktop/enhanced-container-isolation/config/
@@ -11,37 +11,36 @@ weight: 20
 
 {{< summary-bar feature_name="Hardened Docker Desktop" >}}
 
-This page shows you how to configure Docker socket exceptions and other advanced settings for Enhanced Container Isolation (ECI). These configurations enable trusted tools like Testcontainers to work with ECI while maintaining security.
+本页面介绍如何为增强容器隔离（ECI）配置 Docker 套接字异常和其他高级设置。这些配置使 Testcontainers 等可信工具能够与 ECI 协同工作，同时保持安全性。
 
-## Docker socket mount permissions
+## Docker 套接字挂载权限
 
-By default, Enhanced Container Isolation blocks containers from mounting the Docker socket to prevent malicious access to Docker Engine. However, some tools require Docker socket access.
+默认情况下，增强容器隔离会阻止容器挂载 Docker 套接字，以防止对 Docker 引擎的恶意访问。但是，某些工具需要访问 Docker 套接字。
 
-Common scenarios requiring Docker socket access include:
+常见需要访问 Docker 套接字的场景包括：
 
-- Testing frameworks: Testcontainers, which manages test containers
-- Build tools: Paketo buildpacks that create ephemeral build containers
-- CI/CD tools: Tools that manage containers as part of deployment pipelines
-- Development utilities: Docker CLI containers for container management
+- **测试框架**：如 Testcontainers，用于管理测试容器
+- **构建工具**：如 Paketo buildpacks，用于创建临时构建容器
+- **CI/CD 工具**：作为部署管道的一部分管理容器的工具
+- **开发实用程序**：用于容器管理的 Docker CLI 容器
 
-## Configure socket exceptions
+## 配置套接字异常
 
-Configure Docker socket exceptions using Settings Management:
+使用设置管理来配置 Docker 套接字异常：
 
 {{< tabs >}}
-{{< tab name="Admin Console" >}}
+{{< tab name="管理控制台" >}}
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your organization from the top-left account drop-down.
-1. Go to **Admin Console** > **Desktop Settings Management**.
-1. [Create or edit a setting policy](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md).
-1. Find **Enhanced Container Isolation** settings.
-1. Configure **Docker socket access control** with your trusted images and
-command restrictions.
+1. 登录 [Docker Home](https://app.docker.com) 并从左上角账户下拉菜单中选择您的组织。
+1. 转到 **管理控制台** > **桌面设置管理**。
+1. [创建或编辑设置策略](/manuals/enterprise/security/hardened-desktop/settings-management/configure-admin-console.md)。
+1. 找到 **增强容器隔离** 设置。
+1. 使用您的可信镜像和命令限制配置 **Docker 套接字访问控制**。
 
 {{< /tab >}}
-{{< tab name="JSON file" >}}
+{{< tab name="JSON 文件" >}}
 
-Create an [`admin-settings.json` file](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md) and add:
+创建一个 [`admin-settings.json` 文件](/manuals/enterprise/security/hardened-desktop/settings-management/configure-json-file.md) 并添加：
 
 ```json
 {
@@ -70,20 +69,20 @@ Create an [`admin-settings.json` file](/manuals/enterprise/security/hardened-des
 {{< /tab >}}
 {{< /tabs >}}
 
-## Image allowlist configuration
+## 镜像允许列表配置
 
-The `imageList` defines which container images can mount the Docker socket.
+`imageList` 定义了哪些容器镜像可以挂载 Docker 套接字。
 
-### Image reference formats
+### 镜像引用格式
 
-| Format  | Description |
+| 格式  | 描述 |
 | :---------------------- | :---------- |
-| `<image_name>[:<tag>]`  | Name of the image, with optional tag. If the tag is omitted, the `:latest` tag is used. If the tag is the wildcard `*`, then it means "any tag for that image." |
-| `<image_name>@<digest>` | Name of the image, with a specific repository digest (e.g., as reported by `docker buildx imagetools inspect <image>`). This means only the image that matches that name and digest is allowed. |
+| `<image_name>[:<tag>]`  | 镜像名称，可选标签。如果省略标签，则使用 `:latest` 标签。如果标签是通配符 `*`，则表示"该镜像的任何标签"。 |
+| `<image_name>@<digest>` | 镜像名称，带有特定的仓库摘要（例如，由 `docker buildx imagetools inspect <image>` 报告）。这意味着只允许匹配该名称和摘要的镜像。 |
 
-### Example configurations
+### 配置示例
 
-Basic allowlist for testing tools:
+测试工具的基本允许列表：
 
 ```json
 "imageList": {
@@ -95,7 +94,7 @@ Basic allowlist for testing tools:
 }
 ```
 
-Wildcard allowlist (Docker Desktop 4.36 and later):
+通配符允许列表（Docker Desktop 4.36 及更高版本）：
 
 ```json
 "imageList": {
@@ -105,30 +104,29 @@ Wildcard allowlist (Docker Desktop 4.36 and later):
 
 > [!WARNING]
 >
-> Using `"*"` allows all containers to mount the Docker socket, which reduces security. Only use this when explicitly listing allowed images isn't feasible.
+> 使用 `"*"` 允许所有容器挂载 Docker 套接字，这会降低安全性。仅在无法明确列出允许的镜像时使用。
 
-### Security validation
+### 安全验证
 
-Docker Desktop validates allowed images by:
+Docker Desktop 通过以下方式验证允许的镜像：
 
-1. Downloading image digests from registries for allowed images
-1. Comparing container image digests against the allowlist when containers start
-1. Blocking containers whose digests don't match allowed images
+1. 从仓库下载允许镜像的摘要
+1. 在容器启动时将容器镜像摘要与允许列表进行比较
+1. 阻止摘要与允许镜像不匹配的容器
 
-This prevents bypassing restrictions by re-tagging unauthorized images:
+这可以防止通过重新标记未经授权的镜像来绕过限制：
 
 ```console
 $ docker tag malicious-image docker:cli
 $ docker run -v /var/run/docker.sock:/var/run/docker.sock docker:cli
-# This fails because the digest doesn't match the real docker:cli image
+# 此操作失败，因为摘要与真实的 docker:cli 镜像不匹配
 ```
 
-## Derived images support
+## 派生镜像支持
 
-For tools like Paketo buildpacks that create ephemeral local images, you can
-allow images derived from trusted base images.
+对于像 Paketo buildpacks 这样创建临时本地镜像的工具，您可以允许从可信基础镜像派生的镜像。
 
-### Enable derived images
+### 启用派生镜像
 
 ```json
 "imageList": {
@@ -139,20 +137,20 @@ allow images derived from trusted base images.
 }
 ```
 
-When `allowDerivedImages` is true, local images built from allowed base images (using `FROM` in Dockerfile) also gain Docker socket access.
+当 `allowDerivedImages` 为 true 时，从允许的基础镜像（在 Dockerfile 中使用 `FROM`）构建的本地镜像也会获得 Docker 套接字访问权限。
 
-### Derived images requirements
+### 派生镜像要求
 
-- Local images only: Derived images must not exist in remote registries
-- Base image available: The parent image must be pulled locally first
-- Performance impact: Adds up to 1 second to container startup for validation
-- Version compatibility: Full wildcard support requires Docker Desktop 4.36+
+- **仅限本地镜像**：派生镜像不得存在于远程仓库中
+- **基础镜像可用**：必须先在本地拉取父镜像
+- **性能影响**：为验证增加最多 1 秒的容器启动时间
+- **版本兼容性**：完整的通配符支持需要 Docker Desktop 4.36+
 
-## Command restrictions
+## 命令限制
 
-### Deny list (recommended)
+### 拒绝列表（推荐）
 
-Blocks specified commands while allowing all others:
+阻止指定命令，同时允许所有其他命令：
 
 ```json
 "commandList": {
@@ -161,9 +159,9 @@ Blocks specified commands while allowing all others:
 }
 ```
 
-### Allow list
+### 允许列表
 
-Only allows specified commands while blocking all others:
+仅允许指定命令，同时阻止所有其他命令：
 
 ```json
 "commandList": {
@@ -172,31 +170,31 @@ Only allows specified commands while blocking all others:
 }
 ```
 
-### Command wildcards
+### 命令通配符
 
-| Wildcard | Blocks/allows |
+| 通配符 | 阻止/允许 |
 | :---------------- | :---------- |
-| `"container\*"`     | All "docker container ..." commands |
-| `"image\*"`         | All "docker image ..." commands |
-| `"volume\*"`        | All "docker volume ..." commands |
-| `"network\*"`       | All "docker network ..." commands |
-| `"build\*"`         | All "docker build ..." commands |
-| `"system\*"`        | All "docker system ..." commands |
+| `"container\*"`     | 所有 "docker container ..." 命令 |
+| `"image\*"`         | 所有 "docker image ..." 命令 |
+| `"volume\*"`        | 所有 "docker volume ..." 命令 |
+| `"network\*"`       | 所有 "docker network ..." 命令 |
+| `"build\*"`         | 所有 "docker build ..." 命令 |
+| `"system\*"`        | 所有 "docker system ..." 命令 |
 
-### Command blocking example
+### 命令阻止示例
 
-When a blocked command is executed:
+当执行被阻止的命令时：
 
 ```console
 / # docker push myimage
 Error response from daemon: enhanced container isolation: docker command "/v1.43/images/myimage/push?tag=latest" is blocked; if you wish to allow it, configure the docker socket command list in the Docker Desktop settings.
 ```
 
-## Common configuration examples
+## 常见配置示例
 
-### Testcontainers setup
+### Testcontainers 设置
 
-For Java/Python testing with Testcontainers:
+对于使用 Testcontainers 的 Java/Python 测试：
 
 ```json
 "dockerSocketMount": {
@@ -213,9 +211,9 @@ For Java/Python testing with Testcontainers:
 }
 ```
 
-### CI/CD pipeline tools
+### CI/CD 管道工具
 
-For controlled CI/CD container management:
+用于受控的 CI/CD 容器管理：
 
 ```json
 "dockerSocketMount": {
@@ -232,9 +230,9 @@ For controlled CI/CD container management:
 }
 ```
 
-### Development environments
+### 开发环境
 
-For local development with Docker-in-Docker:
+用于使用 Docker-in-Docker 的本地开发：
 
 ```json
 "dockerSocketMount": {
@@ -251,33 +249,33 @@ For local development with Docker-in-Docker:
 }
 ```
 
-## Security recommendations
+## 安全建议
 
-### Image allowlist best practices
+### 镜像允许列表最佳实践
 
-- Be restrictive: Only allow images you absolutely trust and need
-- Use wildcards carefully: Tag wildcards (`*`) are convenient but less secure than specific tags
-- Regular reviews: Periodically review and update your allowlist
-- Digest pinning: Use digest references for maximum security in critical environments
+- **严格限制**：仅允许您绝对信任和需要的镜像
+- **谨慎使用通配符**：标签通配符（`*`）虽然方便，但不如特定标签安全
+- **定期审查**：定期审查和更新您的允许列表
+- **摘要固定**：在关键环境中使用摘要引用以获得最大安全性
 
-### Command restrictions
+### 命令限制
 
-- Default to deny: Start with a deny list blocking dangerous commands like `push` and `build`
-- Principle of least privilege: Only allow commands your tools actually need
-- Monitor usage: Track which commands are being blocked to refine your configuration
+- **默认拒绝**：从拒绝列表开始，阻止 `push` 和 `build` 等危险命令
+- **最小权限原则**：仅允许您的工具实际需要的命令
+- **监控使用情况**：跟踪哪些命令被阻止以完善您的配置
 
-### Monitoring and maintenance
+### 监控和维护
 
-- Regular validation: Test your configuration after Docker Desktop updates, as image digests may change.
-- Handle digest mismatches: If allowed images are unexpectedly blocked:
+- **定期验证**：在 Docker Desktop 更新后测试您的配置，因为镜像摘要可能会发生变化。
+- **处理摘要不匹配**：如果允许的镜像被意外阻止：
     ```console
     $ docker image rm <image>
     $ docker pull <image>
     ```
 
-This resolves digest mismatches when upstream images are updated.
+这可以解决上游镜像更新时的摘要不匹配问题。
 
-## Next steps
+## 后续步骤
 
-- Review [Enhanced Container Isolation limitations](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md).
-- Review [Enhanced Container Isolation FAQs](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/faq.md).
+- 查看[增强容器隔离限制](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md)。
+- 查看[增强容器隔离常见问题](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/faq.md)。

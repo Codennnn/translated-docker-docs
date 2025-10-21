@@ -1,80 +1,80 @@
 ---
-description: Learn about provisioning users for your SSO configuration.
-keywords: provision users, provisioning, JIT, SCIM, group mapping, sso, docker admin, admin, security
-title: Provision users
-linkTitle: Provision
+description: 了解如何为您的 SSO 配置配置用户。
+keywords: 配置用户, 配置, JIT, SCIM, 组映射, sso, docker 管理员, 管理员, 安全
+title: 配置用户
+linkTitle: 配置
 weight: 20
 aliases:
  - /security/for-admins/provisioning/
 grid:
-  - title: "Just-in-Time (JIT) provisioning"
-    description: "Set up automatic user creation on first sign-in. Ideal for smaller teams with minimal setup requirements."
+  - title: "即时（JIT）配置"
+    description: "设置首次登录时自动创建用户。适合设置需求最少的小型团队。"
     icon: "schedule"
     link: "just-in-time/"
-  - title: "SCIM provisioning"
-    description: "Enable continuous user data synchronization between your IdP and Docker. Best for larger organizations."
+  - title: "SCIM 配置"
+    description: "在您的 IdP 和 Docker 之间启用持续的用户数据同步。最适合大型组织。"
     icon: "sync"
     link: "scim/"
-  - title: "Group mapping"
-    description: "Configure role-based access control using IdP groups. Perfect for strict access control requirements."
+  - title: "组映射"
+    description: "使用 IdP 组配置基于角色的访问控制。完美满足严格的访问控制需求。"
     icon: "group"
     link: "group-mapping/"
 ---
 
 {{< summary-bar feature_name="SSO" >}}
 
-After configuring your SSO connection, the next step is to provision users. This process ensures that users can access your organization through automated user management.
+配置 SSO 连接后，下一步是配置用户。此过程确保用户可以通过自动化用户管理访问您的组织。
 
-This page provides an overview of user provisioning and the supported provisioning methods.
+本页面提供用户配置概述和支持的配置方法。
 
-## What is provisioning?
+## 什么是配置？
 
-Provisioning helps manage users by automating tasks like account creation, updates, and deactivation based on data from your identity provider (IdP). There are three methods for user provisioning, each offering benefits for different organizational needs:
+配置通过自动执行账户创建、更新和停用等任务来帮助管理用户，这些任务基于来自您的身份提供程序（IdP）的数据。用户配置有三种方法，每种方法都为不同的组织需求提供优势：
 
-| Provisioning method | Description | Default setting in Docker | Recommended for |
+| 配置方法 | 描述 | Docker 中的默认设置 | 推荐用于 |
 | :--- | :--- | :------------- | :--- |
-| Just-in-Time (JIT) | Automatically creates and provisions user accounts when they first sign in via SSO | Enabled by default | Organizations needing minimal setup, smaller teams, or low-security environments |
-| System for Cross-domain Identity Management (SCIM) | Continuously syncs user data between your IdP and Docker, ensuring user attributes remain updated without manual intervention | Disabled by default | Larger organizations or environments with frequent changes in user information or roles |
-| Group mapping | Maps user groups from your IdP to specific roles and permissions within Docker, enabling fine-grained access control based on group membership | Disabled by default | Organizations requiring strict access control and role-based user management |
+| 即时（JIT） | 用户首次通过 SSO 登录时自动创建和配置用户账户 | 默认启用 | 需要最少设置的组织、小型团队或低安全环境 |
+| 跨域身份管理系统（SCIM） | 在您的 IdP 和 Docker 之间持续同步用户数据，确保用户属性保持最新而无需手动干预 | 默认禁用 | 大型组织或用户信息或角色频繁变化的环境 |
+| 组映射 | 将用户组从您的 IdP 映射到 Docker 中的特定角色和权限，实现基于组成员身份的精细访问控制 | 默认禁用 | 需要严格访问控制和基于角色的用户管理的组织 |
 
-## Default provisioning setup
+## 默认配置设置
 
-By default, Docker enables JIT provisioning when you configure an SSO connection. With JIT enabled, user accounts are automatically created the first time a user signs in using your SSO flow.
+默认情况下，当您配置 SSO 连接时，Docker 会启用 JIT 配置。启用 JIT 后，用户首次使用您的 SSO 流程登录时会自动创建用户账户。
 
-JIT provisioning may not provide sufficient control or security for some organizations. In such cases, SCIM or group mapping can be configured to give administrators more control over user access and attributes.
+对于某些组织，JIT 配置可能无法提供足够的控制或安全性。在这种情况下，可以配置 SCIM 或组映射，使管理员能够更好地控制用户访问和属性。
 
-## SSO attributes
+## SSO 属性
 
-When a user signs in through SSO, Docker obtains several attributes from your IdP to manage the user's identity and permissions. These attributes include:
+当用户通过 SSO 登录时，Docker 会从您的 IdP 获取多个属性来管理用户的身份和权限。这些属性包括：
 
-- Email address: The unique identifier for the user
-- Full name: The user's complete name
-- Groups: Optional. Used for group-based access control
-- Docker Org: Optional. Specifies the organization the user belongs to
-- Docker Team: Optional. Defines the team the user belongs to within the organization
-- Docker Role: Optional. Determines the user's permissions within Docker
-- Docker session minutes: Optional. Sets the session duration before users must re-authenticate with their IdP. Must be a positive integer greater than 0. If not provided, default session timeouts apply
+- 电子邮件地址：用户的唯一标识符
+- 全名：用户的完整名称
+- 组：可选。用于基于组的访问控制
+- Docker 组织：可选。指定用户所属的组织
+- Docker 团队：可选。定义用户在组织内所属的团队
+- Docker 角色：可选。确定用户在 Docker 中的权限
+- Docker 会话分钟数：可选。设置用户必须使用其 IdP 重新认证之前的会话持续时间。必须是大于 0 的正整数。如果未提供，则应用默认会话超时
 
 > [!NOTE]
 >
-> Default session timeouts apply when Docker session minutes is not specified. Docker Desktop sessions expire after 90 days or 30 days of inactivity. Docker Hub and Docker Home sessions expire after 24 hours.
+> 当未指定 Docker 会话分钟数时，应用默认会话超时。Docker Desktop 会话在 90 天后或 30 天不活动后过期。Docker Hub 和 Docker Home 会话在 24 小时后过期。
 
-## SAML attribute mapping
+## SAML 属性映射
 
-If your organization uses SAML for SSO, Docker retrieves these attributes from the SAML assertion message. Different IdPs may use different names for these attributes.
+如果您的组织使用 SAML 进行 SSO，Docker 会从 SAML 断言消息中检索这些属性。不同的 IdP 可能对这些属性使用不同的名称。
 
-| SSO Attribute	| SAML Assertion Message Attributes |
+| SSO 属性	| SAML 断言消息属性 |
 | :--- | :--- |
-| Email address |	`"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"`, `email` |
-| Full name	| `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"`, `name`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"` |
-| Groups (optional) |	`"http://schemas.xmlsoap.org/claims/Group"`, `"http://schemas.microsoft.com/ws/2008/06/identity/claims/groups"`, `Groups`, `groups` |
-| Docker Org (optional)	| `dockerOrg` |
-| Docker Team (optional) |	`dockerTeam` |
-| Docker Role (optional) |	`dockerRole` |
-| Docker session minutes (optional) | `dockerSessionMinutes`, must be a positive integer > 0 |
+| 电子邮件地址 |	`"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"`, `email` |
+| 全名	| `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"`, `name`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"`, `"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"` |
+| 组（可选） |	`"http://schemas.xmlsoap.org/claims/Group"`, `"http://schemas.microsoft.com/ws/2008/06/identity/claims/groups"`, `Groups`, `groups` |
+| Docker 组织（可选）	| `dockerOrg` |
+| Docker 团队（可选） |	`dockerTeam` |
+| Docker 角色（可选） |	`dockerRole` |
+| Docker 会话分钟数（可选） | `dockerSessionMinutes`，必须是 > 0 的正整数 |
 
-## Next steps
+## 下一步
 
-Choose the provisioning method that best fits your organization's needs:
+选择最适合您组织需求的配置方法：
 
 {{< grid >}}

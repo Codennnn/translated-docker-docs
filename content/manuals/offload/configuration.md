@@ -1,90 +1,69 @@
 ---
-title: Configure Docker Offload
-linktitle: Configure
+title: 配置 Docker Offload
+linktitle: 配置
 weight: 20
-description: Learn how to configure build settings for Docker Offload.
-keywords: cloud, configuration, settings, cloud builder, GPU, disk allocation, private resources, firewall
+description: 了解如何配置 Docker Offload 的构建设置。
+keywords: 云端, 配置, 设置, 云构建器, GPU, 磁盘分配, 私有资源, 防火墙
 ---
 
-To use Docker Offload, you must start it in Docker Desktop. For more details,
-see the [Docker Offload quickstart](/offload/quickstart/).
+要使用 Docker Offload，您必须在 Docker Desktop 中启动它。更多详细信息，请参阅 [Docker Offload 快速入门](/offload/quickstart/)。
 
-Settings for the cloud builders in Docker Offload can be further configured, in
-addition to settings for an entire organization, through **Offload settings** in
-the Docker Offload dashboard.
+除了整个组织的设置外，Docker Offload 中的云构建器设置还可以通过 Docker Offload 仪表板中的 **Offload 设置** 进行进一步配置。
 
 > [!NOTE]
 >
-> To view usage and configure billing for Docker Offload, see [Docker Offload
-> usage and billing](/offload/usage/).
+> 要查看 Docker Offload 的使用情况并配置计费，请参阅 [Docker Offload 使用和计费](/offload/usage/)。
 
-## Offload settings
+## Offload 设置
 
-The **Offload settings** page in Docker Home lets you configure disk
-allocation, private resource access, and firewall settings for your cloud
-builders in your organization.
+Docker 主页中的 **Offload 设置** 页面允许您为组织中的云构建器配置磁盘分配、私有资源访问和防火墙设置。
 
-To view the **Offload settings** page:
+要查看 **Offload 设置** 页面：
 
-1. Go to [Docker Home](https://app.docker.com/).
-2. Select the account for which you want to manage Docker Offload.
-3. Select **Offload** > **Offload settings**.
+1. 访问 [Docker 主页](https://app.docker.com/)。
+2. 选择要管理 Docker Offload 的账户。
+3. 选择 **Offload** > **Offload 设置**。
 
-The following sections describe the available settings.
+以下部分介绍了可用的设置。
 
-### Disk allocation
+### 磁盘分配
 
-The **Disk allocation** setting lets you control how much of the available
-storage is dedicated to the build cache. A lower allocation increases storage
-available for active builds.
+**磁盘分配** 设置允许您控制有多少可用存储专用于构建缓存。较低的分配会增加活动构建的可用存储。
 
-Adjust the **Disk allocation** slider to specify the percentage of storage used
-for build caching.
+调整 **磁盘分配** 滑块以指定用于构建缓存的存储百分比。
 
-Any changes take effect immediately.
+任何更改都会立即生效。
 
 > [!TIP]
 >
-> If you build very large images, consider allocating less storage for caching.
+> 如果您构建非常大的镜像，请考虑为缓存分配较少的存储空间。
 
-### Build cache space
+### 构建缓存空间
 
-Your subscription includes the following Build cache space:
+您的订阅包含以下构建缓存空间：
 
-| Subscription | Build cache space |
-|--------------|-------------------|
-| Personal     | N/A               |
-| Pro          | 50GB              |
-| Team         | 100GB             |
-| Business     | 200GB             |
+| 订阅类型 | 构建缓存空间 |
+|----------|--------------|
+| 个人版   | 不适用       |
+| 专业版   | 50GB         |
+| 团队版   | 100GB        |
+| 商业版   | 200GB        |
 
-To get more Build cache space, [upgrade your subscription](/manuals/subscription/change.md).
+要获取更多构建缓存空间，请 [升级您的订阅](/manuals/subscription/change.md)。
 
-### Private resource access
+### 私有资源访问
 
-Private resource access lets cloud builders pull images and packages from
-private resources. This feature is useful when builds rely on self-hosted
-artifact repositories or private OCI registries.
+私有资源访问允许云构建器从私有资源拉取镜像和包。当构建依赖于自托管工件仓库或私有 OCI 注册表时，此功能非常有用。
 
-For example, if your organization hosts a private [PyPI](https://pypi.org/)
-repository on a private network, Docker Build Cloud would not be able to access
-it by default, since the cloud builder is not connected to your private network.
+例如，如果您的组织在私有网络上托管私有 [PyPI](https://pypi.org/) 仓库，Docker Build Cloud 默认将无法访问它，因为云构建器未连接到您的私有网络。
 
-To enable your cloud builders to access your private resources, enter the host
-name and port of your private resource and then select **Add**.
+要启用云构建器访问您的私有资源，请输入您私有资源的主机名和端口，然后选择 **添加**。
 
-#### Authentication
+#### 身份验证
 
-If your internal artifacts require authentication, make sure that you
-authenticate with the repository either before or during the build. For internal
-package repositories for npm or PyPI, use [build
-secrets](/manuals/build/building/secrets.md) to authenticate during the build.
-For internal OCI registries, use `docker login` to authenticate before building.
+如果您的内部工件需要身份验证，请确保在构建之前或构建期间对仓库进行身份验证。对于 npm 或 PyPI 的内部包仓库，使用 [构建密钥](/manuals/build/building/secrets.md) 在构建期间进行身份验证。对于内部 OCI 注册表，请在构建前使用 `docker login` 进行身份验证。
 
-Note that if you use a private registry that requires authentication, you will
-need to authenticate with `docker login` twice before building. This is because
-the cloud builder needs to authenticate with Docker to use the cloud builder,
-and then again to authenticate with the private registry.
+请注意，如果您使用需要身份验证的私有注册表，您需要在构建前使用 `docker login` 进行两次身份验证。这是因为云构建器需要先向 Docker 进行身份验证以使用云构建器，然后再向私有注册表进行身份验证。
 
 ```console
 $ echo $DOCKER_PAT | docker login docker.io -u <username> --password-stdin
@@ -92,13 +71,11 @@ $ echo $REGISTRY_PASSWORD | docker login registry.example.com -u <username> --pa
 $ docker build --builder <cloud-builder> --tag registry.example.com/<image> --push .
 ```
 
-### Firewall
+### 防火墙
 
-Firewall settings let you restrict cloud builder egress traffic to specific IP
-addresses. This helps enhance security by limiting external network egress from
-the builder.
+防火墙设置允许您将云构建器的出口流量限制为特定的 IP 地址。这通过限制构建器的外部网络出口来帮助增强安全性。
 
-1. Select **Enable firewall: Restrict cloud builder egress to specific public IP address**.
-2. Enter the IP address you want to allow.
-3. Select **Add** to apply the restriction.
+1. 选择 **启用防火墙：将云构建器出口限制为特定的公共 IP 地址**。
+2. 输入您要允许的 IP 地址。
+3. 选择 **添加** 以应用限制。
 
