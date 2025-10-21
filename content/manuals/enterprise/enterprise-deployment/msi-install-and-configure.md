@@ -1,7 +1,7 @@
 ---
-title: MSI installer
-description: Understand how to use the MSI installer. Also explore additional configuration options.
-keywords: msi, windows, docker desktop, install, deploy, configure, admin, mdm
+title: MSI 安装程序
+description: 了解如何使用 MSI 安装程序，并探索其他配置选项。
+keywords: msi, windows, docker desktop, 安装, 部署, 配置, 管理员, mdm
 tags: [admin]
 weight: 10
 aliases:
@@ -14,123 +14,123 @@ aliases:
 
 {{< summary-bar feature_name="MSI installer" >}}
 
-The MSI package supports various MDM (Mobile Device Management) solutions, making it ideal for bulk installations and eliminating the need for manual setups by individual users. With this package, IT administrators can ensure standardized, policy-driven installations of Docker Desktop, enhancing efficiency and software management across their organizations.
+MSI 安装包支持各种 MDM（移动设备管理）解决方案，非常适合批量安装，无需用户手动设置。通过此安装包，IT 管理员可以确保 Docker Desktop 的标准化、策略驱动安装，从而提高组织内的效率和软件管理水平。
 
-## Install interactively
+## 交互式安装
 
-1. In [Docker Home](http://app.docker.com), choose your organization.
-2. Select **Admin Console**, then **Enterprise deployment**.
-3. From the **Windows OS** tab, select the **Download MSI installer** button.
-4. Once downloaded, double-click `Docker Desktop Installer.msi` to run the installer.
-5. After accepting the license agreement, choose the install location. By default, Docker Desktop is installed at `C:\Program Files\Docker\Docker`.
-6. Configure the Docker Desktop installation. You can:
+1. 在 [Docker Home](http://app.docker.com) 中，选择您的组织。
+2. 选择 **Admin Console**（管理控制台），然后选择 **Enterprise deployment**（企业部署）。
+3. 在 **Windows OS** 选项卡中，选择 **Download MSI installer**（下载 MSI 安装程序）按钮。
+4. 下载完成后，双击 `Docker Desktop Installer.msi` 运行安装程序。
+5. 接受许可协议后，选择安装位置。默认情况下，Docker Desktop 安装在 `C:\Program Files\Docker\Docker`。
+6. 配置 Docker Desktop 安装。您可以：
 
-    - Create a desktop shortcut
+    - 创建桌面快捷方式
 
-    - Set the Docker Desktop service startup type to automatic
+    - 将 Docker Desktop 服务启动类型设置为自动
 
-    - Disable Windows Container usage
+    - 禁用 Windows 容器使用
 
-    - Select the Docker Desktop backend: WSL or Hyper-V. If only one is supported by your system, you won't be able to choose.
-7. Follow the instructions on the installation wizard to authorize the installer and proceed with the install.
-8. When the installation is successful, select **Finish** to complete the installation process.
+    - 选择 Docker Desktop 后端：WSL 或 Hyper-V。如果您的系统只支持其中一种，将无法选择。
+7. 按照安装向导的说明授权安装程序并继续安装。
+8. 安装成功后，选择 **Finish**（完成）以完成安装过程。
 
-If your administrator account is different from your user account, you must add the user to the **docker-users** group to access features that require higher privileges, such as creating and managing the Hyper-V VM, or using Windows containers:
+如果您的管理员账户与用户账户不同，则必须将用户添加到 **docker-users** 组，才能访问需要更高权限的功能，例如创建和管理 Hyper-V 虚拟机，或使用 Windows 容器：
 
-1. Run **Computer Management** as an **administrator**.
-2. Navigate to **Local Users and Groups** > **Groups** > **docker-users**.
-3. Right-click to add the user to the group.
-4. Sign out and sign back in for the changes to take effect.
+1. 以 **管理员** 身份运行 **Computer Management**（计算机管理）。
+2. 导航到 **Local Users and Groups** > **Groups** > **docker-users**（本地用户和组 > 组 > docker-users）。
+3. 右键单击以将用户添加到该组。
+4. 注销并重新登录以使更改生效。
 
 > [!NOTE]
 >
-> When installing Docker Desktop with the MSI, in-app updates are automatically disabled. This ensures organizations can maintain version consistency and prevent unapproved updates. For Docker Desktop installed with the .exe installer, in-app updates remain supported.
+> 使用 MSI 安装 Docker Desktop 时，应用内更新会自动禁用。这确保组织可以保持版本一致性并防止未经批准的更新。对于使用 .exe 安装程序安装的 Docker Desktop，应用内更新仍然受支持。
 >
-> Docker Desktop notifies you when an update is available. To update Docker Desktop, download the latest installer from the Docker Admin Console. Navigate to the **Enterprise deployment** page.
+> 当有更新可用时，Docker Desktop 会通知您。要更新 Docker Desktop，请从 Docker 管理控制台下载最新的安装程序。导航到 **Enterprise deployment**（企业部署）页面。
 >
-> To keep up to date with new releases, check the [release notes](/manuals/desktop/release-notes.md) page.
+> 要了解最新发布版本，请查看[发布说明](/manuals/desktop/release-notes.md)页面。
 
-## Install from the command line
+## 命令行安装
 
-This section covers command line installations of Docker Desktop using PowerShell. It provides common installation commands that you can run. You can also add additional arguments which are outlined in [configuration options](#configuration-options).
+本节介绍使用 PowerShell 通过命令行安装 Docker Desktop。提供了可以运行的常见安装命令。您还可以添加[配置选项](#configuration-options)中概述的其他参数。
 
-When installing Docker Desktop, you can choose between interactive or non-interactive installations.
+安装 Docker Desktop 时，您可以选择交互式或非交互式安装。
 
-Interactive installations, without specifying `/quiet` or `/qn`, display the user interface and let you select your own properties.
+交互式安装（不指定 `/quiet` 或 `/qn`）会显示用户界面，让您选择自己的属性。
 
-When installing via the user interface it's possible to:
+通过用户界面安装时，可以：
 
-- Choose the destination folder
-- Create a desktop shortcut
-- Configure the Docker Desktop service startup type
-- Disable Windows Containers
-- Choose between the WSL or Hyper-V engine
+- 选择目标文件夹
+- 创建桌面快捷方式
+- 配置 Docker Desktop 服务启动类型
+- 禁用 Windows 容器
+- 在 WSL 或 Hyper-V 引擎之间选择
 
-Non-interactive installations are silent and any additional configuration must be passed as arguments.
+非交互式安装是无声的，任何额外配置都必须作为参数传递。
 
-### Common installation commands
+### 常见安装命令
 
 > [!IMPORTANT]
 >
-> Admin rights are required to run any of the following commands.
+> 运行以下任何命令都需要管理员权限。
 
-#### Install interactively with verbose logging
+#### 交互式安装并启用详细日志
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log"
 ```
 
-#### Install interactively without verbose logging
+#### 交互式安装且不启用详细日志
 
 ```powershell
 msiexec /i "DockerDesktop.msi"
 ```
 
-#### Install non-interactively with verbose logging
+#### 非交互式安装并启用详细日志
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /quiet
 ```
 
-#### Install non-interactively and suppressing reboots
+#### 非交互式安装并禁止重启
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /quiet /norestart
 ```
 
-#### Install non-interactively with admin settings
+#### 非交互式安装并使用管理员设置
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /quiet /norestart ADMINSETTINGS="{""configurationFileVersion"":2,""enhancedContainerIsolation"":{""value"":true,""locked"":false}}" ALLOWEDORG="your-organization"
 ```
 
-#### Install interactively and allow users to switch to Windows containers without admin rights
+#### 交互式安装并允许用户无需管理员权限即可切换到 Windows 容器
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /quiet /norestart ALLOWEDORG="your-organization" ALWAYSRUNSERVICE=1
 ```
 
-#### Install interactively specifying a PAC file
+#### 交互式安装并指定 PAC 文件
 
 ```powershell
 PowerShell
  msiexec --% /i "DockerDesktop.msi" /L*V ".\msi.log"  PROXYHTTPMODE="manual" OVERRIDEPROXYPAC="http://localhost:8080/myproxy.pac"
 ```
 
-#### Install interactively specifying a PAC script
+#### 交互式安装并指定 PAC 脚本
 
 ```powershell
 PowerShell
  msiexec --% /i "DockerDesktop.msi" /L*V ".\msi.log"  PROXYHTTPMODE="manual" OVERRIDEPROXYEMBEDDEDPAC="function FindProxyForURL(url,host) {return ""DIRECT"" ;; }"
 ```
 
-#### Install with the passive display option
+#### 使用被动显示选项安装
 
-You can use the `/passive` display option instead of `/quiet` when you want to perform a non-interactive installation but show a progress dialog.
+当您想要执行非交互式安装但显示进度对话框时，可以使用 `/passive` 显示选项代替 `/quiet`。
 
-In passive mode the installer doesn't display any prompts or error messages to the user and the installation cannot be cancelled.
+在被动模式下，安装程序不会向用户显示任何提示或错误消息，并且安装无法取消。
 
-For example:
+例如：
 
 ```powershell
 msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /passive /norestart
@@ -138,24 +138,24 @@ msiexec /i "DockerDesktop.msi" /L*V ".\msi.log" /passive /norestart
 
 > [!TIP]
 >
-> When creating a value that expects a JSON string:
+> 创建需要 JSON 字符串的值时：
 >
-> - The property expects a JSON formatted string
-> - The string should be wrapped in double quotes
-> - The string shouldn't contain any whitespace
-> - Property names are expected to be in double quotes
+> - 属性需要 JSON 格式的字符串
+> - 字符串应用双引号括起来
+> - 字符串不应包含任何空白字符
+> - 属性名应使用双引号
 
-### Common uninstall commands
+### 常见卸载命令
 
-When uninstalling Docker Desktop, you need to use the same `.msi` file that was originally used to install the application.
+卸载 Docker Desktop 时，需要使用最初用于安装应用程序的同一个 `.msi` 文件。
 
-If you no longer have the original `.msi` file, you need to use the product code associated with the installation. To find the product code, run:
+如果不再有原始 `.msi` 文件，则需要使用与安装关联的产品代码。要查找产品代码，请运行：
 
 ```powershell
 Get-WmiObject Win32_Product | Select-Object IdentifyingNumber, Name | Where-Object {$_.Name -eq "Docker Desktop"}
 ```
 
-It should return output similar to the following:
+它应该返回类似于以下的输出：
 
 ```text
 IdentifyingNumber                      Name
@@ -164,85 +164,85 @@ IdentifyingNumber                      Name
 ```
 > [!NOTE]
 >
-> This command may take some time, depending on the number of installed applications.
+> 此命令可能需要一些时间，具体取决于已安装应用程序的数量。
 
-`IdentifyingNumber` is the applications product code and can be used to uninstall Docker Desktop. For example:
+`IdentifyingNumber` 是应用程序的产品代码，可用于卸载 Docker Desktop。例如：
 
 ```powershell
 msiexec /x {10FC87E2-9145-4D7D-B493-2E99E8D8E103} /L*V ".\msi.log" /quiet
 ```
 
-#### Uninstall interactively with verbose logging
+#### 交互式卸载并启用详细日志
 
 ```powershell
 msiexec /x "DockerDesktop.msi" /L*V ".\msi.log"
 ```
 
-#### Uninstall interactively without verbose logging
+#### 交互式卸载且不启用详细日志
 
 ```powershell
 msiexec /x "DockerDesktop.msi"
 ```
 
-#### Uninstall non-interactively with verbose logging
+#### 非交互式卸载并启用详细日志
 
 ```powershell
 msiexec /x "DockerDesktop.msi" /L*V ".\msi.log" /quiet
 ```
 
-#### Uninstall non-interactively without verbose logging
+#### 非交互式卸载且不启用详细日志
 
 ```powershell
 msiexec /x "DockerDesktop.msi" /quiet
 ```
 
-### Configuration options
+### 配置选项
 
 > [!IMPORTANT]
 >
-> In addition to the following custom properties, the Docker Desktop MSI installer also supports the standard [Windows Installer command line options](https://learn.microsoft.com/en-us/windows/win32/msi/standard-installer-command-line-options).
+> 除了以下自定义属性外，Docker Desktop MSI 安装程序还支持标准 [Windows Installer 命令行选项](https://learn.microsoft.com/en-us/windows/win32/msi/standard-installer-command-line-options)。
 
-| Property | Description | Default |
+| 属性 | 描述 | 默认值 |
 | :--- | :--- | :--- |
-| `ENABLEDESKTOPSHORTCUT` | Creates a desktop shortcut. | 1 |
-| `INSTALLFOLDER` | Specifies a custom location where Docker Desktop will be installed. | C:\Program Files\Docker |
-| `ADMINSETTINGS` | Automatically creates an `admin-settings.json` file which is used to [control certain Docker Desktop settings](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md) on client machines within organizations. It must be used together with the `ALLOWEDORG` property. | None |
-| `ALLOWEDORG` | Requires the user to sign in and be part of the specified Docker Hub organization when running the application. This creates a registry key called `allowedOrgs` in `HKLM\Software\Policies\Docker\Docker Desktop`. | None |
-| `ALWAYSRUNSERVICE` | Lets users switch to Windows containers without needing admin rights | 0 |
-| `DISABLEWINDOWSCONTAINERS` | Disables the Windows containers integration | 0 |
-| `ENGINE` | Sets the Docker Engine that's used to run containers. This can be either `wsl` , `hyperv`, or `windows` | `wsl` |
-| `PROXYENABLEKERBEROSNTLM` | When set to 1, enables support for Kerberos and NTLM proxy authentication. Available with Docker Desktop 4.33 and later| 0 |
-| `PROXYHTTPMODE` | Sets the HTTP Proxy mode. This can be either `system` or `manual` | `system` |
-| `OVERRIDEPROXYHTTP` | Sets the URL of the HTTP proxy that must be used for outgoing HTTP requests. | None |
-| `OVERRIDEPROXYHTTPS` | Sets the URL of the HTTP proxy that must be used for outgoing HTTPS requests. | None |
-| `OVERRIDEPROXYEXCLUDE` | Bypasses proxy settings for the hosts and domains. Uses a comma-separated list. | None |
-| `OVERRIDEPROXYPAC` | Sets the PAC file URL. This setting takes effect only when using `manual` proxy mode. | None |
-| `OVERRIDEPROXYEMBEDDEDPAC` | Specifies an embedded PAC (Proxy Auto-Config) script. This setting takes effect only when using `manual` proxy mode and has precedence over the `OVERRIDEPROXYPAC` flag.| None |
-| `HYPERVDEFAULTDATAROOT` | Specifies the default location for the Hyper-V VM disk. | None |
-| `WINDOWSCONTAINERSDEFAULTDATAROOT` | Specifies the default location for Windows containers. | None |
-| `WSLDEFAULTDATAROOT` | Specifies the default location for the WSL distribution disk. | None |
-| `DISABLEANALYTICS` | When set to 1, analytics collection will be disabled for the MSI. For more information, see [Analytics](#analytics). | 0 |
+| `ENABLEDESKTOPSHORTCUT` | 创建桌面快捷方式。 | 1 |
+| `INSTALLFOLDER` | 指定 Docker Desktop 的自定义安装位置。 | C:\Program Files\Docker |
+| `ADMINSETTINGS` | 自动创建 `admin-settings.json` 文件，用于[控制组织内客户端计算机上的某些 Docker Desktop 设置](/manuals/enterprise/security/hardened-desktop/settings-management/_index.md)。必须与 `ALLOWEDORG` 属性一起使用。 | 无 |
+| `ALLOWEDORG` | 要求用户在运行应用程序时登录并成为指定 Docker Hub 组织的成员。这会在 `HKLM\Software\Policies\Docker\Docker Desktop` 中创建名为 `allowedOrgs` 的注册表项。 | 无 |
+| `ALWAYSRUNSERVICE` | 允许用户无需管理员权限即可切换到 Windows 容器 | 0 |
+| `DISABLEWINDOWSCONTAINERS` | 禁用 Windows 容器集成 | 0 |
+| `ENGINE` | 设置用于运行容器的 Docker 引擎。可以是 `wsl`、`hyperv` 或 `windows` | `wsl` |
+| `PROXYENABLEKERBEROSNTLM` | 设置为 1 时，启用对 Kerberos 和 NTLM 代理身份验证的支持。适用于 Docker Desktop 4.33 及更高版本| 0 |
+| `PROXYHTTPMODE` | 设置 HTTP 代理模式。可以是 `system` 或 `manual` | `system` |
+| `OVERRIDEPROXYHTTP` | 设置用于传出 HTTP 请求的 HTTP 代理 URL。 | 无 |
+| `OVERRIDEPROXYHTTPS` | 设置用于传出 HTTPS 请求的 HTTP 代理 URL。 | 无 |
+| `OVERRIDEPROXYEXCLUDE` | 绕过主机和域的代理设置。使用逗号分隔的列表。 | 无 |
+| `OVERRIDEPROXYPAC` | 设置 PAC 文件 URL。此设置仅在使用 `manual` 代理模式时生效。 | 无 |
+| `OVERRIDEPROXYEMBEDDEDPAC` | 指定嵌入式 PAC（代理自动配置）脚本。此设置仅在使用 `manual` 代理模式时生效，并且优先于 `OVERRIDEPROXYPAC` 标志。| 无 |
+| `HYPERVDEFAULTDATAROOT` | 指定 Hyper-V 虚拟机磁盘的默认位置。 | 无 |
+| `WINDOWSCONTAINERSDEFAULTDATAROOT` | 指定 Windows 容器的默认位置。 | 无 |
+| `WSLDEFAULTDATAROOT` | 指定 WSL 发行版磁盘的默认位置。 | 无 |
+| `DISABLEANALYTICS` | 设置为 1 时，将为 MSI 禁用分析收集。更多信息，请参阅[分析](#analytics)。 | 0 |
 
 
-Additionally, you can also use `/norestart` or `/forcerestart` to control reboot behaviour.
+此外，您还可以使用 `/norestart` 或 `/forcerestart` 来控制重启行为。
 
-By default, the installer reboots the machine after a successful installation. When run silently, the reboot is automatic and the user is not prompted.
+默认情况下，安装程序在成功安装后重启计算机。以静默方式运行时，重启是自动的，不会提示用户。
 
-## Analytics
+## 分析
 
-The MSI installer collects anonymous usage statistics relating to installation only. This is to better understand user behaviour and to improve the user experience by identifying and addressing issues or optimizing popular features.
+MSI 安装程序仅收集与安装相关的匿名使用统计信息。这是为了更好地了解用户行为，并通过识别和解决问题或优化热门功能来改善用户体验。
 
-### How to opt-out
+### 如何选择退出
 
 {{< tabs >}}
-{{< tab name="From the GUI" >}}
+{{< tab name="通过 GUI" >}}
 
-When you install Docker Desktop from the default installer GUI, select the **Disable analytics** checkbox located on the bottom-left corner of the **Welcome** dialog.
+当您使用默认安装程序 GUI 安装 Docker Desktop 时，选择位于 **Welcome**（欢迎）对话框左下角的 **Disable analytics**（禁用分析）复选框。
 
 {{< /tab >}}
-{{< tab name="From the command line" >}}
+{{< tab name="通过命令行" >}}
 
-When you install Docker Desktop from the command line, use the `DISABLEANALYTICS` property.
+当您通过命令行安装 Docker Desktop 时，使用 `DISABLEANALYTICS` 属性。
 
 ```powershell
 msiexec /i "win\msi\bin\en-US\DockerDesktop.msi" /L*V ".\msi.log" DISABLEANALYTICS=1
@@ -251,20 +251,20 @@ msiexec /i "win\msi\bin\en-US\DockerDesktop.msi" /L*V ".\msi.log" DISABLEANALYTI
 {{< /tab >}}
 {{< /tabs >}}
 
-### Persistence
+### 持久性
 
-If you decide to disable analytics for an installation, your choice is persisted in the registry and honoured across future upgrades and uninstalls.
+如果您决定为安装禁用分析，您的选择将保存在注册表中，并在未来的升级和卸载中受到尊重。
 
-However, the key is removed when Docker Desktop is uninstalled and must be configured again via one of the previous methods.
+但是，当卸载 Docker Desktop 时，该注册表项会被删除，必须通过前述方法之一重新配置。
 
-The registry key is as follows:
+注册表项如下：
 
 ```powershell
 SOFTWARE\Docker Inc.\Docker Desktop\DisableMsiAnalytics
 ```
 
-When analytics is disabled, this key is set to `1`.
+当分析被禁用时，此项设置为 `1`。
 
-## Additional resources
+## 其他资源
 
-- [Explore the FAQs](/manuals/enterprise/enterprise-deployment/faq.md)
+- [探索常见问题](/manuals/enterprise/enterprise-deployment/faq.md)

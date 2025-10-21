@@ -1,95 +1,84 @@
 ---
-title: Create your organization
+title: 创建组织
 weight: 10
-description: Learn how to create an organization.
-keywords: docker organizations, organization, create organization, docker teams, docker admin console, organization management
+description: 了解如何创建组织。
+keywords: docker 组织, 组织, 创建组织, docker 团队, docker 管理控制台, 组织管理
 aliases:
   - /docker-hub/orgs/
 ---
 
 {{< summary-bar feature_name="Admin orgs" >}}
 
-This page describes how to create an organization.
+本页面描述如何创建组织。
 
-## Prerequisites
+## 先决条件
 
-Before you begin creating an organization:
+在开始创建组织之前：
 
-- You need a [Docker ID](/accounts/create-account/)
-- Review the [Docker subscriptions and features](../../subscription/details.md)
-  to determine what subscription to choose for your organization
+- 您需要一个 [Docker ID](/accounts/create-account/)
+- 查看 [Docker 订阅和功能](../../subscription/details.md)
+  以确定为您的组织选择哪种订阅
 
-## Create an organization
+## 创建组织
 
-There are multiple ways to create an organization. You can either:
+有多种方式可以创建组织。您可以：
 
-- Create a new organization using the **Create Organization** option in the
-Admin Console or Docker Hub
-- Convert an existing user account to an organization
+- 使用管理控制台或 Docker Hub 中的 **创建组织** 选项创建新组织
+- 将现有用户账户转换为组织
 
-The following section contains instructions on how to create a new organization. For prerequisites and
-detailed instructions on converting an existing user account to an organization, see
-[Convert an account into an organization](/manuals/admin/organization/convert-account.md).
+以下部分包含如何创建新组织的说明。有关将现有用户账户转换为组织的先决条件和详细说明，请参阅
+[将账户转换为组织](/manuals/admin/organization/convert-account.md)。
 
-To create an organization:
+要创建组织：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and navigate to the bottom
-of the organization list.
-1. Select **Create new organization**.
-1. Choose a subscription for your organization, a billing cycle, and specify how many seats you need. See [Docker Pricing](https://www.docker.com/pricing/) for details on the features offered in the Team and Business subscription.
-1. Select **Continue to profile**.
-1. Select **Create an organization** to create a new one.
-1. Enter an **Organization namespace**. This is the official, unique name for
-your organization in Docker Hub. It's not possible to change the name of the
-organization after you've created it.
+1. 登录 [Docker Home](https://app.docker.com/) 并导航到组织列表底部。
+1. 选择 **创建新组织**。
+1. 为您的组织选择订阅、计费周期，并指定您需要的席位数。有关团队版和商业版订阅提供的功能详情，请参阅 [Docker 定价](https://www.docker.com/pricing/)。
+1. 选择 **继续到个人资料**。
+1. 选择 **创建组织** 来创建新组织。
+1. 输入 **组织命名空间**。这是您组织在 Docker Hub 中的官方唯一名称。创建组织后无法更改组织名称。
 
    > [!NOTE]
    >
-   > You can't use the same name for the organization and your Docker ID. If you want to use your Docker ID as the organization name, then you must first [convert your account into an organization](/manuals/admin/organization/convert-account.md).
+   > 您不能为组织和您的 Docker ID 使用相同的名称。如果您想使用您的 Docker ID 作为组织名称，则必须先[将您的账户转换为组织](/manuals/admin/organization/convert-account.md)。
 
-1. Enter your **Company name**. This is the full name of your company. Docker
-displays the company name on your organization page and in the details of any
-public images you publish. You can update the company name anytime by navigating
-to your organization's **Settings** page.
-1. Select **Continue to billing** to continue.
-1. Enter your organization's billing information and select **Continue to payment** to continue to the billing portal.
-1. Provide your payment details and select **Purchase**.
+1. 输入您的 **公司名称**。这是您公司的全称。Docker
+会在您的组织页面和您发布的任何公共镜像的详细信息中显示公司名称。您可以随时通过导航到
+您组织的 **设置** 页面来更新公司名称。
+1. 选择 **继续到计费** 继续。
+1. 输入您组织的计费信息并选择 **继续到支付** 以继续到计费门户。
+1. 提供您的付款详细信息并选择 **购买**。
 
-You've now created an organization.
+您现在已经创建了一个组织。
 
-## View an organization
+## 查看组织
 
-To view an organization in the Admin Console:
+要在管理控制台中查看组织：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your
-organization.
-1. From the left-hand navigation menu, select **Admin Console**.
+1. 登录 [Docker Home](https://app.docker.com) 并选择您的
+组织。
+1. 从左侧导航菜单中，选择 **管理控制台**。
 
-The Admin Console contains many options that let you to
-configure your organization.
+管理控制台包含许多选项，让您能够
+配置您的组织。
 
-## Merge organizations
+## 合并组织
 
 > [!WARNING]
 >
-> If you are merging organizations, it is recommended to do so at the _end_ of
-> your billing cycle. When you merge an organization and downgrade another, you
-> will lose seats on your downgraded organization. Docker does not offer
-> refunds for downgrades.
+> 如果您要合并组织，建议在计费周期结束时进行。当您合并一个组织并降级另一个组织时，您将失去降级组织上的席位。Docker 不提供降级退款。
 
-If you have multiple organizations that you want to merge into one, complete
-the following steps:
+如果您有多个组织想要合并为一个，请完成以下步骤：
 
-1. Based on the number of seats from the secondary organization, [purchase additional seats](../../subscription/manage-seats.md) for the primary organization account that you want to keep.
-1. Manually add users to the primary organization and remove existing users from the secondary organization.
-1. Manually move over your data, including all repositories.
-1. Once you're done moving all of your users and data, [downgrade](../../subscription/change.md) the secondary account to a free subscription. Note that Docker does not offer refunds for downgrading organizations mid-billing cycle.
+1. 根据次要组织的席位数，为您想要保留的主组织账户[购买额外席位](../../subscription/manage-seats.md)。
+1. 手动将用户添加到主组织并从次要组织中移除现有用户。
+1. 手动迁移您的数据，包括所有仓库。
+1. 完成所有用户和数据迁移后，将次要账户[降级](../../subscription/change.md)为免费订阅。请注意，Docker 不提供在计费周期中途降级组织的退款。
 
 > [!TIP]
 >
-> If your organization has a Docker Business subscription with a purchase
-order, contact Support or your Account Manager at Docker.
+> 如果您的组织有通过采购订单购买的 Docker Business 订阅，请联系 Docker 的支持团队或您的客户经理。
 
-## More resources
+## 更多资源
 
-- [Video: Docker Hub Organizations](https://www.youtube.com/watch?v=WKlT1O-4Du8)
+- [视频：Docker Hub 组织](https://www.youtube.com/watch?v=WKlT1O-4Du8)

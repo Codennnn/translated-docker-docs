@@ -1,47 +1,50 @@
 ---
-title: Install Docker Desktop from the Microsoft Store on Windows
+title: 从 Microsoft Store 在 Windows 上安装 Docker Desktop
 linkTitle: MS Store
-description: Install Docker Desktop for Windows through the Microsoft Store. Understand its update behavior and limitations. 
-keywords: microsoft store, windows, docker desktop, install, deploy, configure, admin, mdm, intune, winget
+description: 通过 Microsoft Store 安装 Windows 版 Docker Desktop。了解其更新行为和限制。
+keywords: microsoft store, windows, docker desktop, 安装, 部署, 配置, 管理员, mdm, intune, winget
 tags: [admin]
 weight: 30
 aliases: 
  - /desktop/setup/install/enterprise-deployment/ms-store/
 ---
 
-You can deploy Docker Desktop for Windows through the [Microsoft app store](https://apps.microsoft.com/detail/xp8cbj40xlbwkx?hl=en-GB&gl=GB).
+您可以通过 [Microsoft 应用商店](https://apps.microsoft.com/detail/xp8cbj40xlbwkx?hl=en-GB&gl=GB) 部署 Windows 版 Docker Desktop。
 
-The Microsoft Store version of Docker Desktop provides the same functionality as the standard installer but has a different update behavior depending on whether your developers install it themselves or if installation is handled by an MDM tool such as Intune. This is described in the following section. 
+Microsoft Store 版本的 Docker Desktop 提供与标准安装程序相同的功能，但根据是由开发人员自行安装还是由 Intune 等 MDM 工具处理安装，其更新行为有所不同。这将在以下章节中详细说明。
 
-Choose the installation method that best aligns with your environment's requirements and management practices.
+请选择最适合您环境要求和管理实践的安装方法。
 
-## Update behavior
+## 更新行为
 
-### Developer-managed installations
+### 开发人员管理的安装
 
-For developers who install Docker Desktop directly:
+对于直接安装 Docker Desktop 的开发人员：
 
-- The Microsoft Store does not automatically update Win32 apps like Docker Desktop for most users.
-- Only a subset of users (approximately 20%) may receive update notifications on the Microsoft Store page.
-- Most users must manually check for and apply updates within the Store.
+- 对于大多数用户，Microsoft Store 不会自动更新像 Docker Desktop 这样的 Win32 应用程序。
+- 只有一部分用户（约 20%）可能会在 Microsoft Store 页面上收到更新通知。
+- 大多数用户必须在商店内手动检查并应用更新。
 
-### Intune-managed installations
+### Intune 管理的安装
 
-In environments managed with Intune:
-- Intune checks for updates approximately every 8 hours.
-- When a new version is detected, Intune triggers a `winget` upgrade.  
-- If appropriate policies are configured, updates can occur automatically without user intervention. 
-- Updates are handled by Intune's management infrastructure rather than the Microsoft Store itself.
+在由 Intune 管理的环境中：
 
-## WSL considerations
+- Intune 大约每 8 小时检查一次更新。
+- 检测到新版本时，Intune 会触发 `winget` 升级。
+- 如果配置了适当的策略，更新可以在没有用户干预的情况下自动进行。
+- 更新由 Intune 的管理基础结构处理，而不是由 Microsoft Store 本身处理。
 
-Docker Desktop for Windows integrates closely with WSL. When updating Docker Desktop installed from the Microsoft Store:
-- Make sure you have quit Docker Desktop and that it is no longer running so updates can complete successfully
-- In some environments, virtual hard disk (VHDX) file locks may prevent the update from completing.
+## WSL 注意事项
 
-## Recommendations for Intune management
+Windows 版 Docker Desktop 与 WSL 紧密集成。更新从 Microsoft Store 安装的 Docker Desktop 时：
 
-If using Intune to manage Docker Desktop for Windows:
-- Ensure your Intune policies are configured to handle application updates
-- Be aware that the update process uses WinGet APIs rather than direct Store mechanisms
-- Consider testing the update process in a controlled environment to verify proper functionality
+- 确保您已退出 Docker Desktop 且它不再运行，以便更新能够成功完成
+- 在某些环境中，虚拟硬盘（VHDX）文件锁定可能会阻止更新完成
+
+## Intune 管理建议
+
+如果使用 Intune 管理 Windows 版 Docker Desktop：
+
+- 确保您的 Intune 策略配置为处理应用程序更新
+- 请注意更新过程使用 WinGet API 而不是直接的 Store 机制
+- 考虑在受控环境中测试更新过程以验证其功能正常

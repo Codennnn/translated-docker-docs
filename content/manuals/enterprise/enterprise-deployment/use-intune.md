@@ -1,7 +1,7 @@
 ---
-title: Deploy with Intune
-description: Use Intune, Microsoft's cloud-based device management tool, to deploy Docker Desktop
-keywords: microsoft, windows, docker desktop, deploy, mdm, enterprise, administrator, mac, pkg, dmg
+title: 使用 Intune 部署
+description: 使用 Intune（Microsoft 基于云的设备管理工具）部署 Docker Desktop
+keywords: microsoft, windows, docker desktop, 部署, mdm, 企业, 管理员, mac, pkg, dmg
 tags: [admin]
 weight: 40
 aliases:
@@ -12,48 +12,48 @@ aliases:
 
 {{< summary-bar feature_name="Intune" >}}
 
-Learn how to deploy Docker Desktop on Windows and macOS devices using Microsoft Intune. It covers app creation, installer configuration, and assignment to users or devices.
+了解如何使用 Microsoft Intune 在 Windows 和 macOS 设备上部署 Docker Desktop。内容涵盖应用创建、安装程序配置以及分配给用户或设备。
 
 {{< tabs >}}
 {{< tab name="Windows" >}}
 
-1. Sign in to your Intune admin center.
-2. Add a new app. Select **Apps**, then **Windows**, then **Add**.
-3. For the app type, select **Windows app (Win32)**
-4. Select the `intunewin` package. 
-5. Fill in the required details, such as the description, publisher, or app version and then select **Next**. 
-6. Optional: On the **Program** tab, you can update the **Install command** field to suit your needs. The field is pre-populated with `msiexec /i "DockerDesktop.msi" /qn`. See the [Common installation scenarios](msi-install-and-configure.md) for examples on the changes you can make. 
+1. 登录到您的 Intune 管理中心。
+2. 添加新应用。选择 **Apps（应用）**，然后选择 **Windows**，再选择 **Add（添加）**。
+3. 对于应用类型，选择 **Windows app (Win32)（Windows 应用 (Win32)）**
+4. 选择 `intunewin` 软件包。 
+5. 填写所需详细信息，如描述、发布者或应用版本，然后选择 **Next（下一步）**。 
+6. 可选：在 **Program（程序）** 选项卡上，您可以更新 **Install command（安装命令）** 字段以满足您的需求。该字段预填充了 `msiexec /i "DockerDesktop.msi" /qn`。有关可进行更改的示例，请参阅 [常见安装场景](msi-install-and-configure.md)。 
 
    > [!TIP]
    >
-   > It's recommended you configure the Intune deployment to schedule a reboot of the machine on successful installs.
+   > 建议您配置 Intune 部署，在成功安装后计划重新启动计算机。
    >
-   > This is because the Docker Desktop installer installs Windows features depending on your engine selection and also updates the membership of the `docker-users` local group.
+   > 这是因为 Docker Desktop 安装程序会根据您选择的引擎安装 Windows 功能，并且还会更新 `docker-users` 本地组的成员身份。
    >
-   > You may also want to set Intune to determine behaviour based on return codes and watch for a return code of `3010`. Return code 3010 means the installation succeeded but a reboot is required.
+   > 您可能还需要设置 Intune 根据返回代码确定行为，并注意返回代码 `3010`。返回代码 3010 表示安装成功但需要重新启动。
 
-7. Complete the remaining tabs, then review and create the app. 
+7. 完成剩余选项卡，然后查看并创建应用。 
 
 {{< /tab >}}
 {{< tab name="Mac" >}}
 
-First, upload the package:
+首先，上传软件包：
 
-1. Sign in to your Intune admin center.
-2. Add a new app. Select **Apps**, then **macOS**, then **Add**.
-3. Select **Line-of-business app** and then **Select**.
-4. Upload the `Docker.pkg` file and fill in the required details.
+1. 登录到您的 Intune 管理中心。
+2. 添加新应用。选择 **Apps（应用）**，然后选择 **macOS**，再选择 **Add（添加）**。
+3. 选择 **Line-of-business app（业务线应用）**，然后选择 **Select（选择）**。
+4. 上传 `Docker.pkg` 文件并填写所需详细信息。
 
-Next, assign the app:
+接下来，分配应用：
 
-1. Once the app is added, navigate to **Assignments** in Intune.
-2. Select **Add group** and choose the user or device groups you want to assign the app to.
-3. Select **Save**.
+1. 添加应用后，在 Intune 中导航至 **Assignments（分配）**。
+2. 选择 **Add group（添加组）** 并选择要分配应用的用户组或设备组。
+3. 选择 **Save（保存）**。
 
 {{< /tab >}}
 {{< /tabs >}}
 
-## Additional resources
+## 其他资源
 
-- [Explore the FAQs](faq.md).
-- Learn how to [enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md) for your users.
+- [探索常见问题解答](faq.md)。
+- 了解如何为您的用户[强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)。

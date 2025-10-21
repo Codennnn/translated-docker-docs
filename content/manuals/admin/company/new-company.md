@@ -1,49 +1,45 @@
 ---
-title: Create a company
-description: Learn how to create a company to centrally manage multiple organizations.
-keywords: company, hub, organization, company owner, Admin Console, company management, Docker Business, create company, Docker Admin Console
+title: 创建公司
+description: 了解如何创建公司以集中管理多个组织。
+keywords: 公司, Hub, 组织, 公司所有者, 管理控制台, 公司管理, Docker Business, 创建公司, Docker 管理控制台
 aliases:
 - /docker-hub/new-company/
 ---
 
 {{< summary-bar feature_name="Company" >}}
 
-Learn how to create a new company in the Docker Admin Console, a centralized
-dashboard for managing organizations.
+了解如何在 Docker 管理控制台中创建新公司，这是一个用于管理组织的集中化仪表板。
 
-## Prerequisites
+## 先决条件
 
-Before you begin, you must:
+开始之前，您必须满足以下条件：
 
-- Be the owner of the organization you want to add to your company
-- Have a Docker Business subscription
+- 是您希望添加到公司的组织的所有者
+- 拥有 Docker Business 订阅
 
-## Create a company
+## 创建公司
 
-To create a new company:
+创建新公司的步骤如下：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Admin Console**, then **Company management**.
-1. Select **Create a company**.
-1. Enter a unique name for your company, then select **Continue**.
+1. 登录 [Docker Home](https://app.docker.com/) 并选择您的组织。
+1. 选择**管理控制台**，然后选择**公司管理**。
+1. 选择**创建公司**。
+1. 为您的公司输入一个唯一的名称，然后选择**继续**。
 
     > [!TIP]
     >
-    > The name for your company can't be the same as an existing user,
-    organization, or company namespace.
+    > 您的公司名称不能与现有的用户、组织或公司命名空间相同。
 
-1. Review the migration details and then select **Create company**.
+1. 查看迁移详情，然后选择**创建公司**。
 
-For more information on how you can add organizations to your company,
-see [Add organizations to a company](./organizations.md#add-organizations-to-a-company).
+有关如何向公司添加组织的更多信息，请参阅[向公司添加组织](./organizations.md#add-organizations-to-a-company)。
 
-## Next steps
+## 进一步阅读
 
-- [Manage organizations](./organizations.md)
-- [Manage company users](./users.md)
-- [Manage company owners](./owners.md)
+- [管理组织](./organizations.md)
+- [管理公司用户](./users.md)
+- [管理公司所有者](./owners.md)
 
-## More resources
+## 更多资源
 
-- [Video: Create a company](https://youtu.be/XZ5_i6qiKho?feature=shared&t=359)
+- [视频：创建公司](https://youtu.be/XZ5_i6qiKho?feature=shared&t=359)

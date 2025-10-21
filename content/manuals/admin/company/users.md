@@ -1,58 +1,42 @@
 ---
-title: Manage company members
-description: Learn how to manage company users in the Docker Admin Console.
-keywords: company, company users, users, admin, Admin Console, member management, organization management, company management, bulk invite, resend invites
+title: 管理公司成员
+description: 了解如何在 Docker 管理控制台中管理公司用户。
+keywords: 公司, 公司用户, 用户, 管理员, 管理控制台, 成员管理, 组织管理, 公司管理, 批量邀请, 重新发送邀请
 ---
 
 {{< summary-bar feature_name="Company" >}}
 
-Company owners can invite new members to an organization via Docker ID,
-email address, or in bulk with a CSV file containing email
-addresses.
+公司所有者可以通过 Docker ID、电子邮件地址或包含电子邮件地址的 CSV 文件批量邀请新成员加入组织。
 
-If an invitee does not have a Docker account, they must create an account and
-verify their email address before they can accept an invitation to join the
-organization. Pending invitations occupy seats for the organization
-the user is invited to.
+如果被邀请人没有 Docker 账户，则必须先创建账户并验证电子邮件地址，然后才能接受加入组织的邀请。待处理的邀请会占用被邀请用户所在组织的席位。
 
-## Invite members via Docker ID or email address
+## 通过 Docker ID 或电子邮件地址邀请成员
 
-Use the following steps to invite members to your organization via Docker ID or
-email address.
+使用以下步骤通过 Docker ID 或电子邮件地址邀请成员加入您的组织：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select
-your company.
-1. On the **Organizations** page, select the organization you want
-to invite members to.
-1. Select **Members**, then **Invite**.
-1. Select **Emails or usernames**.
-1. Follow the on-screen instructions to invite members.
-   Invite a maximum of 1000 members and separate multiple entries by comma,
-   semicolon, or space.
+1. 登录 [Docker Home](https://app.docker.com) 并选择您的公司。
+1. 在**组织**页面上，选择您想要邀请成员加入的组织。
+1. 选择**成员**，然后选择**邀请**。
+1. 选择**电子邮件或用户名**。
+1. 按照屏幕上的指示邀请成员。
+   最多可邀请 1000 名成员，多个条目之间用逗号、分号或空格分隔。
 
    > [!NOTE]
    >
-   > When you invite members, you assign them a role.
-   > See [Roles and permissions](/security/for-admins/roles-and-permissions/)
-   > for details about the access permissions for each role.
+   > 邀请成员时，您需要为他们分配角色。
+   > 有关每个角色的访问权限详情，请参阅[角色和权限](/security/for-admins/roles-and-permissions/)。
 
-   Pending invitations appear on the Members page. The invitees receive an
-   email with a link to Docker Hub where they can accept or decline the
-   invitation.
+   待处理的邀请会显示在成员页面上。被邀请人会收到一封包含 Docker Hub 链接的电子邮件，他们可以在其中接受或拒绝邀请。
 
-## Invite members via CSV file
+## 通过 CSV 文件邀请成员
 
-To invite multiple members to an organization via a CSV file containing email
-addresses:
+通过包含电子邮件地址的 CSV 文件批量邀请多个成员加入组织：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select
-your company.
-1. On the **Organizations** page, select the organization you want
-to invite members to.
-1. Select **Members**, then **Invite**.
-1. Select **CSV upload**.
-1. Select **Download the template CSV file** to optionally download an example
-CSV file. The following is an example of the contents of a valid CSV file.
+1. 登录 [Docker Home](https://app.docker.com) 并选择您的公司。
+1. 在**组织**页面上，选择您想要邀请成员加入的组织。
+1. 选择**成员**，然后选择**邀请**。
+1. 选择**CSV 上传**。
+1. 选择**下载模板 CSV 文件**以选择性地下载示例 CSV 文件。以下是有效 CSV 文件内容的示例：
 
    ```text
    email
@@ -60,88 +44,76 @@ CSV file. The following is an example of the contents of a valid CSV file.
    docker.user-1@example.com
    ```
 
-   CSV file requirements:
+   CSV 文件要求：
 
-   - The file must contain a header row with at least one heading named `email`.
-   Additional columns are allowed and are ignored in the import.
-   - The file must contain a maximum of 1000 email addresses (rows). To invite
-   more than 1000 users, create multiple CSV files and perform all steps in
-   this task for each file.
+   - 文件必须包含标题行，至少有一个名为 `email` 的标题。
+   允许使用其他列，但在导入时会被忽略。
+   - 文件最多包含 1000 个电子邮件地址（行）。要邀请超过 1000 名用户，
+   请创建多个 CSV 文件并对每个文件执行此任务中的所有步骤。
 
-1. Create a new CSV file or export a CSV file from another application.
+1. 创建新的 CSV 文件或从其他应用程序导出 CSV 文件。
 
-   - To export a CSV file from another application, see the application’s
-   documentation.
-   - To create a new CSV file, open a new file in a text editor, type `email`
-   on the first line, type the user email addresses one per line on the
-   following lines, and then save the file with a .csv extension.
+   - 要从其他应用程序导出 CSV 文件，请参阅该应用程序的文档。
+   - 要创建新的 CSV 文件，请在文本编辑器中打开一个新文件，在第一行输入 `email`，
+   在接下来的每一行输入用户的电子邮件地址，然后将文件保存为 .csv 扩展名。
 
-1. Select **Browse files** and then select your CSV file, or drag and drop the
-CSV file into the **Select a CSV file to upload** box. You can only select
-one CSV file at a time.
+1. 选择**浏览文件**，然后选择您的 CSV 文件，或将 CSV 文件拖放到
+   **选择要上传的 CSV 文件**框中。您一次只能选择一个 CSV 文件。
 
    > [!NOTE]
    >
-   > If the amount of email addresses in your CSV file exceeds the number of
-   available seats in your organization, you cannot continue to invite members.
-   To invite members, you can purchase more seats, or remove some email
-   addresses from the CSV file and re-select the new file. To purchase more
-   seats, see [Add seats to your subscription](/subscription/add-seats/) or
-   [Contact sales](https://www.docker.com/pricing/contact-sales/).
+   > 如果您的 CSV 文件中的电子邮件地址数量超过了组织中的可用席位数量，
+   则无法继续邀请成员。要邀请成员，您可以购买更多席位，
+   或从 CSV 文件中删除一些电子邮件地址并重新选择新文件。
+   要购买更多席位，请参阅[为订阅添加席位](/subscription/add-seats/)或
+   [联系销售](https://www.docker.com/pricing/contact-sales/)。
 
-1. After the CSV file has been uploaded, select **Review**.
+1. 上传 CSV 文件后，选择**审核**。
 
-   Valid email addresses and any email addresses that have issues will appear.
-   Email addresses may have the following issues:
+   有效的电子邮件地址和存在问题的电子邮件地址都会显示出来。
+   电子邮件地址可能存在以下问题：
 
-   - Invalid email: The email address is not a valid address. The email address
-   will be ignored if you send invites. You can correct the email address in
-   the CSV file and re-import the file.
-   - Already invited: The user has already been sent an invite email and another
-   invite email will not be sent.
-   - Member: The user is already a member of your organization and an invite
-   email will not be sent.
-   - Duplicate: The CSV file has multiple occurrences of the same email address.
-   The user will be sent only one invite email.
+   - 无效邮箱：电子邮件地址不是有效地址。如果您发送邀请，该电子邮件地址将被忽略。
+   您可以在 CSV 文件中更正电子邮件地址并重新导入文件。
+   - 已邀请：已向该用户发送邀请邮件，不会再次发送邀请邮件。
+   - 成员：该用户已经是您组织的成员，不会发送邀请邮件。
+   - 重复：CSV 文件中多次出现相同的电子邮件地址。
+   该用户只会收到一封邀请邮件。
 
-1. Follow the on-screen instructions to invite members.
+1. 按照屏幕上的指示邀请成员。
 
    > [!NOTE]
    >
-   > When you invite members, you assign them a role.
-   > See [Roles and permissions](/security/for-admins/roles-and-permissions/)
-   > for details about the access permissions for each role.
+   > 邀请成员时，您需要为他们分配角色。
+   > 有关每个角色的访问权限详情，请参阅[角色和权限](/security/for-admins/roles-and-permissions/)。
 
-Pending invitations appear on the Members page. The invitees receive an email
-with a link to Docker Hub where they can accept or decline the invitation.
+待处理的邀请会显示在成员页面上。被邀请人会收到一封包含 Docker Hub 链接的电子邮件，他们可以在其中接受或拒绝邀请。
 
-## Resend invitations to users
+## 重新发送用户邀请
 
-You can resend individual invitations, or bulk invitations from the Admin Console.
+您可以从管理控制台重新发送单个邀请或批量邀请。
 
-### Resend individual invitations
+### 重新发送单个邀请
 
-1. In [Docker Home](https://app.docker.com/), select your company from
-the top-left account drop-down.
-2. Select **Admin Console**, then **Users**.
-3. Select the **action menu** next to the invitee and select **Resend**.
-4. Select **Invite** to confirm.
+1. 在 [Docker Home](https://app.docker.com/) 中，从左上角的账户下拉菜单中选择您的公司。
+2. 选择**管理控制台**，然后选择**用户**。
+3. 选择被邀请人旁边的**操作菜单**，然后选择**重新发送**。
+4. 选择**邀请**以确认。
 
-### Bulk resend invitation
+### 批量重新发送邀请
 
-1. In [Docker Home](https://app.docker.com/), select your company from
-the top-left account drop-down.
-2. Select **Admin Console**, then **Users**.
-3. Use the **checkboxes** next to **Usernames** to bulk select users.
-4. Select **Resend invites**.
-5. Select **Resend** to confirm.
+1. 在 [Docker Home](https://app.docker.com/) 中，从左上角的账户下拉菜单中选择您的公司。
+2. 选择**管理控制台**，然后选择**用户**。
+3. 使用**用户名**旁边的**复选框**批量选择用户。
+4. 选择**重新发送邀请**。
+5. 选择**重新发送**以确认。
 
-## Invite members via API
+## 通过 API 邀请成员
 
-You can bulk invite members using the Docker Hub API. For more information,
-see the [Bulk create invites](https://docs.docker.com/reference/api/hub/latest/#tag/invites/paths/~1v2~1invites~1bulk/post) API endpoint.
+您可以使用 Docker Hub API 批量邀请成员。更多信息请参阅
+[Bulk create invites](https://docs.docker.com/reference/api/hub/latest/#tag/invites/paths/~1v2~1invites~1bulk/post) API 端点。
 
-## Manage members on a team
+## 管理团队成员
 
-Use Docker Hub to add a member to a team or remove a member from a team. For
-more details, see [Manage members](../organization/members.md#manage-members-on-a-team).
+使用 Docker Hub 将成员添加到团队或从团队中移除成员。
+更多详情请参阅[管理成员](../organization/members.md#manage-members-on-a-team)。

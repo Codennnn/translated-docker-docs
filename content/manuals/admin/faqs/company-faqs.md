@@ -1,49 +1,39 @@
 ---
-title: FAQs on companies
-linkTitle: Company
+title: 公司常见问题
+linkTitle: 公司
 weight: 30
-description: Company FAQs
-keywords: Docker, Docker Hub, SSO FAQs, single sign-on, company, administration, company management
+description: 公司常见问题
+keywords: Docker, Docker Hub, SSO 常见问题, 单点登录, 公司, 管理, 公司管理
 tags: [FAQ]
 aliases:
 - /docker-hub/company-faqs/
 - /faq/admin/company-faqs/
 ---
 
-### Some of my organizations don’t have a Docker Business subscription. Can I still use a parent company?
+### 我的一些组织没有 Docker Business 订阅。我仍可以使用父公司吗？
 
-Yes, but you can only add organizations with a Docker Business subscription
-to a company.
+可以，但您只能将拥有 Docker Business 订阅的组织添加到公司中。
 
-### What happens if one of my organizations downgrades from Docker Business, but I still need access as a company owner?
+### 如果我的某个组织从 Docker Business 降级，但我仍需要作为公司所有者访问，该怎么办？
 
-To access and manage child organizations, the organization must have a
-Docker Business subscription. If the organization isn’t included in this
-subscription, the owner of the organization must manage the organization
-outside of the company.
+要访问和管理子组织，该组织必须拥有 Docker Business 订阅。如果该组织未包含在此订阅中，则该组织的所有者必须在公司外部管理该组织。
 
-### Do company owners occupy a subscription seat?
+### 公司所有者会占用订阅席位吗？
 
-Company owners do not occupy a seat unless one of the following is true:
+公司所有者不会占用席位，除非满足以下条件之一：
 
-- They are added as a member of an organization under your company
-- SSO is enabled
+- 他们被添加为公司下组织的成员
+- 启用了 SSO
 
-Although company owners have the same access as organization owners across all
-organizations in the company, it's not necessary to add them to any
-organization. Doing so will cause them to occupy a seat.
+尽管公司所有者在公司内的所有组织中拥有与组织所有者相同的访问权限，但无需将他们添加到任何组织。这样做会导致他们占用席位。
 
-When you first create a company, your account is both a company owner and an
-organization owner. In that case, your account will occupy a seat as long as
-you remain an organization owner.
+当您首次创建公司时，您的账户既是公司所有者又是组织所有者。在这种情况下，只要您仍然是组织所有者，您的账户就会占用一个席位。
 
-To avoid occupying a seat, [assign another user as the organization owner](/manuals/admin/organization/members.md#update-a-member-role) and remove yourself from the organization.
-You'll retain full administrative access as a company owner without using a
-subscription seat.
+为避免占用席位，请[指定另一用户为组织所有者](/manuals/admin/organization/members.md#update-a-member-role)并将自己从组织中移除。
+作为公司所有者，您将保留完整的管理访问权限，而不占用订阅席位。
 
-### What permissions does the company owner have in the associated/nested organizations?
+### 公司所有者在关联/嵌套组织中拥有什么权限？
 
-Company owners can navigate to the **Organizations** page to view all their
-nested organizations in a single location. They can also view or edit organization members and change single sign-on (SSO) and System for Cross-domain Identity Management (SCIM) settings. Changes to company settings impact all users in each organization under the company.
+公司所有者可以导航到**组织**页面，在一个位置查看所有嵌套组织。他们还可以查看或编辑组织成员，并更改单点登录 (SSO) 和跨域身份管理系统 (SCIM) 设置。公司设置的更改会影响公司下每个组织中的所有用户。
 
-For more information, see [Roles and permissions](/manuals/enterprise/security/roles-and-permissions.md).
+更多信息，请参阅[角色和权限](/manuals/enterprise/security/roles-and-permissions.md)。

@@ -1,7 +1,7 @@
 ---
 build:
   render: never
-linkTitle: FAQ
-title: Account and admin FAQ
+linkTitle: 常见问题
+title: 账户和管理员常见问题
 weight: 30
 ---

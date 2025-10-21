@@ -1,133 +1,123 @@
 ---
-title: Activity logs
+title: 活动日志
 weight: 50
-description: Learn how to access and interpret Docker activity logs for organizations and repositories.
-keywords: audit log, organization activity, Docker business logs, repository activity, track changes Docker, security logs Docker, filter logs, log Docker events
+description: 了解如何访问和解释组织和仓库级别的 Docker 活动日志。
+keywords: 审计日志, 组织活动, Docker 业务日志, 仓库活动, 跟踪 Docker 变更, Docker 安全日志, 过滤日志, 记录 Docker 事件
 aliases:
 - /docker-hub/audit-log/
 ---
 
 {{< summary-bar feature_name="Activity logs" >}}
 
-Activity logs display a chronological list of activities that occur at organization and repository levels. The activity log provides organization owners with a record of all
-member activities.
+活动日志按时间顺序显示组织和仓库级别发生的活动列表。活动日志为组织所有者提供了所有成员活动的记录。
 
-With activity logs, owners can view and track:
+通过活动日志，所有者可以查看和跟踪：
 
- - What changes were made
- - The date when a change was made
- - Who initiated the change
+ - 所做的变更内容
+ - 变更发生的日期
+ - 发起变更的人员
 
-For example, activity logs display activities such as the date when a repository was created or deleted, the member who created the repository, the name of the repository, and when there was a change to the privacy settings.
+例如，活动日志显示仓库创建或删除的日期、创建仓库的成员、仓库名称以及隐私设置变更的时间等。
 
-Owners can also see the activity logs for their repository if the repository is part of the organization subscribed to a Docker Business or Team subscription.
+如果仓库属于订阅了 Docker Business 或 Team 订阅的组织，所有者也可以查看其仓库的活动日志。
 
-## Access activity logs
+## 访问活动日志
 
-To view activity logs in the Admin Console:
+要在管理控制台中查看活动日志：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your
-organization.
-1. Select **Admin Console**, then **Activity logs**.
+1. 登录 [Docker Home](https://app.docker.com) 并选择您的组织。
+1. 选择 **管理控制台**，然后选择 **活动日志**。
 
-## Filter and customize activity logs
+## 过滤和自定义活动日志
 
-By default, the **Activity** tab displays all recorded events. To narrow your
-view, use the calendar to select a specific date range. The log updates to
-show only the activities that occurred during that period.
+默认情况下，**活动** 选项卡显示所有已记录的事件。要缩小视图范围，请使用日历选择特定的日期范围。日志将更新为仅显示该时间段内发生的活动。
 
-You can also filter by activity type. Use the **All Activities** drop-down to
-focus on organization-level, repository-level, or billing-related events.
-In Docker Hub, when viewing a repository, the **Activities** tab only shows
-events for that repository.
+您也可以按活动类型进行过滤。使用 **所有活动** 下拉菜单可以专注于组织级别、仓库级别或与计费相关的事件。在 Docker Hub 中，查看仓库时，**活动** 选项卡仅显示该仓库的事件。
 
-After selecting a category—**Organization**, **Repository**, or **Billing**—use
-the **All Actions** drop-down to refine the results even further by specific
-event type.
+选择类别（**组织**、**仓库** 或 **计费**）后，使用 **所有操作** 下拉菜单可以按特定事件类型进一步细化结果。
 
 > [!NOTE]
 >
-> Events triggered by Docker Support appear under the username **dockersupport**.
+> 由 Docker 支持团队触发的事件显示在用户名 **dockersupport** 下。
 
 > [!IMPORTANT]
 >
-> Docker retains activity logs for three months. To maintain access to older
-data, export logs regularly.
+> Docker 保留活动日志的时间为三个月。要保留对更早数据的访问权限，请定期导出日志。
 
-## Types of activity log events
+## 活动日志事件类型
 
-Refer to the following section for a list of events and their descriptions:
+请参考以下部分了解事件列表及其描述：
 
-### Organization events
+### 组织事件
 
-| Event                                                          | Description                                   |
-|:------------------------------------------------------------------|:------------------------------------------------|
-| Team Created | Activities related to the creation of a team |
-| Team Updated | Activities related to the modification of a team |
-| Team Deleted | Activities related to the deletion of a team |
-| Team Member Added | Details of the member added to your team |
-| Team Member Removed | Details of the member removed from your team |
-| Team Member Invited | Details of the member invited to your team |
-| Organization Member Added | Details of the member added to your organization |
-| Organization Member Removed | Details about the member removed from your organization |
-| Member Role Changed | Details about the role changed for a member in your organization |
-| Organization Created | Activities related to the creation of a new organization |
-| Organization Settings Updated | Details related to the organization setting that was updated |
-| Registry Access Management enabled | Activities related to enabling Registry Access Management |
-| Registry Access Management disabled | Activities related to disabling Registry Access Management |
-| Registry Access Management registry added | Activities related to the addition of a registry |
-| Registry Access Management registry removed | Activities related to the removal of a registry |
-| Registry Access Management registry updated | Details related to the registry that was updated |
-| Single Sign-On domain added | Details of the single sign-on domain added to your organization |
-| Single Sign-On domain removed | Details of the single sign-on domain removed from your organization |
-| Single Sign-On domain verified | Details of the single sign-on domain verified for your organization |
-| Access token created | Access token created in organization |
-| Access token updated | Access token updated in organization |
-| Access token deleted | Access token deleted in organization |
-| Policy created | Details of adding a settings policy |
-| Policy updated | Details of updating a settings policy |
-| Policy deleted | Details of deleting a settings policy |
-| Policy transferred | Details of transferring a settings policy to another owner |
-| Create SSO Connection | Details of creating a new org/company SSO connection |
-| Update SSO Connection | Details of updating an existing org/company SSO connection |
-| Delete SSO Connection | Details of deleting an existing org/company SSO connection |
-| Enforce SSO | Details of toggling enforcement on an existing org/company SSO connection |
-| Enforce SCIM | Details of toggling SCIM on an existing org/company SSO connection |
-| Refresh SCIM Token | Details of a SCIM token refresh on an existing org/company SSO connection |
-| Change SSO Connection Type | Details of a connection type change on an existing org/company SSO connection |
-| Toggle JIT provisioning | Details of a JIT toggle on an existing org/company SSO connection |
+| 事件 | 描述 |
+|:---|:---|
+| 团队创建 | 与创建团队相关的活动 |
+| 团队更新 | 与修改团队相关的活动 |
+| 团队删除 | 与删除团队相关的活动 |
+| 团队成员添加 | 添加到团队的成员详细信息 |
+| 团队成员移除 | 从团队移除的成员详细信息 |
+| 团队成员邀请 | 邀请加入团队的成员详细信息 |
+| 组织成员添加 | 添加到组织的成员详细信息 |
+| 组织成员移除 | 从组织移除的成员详细信息 |
+| 成员角色变更 | 组织中成员角色变更的详细信息 |
+| 组织创建 | 与创建新组织相关的活动 |
+| 组织设置更新 | 已更新的组织设置相关信息 |
+| 启用仓库访问管理 | 与启用仓库访问管理相关的活动 |
+| 禁用仓库访问管理 | 与禁用仓库访问管理相关的活动 |
+| 添加仓库访问管理仓库 | 与添加仓库相关的活动 |
+| 移除仓库访问管理仓库 | 与移除仓库相关的活动 |
+| 更新仓库访问管理仓库 | 已更新仓库的相关信息 |
+| 添加单点登录域 | 添加到组织的单点登录域详细信息 |
+| 移除单点登录域 | 从组织移除的单点登录域详细信息 |
+| 验证单点登录域 | 为组织验证的单点登录域详细信息 |
+| 创建访问令牌 | 在组织中创建的访问令牌 |
+| 更新访问令牌 | 在组织中更新的访问令牌 |
+| 删除访问令牌 | 在组织中删除的访问令牌 |
+| 创建策略 | 添加设置策略的详细信息 |
+| 更新策略 | 更新设置策略的详细信息 |
+| 删除策略 | 删除设置策略的详细信息 |
+| 转移策略 | 将设置策略转移到另一个所有者的详细信息 |
+| 创建 SSO 连接 | 创建新的组织/公司 SSO 连接的详细信息 |
+| 更新 SSO 连接 | 更新现有组织/公司 SSO 连接的详细信息 |
+| 删除 SSO 连接 | 删除现有组织/公司 SSO 连接的详细信息 |
+| 强制 SSO | 在现有组织/公司 SSO 连接上切换强制执行的详细信息 |
+| 强制 SCIM | 在现有组织/公司 SSO 连接上切换 SCIM 的详细信息 |
+| 刷新 SCIM 令牌 | 在现有组织/公司 SSO 连接上刷新 SCIM 令牌的详细信息 |
+| 更改 SSO 连接类型 | 在现有组织/公司 SSO 连接上更改连接类型的详细信息 |
+| 切换 JIT 配置 | 在现有组织/公司 SSO 连接上切换 JIT 的详细信息 |
 
-### Repository events
+### 仓库事件
 
 > [!NOTE]
 >
-> Event descriptions that include a user action can refer to a Docker username, personal access token (PAT) or organization access token (OAT). For example, if a user pushes a tag to a repository, the event would include the description: `<user-access-token>` pushed the tag to the repository.
+> 包含用户操作的事件描述可能指代 Docker 用户名、个人访问令牌 (PAT) 或组织访问令牌 (OAT)。例如，如果用户将标签推送到仓库，事件将包含描述：`<user-access-token>` 将标签推送到仓库。
 
-| Event                                                          | Description                                   |
-|:------------------------------------------------------------------|:------------------------------------------------|
-| Repository Created | Activities related to the creation of a new repository |
-| Repository Deleted | Activities related to the deletion of a repository |
-| Repository Updated | Activities related to updating the description, full description, or status of a repository |
-| Privacy Changed | Details related to the privacy policies that were updated |
-| Tag Pushed | Activities related to the tags pushed |
-| Tag Deleted | Activities related to the tags deleted |
-| Categories Updated | Activities related to setting or updating categories of a repository |
+| 事件 | 描述 |
+|:---|:---|
+| 仓库创建 | 与创建新仓库相关的活动 |
+| 仓库删除 | 与删除仓库相关的活动 |
+| 仓库更新 | 与更新仓库描述、完整描述或状态相关的活动 |
+| 隐私变更 | 已更新的隐私策略相关信息 |
+| 标签推送 | 与推送的标签相关的活动 |
+| 标签删除 | 与删除的标签相关的活动 |
+| 类别更新 | 与设置或更新仓库类别相关的活动 |
 
-### Billing events
+### 计费事件
 
-| Event                                                          | Description                                   |
-|:------------------------------------------------------------------|:------------------------------------------------|
-| Plan Upgraded | Occurs when your organization’s billing plan is upgraded to a higher tier plan.|
-| Plan Downgraded | Occurs when your organization’s billing plan is downgraded to a lower tier plan. |
-| Seat Added | Occurs when a seat is added to your organization’s billing plan. |
-| Seat Removed | Occurs when a seat is removed from your organization’s billing plan. |
-| Billing Cycle Changed | Occurs when there is a change in the recurring interval that your organization is charged.|
-| Plan Downgrade Canceled | Occurs when a scheduled plan downgrade for your organization is canceled.|
-| Seat Removal Canceled | Occurs when a scheduled seat removal for an organization’s billing plan is canceled. |
-| Plan Upgrade Requested | Occurs when a user in your organization requests a plan upgrade. |
-| Plan Downgrade Requested | Occurs when a user in your organization requests a plan downgrade. |
-| Seat Addition Requested | Occurs when a user in your organization requests an increase in the number of seats. |
-| Seat Removal Requested | Occurs when a user in your organization requests a decrease in the number of seats. |
-| Billing Cycle Change Requested | Occurs when a user in your organization requests a change in the billing cycle. |
-| Plan Downgrade Cancellation Requested | Occurs when a user in your organization requests a cancellation of a scheduled plan downgrade. |
-| Seat Removal Cancellation Requested | Occurs when a user in your organization requests a cancellation of a scheduled seat removal. |
+| 事件 | 描述 |
+|:---|:---|
+| 计划升级 | 当组织的计费计划升级到更高级别计划时发生。|
+| 计划降级 | 当组织的计费计划降级到更低级别计划时发生。 |
+| 添加席位 | 当向组织的计费计划添加席位时发生。 |
+| 移除席位 | 当从组织的计费计划移除席位时发生。 |
+| 计费周期变更 | 当组织收费的重复间隔发生变化时发生。|
+| 计划降级取消 | 当组织的计划降级被取消时发生。|
+| 席位移除取消 | 当组织的计费计划的计划席位移除被取消时发生。 |
+| 请求计划升级 | 当组织中的用户请求计划升级时发生。 |
+| 请求计划降级 | 当组织中的用户请求计划降级时发生。 |
+| 请求添加席位 | 当组织中的用户请求增加席位数量时发生。 |
+| 请求移除席位 | 当组织中的用户请求减少席位数量时发生。 |
+| 请求计费周期变更 | 当组织中的用户请求更改计费周期时发生。 |
+| 请求取消计划降级 | 当组织中的用户请求取消计划降级时发生。 |
+| 请求取消席位移除 | 当组织中的用户请求取消计划席位移除时发生。 |

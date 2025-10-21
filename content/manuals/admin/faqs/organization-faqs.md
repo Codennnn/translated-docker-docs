@@ -1,71 +1,57 @@
 ---
-description: Organization FAQs
-linkTitle: Organization
+description: 组织常见问题
+linkTitle: 组织
 weight: 20
-keywords: Docker, Docker Hub, SSO FAQs, single sign-on, organizations, administration, Admin Console, members, organization management, manage orgs
-title: FAQs on organizations
+keywords: Docker, Docker Hub, SSO 常见问题, 单点登录, 组织, 管理, 管理控制台, 成员, 组织管理, 管理组织
+title: 组织常见问题
 tags: [FAQ]
 aliases:
 - /docker-hub/organization-faqs/
 - /faq/admin/organization-faqs/
 ---
 
-### How can I see how many active users are in my organization?
+### 如何查看我的组织中有多少活跃用户？
 
-If your organization uses a Software Asset Management tool, you can use it to
-find out how many users have Docker Desktop installed. If your organization
-doesn't use this software, you can run an internal survey
-to find out who is using Docker Desktop.
+如果您的组织使用了软件资产管理工具，可以使用该工具来查看有多少用户安装了 Docker Desktop。如果您的组织没有使用此类软件，可以进行内部调查，了解谁在使用 Docker Desktop。
 
-For more information, see [Identify your Docker users and their Docker accounts](../../admin/organization/onboard.md#step-1-identify-your-docker-users-and-their-docker-accounts).
+更多信息，请参阅[识别您的 Docker 用户及其 Docker 账户](../../admin/organization/onboard.md#step-1-identify-your-docker-users-and-their-docker-accounts)。
 
-### Do users need to authenticate with Docker before an owner can add them to an organization?
+### 用户是否需要先通过 Docker 身份验证，所有者才能将他们添加到组织？
 
-No. Organization owners can invite users with their email addresses, and also
-assign them to a team during the invite process.
+不需要。组织所有者可以使用电子邮件地址邀请用户，并可以在邀请过程中将他们分配到团队。
 
-### Can I force my organization's members to authenticate before using Docker Desktop and are there any benefits?
+### 我可以强制组织成员在使用 Docker Desktop 前进行身份验证吗？这样做有什么好处？
 
-Yes. You can
-[enforce sign-in](/manuals/enterprise/security/enforce-sign-in/_index.md).
+可以。您可以[强制登录](/manuals/enterprise/security/enforce-sign-in/_index.md)。
 
-Some benefits of enforcing sign-in are:
+强制登录的一些好处包括：
 
-- Administrators can enforce features like [Image Access Management](/manuals/enterprise/security/hardened-desktop/image-access-management.md) and [Registry Access Management](/manuals/enterprise/security/hardened-desktop/registry-access-management.md).
- - Administrators can ensure compliance by blocking Docker Desktop usage for
- users who don't sign in as members of the organization.
+- 管理员可以强制执行[镜像访问管理](/manuals/enterprise/security/hardened-desktop/image-access-management.md)和[仓库访问管理](/manuals/enterprise/security/hardened-desktop/registry-access-management.md)等功能。
+- 管理员可以通过阻止未以组织成员身份登录的用户使用 Docker Desktop 来确保合规性。
 
-### Can I convert my personal Docker ID to an organization account?
+### 我可以将我的个人 Docker ID 转换为组织账户吗？
 
-Yes. You can convert your user account to an organization account. Once you
-convert a user account into an organization, it's not possible to
-revert it to a personal user account.
+可以。您可以将用户账户转换为组织账户。一旦将用户账户转换为组织，就无法将其恢复为个人用户账户。
 
-For prerequisites and instructions, see
-[Convert an account into an organization](convert-account.md).
+有关前提条件和说明，请参阅[将账户转换为组织](convert-account.md)。
 
-### Do organization invitees take up seats?
+### 组织受邀者会占用席位吗？
 
-Yes. A user invited to an organization will take up one of the provisioned
-seats, even if that user hasn’t accepted their invitation yet.
+会。被邀请加入组织的用户将占用一个已配置的席位，即使该用户尚未接受邀请。
 
-To manage invites, see [Manage organization members](/manuals/admin/organization/members.md).
+要管理邀请，请参阅[管理组织成员](/manuals/admin/organization/members.md)。
 
-### Do organization owners take a seat?
+### 组织所有者会占用席位吗？
 
-Yes. Organization owners occupy a seat.
+会。组织所有者会占用席位。
 
-### What is the difference between user, invitee, seat, and member?
+### 用户、受邀者、席位和成员之间有什么区别？
 
-- User: Docker user with a Docker ID.
-- Invitee: A user that an administrator has invited to join an organization but
-has not yet accepted their invitation.
-- Seats: The number of purchased seats in an organization.
-- Member: A user who has received and accepted an invitation to join an
-organization. Member can also refer to a member of a team within an
-organization.
+- 用户：拥有 Docker ID 的 Docker 用户。
+- 受邀者：管理员已邀请加入组织但尚未接受邀请的用户。
+- 席位：组织中购买的席位数量。
+- 成员：已收到并接受加入组织邀请的用户。成员也可以指组织内团队的成员。
 
-### If I have two organizations and a user belongs to both organizations, do they take up two seats?
+### 如果我有两个组织，且一个用户同时属于这两个组织，他们会占用两个席位吗？
 
-Yes. In a scenario where a user belongs to two organizations, they take up one
-seat in each organization.
+会。在用户属于两个组织的情况下，他们会在每个组织中各占用一个席位。

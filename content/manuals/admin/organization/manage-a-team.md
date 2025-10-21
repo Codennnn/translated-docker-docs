@@ -1,7 +1,7 @@
 ---
-title: Create and manage a team
+title: 创建和管理团队
 weight: 40
-description: Learn how to create and manage teams for your organization
+description: 了解如何为您的组织创建和管理团队
 keywords: docker, registry, teams, organizations, plans, Dockerfile, Docker
   Hub, docs, documentation, repository permissions, configure repository access, team management
 aliases:
@@ -10,131 +10,102 @@ aliases:
 
 {{< summary-bar feature_name="Admin orgs" >}}
 
-You can create teams for your organization in the Admin Console or Docker Hub,
-and configure team repository access in Docker Hub.
+您可以在管理控制台或 Docker Hub 中为您的组织创建团队，并在 Docker Hub 中配置团队的仓库访问权限。
 
-A team is a group of Docker users that belong to an organization. An
-organization can have multiple teams. An organization owner can create new
-teams and add members to an existing team using their Docker ID or email
-address. Members aren't required to be part of a team to be associated with an
-organization.
+团队是隶属于一个组织的 Docker 用户组。一个组织可以拥有多个团队。组织所有者可以使用 Docker ID 或电子邮件地址创建新团队并向现有团队添加成员。成员不一定需要加入团队才能与组织关联。
 
-The organization owner can add additional organization owners to help them
-manage users, teams, and repositories in the organization by assigning them
-the owner role.
+组织所有者可以指定其他组织所有者，通过授予所有者角色来帮助他们管理组织中的用户、团队和仓库。
 
-## What is an organization owner?
+## 什么是组织所有者？
 
-An organization owner is an administrator who has the following permissions:
+组织所有者是具有以下权限的管理员：
 
-- Manage repositories and add team members to the organization
-- Access private repositories, all teams, billing information, and
-organization settings
-- Specify [permissions](#permissions-reference) for each team in the
-organization
-- Enable [SSO](/manuals/enterprise/security/single-sign-on/_index.md) for the
-organization
+- 管理仓库并向组织添加团队成员
+- 访问私有仓库、所有团队、账单信息和组织设置
+- 为组织中的每个团队指定[权限](#permissions-reference)
+- 为组织启用[SSO](/manuals/enterprise/security/single-sign-on/_index.md)
 
-When SSO is enabled for your organization, the organization owner can
-also manage users. Docker can auto-provision Docker IDs for new end-users or
-users who'd like to have a separate Docker ID for company use through SSO
-enforcement.
+当为您的组织启用 SSO 后，组织所有者还可以管理用户。Docker 可以通过 SSO 强制为新终端用户或希望拥有独立公司使用 Docker ID 的用户自动配置 Docker ID。
 
-Organization owners can add others with the owner role to help them
-manage users, teams, and repositories in the organization.
+组织所有者可以添加其他具有所有者角色的用户，帮助他们管理组织中的用户、团队和仓库。
 
-For more information on roles, see
-[Roles and permissions](/manuals/enterprise/security/roles-and-permissions.md).
+有关角色的更多信息，请参阅[角色和权限](/manuals/enterprise/security/roles-and-permissions.md)。
 
-## Create a team
+## 创建团队
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your
-organization.
-1. Select **Teams**.
+1. 登录 [Docker Home](https://app.docker.com) 并选择您的组织。
+1. 选择 **Teams**（团队）。
 
-## Set team repository permissions
+## 设置团队仓库权限
 
-You must create a team before you are able to configure repository permissions.
-For more details, see [Create and manage a
-team](/manuals/admin/organization/manage-a-team.md).
+您必须先创建团队，然后才能配置仓库权限。有关更多详细信息，请参阅[创建和管理团队](/manuals/admin/organization/manage-a-team.md)。
 
-To set team repository permissions:
+要设置团队仓库权限：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select **My Hub** > **Repositories**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择 **My Hub** > **Repositories**（仓库）。
 
-   A list of your repositories appears.
+   您的仓库列表将会显示。
 
-1. Select a repository.
+1. 选择一个仓库。
 
-   The **General** page for the repository appears.
+   仓库的 **General**（常规）页面将会显示。
 
-1. Select the **Permissions** tab.
-1. Add, modify, or remove a team's repository permissions.
+1. 选择 **Permissions**（权限）选项卡。
+1. 添加、修改或删除团队的仓库权限。
 
-   - Add: Specify the **Team**, select the **Permission**, and then select **Add**.
-   - Modify: Specify the new permission next to the team.
-   - Remove: Select the **Remove permission** icon next to the team.
+   - 添加：指定**团队**，选择**权限**，然后选择**添加**。
+   - 修改：在团队旁边指定新权限。
+   - 删除：选择团队旁边的**删除权限**图标。
 
-### Permissions reference
+### 权限参考
 
-- `Read-only` access lets users view, search, and pull a private repository
-in the same way as they can a public repository.
-- `Read & Write` access lets users pull, push, and view a repository. In
-addition, it lets users view, cancel, retry or trigger builds.
-- `Admin` access lets users pull, push, view, edit, and delete a
-  repository. You can also edit build settings and update the repository’s
-  description, collaborator permissions, public/private visibility, and delete.
+- `只读`（Read-only）权限允许用户查看、搜索和拉取私有仓库，就像访问公共仓库一样。
+- `读写`（Read & Write）权限允许用户拉取、推送和查看仓库。此外，还允许用户查看、取消、重试或触发构建。
+- `管理员`（Admin）权限允许用户拉取、推送、查看、编辑和删除仓库。您还可以编辑构建设置并更新仓库描述、协作者权限、公共/私有可见性以及删除仓库。
 
-Permissions are cumulative. For example, if you have "Read & Write" permissions,
-you automatically have "Read-only" permissions.
+权限是累积的。例如，如果您拥有"读写"权限，则自动拥有"只读"权限。
 
-The following table shows what each permission level allows users to do:
+下表显示了每个权限级别允许用户执行的操作：
 
-| Action | Read-only | Read & Write | Admin |
+| 操作 | 只读 | 读写 | 管理员 |
 |:------------------:|:---------:|:------------:|:-----:|
-| Pull a Repository | ✅ | ✅ | ✅ |
-| View a Repository | ✅ | ✅ | ✅ |
-| Push a Repository | ❌ | ✅ | ✅ |
-| Edit a Repository | ❌ | ❌ | ✅ |
-| Delete a Repository | ❌ | ❌ | ✅ |
-| Update a Repository Description | ❌ | ❌ | ✅ |
-| View Builds | ✅ | ✅ | ✅ |
-| Cancel Builds | ❌ | ✅ | ✅ |
-| Retry Builds | ❌ | ✅ | ✅ |
-| Trigger Builds | ❌ | ✅ | ✅ |
-| Edit Build Settings | ❌ | ❌ | ✅ |
+| 拉取仓库 | ✅ | ✅ | ✅ |
+| 查看仓库 | ✅ | ✅ | ✅ |
+| 推送仓库 | ❌ | ✅ | ✅ |
+| 编辑仓库 | ❌ | ❌ | ✅ |
+| 删除仓库 | ❌ | ❌ | ✅ |
+| 更新仓库描述 | ❌ | ❌ | ✅ |
+| 查看构建 | ✅ | ✅ | ✅ |
+| 取消构建 | ❌ | ✅ | ✅ |
+| 重试构建 | ❌ | ✅ | ✅ |
+| 触发构建 | ❌ | ✅ | ✅ |
+| 编辑构建设置 | ❌ | ❌ | ✅ |
 
 > [!NOTE]
 >
-> A user who hasn't verified their email address only has `Read-only` access to
-the repository, regardless of the rights their team membership has given them.
+> 未验证电子邮件地址的用户仅对仓库具有`只读`访问权限，无论其团队成员身份授予了何种权限。
 
-## View team permissions for all repositories
+## 查看所有仓库的团队权限
 
-To view a team's permissions across all repositories:
+要查看团队在所有仓库中的权限：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-1. Select **My Hub** and choose your organization.
-1. Select **Teams** and choose your team name.
-1. Select the **Permissions** tab, where you can view the repositories this
-team can access.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+1. 选择 **My Hub** 并选择您的组织。
+1. 选择 **Teams**（团队）并选择您的团队名称。
+1. 选择 **Permissions**（权限）选项卡，您可以在此查看该团队可以访问的仓库。
 
-## Delete a team
+## 删除团队
 
-Organization owners can delete a team. When you remove a team from your
-organization, this action revokes member access to the team's permitted
-resources. It won't remove users from other teams that they belong to, and it
-won't delete any resources.
+组织所有者可以删除团队。当您从组织中删除团队时，此操作将撤销成员对团队授权资源的访问权限。这不会将用户从他们所属的其他团队中移除，也不会删除任何资源。
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Teams**.
-1. Select the **Actions** icon next to the name of the team you want to delete.
-1. Select **Delete team**.
-1. Review the confirmation message, then select **Delete**.
+1. 登录 [Docker Home](https://app.docker.com/) 并选择您的组织。
+1. 选择 **Teams**（团队）。
+1. 选择要删除的团队名称旁边的 **Actions**（操作）图标。
+1. 选择 **Delete team**（删除团队）。
+1. 查看确认消息，然后选择 **Delete**（删除）。
 
-## More resources
+## 更多资源
 
-- [Video: Docker teams](https://youtu.be/WKlT1O-4Du8?feature=shared&t=348)
-- [Video: Roles, teams, and repositories](https://youtu.be/WKlT1O-4Du8?feature=shared&t=435)
+- [视频：Docker 团队](https://youtu.be/WKlT1O-4Du8?feature=shared&t=348)
+- [视频：角色、团队和仓库](https://youtu.be/WKlT1O-4Du8?feature=shared&t=435)

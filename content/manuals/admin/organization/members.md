@@ -1,42 +1,41 @@
 ---
-title: Manage organization members
+title: 管理组织成员
 weight: 30
-description: Learn how to manage organization members in Docker Hub and Docker Admin Console.
-keywords: members, teams, organizations, invite members, manage team members, export member list, edit roles, organization teams, user management
+description: 了解如何在 Docker Hub 和 Docker 管理控制台中管理组织成员。
+keywords: 成员, 团队, 组织, 邀请成员, 管理团队成员, 导出成员列表, 编辑角色, 组织团队, 用户管理
 aliases:
 - /docker-hub/members/
 ---
 
-Learn how to manage members for your organization in Docker Hub and the Docker Admin Console.
+了解如何在 Docker Hub 和 Docker 管理控制台中管理您的组织成员。
 
-## Invite members
+## 邀请成员
 
-Owners can invite new members to an organization via Docker ID, email address, or with a CSV file containing email addresses. If an invitee does not have a Docker account, they must create an account and verify their email address before they can accept an invitation to join the organization. When inviting members, their pending invitation occupies a seat.
+所有者可以通过 Docker ID、电子邮件地址或包含电子邮件地址的 CSV 文件邀请新成员加入组织。如果被邀请者没有 Docker 账户，他们必须创建账户并验证电子邮件地址，然后才能接受加入组织的邀请。邀请成员时，待处理的邀请会占用一个席位。
 
-### Invite members via Docker ID or email address
+### 通过 Docker ID 或电子邮件地址邀请成员
 
-Use the following steps to invite members to your organization via Docker ID or email address.
+使用以下步骤通过 Docker ID 或电子邮件地址邀请成员加入您的组织。
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your organization from the top-left account drop-down.
-1. Select **Members**, then **Invite**.
-1. Select **Emails or usernames**.
-1. Follow the on-screen instructions to invite members. Invite a maximum of 1000 members and separate multiple entries by comma, semicolon, or space.
+1. 登录 [Docker 主页](https://app.docker.com)，然后从左上角的账户下拉菜单中选择您的组织。
+1. 选择 **成员**，然后选择 **邀请**。
+1. 选择 **电子邮件或用户名**。
+1. 按照屏幕上的说明邀请成员。最多可邀请 1000 名成员，多个条目之间用逗号、分号或空格分隔。
 
 > [!NOTE]
 >
-> When you invite members, you assign them a role. See [Roles and permissions](/manuals/enterprise/security/roles-and-permissions.md) for
-details about the access permissions for each role.
+> 邀请成员时，您需要为他们分配一个角色。有关每个角色的访问权限详情，请参阅[角色和权限](/manuals/enterprise/security/roles-and-permissions.md)。
 
-Pending invitations appear in the table. Invitees receive an email with a link to Docker Hub where they can accept or decline the invitation.
+待处理的邀请会显示在表格中。被邀请者会收到一封包含 Docker Hub 链接的电子邮件，他们可以通过该链接接受或拒绝邀请。
 
-### Invite members via CSV file
+### 通过 CSV 文件邀请成员
 
-To invite multiple members to an organization via a CSV file containing email addresses:
+要通过包含电子邮件地址的 CSV 文件邀请多个成员加入组织：
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your organization from the top-left account drop-down.
-1. Select **Members**, then **Invite**.
-1. Select **CSV upload**.
-1. Optional. Select **Download the template CSV file** to download an example CSV file. The following is an example of the contents of a valid CSV file.
+1. 登录 [Docker 主页](https://app.docker.com)，然后从左上角的账户下拉菜单中选择您的组织。
+1. 选择 **成员**，然后选择 **邀请**。
+1. 选择 **CSV 上传**。
+1. 可选。选择 **下载模板 CSV 文件** 以下载示例 CSV 文件。以下是有效 CSV 文件内容的示例。
 
 ```text
 email
@@ -44,177 +43,170 @@ docker.user-0@example.com
 docker.user-1@example.com
 ```
 
-CSV file requirements:
+CSV 文件要求：
 
-- The file must contain a header row with at least one heading named email. Additional columns are allowed and are ignored in the import.
-- The file must contain a maximum of 1000 email addresses (rows). To invite more than 1000 users, create multiple CSV files and perform all steps in this task for each file.
+- 文件必须包含标题行，且至少有一个名为 email 的标题。允许有额外的列，但在导入时会被忽略。
+- 文件最多包含 1000 个电子邮件地址（行）。要邀请超过 1000 名用户，请创建多个 CSV 文件，并对每个文件执行此任务中的所有步骤。
 
-1. Create a new CSV file or export a CSV file from another application.
+1. 创建新的 CSV 文件或从其他应用程序导出 CSV 文件。
 
-- To export a CSV file from another application, see the application’s documentation.
-- To create a new CSV file, open a new file in a text editor, type email on the first line, type the user email addresses one per line on the following lines, and then save the file with a .csv extension.
+- 要从其他应用程序导出 CSV 文件，请参阅该应用程序的文档。
+- 要创建新的 CSV 文件，请在文本编辑器中打开新文件，在第一行输入 email，在接下来的行中每行输入一个用户电子邮件地址，然后将文件保存为 .csv 扩展名。
 
-1. Select **Browse files** and then select your CSV file, or drag and drop the CSV file into the **Select a CSV file to upload** box. You can only select one CSV file at a time.
-
-> [!NOTE]
->
-> If the amount of email addresses in your CSV file exceeds the number of available seats in your organization, you cannot continue to invite members. To invite members, you can purchase more seats, or remove some email addresses from the CSV file and re-select the new file. To purchase more seats, see [Add seats](/manuals/subscription/manage-seats.md) to your subscription or [Contact sales](https://www.docker.com/pricing/contact-sales/).
-
-1. After the CSV file has been uploaded, select **Review**.
-
-Valid email addresses and any email addresses that have issues appear. Email addresses may have the following issues:
-
-- Invalid email: The email address is not a valid address. The email address will be ignored if you send invites. You can correct the email address in the CSV file and re-import the file.
-- Already invited: The user has already been sent an invite email and another invite email will not be sent.
-- Member: The user is already a member of your organization and an invite email will not be sent.
-- Duplicate: The CSV file has multiple occurrences of the same email address. The user will be sent only one invite email.
-
-1. Follow the on-screen instructions to invite members.
+1. 选择 **浏览文件**，然后选择您的 CSV 文件，或将 CSV 文件拖放到 **选择要上传的 CSV 文件** 框中。一次只能选择一个 CSV 文件。
 
 > [!NOTE]
 >
-> When you invite members, you assign them a role. See [Roles and permissions](/manuals/enterprise/security/roles-and-permissions.md) for
-details about the access permissions for each role.
+> 如果 CSV 文件中的电子邮件地址数量超过组织中可用席位的数量，您将无法继续邀请成员。要邀请成员，您可以购买更多席位，或从 CSV 文件中删除一些电子邮件地址并重新选择新文件。要购买更多席位，请参阅[向订阅添加席位](/manuals/subscription/manage-seats.md)或[联系销售](https://www.docker.com/pricing/contact-sales/)。
 
-Pending invitations appear in the table. The invitees receive an email with a link to Docker Hub where they can accept or decline the invitation.
+1. CSV 文件上传完成后，选择 **审阅**。
 
-### Invite members via API
+有效的电子邮件地址和任何有问题的电子邮件地址都会显示出来。电子邮件地址可能出现以下问题：
 
-You can bulk invite members using the Docker Hub API. For more information, see the [Bulk create invites](https://docs.docker.com/reference/api/hub/latest/#tag/invites/paths/~1v2~1invites~1bulk/post) API endpoint.
+- 无效电子邮件：电子邮件地址不是有效地址。如果发送邀请，该电子邮件地址将被忽略。您可以在 CSV 文件中更正电子邮件地址并重新导入文件。
+- 已邀请：用户已收到邀请电子邮件，不会发送另一封邀请电子邮件。
+- 成员：用户已经是您组织的成员，不会发送邀请电子邮件。
+- 重复：CSV 文件中多次出现相同的电子邮件地址。用户只会收到一封邀请电子邮件。
 
-## Accept invitation
+1. 按照屏幕上的说明邀请成员。
 
-When an invitation is to a user's email address, they receive
-a link to Docker Hub where they can accept or decline the invitation.
-To accept an invitation:
+> [!NOTE]
+>
+> 邀请成员时，您需要为他们分配一个角色。有关每个角色的访问权限详情，请参阅[角色和权限](/manuals/enterprise/security/roles-and-permissions.md)。
 
-1. Check your email inbox and open the Docker email with an invitation to
-join the Docker organization.
-1. To open the link to Docker Hub, select the **click here** link.
+待处理的邀请会显示在表格中。被邀请者会收到一封包含 Docker Hub 链接的电子邮件，他们可以通过该链接接受或拒绝邀请。
+
+### 通过 API 邀请成员
+
+您可以使用 Docker Hub API 批量邀请成员。有关更多信息，请参阅[批量创建邀请](https://docs.docker.com/reference/api/hub/latest/#tag/invites/paths/~1v2~1invites~1bulk/post) API 端点。
+
+## 接受邀请
+
+当邀请发送到用户的电子邮件地址时，他们会收到一个 Docker Hub 链接，可以通过该链接接受或拒绝邀请。
+接受邀请的步骤：
+
+1. 检查您的电子邮件收件箱，打开包含加入 Docker 组织邀请的 Docker 电子邮件。
+1. 要打开 Docker Hub 链接，选择 **点击此处** 链接。
 
    > [!WARNING]
    >
-   > Invitation email links expire after 14 days. If your email link has expired,
-   > you can sign in to [Docker Hub](https://hub.docker.com/) with the email
-   > address the link was sent to and accept the invitation from the
-   > **Notifications** panel.
+   > 邀请电子邮件链接在 14 天后过期。如果您的电子邮件链接已过期，
+   > 您可以使用发送链接的电子邮件地址登录 [Docker Hub](https://hub.docker.com/)，然后从
+   > **通知** 面板接受邀请。
 
-1. The Docker create an account page will open. If you already have an account, select **Already have an account? Sign in**.
-If you do not have an account yet, create an account using the same email
-address you received the invitation through.
-1. Optional. If you do not have an account and created one, you must navigate
-back to your email inbox and verify your email address using the Docker verification
-email.
-1. Once you are signed in to Docker Hub, select **My Hub** from the top-level navigation menu.
-1. Select **Accept** on your invitation.
+1. 将打开 Docker 创建账户页面。如果您已有账户，选择 **已有账户？登录**。
+如果您还没有账户，请使用收到邀请的相同电子邮件地址创建账户。
+1. 可选。如果您没有账户并创建了账户，您必须
+返回电子邮件收件箱，使用 Docker 验证电子邮件验证您的电子邮件地址。
+1. 登录 Docker Hub 后，从顶级导航菜单中选择 **我的 Hub**。
+1. 在您的邀请上选择 **接受**。
 
-After accepting an invitation, you are now a member of the organization.
+接受邀请后，您现在就是该组织的成员。
 
-## Manage invitations
+## 管理邀请
 
-After inviting members, you can resend or remove invitations as needed.
+邀请成员后，您可以根据需要重新发送或删除邀请。
 
-### Resend an invitation
+### 重新发送邀请
 
-You can send individual invitations, or bulk invitations from the Admin Console.
+您可以从管理控制台发送个人邀请或批量邀请。
 
-To resend an individual invitation:
+重新发送个人邀请：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Members**.
-1. Select the **action menu** next to the invitee and select **Resend**.
-1. Select **Invite** to confirm.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **成员**。
+1. 选择被邀请者旁边的 **操作菜单**，然后选择 **重新发送**。
+1. 选择 **邀请** 确认。
 
-To bulk resend invitations:
+批量重新发送邀请：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Members**.
-1. Use the **checkboxes** next to **Usernames** to bulk select users.
-1. Select **Resend invites**.
-1. Select **Resend** to confirm.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **成员**。
+1. 使用 **用户名** 旁边的 **复选框** 批量选择用户。
+1. 选择 **重新发送邀请**。
+1. 选择 **重新发送** 确认。
 
-### Remove an invitation
+### 删除邀请
 
-To remove an invitation from the Admin Console:
+要从管理控制台删除邀请：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Members**.
-1. Select the **action menu** next to the invitee and select **Remove invitee**.
-1. Select **Remove** to confirm.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **成员**。
+1. 选择被邀请者旁边的 **操作菜单**，然后选择 **删除被邀请者**。
+1. 选择 **删除** 确认。
 
-## Manage members on a team
+## 管理团队成员
 
-Use Docker Hub or the Admin Console to add or remove team members. Organization owners can add a member to one or more teams within an organization.
+使用 Docker Hub 或管理控制台添加或删除团队成员。组织所有者可以将成员添加到组织内的一个或多个团队。
 
-### Add a member to a team
+### 将成员添加到团队
 
-To add a member to a team with the Admin Console:
+使用管理控制台将成员添加到团队：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Teams**.
-1. Select the team name.
-1. Select **Add member**. You can add the member by searching for their email address or username.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **团队**。
+1. 选择团队名称。
+1. 选择 **添加成员**。您可以通过搜索他们的电子邮件地址或用户名来添加成员。
 
    > [!NOTE]
    >
-   > An invitee must first accept the invitation to join the organization before being added to the team.
+   > 被邀请者必须首先接受加入组织的邀请，然后才能被添加到团队。
 
-### Remove members from teams
-
-> [!NOTE]
->
-> If your organization uses single sign-on (SSO) with [SCIM](/manuals/enterprise/security/provisioning/scim.md) enabled, you should remove members from your identity provider (IdP). This will automatically remove members from Docker. If SCIM is disabled, you must manually manage members in Docker.
-
-Organization owners can remove a member from a team in Docker Hub or Admin Console. Removing the member from the team will revoke their access to the permitted resources.
-
-To remove a member from a specific team with the Admin Console:
-
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Teams**.
-1. Select the team name.
-1. Select the **X** next to the user's name to remove them from the team.
-1. When prompted, select **Remove** to confirm.
-
-### Update a member role
-
-Organization owners can manage [roles](/security/for-admins/roles-and-permissions/)
-within an organization. If an organization is part of a company,
-the company owner can also manage that organization's roles. If you have SSO enabled, you can use [SCIM for role mapping](/security/for-admins/provisioning/scim/).
+### 从团队中删除成员
 
 > [!NOTE]
 >
-> If you're the only owner of an organization, you need to assign a new owner
-before you can edit your role.
+> 如果您的组织使用启用了 [SCIM](/manuals/enterprise/security/provisioning/scim.md) 的单点登录 (SSO)，您应该从身份提供商 (IdP) 中删除成员。这将自动从 Docker 中删除成员。如果禁用 SCIM，您必须在 Docker 中手动管理成员。
 
-To update a member role in the Admin Console:
+组织所有者可以在 Docker Hub 或管理控制台中从团队中删除成员。从团队中删除成员将撤销他们对允许资源的访问权限。
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Members**.
-1. Find the username of the member whose role you want to edit. Select the
-**Actions** menu, then **Edit role**.
+使用管理控制台从特定团队中删除成员：
 
-## Export members CSV file
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **团队**。
+1. 选择团队名称。
+1. 选择用户名旁边的 **X** 将其从团队中删除。
+1. 出现提示时，选择 **删除** 确认。
+
+### 更新成员角色
+
+组织所有者可以管理组织内的[角色](/security/for-admins/roles-and-permissions/)。
+如果组织是公司的一部分，公司所有者也可以管理该组织的角色。如果启用了 SSO，您可以使用 [SCIM 进行角色映射](/security/for-admins/provisioning/scim/)。
+
+> [!NOTE]
+>
+> 如果您是组织的唯一所有者，您需要先分配一个新的所有者，
+然后才能编辑您的角色。
+
+在管理控制台中更新成员角色：
+
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **成员**。
+1. 找到要编辑其角色的成员的用户名。选择
+**操作** 菜单，然后选择 **编辑角色**。
+
+## 导出成员 CSV 文件
 
 {{< summary-bar feature_name="Admin orgs" >}}
 
-Owners can export a CSV file containing all members. The CSV file for a company contains the following fields:
+所有者可以导出包含所有成员的 CSV 文件。公司的 CSV 文件包含以下字段：
 
-- Name: The user's name
-- Username: The user's Docker ID
-- Email: The user's email address
-- Member of Organizations: All organizations the user is a member of within a company
-- Invited to Organizations: All organizations the user is an invitee of within a company
-- Account Created: The time and date when the user account was created
+- 姓名：用户姓名
+- 用户名：用户的 Docker ID
+- 电子邮件：用户的电子邮件地址
+- 所属组织：用户在公司内所属的所有组织
+- 受邀组织：用户在公司内受邀的所有组织
+- 账户创建时间：用户账户创建的时间和日期
 
-To export a CSV file of your members:
+导出成员的 CSV 文件：
 
-1. Sign in to [Docker Home](https://app.docker.com/) and select your
-organization.
-1. Select **Members**.
-1. Select the **download** icon to export a CSV file of all members.
+1. 登录 [Docker 主页](https://app.docker.com/) 并选择您的
+组织。
+1. 选择 **成员**。
+1. 选择 **下载** 图标导出所有成员的 CSV 文件。

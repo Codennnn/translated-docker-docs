@@ -1,7 +1,7 @@
 ---
-Title: Docker Desktop in Microsoft Dev Box
+Title: Docker Desktop 在 Microsoft Dev Box 中
 linkTitle: Microsoft Dev Box
-description: Learn about the benefits of and  how to setup Docker Desktop in Microsoft Dev Box
+description: 了解在 Microsoft Dev Box 中使用 Docker Desktop 的优势及设置方法
 keywords: desktop, docker, windows, microsoft dev box
 weight: 60
 aliases:
@@ -9,52 +9,52 @@ aliases:
  - /desktop/setup/install/enterprise-deployment/dev-box/
 ---
 
-Docker Desktop is available as a pre-configured image in the Microsoft Azure Marketplace for use with Microsoft Dev Box, allowing developers to quickly set up consistent development environments in the cloud.
+Docker Desktop 作为预配置镜像在 Microsoft Azure Marketplace 中提供，可与 Microsoft Dev Box 配合使用，使开发人员能够快速在云中设置一致的开发环境。
 
-Microsoft Dev Box provides cloud-based, pre-configured developer workstations that allow you to code, build, and test applications without configuring a local development environment. The Docker Desktop image for Microsoft Dev Box comes with Docker Desktop and its dependencies pre-installed, giving you a ready-to-use containerized development environment.
+Microsoft Dev Box 提供基于云的预配置开发工作站，让您无需配置本地开发环境即可编码、构建和测试应用程序。适用于 Microsoft Dev Box 的 Docker Desktop 镜像预装了 Docker Desktop 及其依赖项，为您提供了即用型容器化开发环境。
 
-## Key benefits
+## 主要优势
 
-- Pre-configured environment: Docker Desktop, WSL2, and other requirements come pre-installed and configured
-- Consistent development: Ensure all team members work with the same Docker environment
-- Powerful resources: Access more compute power and storage than might be available on local machines
-- State persistence: Dev Box maintains your state between sessions, similar to hibernating a local machine
-- Seamless licensing: Use your existing Docker subscription or purchase a new one directly through Azure Marketplace
+- **预配置环境**：Docker Desktop、WSL2 和其他要求项已预装并配置完成
+- **一致的开发体验**：确保所有团队成员使用相同的 Docker 环境
+- **强大的资源**：访问比本地机器可能更多的计算能力和存储空间
+- **状态持久性**：Dev Box 在会话之间保持您的状态，类似于本地计算机的休眠
+- **无缝许可**：使用您现有的 Docker 订阅或直接通过 Azure Marketplace 购买新订阅
 
-## Setup
+## 设置
 
-### Prerequisites 
+### 先决条件 
 
-- An Azure subscription
-- Access to Microsoft Dev Box
-- A Docker subscription (Pro, Team, or Business). You can use Docker Desktop in Microsoft Dev Box with any of the following subscription options:
-   - An existing or new Docker subscription 
-   - A new Docker subscription purchased through Azure Marketplace
-   - A Docker Business subscription with SSO configured for your organization
+- Azure 订阅
+- Microsoft Dev Box 访问权限
+- Docker 订阅（Pro、Team 或 Business）。您可以通过以下任一订阅选项在 Microsoft Dev Box 中使用 Docker Desktop：
+   - 现有的或新的 Docker 订阅
+   - 通过 Azure Marketplace 购买的新 Docker 订阅
+   - 为您的组织配置了 SSO 的 Docker Business 订阅
 
-### Set up Docker Desktop in Dev Box
+### 在 Dev Box 中设置 Docker Desktop
 
-1. Navigate to the [Docker Desktop for Microsoft Dev Box](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/dockerinc1694120899427.devbox_azuremachine?tab=Overview) listing in Azure Marketplace.
-2. Select **Get It Now** to add the virtual machine image to your subscription.
-3. Follow the Azure workflow to complete the setup.
-4. Use the image to create VMs, assign to Dev Centers, or create Dev Box Pools according to your organization's setup.
+1. 导航到 Azure Marketplace 中的 [Docker Desktop for Microsoft Dev Box](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/dockerinc1694120899427.devbox_azuremachine?tab=Overview) 页面。
+2. 选择 **立即获取** 将虚拟机镜像添加到您的订阅。
+3. 按照 Azure 工作流程完成设置。
+4. 根据您组织的设置，使用该镜像创建虚拟机、分配给开发中心或创建 Dev Box 池。
 
-### Activate Docker Desktop
+### 激活 Docker Desktop
 
-Once your Dev Box is provisioned with the Docker Desktop image:
+当您的 Dev Box 使用 Docker Desktop 镜像配置完成后：
 
-1. Start your Dev Box instance.
-2. Launch Docker Desktop. 
-3. Sign in with your Docker ID.
+1. 启动您的 Dev Box 实例。
+2. 启动 Docker Desktop。
+3. 使用您的 Docker ID 登录。
 
-## Support
+## 支持
 
-For issues related to:
+如需获取以下相关问题的支持：
 
-- Docker Desktop configuration, usage, or licensing: Create a support ticket through [Docker Support](https://hub.docker.com/support).
-- Dev Box creation, Azure portal configuration, or networking: Contact Azure Support.
+- Docker Desktop 配置、使用或许可：通过 [Docker 支持](https://hub.docker.com/support) 创建支持工单。
+- Dev Box 创建、Azure 门户配置或网络：联系 Azure 支持。
 
-## Limitations
+## 限制
 
-- Microsoft Dev Box is currently only available on Windows 10 and 11 (Linux VMs are not supported).
-- Performance may vary based on your Dev Box configuration and network conditions.
+- Microsoft Dev Box 目前仅在 Windows 10 和 11 上可用（不支持 Linux 虚拟机）。
+- 性能可能会根据您的 Dev Box 配置和网络条件而有所不同。

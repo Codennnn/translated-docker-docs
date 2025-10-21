@@ -1,36 +1,30 @@
 ---
-title: Manage company owners
-description: Learn how to add and remove company owners.
-keywords: company, owners, add company owner, remove company owner, company manageemnt, company owner permissions
+title: 管理公司所有者
+description: 了解如何添加和移除公司所有者。
+keywords: 公司, 所有者, 添加公司所有者, 移除公司所有者, 公司管理, 公司所有者权限
 aliases:
 - /docker-hub/company-owner/
 ---
 
 {{< summary-bar feature_name="Company" >}}
 
-A company can have multiple owners. Company owners have visibility across the
-entire company and can manage settings that apply to all organizations under
-that company. They also have the same access rights as organization owners but
-don’t need to be members of any individual organization.
+一个公司可以有多个所有者。公司所有者可以查看整个公司的信息，并管理适用于该公司下所有组织的设置。他们拥有与组织所有者相同的访问权限，但无需成为任何单个组织的成员。
 
 > [!IMPORTANT]
 >
-> Company owners do not occupy a seat unless they are added as a member of an
-organization under your company or SSO is enabled.
+> 除非公司所有者被添加为公司下组织的成员或启用了 SSO，否则他们不会占用席位。
 
-## Add a company owner
+## 添加公司所有者
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company from
-the top-left account drop-down.
-1. Select **Admin Console**, then **Company owners**.
-1. Select **Add owner**.
-1. Specify the user's Docker ID to search for the user.
-1. After you find the user, select **Add company owner**.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司。
+1. 选择 **管理控制台**，然后选择 **公司所有者**。
+1. 选择 **添加所有者**。
+1. 指定用户的 Docker ID 以搜索该用户。
+1. 找到用户后，选择 **添加公司所有者**。
 
-## Remove a company owner
+## 移除公司所有者
 
-1. Sign in to [Docker Home](https://app.docker.com) and select your company from
-the top-left account drop-down.
-1. Select **Admin Console**, then **Company owners**.
-1. Locate the company owner you want to remove and select the **Actions** menu.
-1. Select **Remove as company owner**.
+1. 登录 [Docker 主页](https://app.docker.com)，从左上角的账户下拉菜单中选择您的公司。
+1. 选择 **管理控制台**，然后选择 **公司所有者**。
+1. 找到要移除的公司所有者，选择 **操作** 菜单。
+1. 选择 **移除公司所有者**。
