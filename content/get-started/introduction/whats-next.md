@@ -1,5 +1,5 @@
 ---
-title: 下一步 
+title: 下一步
 keywords: concepts, build, images, container, docker desktop
 description: 浏览循序渐进的指南，帮助你理解 Docker 核心概念、镜像构建与容器运行。
 aliases:
@@ -16,17 +16,17 @@ the-basics:
   description: 了解如何运行你的第一个容器。
   link: /get-started/docker-concepts/the-basics/what-is-a-container/
 - title: 什么是镜像？
-  description: 了解镜像分层的基础知识。 
+  description: 了解镜像分层的基础知识。
   link: /get-started/docker-concepts/the-basics/what-is-an-image/
 - title: 什么是仓库？
-  description: 了解容器仓库，探索其互操作性，并学习与仓库交互。 
+  description: 了解容器仓库，探索其互操作性，并学习与仓库交互。
   link: /get-started/docker-concepts/the-basics/what-is-a-registry/
 - title: 什么是 Docker Compose？
   description: 更系统地理解 Docker Compose。
   link: /get-started/docker-concepts/the-basics/what-is-docker-compose/
 
 building-images:
-- title: 理解镜像分层 
+- title: 理解镜像分层
   description: 了解容器镜像的分层结构。
   link: /get-started/docker-concepts/building-images/understanding-image-layers/
 - title: 编写 Dockerfile
@@ -60,22 +60,33 @@ running-containers:
   link: /get-started/docker-concepts/running-containers/multi-container-applications/
 ---
 
-以下章节提供循序渐进的指南，帮助你理解 Docker 核心概念、镜像构建与容器运行。
+# Docker 技术进阶指南
 
-## 基础入门
+本章节为你提供系统化的 Docker 技术学习路径，通过循序渐进的专题指南，帮助你全面掌握容器技术的核心概念、镜像构建最佳实践与容器运行管理技巧。根据你的学习需求和兴趣，可选择以下任一主题深入探索。
 
-从容器、镜像、仓库与 Docker Compose 的核心概念开始学习。
+## 容器技术基础
+
+从理解容器本质、镜像架构、仓库机制到 Docker Compose 编排工具，建立坚实的容器技术知识体系。这些基础概念是掌握 Docker 技术的关键起点。
 
 {{< grid items="the-basics" >}}
 
-## 构建镜像
+## 镜像构建精通
 
-借助 Dockerfile、构建缓存与多阶段构建，打造更优的容器镜像。
+深入掌握 Dockerfile 编写技巧、分层优化策略、缓存机制与多阶段构建，打造轻量高效的容器镜像。这些技能将帮助你构建生产级别的高质量容器镜像。
 
 {{< grid items="building-images" >}}
 
-## 运行容器
+## 容器运行与管理
 
-掌握端口暴露、覆盖默认配置、数据持久化、文件共享与多容器应用管理等关键技巧。
+系统学习网络配置、运行参数调优、数据持久化、存储方案选择与多容器应用架构设计，实现容器化应用的高效部署与管理。掌握这些技能将使你能够在各种环境中灵活运行和管理容器。
 
 {{< grid items="running-containers" >}}
+
+## 学习路径建议
+
+如果你是容器技术新手，建议按照以下顺序学习：
+1. 首先了解容器和镜像的基本概念
+2. 然后学习如何构建和优化镜像
+3. 最后掌握容器的高级运行和管理技巧
+
+已有一定经验的用户可直接选择感兴趣的主题深入学习。
