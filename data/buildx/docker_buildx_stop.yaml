@@ -1,15 +1,14 @@
 command: docker buildx stop
-short: Stop builder instance
+short: 停止构建器实例
 long: |-
-    Stops the specified or current builder. This does not prevent buildx build to
-    restart the builder. The implementation of stop depends on the driver.
+    停止指定的或当前的构建器。此操作不会阻止 buildx build 命令重新启动构建器。具体的停止实现取决于驱动程序。
 usage: docker buildx stop [NAME]
 pname: docker buildx
 plink: docker_buildx.yaml
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -21,7 +20,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false
@@ -29,9 +28,9 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例 (--builder) {#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    与 [`buildx --builder`](/reference/cli/docker/buildx/#builder) 相同。
 deprecated: false
 hidden: false
 experimental: false

@@ -1,35 +1,34 @@
 ---
-description: Find the latest recommended version of the Docker Compose file format
-  for defining multi-container applications.
-keywords: docker compose file, docker compose yml, docker compose reference, docker
-  compose cmd, docker compose user, docker compose image, yaml spec, docker compose
-  syntax, yaml specification, docker compose specification
-title: Compose file reference
+description: 查找用于定义多容器应用程序的 Docker Compose 文件格式的最新推荐版本。
+keywords: docker compose 文件, docker compose yml, docker compose 参考, docker
+  compose 命令, docker compose 用户, docker compose 镜像, yaml 规范, docker compose
+  语法, yaml 规范, docker compose 规范
+title: Compose 文件参考
 toc_max: 4
 toc_min: 1
 grid:
-- title: Version and name top-level element
-  description: Understand version and name attributes for Compose.
+- title: 版本和名称顶级元素
+  description: 了解 Compose 的版本和名称属性。
   icon: text_snippet
   link: /reference/compose-file/version-and-name/
-- title: Services top-level element
-  description: Explore all services attributes for Compose.
+- title: 服务顶级元素
+  description: 探索 Compose 的所有服务属性。
   icon: construction
   link: /reference/compose-file/services/
-- title: Networks top-level element
-  description: Find all networks attributes for Compose.
+- title: 网络顶级元素
+  description: 查找 Compose 的所有网络属性。
   icon: lan
   link: /reference/compose-file/networks/
-- title: Volumes top-level element
-  description: Explore all volumes attributes for Compose.
+- title: 卷顶级元素
+  description: 探索 Compose 的所有卷属性。
   icon: database
   link: /reference/compose-file/volumes/
-- title: Configs top-level element
-  description: Find out about configs in Compose.
+- title: 配置顶级元素
+  description: 了解 Compose 中的配置信息。
   icon: settings
   link: /reference/compose-file/configs/
-- title: Secrets top-level element
-  description: Learn about secrets in Compose.
+- title: 密钥顶级元素
+  description: 了解 Compose 中的密钥管理。
   icon: lock
   link: /reference/compose-file/secrets/
 aliases:
@@ -39,21 +38,21 @@ aliases:
  - /compose/reference/overview/
 ---
 
->**New to Docker Compose?**
+>**Docker Compose 新手？**
 >
-> Find more information about the [key features and use cases of Docker Compose](/manuals/compose/intro/features-uses.md) or [try the quickstart guide](/manuals/compose/gettingstarted.md).
+> 了解 [Docker Compose 的主要功能和用例](/manuals/compose/intro/features-uses.md) 或 [尝试快速入门指南](/manuals/compose/gettingstarted.md)。
 
-The Compose Specification is the latest and recommended version of the Compose file format. It helps you define a [Compose file](/manuals/compose/intro/compose-application-model.md) which is used to configure your Docker application’s services, networks, volumes, and more.
+Compose 规范是 Compose 文件格式的最新推荐版本。它帮助您定义 [Compose 文件](/manuals/compose/intro/compose-application-model.md)，用于配置 Docker 应用程序的服务、网络、卷等内容。
 
-Legacy versions 2.x and 3.x of the Compose file format were merged into the Compose Specification. It is implemented in versions 1.27.0 and above (also known as Compose v2) of the Docker Compose CLI.
+Compose 文件格式的旧版本 2.x 和 3.x 已合并到 Compose 规范中。它在 Docker Compose CLI 的 1.27.0 及更高版本（也称为 Compose v2）中实现。
 
-The Compose Specification on Docker Docs is the Docker Compose implementation. If you wish to implement your own version of the Compose Specification, see the [Compose Specification repository](https://github.com/compose-spec/compose-spec).
+Docker 文档上的 Compose 规范是 Docker Compose 的实现。如果您希望实现自己的 Compose 规范版本，请参阅 [Compose 规范仓库](https://github.com/compose-spec/compose-spec)。
 
-Use the following links to navigate key sections of the Compose Specification. 
+使用以下链接导航 Compose 规范的关键部分。
 
 > [!TIP]
 >
-> Want a better editing experience for Compose files in VS Code?
-> Check out the [Docker VS Code Extension (Beta)](https://marketplace.visualstudio.com/items?itemName=docker.docker) for linting, code navigation, and vulnerability scanning.
+> 想要在 VS Code 中获得更好的 Compose 文件编辑体验？
+> 查看 [Docker VS Code 扩展（测试版）](https://marketplace.visualstudio.com/items?itemName=docker.docker)，获取代码检查、代码导航和漏洞扫描功能。
 
 {{< grid >}}

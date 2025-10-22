@@ -1,104 +1,84 @@
 command: docker buildx history trace
-short: Show the OpenTelemetry trace of a build record
-long: |-
-    View the OpenTelemetry trace for a completed build. This command loads the
-    trace into a Jaeger UI viewer and opens it in your browser.
+short: 查看构建的 OpenTelemetry 追踪
+long: |
+  打开指定构建记录的 OpenTelemetry 追踪，并通过 Jaeger UI 进行可视化分析。
 
-    This helps analyze build performance, step timing, and internal execution flows.
+  如果未指定构建记录（REF），则默认使用最近一条记录。
+
+  该命令会启动 Jaeger 容器，并自动在浏览器中打开追踪页面，方便你深入分析构建性能瓶颈。
 usage: docker buildx history trace [OPTIONS] [REF]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
 options:
     - option: addr
       value_type: string
-      default_value: 127.0.0.1:0
-      description: Address to bind the UI server
-      details_url: '#addr'
-      deprecated: false
-      hidden: false
-      experimental: false
-      experimentalcli: false
-      kubernetes: false
-      swarm: false
+      default_value: auto
+      description: Jaeger 监听地址
+      details: |
+        自定义 Jaeger 容器的监听地址，格式为 `<主机>:<端口>`。
+
+        默认值为 `auto`，系统会自动分配可用端口。
     - option: compare
       value_type: string
-      description: Compare with another build record
-      details_url: '#compare'
-      deprecated: false
-      hidden: false
-      experimental: false
-      experimentalcli: false
-      kubernetes: false
-      swarm: false
-inherited_options:
+      description: 对比两次构建的追踪
+      details: |
+        同时打开两条构建记录的追踪页面，方便并排对比性能差异。
+
+        例如：
+        ```console
+        $ docker buildx history trace --compare r0,r1
+        ```
     - option: builder
       value_type: string
-      description: Override the configured builder instance
-      deprecated: false
-      hidden: false
-      experimental: false
-      experimentalcli: false
-      kubernetes: false
-      swarm: false
+      description: 覆盖构建器实例
+      details: |
+        指定要使用的构建器。支持以下格式：
+
+        - 构建器名称（如 `mybuilder`）
+        - Docker 上下文（如 `default`）
+        - 远端地址（如 `tcp://localhost:8376` 或 `ssh://user@host`）
+        - 本地容器（如 `docker-container://mybuilder`）
+        - 本地进程（如 `docker://proc-1234`）
+
+        默认使用当前构建器。
     - option: debug
-      shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
-      deprecated: false
-      hidden: false
-      experimental: false
-      experimentalcli: false
-      kubernetes: false
-      swarm: false
-examples: |-
-    ### Open the OpenTelemetry trace for the most recent build
+      description: 启用调试模式
+      details: |
+        输出详细的调试日志，帮助排查构建器通信或追踪数据问题。
+examples: |
+  ### 查看最近一条构建的追踪信息
 
-    This command starts a temporary Jaeger UI server and opens your default browser
-    to view the trace.
+  ```console
+  $ docker buildx history trace
+  ```
 
-    ```console
-    docker buildx history trace
-    ```
+  ### 打开指定构建记录的追踪
 
-    ### Open the trace for a specific build
+  ```console
+  $ docker buildx history trace proud_matsumoto
+  ```
 
-    ```console
-    # Using a build ID
-    docker buildx history trace qu2gsuo8ejqrwdfii23xkkckt
+  ### 指定 Jaeger 监听端口
 
-    # Or using a relative offset
-    docker buildx history trace ^1
-    ```
+  ```console
+  $ docker buildx history trace --addr :8080 quirky_allen
+  ```
 
-    ### Run the Jaeger UI on a specific port (--addr) {#addr}
+  ### 对比两次构建的追踪差异
 
-    ```console
-    # Using a build ID
-    docker buildx history trace qu2gsuo8ejqrwdfii23xkkckt --addr 127.0.0.1:16686
+  ```console
+  $ docker buildx history trace --compare r0,r1
+  ```
 
-    # Or using a relative offset
-    docker buildx history trace ^1 --addr 127.0.0.1:16686
-    ```
+  浏览器将并排打开两次构建的追踪页面，方便对比分析性能差异。
 
-    ### Compare two build traces (--compare) {#compare}
-
-    Compare two specific builds by name:
-
-    ```console
-    # Using build IDs
-    docker buildx history trace --compare=qu2gsuo8ejqrwdfii23xkkckt qsiifiuf1ad9pa9qvppc0z1l3
-
-    # Or using a single relative offset
-    docker buildx history trace --compare=^1
-    ```
-
-    When you use a single reference with `--compare`, it compares that build
-    against the most recent one.
-deprecated: false
-hidden: false
-experimental: false
-experimentalcli: false
-kubernetes: false
-swarm: false
+seealso:
+    - title: 查看构建记录列表
+      section: docker_buildx_history_ls.yaml
+    - title: 删除构建记录
+      section: docker_buildx_history_rm.yaml
+    - title: 查看构建详情
+      section: docker_buildx_history_inspect.yaml
 

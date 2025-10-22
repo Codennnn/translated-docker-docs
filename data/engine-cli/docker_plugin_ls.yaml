@@ -1,11 +1,10 @@
 command: docker plugin ls
 aliases: docker plugin ls, docker plugin list
-short: List plugins
+short: 列出插件
 long: |-
-    Lists all the plugins that are currently installed. You can install plugins
-    using the [`docker plugin install`](/reference/cli/docker/plugin/install/) command.
-    You can also filter using the `-f` or `--filter` flag.
-    Refer to the [filtering](#filter) section for more information about available filter options.
+    列出当前已安装的所有插件。您可以使用 [`docker plugin install`](/reference/cli/docker/plugin/install/) 命令安装插件。
+    也可以使用 `-f` 或 `--filter` 标志进行过滤。
+    有关可用过滤选项的详细信息，请参考[过滤](#filter)部分。
 usage: docker plugin ls [OPTIONS]
 pname: docker plugin
 plink: docker_plugin.yaml
@@ -13,7 +12,7 @@ options:
     - option: filter
       shorthand: f
       value_type: filter
-      description: Provide filter values (e.g. `enabled=true`)
+      description: 提供过滤值（例如 `enabled=true`）
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -24,12 +23,12 @@ options:
     - option: format
       value_type: string
       description: |-
-        Format output using a custom template:
-        'table':            Print output in table format with column headers (default)
-        'table TEMPLATE':   Print output in table format using the given Go template
-        'json':             Print in JSON format
-        'TEMPLATE':         Print output using the given Go template.
-        Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
+        使用自定义模板格式化输出：
+        'table'：            以表格格式打印输出，带列标题（默认）
+        'table TEMPLATE'：   使用给定的 Go 模板以表格格式打印输出
+        'json'：             以 JSON 格式打印
+        'TEMPLATE'：         使用给定的 Go 模板打印输出。
+        有关使用模板格式化输出的更多信息，请参考 https://docs.docker.com/go/formatting/
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -40,7 +39,7 @@ options:
     - option: no-trunc
       value_type: bool
       default_value: "false"
-      description: Don't truncate output
+      description: 不截断输出
       deprecated: false
       hidden: false
       experimental: false
@@ -51,7 +50,7 @@ options:
       shorthand: q
       value_type: bool
       default_value: "false"
-      description: Only display plugin IDs
+      description: 仅显示插件 ID
       deprecated: false
       hidden: false
       experimental: false
@@ -62,7 +61,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false
@@ -74,60 +73,56 @@ examples: |-
     $ docker plugin ls
 
     ID            NAME                                    DESCRIPTION                ENABLED
-    69553ca1d123  tiborvass/sample-volume-plugin:latest   A test plugin for Docker   true
+    69553ca1d123  tiborvass/sample-volume-plugin:latest   Docker 测试插件             true
     ```
 
-    ### Filtering (--filter) {#filter}
+    ### 过滤（--filter）{#filter}
 
-    The filtering flag (`-f` or `--filter`) format is of "key=value". If there is more
-    than one filter, then pass multiple flags (e.g., `--filter "foo=bar" --filter "bif=baz"`).
+    过滤标志（`-f` 或 `--filter`）的格式为 "key=value"。如果有多个过滤器，
+    请传递多个标志（例如 `--filter "foo=bar" --filter "bif=baz"`）。
 
-    The currently supported filters are:
+    当前支持的过滤器有：
 
-    * enabled (boolean - true or false, 0 or 1)
-    * capability (string - currently `volumedriver`, `networkdriver`, `ipamdriver`, `logdriver`, `metricscollector`, or `authz`)
+    * enabled（布尔值 - true 或 false，0 或 1）
+    * capability（字符串 - 当前支持 `volumedriver`、`networkdriver`、`ipamdriver`、`logdriver`、`metricscollector` 或 `authz`）
 
     #### enabled
 
-    The `enabled` filter matches on plugins enabled or disabled.
+    `enabled` 过滤器匹配已启用或禁用的插件。
 
     #### capability
 
-    The `capability` filter matches on plugin capabilities. One plugin
-    might have multiple capabilities. Currently `volumedriver`, `networkdriver`,
-    `ipamdriver`, `logdriver`, `metricscollector`, and `authz` are supported capabilities.
+    `capability` 过滤器匹配插件功能。一个插件可能有多个功能。
+    当前支持的功能包括 `volumedriver`、`networkdriver`、`ipamdriver`、`logdriver`、`metricscollector` 和 `authz`。
 
     ```console
     $ docker plugin install --disable vieux/sshfs
 
-    Installed plugin vieux/sshfs
+    已安装插件 vieux/sshfs
 
     $ docker plugin ls --filter enabled=true
 
     ID                  NAME                DESCRIPTION         ENABLED
     ```
 
-    ### Format the output (--format) {#format}
+    ### 格式化输出（--format）{#format}
 
-    The formatting options (`--format`) pretty-prints plugins output
-    using a Go template.
+    格式化选项（`--format`）使用 Go 模板美化插件输出。
 
-    Valid placeholders for the Go template are listed below:
+    Go 模板的有效占位符如下：
 
-    | Placeholder        | Description                                     |
-    |--------------------|-------------------------------------------------|
-    | `.ID`              | Plugin ID                                       |
-    | `.Name`            | Plugin name and tag                             |
-    | `.Description`     | Plugin description                              |
-    | `.Enabled`         | Whether plugin is enabled or not                |
-    | `.PluginReference` | The reference used to push/pull from a registry |
+    | 占位符              | 描述                                      |
+    |--------------------|------------------------------------------|
+    | `.ID`              | 插件 ID                                   |
+    | `.Name`            | 插件名称和标签                             |
+    | `.Description`     | 插件描述                                  |
+    | `.Enabled`         | 插件是否已启用                             |
+    | `.PluginReference` | 用于从仓库推送/拉取的引用                   |
 
-    When using the `--format` option, the `plugin ls` command will either
-    output the data exactly as the template declares or, when using the
-    `table` directive, includes column headers as well.
+    使用 `--format` 选项时，`plugin ls` 命令将完全按照模板声明输出数据，
+    或者在使用 `table` 指令时，还会包含列标题。
 
-    The following example uses a template without headers and outputs the
-    `ID` and `Name` entries separated by a colon (`:`) for all plugins:
+    以下示例使用无标题模板，并输出所有插件的 `ID` 和 `Name` 条目，用冒号（`:`）分隔：
 
     ```console
     $ docker plugin ls --format "{{.ID}}: {{.Name}}"
@@ -135,10 +130,10 @@ examples: |-
     4be01827a72e: vieux/sshfs:latest
     ```
 
-    To list all plugins in JSON format, use the `json` directive:
+    要以 JSON 格式列出所有插件，请使用 `json` 指令：
     ```console
     $ docker plugin ls --format json
-    {"Description":"sshFS plugin for Docker","Enabled":false,"ID":"856d89febb1c","Name":"vieux/sshfs:latest","PluginReference":"docker.io/vieux/sshfs:latest"}
+    {"Description":"Docker 的 sshFS 插件","Enabled":false,"ID":"856d89febb1c","Name":"vieux/sshfs:latest","PluginReference":"docker.io/vieux/sshfs:latest"}
     ```
 deprecated: false
 hidden: false

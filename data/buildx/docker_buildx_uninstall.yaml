@@ -1,6 +1,6 @@
 command: docker buildx uninstall
-short: Uninstall the 'docker builder' alias
-long: Uninstall the 'docker builder' alias
+short: 卸载 'docker builder' 别名
+long: 卸载 'docker builder' 别名
 usage: docker buildx uninstall
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -18,7 +18,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false

@@ -1,9 +1,8 @@
 command: docker buildx history inspect
-short: Inspect a build record
+short: 查看构建记录详情
 long: |-
-    Inspect a build record to view metadata such as duration, status, build inputs,
-    platforms, outputs, and attached artifacts. You can also use flags to extract
-    provenance, SBOMs, or other detailed information.
+    查看构建记录的元数据，包括耗时、状态、构建输入、目标平台、输出结果及附加产物。
+    也可通过附加参数提取构建来源（provenance）、SBOM 等详细信息。
 usage: docker buildx history inspect [OPTIONS] [REF]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
@@ -15,7 +14,7 @@ options:
     - option: format
       value_type: string
       default_value: pretty
-      description: Format the output
+      description: 指定输出格式
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -26,7 +25,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -37,7 +36,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 开启调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -45,7 +44,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Inspect the most recent build
+    ### 查看最新一次构建
 
     ```console
     $ docker buildx history inspect
@@ -75,22 +74,24 @@ examples: |-
     sha256:217329d2af959d4f02e3a96dcbe62bf100cab1feb8006a047ddfe51a5397f7e3                 https://slsa.dev/provenance/v0.2
     ```
 
-    ### Inspect a specific build
+    ### 查看指定构建
 
     ```console
-    # Using a build ID
+    # 使用构建 ID
     docker buildx history inspect qu2gsuo8ejqrwdfii23xkkckt
 
-    # Or using a relative offset
+    # 或使用相对偏移
     docker buildx history inspect ^1
     ```
 
-    ### Format the output (--format) {#format}
+    ### 格式化输出（--format）{#format}
 
-    The formatting options (`--format`) pretty-prints the output to `pretty` (default),
-    `json` or using a Go template.
+    `--format` 支持以下三种输出方式：
+    - `pretty`（默认）：易读表格
+    - `json`：完整 JSON
+    - Go 模板：自定义字段
 
-    #### Pretty output
+    #### 表格输出（pretty）
 
     ```console
     $ docker buildx history inspect
@@ -119,10 +120,10 @@ examples: |-
     DIGEST                                                                  PLATFORM        TYPE
     sha256:217329d2af959d4f02e3a96dcbe62bf100cab1feb8006a047ddfe51a5397f7e3                 https://slsa.dev/provenance/v0.2
 
-    Print build logs: docker buildx history logs g9808bwrjrlkbhdamxklx660b
+    查看构建日志：docker buildx history logs g9808bwrjrlkbhdamxklx660b
     ```
 
-    #### JSON output
+    #### JSON 输出
 
     ```console
     $ docker buildx history inspect --format json
@@ -177,7 +178,7 @@ examples: |-
     }
     ```
 
-    #### Go template output
+    #### Go 模板输出
 
     ```console
     $ docker buildx history inspect --format "{{.Name}}: {{.VCSRepository}} ({{.VCSRevision}})"

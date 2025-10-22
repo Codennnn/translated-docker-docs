@@ -1,11 +1,10 @@
 command: docker plugin push
-short: Push a plugin to a registry
+short: 将插件推送到仓库
 long: |-
-    After you have created a plugin using `docker plugin create` and the plugin is
-    ready for distribution, use `docker plugin push` to share your images to Docker
-    Hub or a self-hosted registry.
+    在使用 `docker plugin create` 创建插件并准备好分发后，或者如果您从其他来源获取了插件，
+    请使用 `docker plugin push` 命令将插件共享到 Docker 仓库。
 
-    Registry credentials are managed by [docker login](/reference/cli/docker/login/).
+    有关注册表凭据的管理，请参阅 [docker login](/reference/cli/docker/login/)。
 usage: docker plugin push [OPTIONS] PLUGIN[:TAG]
 pname: docker plugin
 plink: docker_plugin.yaml
@@ -13,7 +12,7 @@ options:
     - option: disable-content-trust
       value_type: bool
       default_value: "true"
-      description: Skip image signing
+      description: 跳过镜像验证
       deprecated: false
       hidden: false
       experimental: false
@@ -24,7 +23,7 @@ inherited_options:
     - option: help
       value_type: bool
       default_value: "false"
-      description: Print usage
+      description: 打印用法
       deprecated: false
       hidden: true
       experimental: false

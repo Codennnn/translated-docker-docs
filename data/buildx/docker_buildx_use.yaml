@@ -1,9 +1,7 @@
 command: docker buildx use
-short: Set the current builder instance
+short: 设置当前构建器实例
 long: |-
-    Switches the current builder instance. Build commands invoked after this command
-    will run on a specified builder. Alternatively, a context name can be used to
-    switch to the default builder of that context.
+    切换当前构建器实例。执行此命令后，后续的构建命令将在指定的构建器上运行。也可以使用上下文名称切换到该上下文的默认构建器。
 usage: docker buildx use [OPTIONS] NAME
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -11,7 +9,7 @@ options:
     - option: default
       value_type: bool
       default_value: "false"
-      description: Set builder as default for current context
+      description: 将构建器设置为当前上下文的默认值
       deprecated: false
       hidden: false
       experimental: false
@@ -21,7 +19,7 @@ options:
     - option: global
       value_type: bool
       default_value: "false"
-      description: Builder persists context changes
+      description: 构建器持久化上下文变更
       deprecated: false
       hidden: false
       experimental: false
@@ -31,7 +29,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -43,7 +41,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false
@@ -51,9 +49,9 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例 (--builder) {#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    与 [`buildx --builder`](/reference/cli/docker/buildx/#builder) 相同。
 deprecated: false
 hidden: false
 experimental: false

@@ -1,13 +1,13 @@
 command: docker buildx du
-short: Disk usage
-long: Disk usage
+short: 磁盘使用情况
+long: 显示磁盘使用情况
 usage: docker buildx du
 pname: docker buildx
 plink: docker_buildx.yaml
 options:
     - option: filter
       value_type: filter
-      description: Provide filter values
+      description: 提供过滤条件值
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -17,7 +17,7 @@ options:
       swarm: false
     - option: format
       value_type: string
-      description: Format the output
+      description: 格式化输出内容
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -28,7 +28,7 @@ options:
     - option: verbose
       value_type: bool
       default_value: "false"
-      description: Shorthand for `--format=pretty`
+      description: "--format=pretty 的简写形式"
       details_url: '#verbose'
       deprecated: false
       hidden: false
@@ -39,7 +39,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -51,7 +51,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false
@@ -59,10 +59,9 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Show disk usage
+    ### 显示磁盘使用情况
 
-    The `docker buildx du` command shows the disk usage for the currently selected
-    builder.
+    `docker buildx du` 命令显示当前所选构建器的磁盘使用情况。
 
     ```console
     $ docker buildx du
@@ -84,51 +83,38 @@ examples: |-
     Total:         10.36GB
     ```
 
-    If `RECLAIMABLE` is false, the `docker buildx du prune` command won't delete
-    the record, even if you use `--all`. That's because the record is actively in
-    use by some component of the builder.
+    如果 `RECLAIMABLE` 为 false，即使使用 `--all` 参数，`docker buildx du prune` 命令也不会删除该记录。这是因为该记录当前正被构建器的某个组件使用。
 
-    The asterisks (\*) in the default output format indicate the following:
+    默认输出格式中的星号（\*）表示以下含义：
 
-    - An asterisk next to an ID (`zu7m6evdpebh5h8kfkpw9dlf2*`) indicates that the record
-      is mutable. The size of the record may change, or another build can take ownership of
-      it and change or commit to it. If you run the `du` command again, this item may
-      not be there anymore, or the size might be different.
-    - An asterisk next to a size (`8.288kB*`) indicates that the record is shared.
-      Storage of the record is shared with some other resource, typically an image.
-      If you prune such a record then you will lose build cache but only metadata
-      will be deleted as the image still needs to actual storage layers.
+    - **ID 旁的星号**（如 `zu7m6evdpebh5h8kfkpw9dlf2*`）表示该记录是可变的。记录的大小可能会发生变化，或者另一个构建过程可能接管该记录并进行修改或提交。如果再次运行 `du` 命令，此项可能已不存在，或者大小可能已发生变化。
+    - **大小旁的星号**（如 `8.288kB*`）表示该记录是共享的。记录的存储空间与其他资源（通常是镜像）共享。如果清理此类记录，您将丢失构建缓存，但只会删除元数据，因为镜像仍然需要实际的存储层。
 
-    ### Provide filter values (--filter) {#filter}
+    ### 提供过滤条件值 (--filter) {#filter}
 
-    Same as [`buildx prune --filter`](/reference/cli/docker/buildx/prune/#filter).
+    与 [`buildx prune --filter`](/reference/cli/docker/buildx/prune/#filter) 相同。
 
-    ### Format the output (--format) {#format}
+    ### 格式化输出内容 (--format) {#format}
 
-    The formatting options (`--format`) pretty-prints usage information output
-    using a Go template.
+    格式化选项（`--format`）使用 Go 模板来美化使用情况信息的输出。
 
-    Valid placeholders for the Go template are:
+    Go 模板的有效占位符包括：
 
-    * `.ID`
-    * `.Parents`
-    * `.CreatedAt`
-    * `.Mutable`
-    * `.Reclaimable`
-    * `.Shared`
-    * `.Size`
-    * `.Description`
-    * `.UsageCount`
-    * `.LastUsedAt`
-    * `.Type`
+    * `.ID` - 记录标识符
+    * `.Parents` - 父记录
+    * `.CreatedAt` - 创建时间
+    * `.Mutable` - 是否可变
+    * `.Reclaimable` - 是否可回收
+    * `.Shared` - 是否共享
+    * `.Size` - 大小
+    * `.Description` - 描述信息
+    * `.UsageCount` - 使用次数
+    * `.LastUsedAt` - 最后使用时间
+    * `.Type` - 记录类型
 
-    When using the `--format` option, the `du` command will either output the data
-    exactly as the template declares or, when using the `table` directive, includes
-    column headers as well.
+    使用 `--format` 选项时，`du` 命令将按照模板声明的方式输出数据，或者在使用 `table` 指令时包含列标题。
 
-    The `pretty` format is useful for inspecting the disk usage records in more
-    detail. It shows the mutable and shared states more clearly, as well as
-    additional information about the corresponding layer:
+    `pretty` 格式对于详细检查磁盘使用记录非常有用。它能更清晰地显示可变和共享状态，以及相应层的附加信息：
 
     ```console
     $ docker buildx du --format=pretty
@@ -152,8 +138,7 @@ examples: |-
     Total:          133.5GB
     ```
 
-    The following example uses a template without headers and outputs the
-    `ID` and `Size` entries separated by a colon (`:`):
+    以下示例使用不带标题的模板，以冒号（`:`）分隔输出 `ID` 和 `Size` 条目：
 
     ```console
     $ docker buildx du --format "{{.ID}}: {{.Size}}"
@@ -166,8 +151,7 @@ examples: |-
     3w9qhzzskq5jc262snfu90bfz: 2.617GB
     ```
 
-    The following example uses a `table` template and outputs the `ID` and
-    `Description`:
+    以下示例使用 `table` 模板输出 `ID` 和 `Description`：
 
     ```console
     $ docker buildx du --format "table {{.ID}}    {{.Description}}"
@@ -181,7 +165,7 @@ examples: |-
     ax7cov6kizxi9ufvcwsef4occ*   local source for context
     ```
 
-    JSON output is also supported and will print as newline delimited JSON:
+    也支持 JSON 输出，将以换行分隔的 JSON 格式打印：
 
     ```console
     $ docker buildx du --format=json
@@ -189,7 +173,7 @@ examples: |-
     {"CreatedAt":"2025-08-05T09:24:09Z","Description":"pulled from docker.io/library/node:22@sha256:3218f0d1b9e4b63def322e9ae362d581fbeac1ef21b51fc502ef91386667ce92","ID":"jsw7fx09l5zsda3bri1z4mwk5","LastUsedAt":"2025-08-05T09:24:09Z","Mutable":false,"Parents":["098jsj5ebbv1w47ikqigeuurs"],"Reclaimable":true,"Shared":true,"Size":"829898832","Type":"regular","UsageCount":1}
     ```
 
-    You can use `jq` to pretty-print the JSON output:
+    您可以使用 `jq` 工具美化 JSON 输出：
 
     ```console
     $ docker buildx du --format=json | jq .
@@ -225,9 +209,9 @@ examples: |-
     }
     ```
 
-    ### Use verbose output (--verbose) {#verbose}
+    ### 使用详细输出 (--verbose) {#verbose}
 
-    Shorthand for [`--format=pretty`](#format):
+    [`--format=pretty`](#format) 的简写形式：
 
     ```console
     $ docker buildx du --verbose
@@ -251,9 +235,9 @@ examples: |-
     Total:          133.5GB
     ```
 
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例 (--builder) {#builder}
 
-    Use the `--builder` flag to inspect the disk usage of a particular builder.
+    使用 `--builder` 标志检查特定构建器的磁盘使用情况。
 
     ```console
     $ docker buildx du --builder mybuilder

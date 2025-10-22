@@ -1,15 +1,15 @@
 command: docker buildx history open
-short: Open a build record in Docker Desktop
+short: 在 Docker Desktop 中打开构建记录
 long: |-
-    Open a build record in Docker Desktop for visual inspection. This requires
-    Docker Desktop to be installed and running on the host machine.
+    在 Docker Desktop 中可视化查看某次构建的详细记录。
+    使用该命令前，请确保本地已安装并运行 Docker Desktop。
 usage: docker buildx history open [OPTIONS] [REF]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 手动指定要使用的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -20,7 +20,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 开启调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -28,21 +28,20 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Open the most recent build in Docker Desktop
+    ### 打开最近一次构建
 
     ```console
     docker buildx history open
     ```
+    默认展示当前构建器最新一条记录。
 
-    By default, this opens the most recent build on the current builder.
-
-    ### Open a specific build
+    ### 打开指定构建
 
     ```console
-    # Using a build ID
+    # 使用构建 ID
     docker buildx history open qu2gsuo8ejqrwdfii23xkkckt
 
-    # Or using a relative offset
+    # 或使用相对偏移
     docker buildx history open ^1
     ```
 deprecated: false

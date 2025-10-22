@@ -1,6 +1,6 @@
 command: docker buildx history
-short: Commands to work on build records
-long: Commands to work on build records
+short: 构建记录操作命令
+long: 用于操作构建记录的命令
 usage: docker buildx history
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -25,7 +25,7 @@ clink:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -36,7 +36,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false

@@ -1,13 +1,13 @@
 command: docker buildx dap attach
-short: Attach to a container created by the dap evaluate request
-long: Attach to a container created by the dap evaluate request
+short: 附加到由 dap evaluate 请求创建的容器
+long: 附加到由 dap evaluate 请求创建的容器
 usage: docker buildx dap attach PATH
 pname: docker buildx dap
 plink: docker_buildx_dap.yaml
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -18,7 +18,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false

@@ -1,15 +1,14 @@
 command: docker buildx history logs
-short: Print the logs of a build record
+short: 打印构建日志
 long: |-
-    Print the logs for a completed build. The output appears in the same format as
-    `--progress=plain`, showing the full logs for each step.
+    输出已完成构建的完整日志，格式与 `--progress=plain` 一致，逐步展示详细过程。
 
-    By default, this shows logs for the most recent build on the current builder.
+    默认显示当前构建器上最新一次构建的日志。
 
-    You can also specify an earlier build using an offset. For example:
+    也可通过偏移量查看更早的构建：
 
-    - `^1` shows logs for the build before the most recent
-    - `^2` shows logs for the build two steps back
+    - `^1`：倒数第二次构建
+    - `^2`：倒数第三次构建
 usage: docker buildx history logs [OPTIONS] [REF]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
@@ -17,7 +16,7 @@ options:
     - option: progress
       value_type: string
       default_value: plain
-      description: Set type of progress output (plain, rawjson, tty)
+      description: 设置进度输出类型（plain、rawjson、tty）
       details_url: '#progress'
       deprecated: false
       hidden: false
@@ -28,7 +27,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -39,7 +38,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 开启调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -47,7 +46,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Print logs for the most recent build
+    ### 查看最新一次构建的日志
 
     ```console
     $ docker buildx history logs
@@ -60,21 +59,21 @@ examples: |-
     ...
     ```
 
-    By default, this shows logs for the most recent build on the current builder.
+    默认显示当前构建器上最新一次构建的完整日志。
 
-    ### Print logs for a specific build
+    ### 查看指定构建的日志
 
-    To print logs for a specific build, use a build ID or offset:
+    可通过构建 ID 或偏移量指定：
 
     ```console
-    # Using a build ID
+    # 使用构建 ID
     docker buildx history logs qu2gsuo8ejqrwdfii23xkkckt
 
-    # Or using a relative offset
+    # 或使用相对偏移
     docker buildx history logs ^1
     ```
 
-    ### Set type of progress output (--progress) {#progress}
+    ### 设置进度输出类型（--progress）{#progress}
 
     ```console
     $ docker buildx history logs ^1 --progress rawjson

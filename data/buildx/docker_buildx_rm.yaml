@@ -1,8 +1,7 @@
 command: docker buildx rm
-short: Remove one or more builder instances
+short: 移除一个或多个构建器实例
 long: |-
-    Removes the specified or current builder. It is a no-op attempting to remove the
-    default builder.
+    移除指定的或当前的构建器。尝试移除默认构建器时不会产生任何操作。
 usage: docker buildx rm [OPTIONS] [NAME...]
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -10,7 +9,7 @@ options:
     - option: all-inactive
       value_type: bool
       default_value: "false"
-      description: Remove all inactive builders
+      description: 移除所有非活动构建器
       details_url: '#all-inactive'
       deprecated: false
       hidden: false
@@ -22,7 +21,7 @@ options:
       shorthand: f
       value_type: bool
       default_value: "false"
-      description: Do not prompt for confirmation
+      description: 不提示确认
       details_url: '#force'
       deprecated: false
       hidden: false
@@ -33,7 +32,7 @@ options:
     - option: keep-daemon
       value_type: bool
       default_value: "false"
-      description: Keep the BuildKit daemon running
+      description: 保持 BuildKit 守护进程运行
       details_url: '#keep-daemon'
       deprecated: false
       hidden: false
@@ -44,7 +43,7 @@ options:
     - option: keep-state
       value_type: bool
       default_value: "false"
-      description: Keep BuildKit state
+      description: 保持 BuildKit 状态
       details_url: '#keep-state'
       deprecated: false
       hidden: false
@@ -55,7 +54,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -67,7 +66,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false
@@ -75,39 +74,38 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Remove all inactive builders (--all-inactive) {#all-inactive}
+    ### 移除所有非活动构建器（--all-inactive）{#all-inactive}
 
-    Remove builders that are not in running state.
+    移除未在运行状态的构建器。
 
     ```console
     $ docker buildx rm --all-inactive
-    WARNING! This will remove all builders that are not in running state. Are you sure you want to continue? [y/N] y
+    警告！这将移除所有未在运行状态的构建器。您确定要继续吗？ [y/N] y
     ```
 
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例（--builder）{#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    与 [`buildx --builder`](/reference/cli/docker/buildx/#builder) 相同。
 
-    ### Do not prompt for confirmation (--force) {#force}
+    ### 不提示确认（--force）{#force}
 
-    Do not prompt for confirmation before removing inactive builders.
+    在移除非活动构建器之前不提示确认。
 
     ```console
     $ docker buildx rm --all-inactive --force
     ```
 
-    ### Keep the BuildKit daemon running (--keep-daemon) {#keep-daemon}
+    ### 保持 BuildKit 守护进程运行（--keep-daemon）{#keep-daemon}
 
-    Keep the BuildKit daemon running after the buildx context is removed. This is
-    useful when you manage BuildKit daemons and buildx contexts independently.
-    Only supported by the
+    在移除 buildx 上下文后保持 BuildKit 守护进程运行。这在您独立管理
+    BuildKit 守护进程和 buildx 上下文时很有用。仅受
     [`docker-container`](/build/drivers/docker-container/)
-    and [`kubernetes`](/build/drivers/kubernetes/) drivers.
+    和 [`kubernetes`](/build/drivers/kubernetes/) 驱动程序支持。
 
-    ### Keep BuildKit state (--keep-state) {#keep-state}
+    ### 保持 BuildKit 状态（--keep-state）{#keep-state}
 
-    Keep BuildKit state, so it can be reused by a new builder with the same name.
-    Currently, only supported by the [`docker-container` driver](/build/drivers/docker-container/).
+    保持 BuildKit 状态，以便具有相同名称的新构建器可以重用它。
+    目前仅受 [`docker-container` 驱动程序](/build/drivers/docker-container/) 支持。
 deprecated: false
 hidden: false
 experimental: false

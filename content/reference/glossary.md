@@ -1,7 +1,7 @@
 ---
-title: Glossary
-description: Glossary of terms used around Docker
-keywords: glossary, docker, terms, definitions
+title: 术语表
+description: Docker 相关术语词汇表
+keywords: 术语表, docker, 术语, 定义
 notoc: true
 layout: glossary
 aliases:
@@ -11,13 +11,12 @@ aliases:
 
 > [!TIP]
 >
-> Looking for a definition that's not listed or need a more context-aware
-> explanation?
+> 找不到需要的定义，或者需要更多上下文相关的解释？
 >
-> Try <a role="button" tabindex="0" class="open-kapa-widget">Ask AI</a>.
+> 试试 <a role="button" tabindex="0" class="open-kapa-widget">询问 AI</a>。
 
 
 <!--
-To edit/add/remove glossary entries, visit the YAML file at:
+要编辑/添加/删除术语表条目，请访问 YAML 文件：
 https://github.com/docker/docs/blob/main/data/glossary.yaml
 -->

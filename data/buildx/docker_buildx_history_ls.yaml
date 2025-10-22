@@ -1,11 +1,9 @@
 command: docker buildx history ls
-short: List build records
+short: 列出构建记录
 long: |-
-    List completed builds recorded by the active builder. Each entry includes the
-    build ID, name, status, timestamp, and duration.
+    列出当前构建器已保存的完成记录，每条包含构建 ID、名称、状态、时间戳与耗时。
 
-    By default, only records for the current builder are shown. You can filter
-    results using flags.
+    默认仅展示当前构建器的记录，可通过参数筛选结果。
 usage: docker buildx history ls [OPTIONS]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
@@ -13,7 +11,7 @@ options:
     - option: filter
       value_type: stringArray
       default_value: '[]'
-      description: Provide filter values (e.g., `status=error`)
+      description: 设置筛选条件（如 `status=error`）
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -24,7 +22,7 @@ options:
     - option: format
       value_type: string
       default_value: table
-      description: Format the output
+      description: 指定输出格式
       details_url: '#format'
       deprecated: false
       hidden: false
@@ -35,7 +33,7 @@ options:
     - option: local
       value_type: bool
       default_value: "false"
-      description: List records for current repository only
+      description: 仅列出当前仓库的记录
       details_url: '#local'
       deprecated: false
       hidden: false
@@ -46,7 +44,7 @@ options:
     - option: no-trunc
       value_type: bool
       default_value: "false"
-      description: Don't truncate output
+      description: 不截断输出内容
       details_url: '#no-trunc'
       deprecated: false
       hidden: false
@@ -57,7 +55,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -68,7 +66,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 开启调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -76,7 +74,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### List all build records for the current builder
+    ### 列出当前构建器的全部记录
 
     ```console
     $ docker buildx history ls
@@ -86,40 +84,40 @@ examples: |-
     g9808bwrjrlkbhdamxklx660b   .dev/3120      Completed  5 days ago        2.1s
     ```
 
-    ### List failed builds (--filter) {#filter}
+    ### 筛选失败构建（--filter）{#filter}
 
     ```console
     docker buildx history ls --filter status=error
     ```
 
-    You can filter the list using the `--filter` flag. Supported filters include:
+    支持以下筛选字段与比较符：
 
-    | Filter                                 | Supported comparisons                            | Example                    |
+    | 字段                                   | 支持的比较符                                     | 示例                       |
     |:---------------------------------------|:-------------------------------------------------|:---------------------------|
-    | `ref`, `repository`, `status`          | Support `=` and `!=` comparisons                 | `--filter status!=success` |
-    | `startedAt`, `completedAt`, `duration` | Support `<` and `>` comparisons with time values | `--filter duration>30s`    |
+    | `ref`、`repository`、`status`          | `=`、`!=`                                       | `--filter status!=success` |
+    | `startedAt`、`completedAt`、`duration` | `<`、`>`（时间值）                              | `--filter duration>30s`    |
 
-    You can combine multiple filters by repeating the `--filter` flag:
+    可重复使用 `--filter` 组合多条件：
 
     ```console
     docker buildx history ls --filter status=error --filter duration>30s
     ```
 
-    ### List builds from the current project (--local) {#local}
+    ### 仅展示当前仓库记录（--local）{#local}
 
     ```console
     docker buildx history ls --local
     ```
 
-    ### Display full output without truncation (--no-trunc) {#no-trunc}
+    ### 完整输出不截断（--no-trunc）{#no-trunc}
 
     ```console
     docker buildx history ls --no-trunc
     ```
 
-    ### Format output (--format) {#format}
+    ### 自定义输出格式（--format）{#format}
 
-    #### JSON output
+    #### JSON 输出
 
     ```console
     $ docker buildx history ls --format json
@@ -141,7 +139,7 @@ examples: |-
     ]
     ```
 
-    #### Go template output
+    #### Go 模板输出
 
     ```console
     $ docker buildx history ls --format '{{.Name}} - {{.Duration}}'

@@ -1,119 +1,112 @@
 ---
-title: Build checks
+title: 构建检查
 description: |
-  BuildKit has built-in support for analyzing your build configuration based on
-  a set of pre-defined rules for enforcing Dockerfile and building best
-  practices.
-keywords: buildkit, linting, dockerfile, frontend, rules
+  BuildKit 内置支持基于一组预定义规则来分析构建配置，
+  用于强制执行 Dockerfile 和构建最佳实践。
+keywords: buildkit, 检查, dockerfile, 前端, 规则
 ---
 
-BuildKit has built-in support for analyzing your build configuration based on a
-set of pre-defined rules for enforcing Dockerfile and building best practices.
-Adhering to these rules helps avoid errors and ensures good readability of your
-Dockerfile.
+BuildKit 内置支持基于一组预定义规则来分析构建配置，用于强制执行 Dockerfile 和构建最佳实践。遵循这些规则有助于避免错误并确保 Dockerfile 的良好可读性。
 
-Checks run as a build invocation, but instead of producing a build output, it
-performs a series of checks to validate that your build doesn't violate any of
-the rules. To run a check, use the `--check` flag:
+检查以构建调用的方式运行，但不会生成构建输出，而是执行一系列检查来验证构建是否违反任何规则。要运行检查，请使用 `--check` 标志：
 
 ```console
 $ docker build --check .
 ```
 
-To learn more about how to use build checks, see
-[Checking your build configuration](https://docs.docker.com/build/checks/).
+要了解有关如何使用构建检查的更多信息，请参阅[检查构建配置](https://docs.docker.com/build/checks/)。
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Description</th>
+      <th>名称</th>
+      <th>描述</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><a href="./stage-name-casing/">StageNameCasing</a></td>
-      <td>Stage names should be lowercase</td>
+      <td>阶段名称应该使用小写字母</td>
     </tr>
     <tr>
       <td><a href="./from-as-casing/">FromAsCasing</a></td>
-      <td>The 'as' keyword should match the case of the 'from' keyword</td>
+      <td>'as' 关键字应该与 'from' 关键字的大小写保持一致</td>
     </tr>
     <tr>
       <td><a href="./no-empty-continuation/">NoEmptyContinuation</a></td>
-      <td>Empty continuation lines will become errors in a future release</td>
+      <td>空续行将在未来版本中变为错误</td>
     </tr>
     <tr>
       <td><a href="./consistent-instruction-casing/">ConsistentInstructionCasing</a></td>
-      <td>All commands within the Dockerfile should use the same casing (either upper or lower)</td>
+      <td>Dockerfile 中的所有命令应该使用相同的大小写（全大写或全小写）</td>
     </tr>
     <tr>
       <td><a href="./duplicate-stage-name/">DuplicateStageName</a></td>
-      <td>Stage names should be unique</td>
+      <td>阶段名称应该是唯一的</td>
     </tr>
     <tr>
       <td><a href="./reserved-stage-name/">ReservedStageName</a></td>
-      <td>Reserved words should not be used as stage names</td>
+      <td>保留字不应该用作阶段名称</td>
     </tr>
     <tr>
       <td><a href="./json-args-recommended/">JSONArgsRecommended</a></td>
-      <td>JSON arguments recommended for ENTRYPOINT/CMD to prevent unintended behavior related to OS signals</td>
+      <td>建议对 ENTRYPOINT/CMD 使用 JSON 参数格式，以防止与操作系统信号相关的意外行为</td>
     </tr>
     <tr>
       <td><a href="./maintainer-deprecated/">MaintainerDeprecated</a></td>
-      <td>The MAINTAINER instruction is deprecated, use a label instead to define an image author</td>
+      <td>MAINTAINER 指令已弃用，请改用标签来定义镜像作者</td>
     </tr>
     <tr>
       <td><a href="./undefined-arg-in-from/">UndefinedArgInFrom</a></td>
-      <td>FROM command must use declared ARGs</td>
+      <td>FROM 命令必须使用已声明的 ARG</td>
     </tr>
     <tr>
       <td><a href="./workdir-relative-path/">WorkdirRelativePath</a></td>
-      <td>Relative workdir without an absolute workdir declared within the build can have unexpected results if the base image changes</td>
+      <td>如果在构建中没有声明绝对工作目录，相对工作目录可能会在基础镜像更改时产生意外结果</td>
     </tr>
     <tr>
       <td><a href="./undefined-var/">UndefinedVar</a></td>
-      <td>Variables should be defined before their use</td>
+      <td>变量应该在使用前定义</td>
     </tr>
     <tr>
       <td><a href="./multiple-instructions-disallowed/">MultipleInstructionsDisallowed</a></td>
-      <td>Multiple instructions of the same type should not be used in the same stage</td>
+      <td>在同一阶段中不应该使用相同类型的多个指令</td>
     </tr>
     <tr>
       <td><a href="./legacy-key-value-format/">LegacyKeyValueFormat</a></td>
-      <td>Legacy key/value format with whitespace separator should not be used</td>
+      <td>不应使用带空格分隔符的旧键值格式</td>
     </tr>
     <tr>
       <td><a href="./redundant-target-platform/">RedundantTargetPlatform</a></td>
-      <td>Setting platform to predefined $TARGETPLATFORM in FROM is redundant as this is the default behavior</td>
+      <td>在 FROM 中将平台设置为预定义的 $TARGETPLATFORM 是多余的，因为这是默认行为</td>
     </tr>
     <tr>
       <td><a href="./secrets-used-in-arg-or-env/">SecretsUsedInArgOrEnv</a></td>
-      <td>Sensitive data should not be used in the ARG or ENV commands</td>
+      <td>敏感数据不应该在 ARG 或 ENV 命令中使用</td>
     </tr>
     <tr>
       <td><a href="./invalid-default-arg-in-from/">InvalidDefaultArgInFrom</a></td>
-      <td>Default value for global ARG results in an empty or invalid base image name</td>
+      <td>全局 ARG 的默认值导致空或无效的基础镜像名称</td>
     </tr>
     <tr>
       <td><a href="./from-platform-flag-const-disallowed/">FromPlatformFlagConstDisallowed</a></td>
-      <td>FROM --platform flag should not use a constant value</td>
+      <td>FROM --platform 标志不应该使用常量值</td>
     </tr>
     <tr>
-      <td><a href="./copy-ignored-file/">CopyIgnoredFile (experimental)</a></td>
-      <td>Attempting to Copy file that is excluded by .dockerignore</td>
+      <td><a href="./copy-ignored-file/">CopyIgnoredFile（实验性）</a></td>
+      <td>尝试复制被 .dockerignore 排除的文件</td>
     </tr>
     <tr>
-      <td><a href="./invalid-definition-description/">InvalidDefinitionDescription (experimental)</a></td>
-      <td>Comment for build stage or argument should follow the format: `# <arg/stage name> <description>`. If this is not intended to be a description comment, add an empty line or comment between the instruction and the comment.</td>
+      <td><a href="./invalid-definition-description/">InvalidDefinitionDescription（实验性）</a></td>
+      <td>构建阶段或参数的注释应该遵循格式：`# <参数/阶段名称> <描述>`。如果不打算作为描述注释，请在指令和注释之间添加空行或注释。</td>
     </tr>
     <tr>
       <td><a href="./expose-proto-casing/">ExposeProtoCasing</a></td>
-      <td>Protocol in EXPOSE instruction should be lowercase</td>
+      <td>EXPOSE 指令中的协议应该使用小写字母</td>
     </tr>
     <tr>
       <td><a href="./expose-invalid-format/">ExposeInvalidFormat</a></td>
-      <td>IP address and host-port mapping should not be used in EXPOSE instruction. This will become an error in a future release</td>
+      <td>EXPOSE 指令中不应该使用 IP 地址和主机端口映射。这将在未来版本中变为错误</td>
     </tr>
   </tbody>
 </table>

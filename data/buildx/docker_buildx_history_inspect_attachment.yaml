@@ -1,16 +1,15 @@
 command: docker buildx history inspect attachment
-short: Inspect a build record attachment
+short: 查看构建附件详情
 long: |-
-    Inspect a specific attachment from a build record, such as a provenance file or
-    SBOM. Attachments are optional artifacts stored with the build and may be
-    platform-specific.
+    检查某次构建记录中的附件，如 provenance 文件或 SBOM。
+    附件为可选产物，可能随平台而异。
 usage: docker buildx history inspect attachment [OPTIONS] [REF [DIGEST]]
 pname: docker buildx history inspect
 plink: docker_buildx_history_inspect.yaml
 options:
     - option: platform
       value_type: string
-      description: Platform of attachment
+      description: 附件所属平台
       details_url: '#platform'
       deprecated: false
       hidden: false
@@ -20,7 +19,7 @@ options:
       swarm: false
     - option: type
       value_type: string
-      description: Type of attachment
+      description: 附件类型
       details_url: '#type'
       deprecated: false
       hidden: false
@@ -31,7 +30,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 手动指定要使用的构建器实例
       deprecated: false
       hidden: false
       experimental: false
@@ -42,7 +41,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 开启调试日志
       deprecated: false
       hidden: false
       experimental: false
@@ -50,7 +49,7 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Inspect an attachment by platform (--platform) {#platform}
+    ### 按平台查看附件 (--platform) {#platform}
 
     ```console
     $ docker buildx history inspect attachment --platform linux/amd64
@@ -72,9 +71,9 @@ examples: |-
     }
     ```
 
-    ### Inspect an attachment by type (--type) {#type}
+    ### 按类型查看附件 (--type) {#type}
 
-    Supported types include:
+    支持类型：
     * `index`
     * `manifest`
     * `image`
@@ -204,21 +203,19 @@ examples: |-
     }
     ```
 
-    ### Inspect an attachment by digest
+    ### 按摘要直接查看附件
 
-    You can inspect an attachment directly using its digset, which you can get from
-    the `inspect` output:
+    若已知附件 digest（可通过 `inspect` 输出获取），可直接查看：
 
     ```console
-    # Using a build ID
+    # 使用构建 ID
     docker buildx history inspect attachment qu2gsuo8ejqrwdfii23xkkckt sha256:abcdef123456...
 
-    # Or using a relative offset
+    # 或使用相对偏移
     docker buildx history inspect attachment ^0 sha256:abcdef123456...
     ```
 
-    Use `--type sbom` or `--type provenance` to filter attachments by type. To
-    inspect a specific attachment by digest, omit the `--type` flag.
+    加 `--type sbom` 或 `--type provenance` 可按类型过滤；若已给出 digest，则无需再指定 `--type`。
 deprecated: false
 hidden: false
 experimental: false

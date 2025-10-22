@@ -1,6 +1,6 @@
 command: docker buildx prune
-short: Remove build cache
-long: Clears the build cache of the selected builder.
+short: 移除构建缓存
+long: 清除所选构建器的构建缓存。
 usage: docker buildx prune
 pname: docker buildx
 plink: docker_buildx.yaml
@@ -9,7 +9,7 @@ options:
       shorthand: a
       value_type: bool
       default_value: "false"
-      description: Include internal/frontend images
+      description: 包含内部/前端镜像
       details_url: '#all'
       deprecated: false
       hidden: false
@@ -19,7 +19,7 @@ options:
       swarm: false
     - option: filter
       value_type: filter
-      description: Provide filter values
+      description: 提供过滤值
       details_url: '#filter'
       deprecated: false
       hidden: false
@@ -31,7 +31,7 @@ options:
       shorthand: f
       value_type: bool
       default_value: "false"
-      description: Do not prompt for confirmation
+      description: 不提示确认
       deprecated: false
       hidden: false
       experimental: false
@@ -41,7 +41,7 @@ options:
     - option: keep-storage
       value_type: bytes
       default_value: "0"
-      description: Amount of disk space to keep for cache
+      description: 为缓存保留的磁盘空间量
       deprecated: true
       hidden: true
       experimental: false
@@ -51,7 +51,7 @@ options:
     - option: max-used-space
       value_type: bytes
       default_value: "0"
-      description: Maximum amount of disk space allowed to keep for cache
+      description: 允许为缓存保留的最大磁盘空间量
       details_url: '#max-used-space'
       deprecated: false
       hidden: false
@@ -62,7 +62,7 @@ options:
     - option: min-free-space
       value_type: bytes
       default_value: "0"
-      description: Target amount of free disk space after pruning
+      description: 清理后目标空闲磁盘空间量
       details_url: '#min-free-space'
       deprecated: false
       hidden: false
@@ -73,7 +73,7 @@ options:
     - option: reserved-space
       value_type: bytes
       default_value: "0"
-      description: Amount of disk space always allowed to keep for cache
+      description: 始终允许为缓存保留的磁盘空间量
       details_url: '#reserved-space'
       deprecated: false
       hidden: false
@@ -84,7 +84,7 @@ options:
     - option: verbose
       value_type: bool
       default_value: "false"
-      description: Provide a more verbose output
+      description: 提供更详细的输出
       deprecated: false
       hidden: false
       experimental: false
@@ -94,7 +94,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -106,7 +106,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false
@@ -114,37 +114,29 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Include internal/frontend images (--all) {#all}
+    ### 包含内部/前端镜像（--all）{#all}
 
-    The `--all` flag to allow clearing internal helper images and frontend images
-    set using the `#syntax=` directive or the `BUILDKIT_SYNTAX` build argument.
+    `--all` 标志允许清除使用 `#syntax=` 指令或 `BUILDKIT_SYNTAX` 构建参数设置的
+    内部辅助镜像和前端镜像。
 
-    ### Provide filter values (--filter) {#filter}
+    ### 提供过滤值（--filter）{#filter}
 
-    You can finely control which cache records to delete using the `--filter` flag.
+    您可以使用 `--filter` 标志精细控制要删除的缓存记录。
 
-    The filter format is in the form of `<key><op><value>`, known as selectors. All
-    selectors must match the target object for the filter to be true. We define the
-    operators `=` for equality, `!=` for not equal and `~=` for a regular
-    expression.
+    过滤器格式为 `<key><op><value>`，称为选择器。所有选择器都必须匹配目标对象，
+    过滤器才为真。我们定义运算符 `=` 表示相等，`!=` 表示不相等，`~=` 表示正则表达式。
 
-    Valid filter keys are:
-    - `until` flag to keep records that have been used in the last duration time.
-      Value is a duration string, e.g. `24h` or `2h30m`, with allowable units of
-      `(h)ours`, `(m)inutes` and `(s)econds`.
-    - `id` flag to target a specific image ID.
-    - `parents` flag to target records that are parents of the
-      specified image ID. Multiple parent IDs are separated by a semicolon (`;`).
-    - `description` flag to target records whose description is the specified
-      substring.
-    - `inuse` flag to target records that are actively in use and therefore not
-      reclaimable.
-    - `mutable` flag to target records that are mutable.
-    - `immutable` flag to target records that are immutable.
-    - `shared` flag to target records that are shared with other resources,
-      typically images.
-    - `private` flag to target records that are not shared.
-    - `type` flag to target records by type. Valid types are:
+    有效的过滤键包括：
+    - `until` 标志用于保留在最近时间段内使用过的记录。
+      值为持续时间字符串，例如 `24h` 或 `2h30m`，允许的单位为 `(h)小时`、`(m)分钟` 和 `(s)秒`。\n    - `id` 标志用于定位特定的镜像 ID。
+    - `parents` 标志用于定位指定镜像 ID 的父记录。多个父 ID 用分号（`;`）分隔。
+    - `description` 标志用于定位描述为指定子字符串的记录。
+    - `inuse` 标志用于定位正在积极使用且因此不可回收的记录。
+    - `mutable` 标志用于定位可变的记录。
+    - `immutable` 标志用于定位不可变的记录。
+    - `shared` 标志用于定位与其他资源（通常是镜像）共享的记录。
+    - `private` 标志用于定位不共享的记录。
+    - `type` 标志用于按类型定位记录。有效类型包括：
       - `internal`
       - `frontend`
       - `source.local`
@@ -152,7 +144,7 @@ examples: |-
       - `exec.cachemount`
       - `regular`
 
-    Examples:
+    示例：
 
     ```console
     docker buildx prune --filter "until=24h"
@@ -163,41 +155,38 @@ examples: |-
     ```
 
     > [!NOTE]
-    > Multiple `--filter` flags are ANDed together.
+    > 多个 `--filter` 标志通过 AND 运算组合在一起。
 
-    ### Maximum amount of disk space allowed to keep for cache (--max-used-space) {#max-used-space}
+    ### 允许为缓存保留的最大磁盘空间量（--max-used-space）{#max-used-space}
 
-    The `--max-used-space` flag allows setting a maximum amount of disk space
-    that the build cache can use. If the cache is using more disk space than this
-    value, the least recently used cache records are deleted until the total
-    used space is less than or equal to the specified value.
+    `--max-used-space` 标志允许设置构建缓存可以使用的最大磁盘空间量。
+    如果缓存使用的磁盘空间超过此值，将删除最近最少使用的缓存记录，
+    直到总使用空间小于或等于指定值。
 
-    The value is specified in bytes. You can use a human-readable memory string,
-    e.g. `128mb`, `2gb`, etc. Units are case-insensitive.
+    值以字节为单位指定。您可以使用人类可读的内存字符串，
+    例如 `128mb`、`2gb` 等。单位不区分大小写。
 
-    ### Target amount of free disk space after pruning (--min-free-space) {#min-free-space}
+    ### 清理后目标空闲磁盘空间量（--min-free-space）{#min-free-space}
 
-    The `--min-free-space` flag allows setting a target amount of free disk space
-    that should be available after pruning. If the available disk space is less
-    than this value, the least recently used cache records are deleted until
-    the available free space is greater than or equal to the specified value.
+    `--min-free-space` 标志允许设置清理后应可用的目标空闲磁盘空间量。
+    如果可用磁盘空间小于此值，将删除最近最少使用的缓存记录，
+    直到可用空闲空间大于或等于指定值。
 
-    The value is specified in bytes. You can use a human-readable memory string,
-    e.g. `128mb`, `2gb`, etc. Units are case-insensitive.
+    值以字节为单位指定。您可以使用人类可读的内存字符串，
+    例如 `128mb`、`2gb` 等。单位不区分大小写。
 
-    ### Amount of disk space always allowed to keep for cache (--reserved-space) {#reserved-space}
+    ### 始终允许为缓存保留的磁盘空间量（--reserved-space）{#reserved-space}
 
-    The `--reserved-space` flag allows setting an amount of disk space that
-    should always be kept for the build cache. If the available disk space is less
-    than this value, the least recently used cache records are deleted until
-    the available free space is greater than or equal to the specified value.
+    `--reserved-space` 标志允许设置应始终为构建缓存保留的磁盘空间量。
+    如果可用磁盘空间小于此值，将删除最近最少使用的缓存记录，
+    直到可用空闲空间大于或等于指定值。
 
-    The value is specified in bytes. You can use a human-readable memory string,
-    e.g. `128mb`, `2gb`, etc. Units are case-insensitive.
+    值以字节为单位指定。您可以使用人类可读的内存字符串，
+    例如 `128mb`、`2gb` 等。单位不区分大小写。
 
-    ### Override the configured builder instance (--builder) {#builder}
+    ### 覆盖已配置的构建器实例（--builder）{#builder}
 
-    Same as [`buildx --builder`](/reference/cli/docker/buildx/#builder).
+    与 [`buildx --builder`](/reference/cli/docker/buildx/#builder) 相同。
 deprecated: false
 hidden: false
 experimental: false

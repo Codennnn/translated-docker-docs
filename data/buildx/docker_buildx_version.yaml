@@ -1,7 +1,7 @@
 command: docker buildx version
-short: Show buildx version information
+short: 显示 buildx 版本信息
 long: |-
-    View version information
+    查看版本信息
 
     ```console
     $ docker buildx version
@@ -24,7 +24,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       deprecated: false
       hidden: false
       experimental: false

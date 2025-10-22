@@ -1,9 +1,9 @@
 command: docker buildx history export
-short: Export build records into Docker Desktop bundle
+short: 将构建记录导出为 Docker Desktop 包
 long: |-
-    Export one or more build records to `.dockerbuild` archive files. These archives
-    contain metadata, logs, and build outputs, and can be imported into Docker
-    Desktop or shared across environments.
+    将一个或多个构建记录导出为 `.dockerbuild` 归档文件。这些归档文件
+    包含元数据、日志和构建输出，可以导入到 Docker Desktop 中
+    或在跨环境之间共享。
 usage: docker buildx history export [OPTIONS] [REF...]
 pname: docker buildx history
 plink: docker_buildx_history.yaml
@@ -11,7 +11,7 @@ options:
     - option: all
       value_type: bool
       default_value: "false"
-      description: Export all build records for the builder
+      description: 导出构建器的所有构建记录
       details_url: '#all'
       deprecated: false
       hidden: false
@@ -22,7 +22,7 @@ options:
     - option: finalize
       value_type: bool
       default_value: "false"
-      description: Ensure build records are finalized before exporting
+      description: 确保在导出前构建记录已完成最终化
       details_url: '#finalize'
       deprecated: false
       hidden: false
@@ -33,7 +33,7 @@ options:
     - option: output
       shorthand: o
       value_type: string
-      description: Output file path
+      description: 输出文件路径
       details_url: '#output'
       deprecated: false
       hidden: false
@@ -44,7 +44,7 @@ options:
 inherited_options:
     - option: builder
       value_type: string
-      description: Override the configured builder instance
+      description: 覆盖已配置的构建器实例
       details_url: '#builder'
       deprecated: false
       hidden: false
@@ -56,7 +56,7 @@ inherited_options:
       shorthand: D
       value_type: bool
       default_value: "false"
-      description: Enable debug logging
+      description: 启用调试日志记录
       details_url: '#debug'
       deprecated: false
       hidden: false
@@ -65,65 +65,65 @@ inherited_options:
       kubernetes: false
       swarm: false
 examples: |-
-    ### Export all build records to a file (--all) {#all}
+    ### 将所有构建记录导出到文件 (--all) {#all}
 
-    Use the `--all` flag and redirect the output:
+    使用 `--all` 标志并重定向输出：
 
     ```console
     docker buildx history export --all > all-builds.dockerbuild
     ```
 
-    Or use the `--output` flag:
+    或使用 `--output` 标志：
 
     ```console
     docker buildx history export --all -o all-builds.dockerbuild
     ```
 
-    ### Use a specific builder instance (--builder) {#builder}
+    ### 使用特定的构建器实例 (--builder) {#builder}
 
     ```console
     docker buildx history export --builder builder0 ^1 -o builder0-build.dockerbuild
     ```
 
-    ### Enable debug logging (--debug) {#debug}
+    ### 启用调试日志记录 (--debug) {#debug}
 
     ```console
     docker buildx history export --debug qu2gsuo8ejqrwdfii23xkkckt -o debug-build.dockerbuild
     ```
 
-    ### Ensure build records are finalized before exporting (--finalize) {#finalize}
+    ### 确保在导出前构建记录已完成最终化 (--finalize) {#finalize}
 
-    Clients can report their own traces concurrently, and not all traces may be
-    saved yet by the time of the export. Use the `--finalize` flag to ensure all
-    traces are finalized before exporting.
+    客户端可以并发报告自己的跟踪信息，在导出时可能并非所有跟踪信息
+    都已保存。使用 `--finalize` 标志可确保所有跟踪信息在导出前
+    已完成最终化。
 
     ```console
     docker buildx history export --finalize qu2gsuo8ejqrwdfii23xkkckt -o finalized-build.dockerbuild
     ```
 
-    ### Export a single build to a custom file (--output) {#output}
+    ### 将单个构建导出到自定义文件 (--output) {#output}
 
     ```console
     docker buildx history export qu2gsuo8ejqrwdfii23xkkckt --output mybuild.dockerbuild
     ```
 
-    You can find build IDs by running:
+    您可以通过运行以下命令查找构建 ID：
 
     ```console
     docker buildx history ls
     ```
 
-    To export two builds to separate files:
+    将两个构建导出到单独的文件：
 
     ```console
-    # Using build IDs
+    # 使用构建 ID
     docker buildx history export qu2gsuo8ejqrwdfii23xkkckt qsiifiuf1ad9pa9qvppc0z1l3 -o multi.dockerbuild
 
-    # Or using relative offsets
+    # 或使用相对偏移量
     docker buildx history export ^1 ^2 -o multi.dockerbuild
     ```
 
-    Or use shell redirection:
+    或使用 shell 重定向：
 
     ```console
     docker buildx history export ^1 > mybuild.dockerbuild
