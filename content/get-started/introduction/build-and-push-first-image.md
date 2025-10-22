@@ -1,11 +1,11 @@
 ---
 title: 构建并推送你的第一个镜像
 keywords: concepts, container, docker desktop
-description: 本页将教你如何构建并推送你的第一个镜像。
+description: 本页将指导你如何构建并推送你的第一个 Docker 镜像。
 summary: |
-  学习如何构建你的第一个 Docker 镜像，这是让应用走向容器化的关键一步。
+  学习如何构建你的第一个 Docker 镜像，这是将应用容器化的关键一步。
   我们将引导你创建镜像仓库，并将镜像构建并推送到 Docker Hub，
-  让你可以在团队内轻松共享镜像。
+  让你能够在团队中轻松共享镜像。
 weight: 3
 aliases: 
  - /guides/getting-started/build-and-push-first-image/
@@ -15,31 +15,31 @@ aliases:
 
 ## 说明
 
-现在你已经更新了[待办事项应用](develop-with-containers.md)，接下来可以为该应用创建一个容器镜像，并将其分享到 Docker Hub。为此，你需要完成以下步骤：
+在完成[待办事项应用](develop-with-containers.md)的更新后，现在可以为该应用创建一个容器镜像，并将其分享到 Docker Hub。为此，你需要完成以下步骤：
 
 1. 使用你的 Docker 账号登录
 2. 在 Docker Hub 上创建镜像仓库
 3. 构建容器镜像
 4. 将镜像推送到 Docker Hub
 
-在开始动手之前，我们先来了解几个核心概念。
+在开始实际操作之前，让我们先了解几个核心概念。
 
 ### 容器镜像
 
-如果你刚接触容器镜像，可以将其理解为一个标准化的软件包，其中包含了运行应用所需的一切：源文件、配置信息以及所有依赖项。这些镜像可以方便地分发并与他人共享，极大简化了应用部署流程。
+如果你初次接触容器镜像，可以将其理解为一种标准化的软件包，其中包含了运行应用所需的所有内容：源代码、配置文件以及所有依赖项。这些镜像可以方便地进行分发和共享，极大地简化了应用的部署流程。
 
 ### Docker Hub
 
-要分享你的 Docker 镜像，你需要一个存放它们的地方，即“仓库”（registry）。虽然市面上有许多可用的仓库服务，但 Docker Hub 是默认且最广泛使用的镜像仓库平台。Docker Hub 不仅是你存放自有镜像的理想场所，还是一个丰富的资源库，你可以在其中查找他人的镜像，用来直接运行或作为你自己镜像的基础。
+要分享你的 Docker 镜像，你需要一个存放它们的地方，即“镜像仓库”（registry）。虽然市面上有多种可用的仓库服务，但 Docker Hub 是默认且应用最广泛的镜像仓库平台。Docker Hub 不仅是存放自有镜像的理想场所，还是一个丰富的资源库，你可以在此查找他人的镜像，用于直接运行或作为自己镜像的基础。
 
 在[使用容器进行开发](develop-with-containers.md)章节中，你使用了来自 Docker Hub 的以下镜像，它们均为[Docker 官方镜像](/manuals/docker-hub/image-library/trusted-content.md#docker-official-images)：
 
-- [node](https://hub.docker.com/_/node) - 提供 Node 运行环境，作为开发阶段的基础镜像，同时也作为最终应用镜像的基础。
-- [mysql](https://hub.docker.com/_/mysql) - 提供用于存储待办事项的 MySQL 数据库。
-- [phpmyadmin](https://hub.docker.com/_/phpmyadmin) - 提供 phpMyAdmin，一个基于 Web 的 MySQL 数据库管理界面。
-- [traefik](https://hub.docker.com/_/traefik) - 提供 Traefik，一款现代化的 HTTP 反向代理与负载均衡器，可基于路由规则将请求转发到目标容器。
+- [node](https://hub.docker.com/_/node) - 提供 Node 运行环境，既作为开发阶段的基础镜像，也作为最终应用镜像的基础
+- [mysql](https://hub.docker.com/_/mysql) - 提供用于存储待办事项的 MySQL 数据库
+- [phpmyadmin](https://hub.docker.com/_/phpmyadmin) - 提供 phpMyAdmin，一个基于 Web 的 MySQL 数据库管理界面
+- [traefik](https://hub.docker.com/_/traefik) - 提供 Traefik，一款现代化的 HTTP 反向代理与负载均衡器，能够基于路由规则将请求转发到目标容器
 
-你可以前往查看完整目录：[Docker 官方镜像](https://hub.docker.com/search?image_filter=official&q=)、[Docker 验证发布者](https://hub.docker.com/search?q=&image_filter=store)与 [Docker 赞助的开源软件](https://hub.docker.com/search?q=&image_filter=open_source)，探索更多可运行和可构建的内容。
+你可以访问以下完整目录：[Docker 官方镜像](https://hub.docker.com/search?image_filter=official&q=)、[Docker 验证发布者](https://hub.docker.com/search?q=&image_filter=store)与 [Docker 赞助的开源软件](https://hub.docker.com/search?q=&image_filter=open_source)，探索更多可运行和可构建的内容。
 
 ## 动手实践
 
@@ -53,7 +53,7 @@ aliases:
 
 2. 点击右上角的 **Sign in** 按钮。
 
-3. 如果你还没有账号，请先创建一个，然后再完成登录流程。
+3. 如果你还没有账号，请先创建一个，然后完成登录流程。
 
 登录成功后，你将看到右上角的 **Sign in** 按钮变为你的个人头像，表示已成功登录。
 
@@ -72,7 +72,6 @@ aliases:
     - **Visibility** - 选择 **Public**（公开），这样其他人就可以拉取你定制的待办事项应用镜像
 
 4. 点击 **Create** 按钮完成仓库创建。
-
 
 ## 构建并推送镜像
 
@@ -178,7 +177,6 @@ aliases:
 {{< /tab >}}
 {{< /tabs >}}
 
-
 ## 成果回顾
 
 在继续学习之前，让我们花点时间回顾一下你刚才完成的工作：在短短几分钟内，你已经成功构建了一个完整的应用容器镜像，并将其推送到了 Docker Hub 平台上，实现了容器化应用的分享与发布。
@@ -187,7 +185,7 @@ aliases:
 
 - Docker Hub 是查找可信内容的首选仓库平台。Docker 公司提供了由 Docker 官方镜像、Docker 验证发布者以及 Docker 赞助开源软件构成的丰富可信内容集合，你可以直接使用这些镜像，或将它们作为你自己镜像的基础层。
 
-- Docker Hub 同样可以作为分发你自有应用的"应用市场"。任何开发者都可以创建账号并分发自己的镜像。除了公开分发之外，你还可以使用私有仓库功能，确保只有经过授权的用户才能访问你的特定镜像。
+- Docker Hub 同样可以作为分发你自有应用的“应用市场”。任何开发者都可以创建账号并分发自己的镜像。除了公开分发之外，你还可以使用私有仓库功能，确保只有经过授权的用户才能访问你的特定镜像。
 
 > **关于使用其他仓库**
 >
