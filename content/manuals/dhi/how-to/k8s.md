@@ -1,25 +1,22 @@
 ---
-title: Use a Docker Hardened Image in Kubernetes
-linktitle: Use an image in Kubernetes
-description: Learn how to use Docker Hardened Images in Kubernetes deployments.
-keywords: use hardened image, kubernetes, k8s
+title: 在 Kubernetes 中使用 Docker 加固镜像
+linktitle: 在 Kubernetes 中使用镜像
+description: 学习如何在 Kubernetes 部署中使用 Docker 加固镜像。
+keywords: 使用加固镜像, kubernetes, k8s
 weight: 35
 ---
 
 {{< summary-bar feature_name="Docker Hardened Images" >}}
 
-## Authentication
+## 身份认证
 
-To be able to use Docker Hardened Images in Kubernetes, you need to create a 
-Kubernetes secret for pulling images from your mirror or internal registry.
+若要在 Kubernetes 中使用 Docker 加固镜像，需先创建用于从镜像仓库或内部仓库拉取镜像的 Secret。
 
 > [!NOTE]
 >
-> You need to create this secret in each Kubernetes namespace that uses a DHI.
+> 请在每个使用 DHI 的 Kubernetes 命名空间中分别创建该 Secret。
 
-Create a secret using a Personal Access Token (PAT). Ensure the token has at least
-read-only access to private repositories. For Docker Hub replace `<registry server>`
-with `docker.io`.
+使用个人访问令牌（PAT）创建 Secret。确保令牌至少拥有私有仓库的只读权限。若使用 Docker Hub，请将 `<registry server>` 替换为 `docker.io`。
 
 ```console
 $ kubectl create -n <kubernetes namespace> secret docker-registry <secret name> --docker-server=<registry server> \
@@ -27,7 +24,7 @@ $ kubectl create -n <kubernetes namespace> secret docker-registry <secret name> 
         --docker-email=<registry email>
 ```
 
-To tests the secrets use the following command:
+使用以下命令测试 Secret 是否生效：
 
 ```console
 kubectl apply --wait -f - <<EOF
@@ -46,33 +43,33 @@ spec:
 EOF
 ```
 
-Get the status of the pod by running:
+查看 Pod 状态：
 
 ```console
 $ kubectl get -n <kubernetes namespace> pods/dhi-test
 ```
 
-The command should return the following result:
+若返回如下结果，说明镜像拉取并运行成功：
 
 ```console
 NAME       READY   STATUS      RESTARTS     AGE
 dhi-test   0/1     Completed   ...          ...
 ```
 
-If instead, the result is the following, there might be an issue with your secret.
+若看到以下状态，则表明 Secret 可能配置有误：
 
 ```console
 NAME       READY   STATUS         RESTARTS   AGE
 dhi-test   0/1     ErrImagePull   0          ...
 ```
 
-Verify the output of the pod by running, which should return `Hello from DHI in Kubernetes!`
+确认 Pod 输出，应返回 `Hello from DHI in Kubernetes!`：
 
 ```console
 kubectl logs -n <kubernetes namespace> pods/dhi-test
 ```
 
-After a successful test, the test pod can be deleted with the following command:
+测试完成后，可删除该测试 Pod：
 
 ```console
 $ kubectl delete -n <kubernetes namespace> pods/dhi-test

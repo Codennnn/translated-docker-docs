@@ -1,75 +1,75 @@
 ---
-title: Design guidelines for Docker extensions
-linkTitle: Guidelines
-description: Docker extension design
+title: Docker 扩展设计指南
+linkTitle: 指南
+description: Docker 扩展设计
 keywords: Docker, extensions, design
 aliases: 
  - /desktop/extensions-sdk/design/design-guidelines/
 weight: 10
 ---
 
-At Docker, we aim to build tools that integrate into a user's existing workflows rather than requiring them to adopt new ones. We strongly recommend that you follow these guidelines when creating extensions. We review and approve your Marketplace publication based on these requirements.
+在 Docker，我们的目标是构建能够集成到用户现有工作流程中的工具，而不是要求他们采用新的工作流程。我们强烈建议您在创建扩展时遵循这些指南。我们基于这些要求审查和批准您的 Marketplace 发布内容。
 
-Here is a simple checklist to go through when creating your extension:
-- Is it easy to get started?
-- Is it easy to use?
-- Is it easy to get help when needed?
+以下是创建扩展时可以参考的简单检查清单：
+- 是否容易上手？
+- 是否易于使用？
+- 需要帮助时是否容易获得支持？
 
 
-## Create a consistent experience with Docker Desktop
+## 创建与 Docker Desktop 一致的体验
 
-Use the [Docker Material UI Theme](https://www.npmjs.com/package/@docker/docker-mui-theme) and the [Docker Extensions Styleguide](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771) to ensure that your extension feels like it is part of Docker Desktop to create a seamless experience for users.
+使用 [Docker Material UI 主题](https://www.npmjs.com/package/@docker/docker-mui-theme) 和 [Docker 扩展样式指南](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771) 确保您的扩展感觉像是 Docker Desktop 的一部分，为用户创造无缝体验。
 
-- Ensure the extension has both a light and dark theme. Using the components and styles as per the Docker style guide ensures that your extension meets the [level AA accessibility standard.](https://www.w3.org/WAI/WCAG2AA-Conformance).
+- 确保扩展同时具有浅色和深色主题。按照 Docker 样式指南使用组件和样式，可以确保您的扩展符合 [AA 级无障碍标准](https://www.w3.org/WAI/WCAG2AA-Conformance)。
 
-  ![Light and dark mode](images/light_dark_mode.webp)
+  ![浅色和深色模式](images/light_dark_mode.webp)
 
-- Ensure that your extension icon is visible both in light and dark mode.
+- 确保您的扩展图标在浅色和深色模式下都可见。
 
-  ![Icon colors in light and dark mode](images/icon_colors.webp)
+  ![浅色和深色模式下的图标颜色](images/icon_colors.webp)
 
-- Ensure that the navigational behavior is consistent with the rest of Docker Desktop. Add a header to set the context for the extension.
+- 确保导航行为与 Docker Desktop 的其余部分保持一致。添加标题栏为扩展设置上下文。
 
-  ![Header that sets the context](images/header.webp)
+  ![设置上下文的标题栏](images/header.webp)
 
-- Avoid embedding terminal windows. The advantage we have with Docker Desktop over the CLI is that we have the opportunity to provide rich information to users. Make use of this interface as much as possible. 
+- 避免嵌入终端窗口。与 CLI 相比，Docker Desktop 的优势在于我们有机会为用户提供丰富的信息。尽可能利用这个界面。
 
-  ![Terminal window used incorrectly](images/terminal_window_dont.webp)
+  ![终端窗口的错误使用方式](images/terminal_window_dont.webp)
 
-  ![Terminal window used correctly](images/terminal_window_do.webp)
+  ![终端窗口的正确使用方式](images/terminal_window_do.webp)
 
-## Build features natively
+## 原生构建功能
 
-- In order not to disrupt the flow of users, avoid scenarios where the user has to navigate outside Docker Desktop, to the CLI or a webpage for example, in order to carry out certain functionalities. Instead, build features that are native to Docker Desktop.
+- 为了不打断用户的流程，避免用户必须导航到 Docker Desktop 外部（例如 CLI 或网页）来执行某些功能的情况。相反，应构建 Docker Desktop 原生的功能。
 
-  ![Incorrect way to switch context](images/switch_context_dont.webp)
+  ![切换上下文的错误方式](images/switch_context_dont.webp)
 
-  ![Correct way to switch context](images/switch_context_do.webp)
+  ![切换上下文的正确方式](images/switch_context_do.webp)
 
-## Break down complicated user flows
+## 分解复杂的用户流程
 
-- If a flow is too complicated or the concept is abstract, break down the flow into multiple steps with one simple call-to-action in each step. This helps when onboarding novice users to your extension
+- 如果流程过于复杂或概念抽象，请将流程分解为多个步骤，每个步骤中包含一个简单的行动号召。这有助于新手用户快速上手您的扩展。
 
-  ![A complicated flow](images/complicated_flows.webp)
+  ![复杂的流程](images/complicated_flows.webp)
 
-- Where there are multiple call-to-actions, ensure you use the primary (filled button style) and secondary buttons (outline button style) to convey the importance of each action.
+- 当有多个行动号召时，确保您使用主要按钮（填充按钮样式）和次要按钮（轮廓按钮样式）来传达每个操作的重要性。
 
-  ![Call to action](images/cta.webp)
+  ![行动号召](images/cta.webp)
 
-## Onboarding new users
+## 引导新用户
 
-When creating your extension, ensure that first time users of the extension and your product can understand its value-add and adopt it easily. Ensure you include contextual help within the extension.
+创建扩展时，确保扩展和产品的首次用户能够理解其价值并轻松采用。确保您在扩展中包含上下文相关的帮助。
 
-- Ensure that all necessary information is added to the extensions Marketplace as well as the extensions detail page. This should include:
-  - Screenshots of the extension. Note that the recommended size for screenshots is 2400x1600 pixels. 
-  - A detailed description that covers what the purpose of the extension is, who would find it useful and how it works.
-  - Link to necessary resources such as documentation.
-- If your extension has particularly complex functionality, add a demo or video to the start page. This helps onboard a first time user quickly.
+- 确保所有必要信息都添加到扩展 Marketplace 以及扩展详情页面。这应包括：
+  - 扩展的截图。请注意，截图的推荐尺寸为 2400x1600 像素。
+  - 详细描述，涵盖扩展的目的、适用人群以及工作方式。
+  - 必要资源的链接，如文档。
+- 如果您的扩展具有特别复杂的功能，请在起始页面添加演示或视频。这有助于快速引导首次用户。
 
-  ![start page](images/start_page.webp)
+  ![起始页面](images/start_page.webp)
 
-## What's next?
+## 下一步
 
-- Explore our [design principles](design-principles.md).
-- Take a look at our [UI styling guidelines](index.md).
-- Learn how to [publish your extension](../extensions/_index.md).
+- 探索我们的[设计原则](design-principles.md)。
+- 查看我们的[UI 样式指南](index.md)。
+- 了解如何[发布您的扩展](../extensions/_index.md)。

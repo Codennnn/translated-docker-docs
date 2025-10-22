@@ -1,135 +1,110 @@
 ---
-title: Explore Docker Hardened Images
-linktitle: Explore images
-description: Learn how to find and evaluate image repositories, variants, metadata, and attestations in the DHI catalog on Docker Hub.
-keywords: explore docker images, image variants, docker hub catalog, container image metadata, signed attestations
+title: 探索 Docker 加固镜像
+linktitle: 探索镜像
+description: 学习如何在 Docker Hub 的 DHI 目录中查找和评估镜像仓库、变体、元数据和证明。
+keywords: 探索 docker 镜像, 镜像变体, docker hub 目录, 容器镜像元数据, 签名证明
 weight: 10
 ---
 
 {{< summary-bar feature_name="Docker Hardened Images" >}}
 
-Docker Hardened Images (DHI) are a curated set of secure, production-ready
-container images designed for enterprise use. This page explains how to explore
-available DHI repositories, review image metadata, examine variant details, and
-understand the security attestations provided. Use this information to evaluate
-and select the right image variants for your applications before mirroring them
-to your organization.
+Docker 加固镜像（DHI）是一系列经过精心筛选的安全、生产就绪型容器镜像，专为企业级应用而设计。本文将带你了解如何浏览可用的 DHI 仓库、查看镜像元数据、审视不同变体，并理解随附的安全证明。借助这些信息，你可以在将镜像同步到组织之前，全面评估并选出最适合业务需求的变体。
 
-## Explore Docker Hardened Images
+## 探索 Docker 加固镜像
 
-To explore Docker Hardened Images (DHI):
+要浏览 Docker 加固镜像（DHI）：
 
-1. Go to [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has access to DHI.
-4. Select **Hardened Images** > **Catalog**.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中，选择已开通 DHI 权限的组织。
+4. 依次选择 **加固镜像** > **目录**。
 
-On the DHI page, you can browse images, search images, or filter images by
-category.
+在 DHI 页面，你可以按分类浏览、搜索或筛选镜像。
 
-## View repository details
+## 查看仓库详情
 
-To view repository details:
+要查看仓库详情：
 
-1. Go to [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has access to DHI.
-4. Select **Hardened Images** > **Catalog**.
-5. Select a repository in the DHI catalog list.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中，选择已开通 DHI 权限的组织。
+4. 依次选择 **加固镜像** > **目录**。
+5. 在目录列表中点选目标仓库。
 
-The repository details page provides the following:
+仓库详情页提供以下内容：
 
- - Overview: A brief explanation of the image.
- - Guides: Several guides on how to use the image and migrate your existing application.
- - Tags: Select this option to [view image variants](#view-image-variants).
- - Security summary: Select a tag name to view a quick security summary,
-   including package count, total known vulnerabilities, and Scout health score.
- - Recently pushed tags: A list of recently updated image variants and when they
-   were last updated.
- - Mirror to repository: Select this option to mirror the image to your
-   organization's repository in order to use it. Only organization owners can mirror a repository.
- - View in repository: After a repository has been mirrored, you can select this
-   option to view where the repository has been mirrored, or mirror it to another repository.
+- **概览**：镜像的简要说明。
+- **指南**：多篇使用教程与迁移指南。
+- **标签**：点击可[查看镜像变体](#查看镜像变体)。
+- **安全摘要**：点击标签名称，即可查看快速安全摘要，包括软件包数量、已知漏洞总数及 Scout 健康评分。
+- **最近推送的标签**：最近更新的镜像变体及其更新时间。
+- **镜像到仓库**：点击可将该镜像同步至组织仓库，供后续使用（仅组织所有者拥有同步权限）。
+- **在仓库中查看**：镜像同步完成后，可点此查看同步位置，或将其同步至其他仓库。
 
-## View image variants
+## 查看镜像变体
 
-Tags are used to identify image variants. Image variants are different builds of
-the same application or framework tailored for different use-cases.
+标签（Tag）用来区分镜像变体。镜像变体是同一应用或框架针对不同场景构建的差异化版本。
 
-To explore image variants:
+要查看镜像变体：
 
-1. Go to [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has access to DHI.
-4. Select **Hardened Images** > **Catalog**.
-5. Select a repository in the DHI catalog list.
-6. Select **Tags**.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中，选择已开通 DHI 权限的组织。
+4. 依次选择 **加固镜像** > **目录**。
+5. 在目录列表中点选目标仓库。
+6. 点击 **标签**。
 
-The **Tags** page provides the following information:
+**标签**页提供以下信息：
 
-- Tags: A list of all available tags, also known as image variants.
-- Compliance: Lists relevant compliance designations. For example, `FIPS` or `STIG`.
-- Distribution: The distribution that the variant is based on. For example, `debian 12` or `alpine 3.21`.
-- Package manager: The package manager that is available in the variant. For example, `apt`, `apk`, or `-` (no package manager).
-- Shell: The shell that is available in the variant. For example, `bash`, `busybox`, or `-` (no shell).
-- User: The user that the container runs as. For example, `root`, `nonroot (65532)`, or `node (1000)`.
-- Last pushed: The amount of days ago that the image variant was last pushed.
-- Vulnerabilities: The amount of vulnerabilities in the variant based on the severity.
-- Health: The Scout health score for the variant. Select the score icon to get more details.
+- **标签**：所有可用标签，即镜像变体列表。
+- **合规性**：相关合规标识，如 `FIPS`、`STIG` 等。
+- **发行版**：变体所基于的发行版，例如 `debian 12` 或 `alpine 3.21`。  
+- **包管理器**：变体内置的包管理器，如 `apt`、`apk`，或 `-`（无）。
+- **Shell**：可用 Shell，如 `bash`、`busybox`，或 `-`（无）。
+- **用户**：容器默认运行用户，如 `root`、`nonroot (65532)` 或 `node (1000)`。
+- **最近推送**：该变体上次推送距今的天数。
+- **漏洞**：按严重级别统计的漏洞数量。
+- **健康度**：Scout 为该变体给出的健康评分，点击图标可查看详情。
 
 > [!NOTE]
 >
-> Unlike most images on Docker Hub, Docker Hardened Images do not use the
-> `latest` tag. Each image variant is published with a full semantic version tag
-> (for example, `3.13`, `3.13-dev`) and is kept up to date. If you need to pin
-> to a specific image release for reproducibility, you can reference the image
-> by its [digest](../core-concepts/digests.md).
+> 与 Docker Hub 上的大多数镜像不同，Docker 加固镜像**不提供** `latest` 标签。每个变体均通过完整的语义化版本号发布（例如 `3.13`、`3.13-dev`），并保持持续更新。若需锁定特定版本以保证可重复构建，可通过[镜像摘要](../core-concepts/digests.md)引用。
 
-## View image variant details
+## 查看镜像变体详情
 
-To explore the details of an image variant:
+要深入查看某个镜像变体的信息：
 
-1. Go to [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has access to DHI.
-4. Select **Hardened Images** > **Catalog**.
-5. Select a repository in the DHI catalog list.
-6. Select **Tags**.
-7. Select the image variant's tag in the table.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中，选择已开通 DHI 权限的组织。
+4. 依次选择 **加固镜像** > **目录**。
+5. 在目录列表中点选目标仓库。
+6. 点击 **标签**。
+7. 在列表中点选对应标签。
 
-The image variant details page provides the following information:
+镜像变体详情页包含以下内容：
 
-- Packages: A list of all packages included in the image variant. This section
-  includes details about each package, including its name, version,
-  distribution, and licensing information.
-- Specifications: The specifications for the image variant include the following
-  key details:
-   - Source & Build Information: The image is built from the Dockerfile found
-     here and the Git commit.
-   - Build parameters
-   - Entrypoint
-   - CMD
-   - User
-   - Working directory
-   - Environment Variables
-   - Labels
-   - Platform
-- Vulnerabilities: The vulnerabilities section provides a list of known CVEs for
-  the image variant, including:
-   - CVE
-   - Severity
-   - Package
-   - Fix version
-   - Last detected
-   - Status
-   - Suppressed CVEs
-- Attestations: Variants include comprehensive security attestations to verify
-  the image's build process, contents, and security posture. These attestations
-  are signed and can be verified using cosign. For a list of available
-  attestations, see [Attestations](../core-concepts/attestations.md).
+- **软件包**：列出该变体内置的所有软件包，并给出名称、版本、发行版及许可证信息。
+- **规格**：关键运行参数，包括：
+  - **源码与构建信息**：所用 Dockerfile 位置及 Git 提交记录。
+  - 构建参数
+  - 入口点（Entrypoint）
+  - 默认命令（CMD）
+  - 运行用户
+  - 工作目录
+  - 环境变量
+  - 标签
+  - 平台架构
+- **漏洞**：已知 CVE 清单，涵盖：
+  - CVE 编号
+  - 严重级别
+  - 受影响软件包
+  - 修复版本
+  - 最近检出时间
+  - 当前状态
+  - 已抑制 CVE
+- **证明**：每个变体均附带全面的安全证明，用于验证构建流程、镜像内容及安全态势。证明已签名，可使用 cosign 校验。可用证明类型详见[证明文档](../core-concepts/attestations.md)。
 
-## What's next
+## 下一步
 
-After finding an image you need, you can [mirror the image to your
-organization](./mirror.md). If the image is already mirrored, then you can start
-[using the image](./use.md).
+找到所需镜像后，可将其[同步至组织仓库](./mirror.md)。若镜像已同步，直接[开始使用](./use.md)即可。

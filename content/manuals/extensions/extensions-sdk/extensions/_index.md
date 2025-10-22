@@ -1,47 +1,47 @@
 ---
-title: "Part two: Publish"
-description: General steps in how to publish an extension
-keywords: Docker, Extensions, sdk, publish
+title: "第二部分：发布"
+description: 发布扩展的常规步骤
+keywords: Docker, Extensions, sdk, 发布
 aliases: 
  - /desktop/extensions-sdk/extensions/
 weight: 40
 ---
 
-This section describes how to make your extension available and more visible, so users can discover it and install it with a single click.
+本节介绍如何使您的扩展可用且更加可见，以便用户可以发现它并通过单击安装。
 
-## Release your extension
+## 发布您的扩展
 
-After you have developed your extension and tested it locally, you are ready to release the extension and make it available for others to install and use (either internally with your team, or more publicly).
+在开发扩展并在本地测试后，您就可以发布扩展，使其可供其他人安装和使用（可以在团队内部，或更广泛地公开）。
 
-Releasing your extension consists of:
+发布扩展包括：
 
-- Providing information about your extension: description, screenshots, etc. so users can decide to install your extension
-- [Validating](validate.md) that the extension is built in the right format and includes the required information
-- Making the extension image available on [Docker Hub](https://hub.docker.com/)
+- 提供有关您的扩展的信息：描述、截图等，以便用户决定是否安装您的扩展
+- [验证](validate.md)扩展是否以正确的格式构建并包含所需信息
+- 使扩展镜像在 [Docker Hub](https://hub.docker.com/) 上可用
 
-See [Package and release your extension](DISTRIBUTION.md) for more details about the release process.
+有关发布过程的更多详细信息，请参阅[打包和发布您的扩展](DISTRIBUTION.md)。
 
-## Promote your extension
+## 推广您的扩展
 
-Once your extension is available on Docker Hub, users who have access to the extension image can install it using the Docker CLI.
+一旦您的扩展在 Docker Hub 上可用，有权访问扩展镜像的用户就可以使用 Docker CLI 安装它。
 
-### Use a share extension link
+### 使用共享扩展链接
 
-You can also [generate a share URL](share.md) in order to share your extension within your team, or promote your extension on the internet. The share link lets users view the extension description and screenshots.
+您还可以[生成共享 URL](share.md)，以便在团队内共享您的扩展，或在互联网上推广您的扩展。共享链接让用户可以查看扩展描述和截图。
 
-### Publish your extension in the Marketplace
+### 在市场中发布您的扩展
 
-You can publish your extension in the Extensions Marketplace to make it more discoverable. You must [submit your extension](publish.md) if you want to have it published in the Marketplace.
+您可以在扩展市场中发布您的扩展，使其更容易被发现。如果您想在市场中发布扩展，必须[提交您的扩展](publish.md)。
 
-## What happens next
+## 后续操作
 
-### New releases
+### 新版本
 
-Once you have released your extension, you can push a new release just by pushing a new version of the extension image, with an incremented tag (still using `semver` conventions).
-Extensions published in the Marketplace benefit from update notifications to all Desktop users that have installed the extension. For more details, see [new releases and updates](DISTRIBUTION.md#new-releases-and-updates).
+发布扩展后，您只需推送扩展镜像的新版本（使用递增的标签，仍遵循 `semver` 约定），即可推送新版本。
+在市场中发布的扩展会受益于向所有已安装该扩展的 Desktop 用户发送更新通知。有关更多详细信息，请参阅[新版本和更新](DISTRIBUTION.md#new-releases-and-updates)。
 
-### Extension support and user feedback
+### 扩展支持和用户反馈
 
-In addition to providing a description of your extension's features and screenshots, you should also specify additional URLs using [extension labels](labels.md). This direct users to your website for reporting bugs and feedback, and accessing documentation and support.
+除了提供扩展功能和截图的描述外，您还应使用[扩展标签](labels.md)指定额外的 URL。这将引导用户访问您的网站以报告错误和反馈，以及访问文档和支持。
 
 {{% include "extensions-form.md" %}}

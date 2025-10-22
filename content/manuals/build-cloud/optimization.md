@@ -1,97 +1,60 @@
 ---
-title: Optimize for building in the cloud
-linkTitle: Optimization
+title: 优化云构建
+linkTitle: 优化
 weight: 40
-description: Building remotely is different from building locally. Here's how to optimize for remote builders.
-keywords: build, cloud build, optimize, remote, local, cloud
+description: 远程构建与本地构建有所不同。以下是如何优化远程构建器的方法。
+keywords: 构建, 云构建, 优化, 远程, 本地, 云
 aliases:
   - /build/cloud/optimization/
 ---
 
-Docker Build Cloud runs your builds remotely, and not on the machine where you
-invoke the build. This means that file transfers between the client and builder
-happen over the network.
+Docker Build Cloud 在远程运行您的构建，而不是在您调用构建的机器上。这意味着客户端和构建器之间的文件传输通过网络进行。
 
-Transferring files over the network has a higher latency and lower bandwidth
-than local transfers. Docker Build Cloud has several features to mitigate this:
+通过网络传输文件比本地传输具有更高的延迟和更低的带宽。Docker Build Cloud 有几个功能来缓解这种情况：
 
-- It uses attached storage volumes for build cache, which makes reading and
-  writing cache very fast.
-- Loading build results back to the client only pulls the layers that were
-  changed compared to previous builds.
+- 它使用附加的存储卷进行构建缓存，这使得读取和写入缓存非常快。
+- 将构建结果加载回客户端时，只拉取与之前构建相比已更改的层。
 
-Despite these optimizations, building remotely can still yield slow context
-transfers and image loads, for large projects or if the network connection is
-slow. Here are some ways that you can optimize your builds to make the transfer
-more efficient:
+尽管有这些优化，但对于大型项目或网络连接较慢的情况，远程构建仍可能导致上下文传输和镜像加载缓慢。以下是一些您可以优化构建以使传输更高效的方法：
 
-- [Dockerignore files](#dockerignore-files)
-- [Slim base images](#slim-base-images)
-- [Multi-stage builds](#multi-stage-builds)
-- [Fetch remote files in build](#fetch-remote-files-in-build)
-- [Multi-threaded tools](#multi-threaded-tools)
+- [Dockerignore 文件](#dockerignore-文件)
+- [精简基础镜像](#精简基础镜像)
+- [多阶段构建](#多阶段构建)
+- [在构建中获取远程文件](#在构建中获取远程文件)
+- [多线程工具](#多线程工具)
 
-For more information on how to optimize your builds, see
-[Building best practices](/manuals/build/building/best-practices.md).
+有关如何优化构建的更多信息，请参阅[构建最佳实践](/manuals/build/building/best-practices.md)。
 
-### Dockerignore files
+### Dockerignore 文件
 
-Using a [`.dockerignore` file](/manuals/build/concepts/context.md#dockerignore-files),
-you can be explicit about which local files you don’t want to include in the
-build context. Files caught by the glob patterns you specify in your
-ignore-file aren't transferred to the remote builder.
+使用 [`.dockerignore` 文件](/manuals/build/concepts/context.md#dockerignore-files)，您可以明确指定不想包含在构建上下文中的本地文件。被您在忽略文件中指定的 glob 模式捕获的文件不会被传输到远程构建器。
 
-Some examples of things you might want to add to your `.dockerignore` file are:
+您可能想要添加到 `.dockerignore` 文件中的一些示例如下：
 
-- `.git` — skip sending the version control history in the build context. Note
-  that this means you won’t be able to run Git commands in your build steps,
-  such as `git rev-parse`.
-- Directories containing build artifacts, such as binaries. Build artifacts
-  created locally during development.
-- Vendor directories for package managers, such as `node_modules`.
+- `.git` — 跳过在构建上下文中发送版本控制历史记录。请注意，这意味着您将无法在构建步骤中运行 Git 命令，例如 `git rev-parse`。
+- 包含构建产物的目录，例如二进制文件。在开发过程中本地创建的构建产物。
+- 包管理器的供应商目录，例如 `node_modules`。
 
-In general, the contents of your `.dockerignore` file should be similar to what
-you have in your `.gitignore`.
+一般来说，您的 `.dockerignore` 文件内容应该与您的 `.gitignore` 文件内容相似。
 
-### Slim base images
+### 精简基础镜像
 
-Selecting smaller images for your `FROM` instructions in your Dockerfile can
-help reduce the size of the final image. The [Alpine image](https://hub.docker.com/_/alpine)
-is a good example of a minimal Docker image that provides all of the OS
-utilities you would expect from a Linux container.
+在 Dockerfile 中为 `FROM` 指令选择较小的镜像可以帮助减小最终镜像的大小。[Alpine 镜像](https://hub.docker.com/_/alpine)是一个最小化 Docker 镜像的好例子，它提供了您对 Linux 容器所期望的所有操作系统实用程序。
 
-There’s also the [special `scratch` image](https://hub.docker.com/_/scratch),
-which contains nothing at all. Useful for creating images of statically linked
-binaries, for example.
+还有[特殊的 `scratch` 镜像](https://hub.docker.com/_/scratch)，它完全不包含任何内容。例如，这对于创建静态链接二进制文件的镜像很有用。
 
-### Multi-stage builds
+### 多阶段构建
 
-[Multi-stage builds](/build/building/multi-stage/) can make your build run faster,
-because stages can run in parallel. It can also make your end-result smaller.
-Write your Dockerfile in such a way that the final runtime stage uses the
-smallest possible base image, with only the resources that your program requires
-to run.
+[多阶段构建](/build/building/multi-stage/)可以使您的构建运行更快，因为阶段可以并行运行。它也可以使您的最终结果更小。以这样的方式编写 Dockerfile：最终运行时阶段使用尽可能小的基础镜像，只包含程序运行所需的资源。
 
-It’s also possible to
-[copy resources from other images or stages](/build/building/multi-stage/#name-your-build-stages),
-using the Dockerfile `COPY --from` instruction. This technique can reduce the
-number of layers, and the size of those layers, in the final stage.
+也可以使用 Dockerfile `COPY --from` 指令[从其他镜像或阶段复制资源](/build/building/multi-stage/#name-your-build-stages)。这种技术可以减少最终阶段中的层数以及这些层的大小。
 
-### Fetch remote files in build
+### 在构建中获取远程文件
 
-When possible, you should fetch files from a remote location in the build,
-rather than bundling the files into the build context. Downloading files on the
-Docker Build Cloud server directly is better, because it will likely be faster
-than transferring the files with the build context.
+如果可能，您应该在构建中从远程位置获取文件，而不是将文件捆绑到构建上下文中。在 Docker Build Cloud 服务器上直接下载文件更好，因为这可能比使用构建上下文传输文件更快。
 
-You can fetch remote files during the build using the
-[Dockerfile `ADD` instruction](/reference/dockerfile/#add),
-or in your `RUN` instructions with tools like `wget` and `rsync`.
+您可以在构建过程中使用 [Dockerfile `ADD` 指令](/reference/dockerfile/#add)或在 `RUN` 指令中使用 `wget` 和 `rsync` 等工具来获取远程文件。
 
-### Multi-threaded tools
+### 多线程工具
 
-Some tools that you use in your build instructions may not utilize multiple
-cores by default. One such example is `make` which uses a single thread by
-default, unless you specify the `make --jobs=<n>` option. For build steps
-involving such tools, try checking if you can optimize the execution with
-parallelization.
+您在构建指令中使用的一些工具可能默认不利用多核。一个这样的例子是 `make`，默认情况下使用单线程，除非您指定 `make --jobs=<n>` 选项。对于涉及此类工具的构建步骤，请尝试检查是否可以通过并行化优化执行。

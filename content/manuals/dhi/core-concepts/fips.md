@@ -1,97 +1,63 @@
 ---
-title: FIPS
-description: Learn how Docker Hardened Images support FIPS 140 through validated cryptographic modules to help organizations meet compliance requirements.
-keywords: docker fips, fips 140 images, fips docker images, docker compliance, secure container images
+title: FIPS 140 合规支持
+description: 了解 Docker 加固镜像如何通过经过验证的加密模块支持 FIPS 140，帮助组织满足合规要求。
+keywords: docker fips, fips 140 镜像, fips docker 镜像, docker 合规, 安全容器镜像
 ---
 
-## What is FIPS 140?
+## FIPS 140 是什么？
 
-[FIPS 140](https://csrc.nist.gov/publications/detail/fips/140/3/final) is a U.S.
-government standard that defines security requirements for cryptographic modules
-that protect sensitive information. It is widely used in regulated environments
-such as government, healthcare, and financial services.
+[FIPS 140](https://csrc.nist.gov/publications/detail/fips/140/3/final) 是美国政府制定的密码模块安全标准，用于保护敏感信息，在政府、医疗、金融等受监管行业被广泛采纳。  
+标准由 [NIST 密码模块验证计划（CMVP）](https://csrc.nist.gov/projects/cryptographic-module-validation-program) 负责认证，确保密码算法与实现达到严格的安全基准。
 
-FIPS certification is managed by the [NIST Cryptographic Module Validation
-Program
-(CMVP)](https://csrc.nist.gov/projects/cryptographic-module-validation-program),
-which ensures cryptographic modules meet rigorous security standards.
+## 为何必须关注 FIPS 合规
 
-## Why FIPS compliance matters
+在需要保护敏感数据的受监管场景（政府、医疗、金融、国防）中，FIPS 140 合规是硬性或强监管要求。采用通过验证的密码模块可：
 
-FIPS 140 compliance is required or strongly recommended in many regulated
-environments where sensitive data must be protected, such as government,
-healthcare, finance, and defense. These standards ensure that cryptographic
-operations are performed using vetted, trusted algorithms implemented in secure
-modules.
+- **满足 FedRAMP 等联邦/行业法规**——强制要求使用 FIPS 140 验证的密码学组件；
+- **提升审计就绪度**——提供可验证的证据链，证明系统采用标准化、安全的密码实践；
+- **降低安全风险**——自动屏蔽 MD5 等不安全算法，确保跨环境行为一致。
 
-Using software components that rely on validated cryptographic modules can help organizations:
+## Docker 加固镜像如何助力 FIPS 合规
 
-- Satisfy federal and industry mandates, such as FedRAMP, which require or
-  strongly recommend FIPS 140-validated cryptography.
-- Demonstrate audit readiness, with verifiable evidence of secure,
-  standards-based cryptographic practices.
-- Reduce security risk, by blocking unapproved or unsafe algorithms (e.g., MD5)
-  and ensuring consistent behavior across environments.
+Docker 加固镜像（DHI）提供专门的 **FIPS 变体**，内置已通过 FIPS 140 验证的密码模块，帮助组织“开箱即用”地满足合规要求：
 
-## How Docker Hardened Images support FIPS compliance
-
-Docker Hardened Images (DHIs) include variants that use cryptographic modules
-validated under FIPS 140. These images are intended to help organizations meet
-compliance requirements by incorporating components that meet the standard.
-
-- FIPS image variants use cryptographic modules that are already validated under
-  FIPS 140.
-- These variants are built and maintained by Docker to support environments with
-  regulatory or compliance needs.
-- Docker provides signed test attestations that document the use of validated
-  cryptographic modules. These attestations can support internal audits and
-  compliance reporting.
+- 镜像在构建阶段即集成已验证的密码模块，无需自行编译或补丁；
+- Docker 官方维护并持续更新，确保验证状态不过期；
+- 提供**签名合规声明（attestation）**，可用于内部审计与合规报告。
 
 > [!NOTE]
->
-> Using a FIPS image variant helps meet compliance requirements but does not
-> make an application or system fully compliant. Compliance depends on how the
-> image is integrated and used within the broader system.
+> 使用 FIPS 镜像只是“合规拼图”的一块，最终合规仍需结合整体系统架构与使用方式。
 
-## Identify images that support FIPS
+## 快速识别支持 FIPS 的镜像
 
-Docker Hardened Images that support FIPS are marked as **FIPS** compliant
-in the Docker Hardened Images catalog.
+在 Docker 加固镜像目录中：
 
-To find DHI repositories with FIPS image variants, [explore images](../how-to/explore.md) and:
+1. 打开 [镜像浏览页](../how-to/explore.md)，勾选 **FIPS** 过滤器；
+2. 或在单条镜像详情页查看 **FIPS 合规** 标签。
 
-- Use the **FIPS** filter on the catalog page
-- Look for **FIPS** compliant on individual image listings
+符合要求的镜像标签以 `-fips` 结尾，例如 `3.13-fips`。
 
-These indicators help you quickly locate repositories that support FIPS-based
-compliance needs. Image variants that include FIPS support will have a tag
-ending with `-fips`, such as `3.13-fips`.
+## 查看 FIPS 合规声明
 
-## View the FIPS attestation
+使用 Docker Scout CLI 一键获取镜像内嵌的 FIPS 声明，验证所含密码模块：
 
-The FIPS variants of Docker Hardened Images contain a FIPS attestation that
-lists the actual cryptographic modules included in the image.
-
-You can retrieve and inspect the FIPS attestation using the Docker Scout CLI:
-
-```console
-$ docker scout attest get \
+```bash
+docker scout attest get \
   --predicate-type https://docker.com/dhi/fips/v0.1 \
   --predicate \
-  <your-namespace>/dhi-<image>:<tag>
+  <命名空间>/dhi-<镜像>:<标签>
 ```
 
-For example:
+示例：
 
-```console
-$ docker scout attest get \
+```bash
+docker scout attest get \
   --predicate-type https://docker.com/dhi/fips/v0.1 \
   --predicate \
   docs/dhi-python:3.13-fips
 ```
 
-The attestation output is a JSON array describing the cryptographic modules
-included in the image and their compliance status. For example:
+返回的 JSON 片段示例：
 
 ```json
 [
@@ -107,3 +73,5 @@ included in the image and their compliance status. For example:
   }
 ]
 ```
+
+每条记录均包含认证编号、标准版本、有效期与官方证书链接，方便审计时一键溯源。

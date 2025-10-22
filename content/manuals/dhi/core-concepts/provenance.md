@@ -1,71 +1,61 @@
 ---
-title: Image provenance
-description: Learn how build provenance metadata helps trace the origin of Docker Hardened Images and support compliance with SLSA.
-keywords: image provenance, container build traceability, slsa compliance, signed container image, software supply chain trust
+title: 镜像来源（Provenance）
+description: 了解构建来源元数据如何帮助追踪 Docker 加固镜像的出处，并满足 SLSA 合规要求。
+keywords: 镜像来源, 容器构建可追溯性, SLSA 合规, 签名容器镜像, 软件供应链信任
 ---
 
-## What is image provenance?
+## 什么是镜像来源？
 
-Image provenance refers to metadata that traces the origin, authorship, and
-integrity of a container image. It answers critical questions such as:
+镜像来源（Image Provenance）是一组元数据，用于**追溯容器镜像的出处、作者及完整性**。它回答了以下关键问题：
 
-- Where did this image come from?
-- Who built it?
-- Has it been tampered with?
+- 这张镜像从哪里来？
+- 由谁构建？
+- 是否被篡改过？
 
-Provenance establishes a chain of custody, helping you verify that the image
-you're using is the result of a trusted and verifiable build process.
+通过建立**完整的保管链**，来源信息帮助你确认：当前使用的镜像确实源自**可信且可验证的构建流程**。
 
-## Why image provenance matters
+## 为什么镜像来源至关重要
 
-Provenance is foundational to securing your software supply chain. Without it, you risk:
+来源信息是**软件供应链安全的基石**。缺乏它，你将面临：
 
-- Running unverified or malicious images
-- Failing to meet internal or regulatory compliance requirements
-- Losing visibility into the components and workflows that produce your containers
+- 运行未经证实甚至恶意的镜像
+- 无法满足内部或监管的合规要求
+- 对容器组件及构建过程失去可见性
 
-With reliable provenance, you gain:
+而可靠的来源信息能带来：
 
-- Trust: Know that your images are authentic and unchanged.
-- Traceability: Understand the full build process and source inputs.
-- Auditability: Provide verifiable evidence of compliance and build integrity.
+- **信任**：确保镜像真实、未被篡改
+- **可追溯性**：全面了解构建过程与源码输入
+- **可审计性**：提供合规与构建完整性的可验证证据
 
-Provenance also supports automated policy enforcement and is a key requirement
-for frameworks like SLSA (Supply-chain Levels for Software Artifacts).
+此外，来源数据还能支撑**自动化策略强制执行**，也是 SLSA（软件制品供应链级别）等框架的核心要求。
 
-## How Docker Hardened Images support provenance
+## Docker 加固镜像如何内置来源支持
 
-Docker Hardened Images (DHIs) are designed with built-in provenance to help you
-adopt secure-by-default practices and meet supply chain security standards.
+Docker 加固镜像（DHI）**原生集成来源信息**，助你**默认即安全**，并轻松满足供应链安全规范。
 
-### Attestations
+### 合规声明（Attestations）
 
-DHIs include [attestations](./attestations.md)—machine-readable metadata that
-describe how, when, and where the image was built. These are generated using
-industry standards such as [in-toto](https://in-toto.io/) and align with [SLSA
-provenance](https://slsa.dev/spec/v1.0/provenance/).
+每张 DHI 都附带[合规声明](./attestations.md)——**机器可读的元数据**，描述镜像的构建方式、时间与环境。声明遵循 [in-toto](https://in-toto.io/) 等行业标准，并兼容 [SLSA 来源规范](https://slsa.dev/spec/v1.0/provenance/)。
 
-Attestations allow you to:
+借助合规声明，你能够：
 
-- Validate that builds followed the expected steps
-- Confirm that inputs and environments meet policy
-- Trace the build process across systems and stages
+- 校验构建是否按预期步骤执行
+- 确认输入源与环境符合策略
+- 跨系统、跨阶段追踪完整构建链路
 
-### Code signing
+### 代码签名
 
-Each Docker Hardened Image is cryptographically [signed](./signatures.md) and
-stored in the registry alongside its digest. These signatures are verifiable
-proofs of authenticity and are compatible with tools like `cosign`, Docker
-Scout, and Kubernetes admission controllers.
+每张 DHI 在推送到仓库时，都会进行**加密签名**，并与镜像摘要一并存储。签名可作为**可验证的真实性证明**，兼容 `cosign`、Docker Scout 及 Kubernetes 准入控制器等工具。
 
-With image signatures, you can:
+通过镜像签名，你可以：
 
-- Confirm that the image was published by Docker
-- Detect if an image has been modified or republished
-- Enforce signature validation in CI/CD or production deployments
+- 确认镜像由 Docker 官方发布
+- 侦测镜像是否被再次修改或重新发布
+- 在 CI/CD 或生产环境中强制校验签名
 
-## Additional resources
+## 延伸阅读
 
-- [Provenance attestations](/build/metadata/attestations/slsa-provenance/)
-- [Image signatures](./signatures.md)
-- [Attestations overview](./attestations.md)
+- [来源合规声明](/build/metadata/attestations/slsa-provenance/)
+- [镜像签名](./signatures.md)
+- [合规声明概览](./attestations.md)

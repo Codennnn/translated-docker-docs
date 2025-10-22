@@ -275,7 +275,7 @@ Error response from daemon: enhanced container isolation: docker command "/v1.43
 
 这可以解决上游镜像更新时的摘要不匹配问题。
 
-## 后续步骤
+## 下一步
 
 - 查看[增强容器隔离限制](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md)。
 - 查看[增强容器隔离常见问题](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/faq.md)。

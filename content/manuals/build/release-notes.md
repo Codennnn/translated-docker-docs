@@ -1,14 +1,13 @@
 ---
-title: Build release notes
+title: Build 发布说明
 weight: 120
-description: Learn about the new features, bug fixes, and breaking changes for the newest Buildx release
-keywords: build, buildx, buildkit, release notes
+description: 了解最新 Buildx 版本的新功能、错误修复和重大变更
+keywords: build, buildx, buildkit, 发布说明
 tags: [Release notes]
 toc_max: 2
 ---
 
-This page contains information about the new features, improvements, and bug
-fixes in [Docker Buildx](https://github.com/docker/buildx).
+本页面包含 [Docker Buildx](https://github.com/docker/buildx) 的新功能、改进和错误修复信息。
 
 ## 0.29.1
 

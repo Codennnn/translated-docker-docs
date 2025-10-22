@@ -51,7 +51,7 @@ weight: 30
 | 同时强制登录和 SSO               | 用户必须使用 SSO 登录才能使用 Docker Desktop       | 确保用户享受订阅权益并应用安全功能。此外，您可以了解用户活动情况。同时集中身份验证并强制执行身份提供商设置的统一策略。 |
 | 两者都不强制                     | 如果用户登录，可以使用 SSO 或 Docker 凭据 | 允许用户无障碍访问 Docker Desktop，但会降低安全性和可见性。                                                                                                                                                  |
 
-## 后续步骤
+## 下一步
 
 - 要设置强制登录，请参阅[配置强制登录](/manuals/enterprise/security/enforce-sign-in/methods.md)。
 - 要配置 SSO 强制执行，请参阅[强制 SSO](/manuals/enterprise/security/single-sign-on/connect.md)。

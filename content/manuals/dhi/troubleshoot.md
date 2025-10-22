@@ -1,81 +1,51 @@
 ---
-title: Troubleshoot
-description: Resolve common issues when building, running, or debugging Docker Hardened Images, such as non-root behavior, missing shells, and port access.
+title: 故障排除
+description: 解决构建、运行或调试 Docker 加固镜像时的常见问题，如非 root 行为、缺失 shell 和端口访问等。
 weight: 40
 tags: [Troubleshooting]
-keywords: troubleshoot hardened image, docker debug container, non-root permission issue, missing shell error, no package manager
+keywords: 故障排除加固镜像, docker 调试容器, 非 root 权限问题, 缺失 shell 错误, 无包管理器
 ---
 
-The following are common issues you may encounter while migrating to or using
-Docker Hardened Images (DHIs), along with recommended solutions.
+以下是在迁移到或使用 Docker 加固镜像（DHIs）时可能遇到的常见问题，以及推荐的解决方案。
 
-## General debugging
+## 常规调试
 
-Docker Hardened Images are optimized for security and runtime performance. As
-such, they typically don't include a shell or standard debugging tools. The
-recommended way to troubleshoot containers built on DHIs is by using [Docker
-Debug](./how-to/debug.md).
+Docker 加固镜像针对安全性和运行时性能进行了优化。因此，它们通常不包含 shell 或标准调试工具。对基于 DHI 的容器进行故障排除的推荐方法是使用 [Docker Debug](./how-to/debug.md)。
 
-Docker Debug allows you to:
+Docker Debug 允许您：
 
-- Attach a temporary debug container to your existing container.
-- Use a shell and familiar tools such as `curl`, `ps`, `netstat`, and `strace`.
-- Install additional tools as needed in a writable, ephemeral layer that
-  disappears after the session.
+- 将临时调试容器附加到现有容器。
+- 使用 shell 和熟悉的工具，如 `curl`、`ps`、`netstat` 和 `strace`。
+- 在可写的临时层中根据需要安装其他工具，该层在会话结束后消失。
 
-## Permissions
+## 权限
 
-DHIs run as a nonroot user by default for enhanced security. This can result in
-permission issues when accessing files or directories. Ensure your application
-files and runtime directories are owned by the expected UID/GID or have
-appropriate permissions.
+DHIs 默认以非 root 用户身份运行以增强安全性。这可能导致访问文件或目录时出现权限问题。确保您的应用程序文件和运行时目录由预期的 UID/GID 拥有或具有适当的权限。
 
-To find out which user a DHI runs as, check the repository page for the image on
-Docker Hub. See [View image variant
-details](./how-to/explore.md#view-image-variant-details) for more information.
+要查找 DHI 以哪个用户身份运行，请检查镜像的文档或使用 `docker inspect` 命令查看镜像配置。
 
-## Privileged ports
+## 特权端口
 
-Nonroot containers cannot bind to ports below 1024 by default. This is enforced
-by both the container runtime and the kernel (especially in Kubernetes and
-Docker Engine < 20.10).
+非 root 容器默认无法绑定到低于 1024 的端口。这是由容器运行时和内核强制执行的（特别是在 Kubernetes 和 Docker Engine < 20.10 中）。
 
-Inside the container, configure your application to listen on an unprivileged
-port (1025 or higher). For example `docker run -p 80:8080 my-image` maps
-port 8080 in the container to port 80 on the host, allowing you to access it
-without needing root privileges.
+在容器内，将您的应用程序配置为监听非特权端口（1025 或更高）。例如，`docker run -p 80:8080 my-image` 将容器中的端口 8080 映射到主机上的端口 80，允许您无需 root 权限即可访问它。
 
-## No shell
+## 无 shell
 
-Runtime DHIs omit interactive shells like `sh` or `bash`. If your build or
-tooling assumes a shell is present (e.g., for `RUN` instructions), use a `dev`
-variant of the image in an earlier build stage and copy the final artifact into
-the runtime image.
+运行时 DHIs 省略了交互式 shell，如 `sh` 或 `bash`。如果您的构建或工具假设 shell 存在（例如，对于 `RUN` 指令），请在较早的构建阶段使用镜像的 `dev` 变体，并将最终构件复制到运行时镜像中。
 
-To find out which shell, if any, a DHI has, check the repository page for the
-image on Docker Hub. See [View image variant
-details](./how-to/explore.md#view-image-variant-details) for more information.
+要查找 DHI 具有哪个 shell（如果有），请在 Docker Hub 上检查该镜像的仓库页面。有关更多信息，请参阅[查看镜像变体详细信息](./how-to/explore.md#view-image-variant-details)。
 
-Also, use [Docker Debug](./how-to/debug.md) when you need shell
-access to a running container.
+当您需要访问正在运行的容器的 shell 时，还可以使用 [Docker Debug](./how-to/debug.md)。
 
-## Entry point differences
+## 入口点差异
 
-DHIs may define different entry points compared to Docker Official Images (DOIs)
-or other community images.
+与 Docker 官方镜像（DOIs）或其他社区镜像相比，DHIs 可能定义了不同的入口点。
 
-To find out the ENTRYPOINT or CMD for a DHI, check the repository page for the
-image on Docker Hub. See [View image variant
-details](./how-to/explore.md#view-image-variant-details) for more information.
+要查找 DHI 的 ENTRYPOINT 或 CMD，请在 Docker Hub 上检查该镜像的仓库页面。有关更多信息，请参阅[查看镜像变体详细信息](./how-to/explore.md#view-image-variant-details)。
 
-## No package manager
+## 无包管理器
 
-Runtime Docker Hardened Images are stripped down for security and minimal attack
-surface. As a result, they don't include a package manager such as `apk` or
-`apt`. This means you can't install additional software directly in the runtime
-image.
+运行时 Docker 加固镜像为了安全性和最小攻击面进行了精简。因此，它们不包含包管理器，如 `apk` 或 `apt`。这意味着您无法直接在运行时镜像中安装额外软件。
 
-If your build or application setup requires installing packages (for example, to
-compile code, install runtime dependencies, or add diagnostic tools), use a `dev`
-variant of the image in a build stage. Then, copy only the necessary artifacts
-into the final runtime image.
+如果您的构建或应用程序设置需要安装包（例如，编译代码、安装运行时依赖项或添加诊断工具），请在构建阶段使用镜像的 `dev` 变体。然后，仅将必要的构件复制到最终的运行时镜像中。

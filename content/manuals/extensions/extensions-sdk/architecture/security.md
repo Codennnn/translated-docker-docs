@@ -1,24 +1,24 @@
 ---
-title: Extension security
-linkTitle: Security
-description: Aspects of the security model of extensions
+title: 扩展安全
+linkTitle: 安全
+description: 扩展安全模型的各个方面
 keywords: Docker, extensions, sdk, security
 aliases:
  - /desktop/extensions-sdk/guides/security/
  - /desktop/extensions-sdk/architecture/security/
 ---
 
-## Extension capabilities
+## 扩展功能
 
-An extension can have the following optional parts: 
-* A user interface in HTML or JavaScript, displayed in Docker Desktop Dashboard
-* A backend part that runs as a container
-* Executables deployed on the host machine.
+扩展可以包含以下可选部分：
+* 在 Docker Desktop 仪表板中显示的 HTML 或 JavaScript 用户界面
+* 作为容器运行的后端部分
+* 部署在主机上的可执行文件
 
-Extensions are executed with the same permissions as the Docker Desktop user. Extension capabilities include running any Docker commands (including running containers and mounting folders), running extension binaries, and accessing files on your machine that are accessible by the user running Docker Desktop.
+扩展以与 Docker Desktop 用户相同的权限执行。扩展功能包括运行任何 Docker 命令（包括运行容器和挂载文件夹）、运行扩展二进制文件，以及访问运行 Docker Desktop 的用户可访问的机器上的文件。
 
-The Extensions SDK provides a set of JavaScript APIs to invoke commands or invoke these binaries from the extension UI code. Extensions can also provide a backend part that starts a long-lived running container in the background.
+Extensions SDK 提供了一组 JavaScript API，用于从扩展 UI 代码调用命令或调用这些二进制文件。扩展还可以提供一个后端部分，在后台启动长时间运行的容器。
 
 > [!IMPORTANT]
 >
-> Make sure you trust the publisher or author of the extension when you install it, as the extension has the same access rights as the user running Docker Desktop.
+> 安装扩展时，请确保您信任扩展的发布者或作者，因为扩展具有与运行 Docker Desktop 的用户相同的访问权限。

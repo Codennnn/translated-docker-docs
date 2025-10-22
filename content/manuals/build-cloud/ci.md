@@ -1,79 +1,71 @@
 ---
-title: Use Docker Build Cloud in CI
-linkTitle: Continuous integration
+title: 在 CI 中使用 Docker Build Cloud
+linkTitle: 持续集成（CI）
 weight: 30
-description: Speed up your continuous integration pipelines with Docker Build Cloud in CI
-keywords: build, cloud build, ci, gha, gitlab, buildkite, jenkins, circle ci
+description: 通过在 CI 中使用 Docker Build Cloud 加速持续集成流水线
+keywords: 构建, 云构建, ci, gha, gitlab, buildkite, jenkins, circle ci
 aliases:
   - /build/cloud/ci/
 ---
 
-Using Docker Build Cloud in CI can speed up your build pipelines, which means less time
-spent waiting and context switching. You control your CI workflows as usual,
-and delegate the build execution to Docker Build Cloud.
+在 CI 中使用 Docker Build Cloud 可以加速您的构建流水线，这意味着更少的等待时间和上下文切换。您可以像往常一样控制 CI 工作流，并将构建执行委托给 Docker Build Cloud。
 
-Building with Docker Build Cloud in CI involves the following steps:
+在 CI 中使用 Docker Build Cloud 进行构建包含以下步骤：
 
-1. Sign in to a Docker account.
-2. Set up Buildx and connect to the builder.
-3. Run the build.
+1. 登录 Docker 账户。
+2. 设置 Buildx 并连接到构建器。
+3. 运行构建。
 
-When using Docker Build Cloud in CI, it's recommended that you push the result to a
-registry directly, rather than loading the image and then pushing it. Pushing
-directly speeds up your builds and avoids unnecessary file transfers.
+在 CI 中使用 Docker Build Cloud 时，建议您直接将构建结果推送到仓库，而不是先加载镜像再推送。直接推送可以加快构建速度并避免不必要的文件传输。
 
-If you just want to build and discard the output, export the results to the
-build cache or build without tagging the image. When you use Docker Build Cloud,
-Buildx automatically loads the build result if you build a tagged image.
-See [Loading build results](./usage/#loading-build-results) for details.
+如果您只想构建并丢弃输出，请将结果导出到构建缓存或构建时不为镜像添加标签。当您使用 Docker Build Cloud 时，如果您构建的是带标签的镜像，Buildx 会自动加载构建结果。详情请参阅[加载构建结果](./usage/#loading-build-results)。
 
 > [!NOTE]
 >
-> Builds on Docker Build Cloud have a timeout limit of 90 minutes. Builds that
-> run for longer than 90 minutes are automatically cancelled.
+> Docker Build Cloud 上的构建有 90 分钟的超时限制。运行时间超过 90 分钟的构建将被自动取消。
 
-## Setting up credentials for CI/CD
+## 为 CI/CD 设置凭证
 
-To enable your CI/CD system to build and push images using Docker Build Cloud, provide both an access token and a username. The type of token and the username you use depend on your account type and permissions.
+要使您的 CI/CD 系统能够使用 Docker Build Cloud 构建和推送镜像，需要提供访问令牌和用户名。您使用的令牌类型和用户名取决于您的账户类型和权限。
 
-- If you are an organization administrator or have permission to create [organization access tokens (OAT)](/manuals/enterprise/security/access-tokens.md), use an OAT and set `DOCKER_ACCOUNT` to your Docker Hub organization name.
-- If you do not have permission to create OATs or are using a personal account, use a [personal access token (PAT)](/security/access-tokens/) and set `DOCKER_ACCOUNT` to your Docker Hub username.
+- 如果您是组织管理员或有权限创建[组织访问令牌 (OAT)](/manuals/enterprise/security/access-tokens.md)，请使用 OAT 并将 `DOCKER_ACCOUNT` 设置为您的 Docker Hub 组织名称。
+- 如果您没有权限创建 OAT 或使用的是个人账户，请使用[个人访问令牌 (PAT)](/security/access-tokens/) 并将 `DOCKER_ACCOUNT` 设置为您的 Docker Hub 用户名。
 
-### Creating access tokens
+### 创建访问令牌
 
-#### For organization accounts
+#### 组织账户
 
-If you are an organization administrator:
+如果您是组织管理员：
 
-- Create an [organization access token (OAT)](/manuals/enterprise/security/access-tokens.md). The token must have these permissions:
-    1. **cloud-connect** scope
-    2. **Read public repositories** permission
-    3. **Repository access** with **Image push** permission for the target repository:
-        - Expand the **Repository** drop-down.
-        - Select **Add repository** and choose your target repository.
-        - Set the **Image push** permission for the repository.
+- 创建一个[组织访问令牌 (OAT)](/manuals/enterprise/security/access-tokens.md)。该令牌必须具有以下权限：
+    1. **cloud-connect** 作用域
+    2. **读取公共仓库**权限
+    3. **仓库访问**权限，并为目标仓库设置**镜像推送**权限：
+        - 展开**仓库**下拉菜单。
+        - 选择**添加仓库**并选择您的目标仓库。
+        - 为该仓库设置**镜像推送**权限。
 
-If you are not an organization administrator:
+如果您不是组织管理员：
 
-- Ask your organization administrator for an access token with the permissions listed above, or use a personal access token.
+- 请向您的组织管理员申请具有上述权限的访问令牌，或使用个人访问令牌。
 
-#### For personal accounts
+#### 个人账户
 
-- Create a [personal access token (PAT)](/security/access-tokens/) with the following permissions:
-   1. **Read & write** access.
-        - Note: Building with Docker Build Cloud only requires read access, but you need write access to push images to a Docker Hub repository.
+- 创建一个具有以下权限的[个人访问令牌 (PAT)](/security/access-tokens/)：
+   1. **读写**访问权限。
+        - 注意：使用 Docker Build Cloud 构建只需要读取权限，但您需要写入权限才能将镜像推送到 Docker Hub 仓库。
 
 
-## CI platform examples
+## CI 平台示例
 
 > [!NOTE]
 >
-> In your CI/CD configuration, set the following variables/secrets:
-> - `DOCKER_ACCESS_TOKEN` — your access token (PAT or OAT). Use a secret to store the token.
-> - `DOCKER_ACCOUNT` — your Docker Hub organization name (for OAT) or username (for PAT)
-> - `CLOUD_BUILDER_NAME` — the name of the cloud builder you created in the [Docker Build Cloud Dashboard](https://app.docker.com/build/)
+> 在您的 CI/CD 配置中，设置以下变量/密钥：
+> - `DOCKER_ACCESS_TOKEN` — 您的访问令牌（PAT 或 OAT）。请使用密钥存储令牌。
+> - `DOCKER_ACCOUNT` — 您的 Docker Hub 组织名称（对于 OAT）或用户名（对于 PAT）
+> - `CLOUD_BUILDER_NAME` — 您在 [Docker Build Cloud 仪表板](https://app.docker.com/build/)中创建的云构建器名称
 >
-> This ensures your builds authenticate correctly with Docker Build Cloud.
+> 这可确保您的构建能够正确通过 Docker Build Cloud 进行身份验证。
 
 ### GitHub Actions
 
@@ -99,15 +91,15 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver: cloud
-          endpoint: "${{ vars.DOCKER_ACCOUNT }}/${{ vars.CLOUD_BUILDER_NAME }}" # for example, "acme/default"
+          endpoint: "${{ vars.DOCKER_ACCOUNT }}/${{ vars.CLOUD_BUILDER_NAME }}" # 例如，"acme/default"
           install: true
       
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          tags: "<IMAGE>" # for example, "acme/my-image:latest"
-          # For pull requests, export results to the build cache.
-          # Otherwise, push to a registry.
+          tags: "<IMAGE>" # 例如，"acme/my-image:latest"
+          # 对于拉取请求，将结果导出到构建缓存。
+          # 否则，推送到仓库。
           outputs: ${{ github.event_name == 'pull_request' && 'type=cacheonly' || 'type=registry' }}
 ```
 
@@ -132,10 +124,10 @@ default:
 
 variables:
   IMAGE_NAME: <IMAGE>
-  DOCKER_ACCOUNT: <DOCKER_ACCOUNT> # your Docker Hub organization name (or username when using a personal account)
-  CLOUD_BUILDER_NAME: <CLOUD_BUILDER_NAME> # the name of the cloud builder you created in the [Docker Build Cloud Dashboard](https://app.docker.com/build/)
+  DOCKER_ACCOUNT: <DOCKER_ACCOUNT> # 您的 Docker Hub 组织名称（或使用个人账户时的用户名）
+  CLOUD_BUILDER_NAME: <CLOUD_BUILDER_NAME> # 您在 [Docker Build Cloud 仪表板](https://app.docker.com/build/)中创建的云构建器名称
 
-# Build multi-platform image and push to a registry
+# 构建多平台镜像并推送到仓库
 build_push:
   stage: build
   script:
@@ -145,7 +137,7 @@ build_push:
         --tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" \
         --push .
 
-# Build an image and discard the result
+# 构建镜像并丢弃结果
 build_cache:
   stage: build
   script:
@@ -163,7 +155,7 @@ build_cache:
 version: 2.1
 
 jobs:
-  # Build multi-platform image and push to a registry
+  # 构建多平台镜像并推送到仓库
   build_push:
     machine:
       image: ubuntu-2204:current
@@ -186,7 +178,7 @@ jobs:
           --push \
           --tag "<IMAGE>" .
 
-  # Build an image and discard the result
+  # 构建镜像并丢弃结果
   build_cache:
     machine:
       image: ubuntu-2204:current
@@ -220,12 +212,9 @@ workflows:
 
 ### Buildkite
 
-The following example sets up a Buildkite pipeline using Docker Build Cloud. The
-example assumes that the pipeline name is `build-push-docker` and that you
-manage the Docker access token using environment hooks, but feel free to adapt
-this to your needs.
+以下示例展示了如何使用 Docker Build Cloud 设置 Buildkite 流水线。该示例假设流水线名称为 `build-push-docker`，并且您使用环境钩子管理 Docker 访问令牌，但您可以根据需要自由调整。
 
-Add the following `environment` hook agent's hook directory:
+将以下 `environment` 钩子添加到代理的钩子目录：
 
 ```bash
 #!/bin/bash
@@ -236,12 +225,12 @@ if [[ "$BUILDKITE_PIPELINE_NAME" == "build-push-docker" ]]; then
 fi
 ```
 
-Create a `pipeline.yml` that uses the `docker-login` plugin:
+创建使用 `docker-login` 插件的 `pipeline.yml`：
 
 ```yaml
 env:
-  DOCKER_ACCOUNT: <DOCKER_ACCOUNT> # your Docker Hub organization name (or username when using a personal account)
-  CLOUD_BUILDER_NAME: <CLOUD_BUILDER_NAME> # the name of the cloud builder you created in the [Docker Build Cloud Dashboard](https://app.docker.com/build/)
+  DOCKER_ACCOUNT: <DOCKER_ACCOUNT> # 您的 Docker Hub 组织名称（或使用个人账户时的用户名）
+  CLOUD_BUILDER_NAME: <CLOUD_BUILDER_NAME> # 您在 [Docker Build Cloud 仪表板](https://app.docker.com/build/)中创建的云构建器名称
   IMAGE_NAME: <IMAGE>
 
 steps:
@@ -250,16 +239,16 @@ steps:
     plugins:
       - docker-login#v2.1.0:
           username: DOCKER_ACCOUNT
-          password-env: DOCKER_ACCESS_TOKEN # the variable name in the environment hook
+          password-env: DOCKER_ACCESS_TOKEN # 环境钩子中的变量名
 ```
 
-Create the `build.sh` script:
+创建 `build.sh` 脚本：
 
 ```bash
 DOCKER_DIR=/usr/libexec/docker
 
-# Get download link for latest buildx binary.
-# Set $ARCH to the CPU architecture (e.g. amd64, arm64)
+# 获取最新 buildx 二进制文件的下载链接。
+# 将 $ARCH 设置为 CPU 架构（例如 amd64, arm64）
 UNAME_ARCH=`uname -m`
 case $UNAME_ARCH in
   aarch64)
@@ -274,21 +263,21 @@ case $UNAME_ARCH in
 esac
 BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
 
-# Download docker buildx with Build Cloud support
+# 下载支持 Build Cloud 的 docker buildx
 curl --silent -L --output $DOCKER_DIR/cli-plugins/docker-buildx $BUILDX_URL
 chmod a+x ~/.docker/cli-plugins/docker-buildx
 
-# Connect to your builder and set it as the default builder
+# 连接到您的构建器并将其设置为默认构建器
 docker buildx create --use --driver cloud "${DOCKER_ACCOUNT}/${CLOUD_BUILDER_NAME}"
 
-# Cache-only image build
+# 仅缓存的镜像构建
 docker buildx build \
     --platform linux/amd64,linux/arm64 \
     --tag "$IMAGE_NAME:$BUILDKITE_COMMIT" \
     --output type=cacheonly \
     .
 
-# Build, tag, and push a multi-arch docker image
+# 构建、标记并推送多架构 docker 镜像
 docker buildx build \
     --platform linux/amd64,linux/arm64 \
     --push \
@@ -321,9 +310,9 @@ pipeline {
         sh 'chmod a+x ~/.docker/cli-plugins/docker-buildx'
         sh 'echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_ACCOUNT --password-stdin'
         sh 'docker buildx create --use --driver cloud "${DOCKER_ACCOUNT}/${CLOUD_BUILDER_NAME}"'
-        // Cache-only build
+        // 仅缓存构建
         sh 'docker buildx build --platform linux/amd64,linux/arm64 --tag "$IMAGE_NAME" --output type=cacheonly .'
-        // Build and push a multi-platform image
+        // 构建并推送多平台镜像
         sh 'docker buildx build --platform linux/amd64,linux/arm64 --push --tag "$IMAGE_NAME" .'
       }
     }
@@ -342,7 +331,7 @@ services:
 
 env:
   global:
-    - IMAGE_NAME=<IMAGE> # for example, "acme/my-image:latest"
+    - IMAGE_NAME=<IMAGE> # 例如，"acme/my-image:latest"
 
 before_install: |
   echo "$DOCKER_ACCESS_TOKEN" | docker login --username "$DOCKER_ACCOUNT" --password-stdin
@@ -365,15 +354,15 @@ script: |
 ### BitBucket Pipelines 
 
 ```yaml
-# Prerequisites: $DOCKER_ACCOUNT, $CLOUD_BUILDER_NAME, $DOCKER_ACCESS_TOKEN setup as deployment variables
-# This pipeline assumes $BITBUCKET_REPO_SLUG as the image name
+# 前提条件：$DOCKER_ACCOUNT, $CLOUD_BUILDER_NAME, $DOCKER_ACCESS_TOKEN 已设置为部署变量
+# 此流水线假设使用 $BITBUCKET_REPO_SLUG 作为镜像名称
 
 image: atlassian/default-image:3
 
 pipelines:
   default:
     - step:
-        name: Build multi-platform image
+        name: 构建多平台镜像
         script:
           - mkdir -vp ~/.docker/cli-plugins/
           - ARCH=amd64
@@ -391,33 +380,33 @@ pipelines:
           - docker
 ```
 
-### Shell script
+### Shell 脚本
 
 ```bash
 #!/bin/bash
 
-# Get download link for latest buildx binary. Set $ARCH to the CPU architecture (e.g. amd64, arm64)
+# 获取最新 buildx 二进制文件的下载链接。将 $ARCH 设置为 CPU 架构（例如 amd64, arm64）
 ARCH=amd64
 BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
 
-# Download docker buildx with Build Cloud support
+# 下载支持 Build Cloud 的 docker buildx
 mkdir -vp ~/.docker/cli-plugins/
 curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
 chmod a+x ~/.docker/cli-plugins/docker-buildx
 
-# Login to Docker Hub with an access token. See https://docs.docker.com/build-cloud/ci/#creating-access-tokens
+# 使用访问令牌登录 Docker Hub。请参阅 https://docs.docker.com/build-cloud/ci/#creating-access-tokens
 echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_ACCOUNT --password-stdin
 
-# Connect to your builder and set it as the default builder
+# 连接到您的构建器并将其设置为默认构建器
 docker buildx create --use --driver cloud "${DOCKER_ACCOUNT}/${CLOUD_BUILDER_NAME}"
 
-# Cache-only image build
+# 仅缓存的镜像构建
 docker buildx build \
     --tag temp \
     --output type=cacheonly \
     .
 
-# Build, tag, and push a multi-arch docker image
+# 构建、标记并推送多架构 docker 镜像
 docker buildx build \
     --platform linux/amd64,linux/arm64 \
     --push \
@@ -427,13 +416,12 @@ docker buildx build \
 
 ### Docker Compose
 
-Use this implementation if you want to use `docker compose build` with
-Docker Build Cloud in CI.
+如果您想在 CI 中使用 `docker compose build` 与 Docker Build Cloud，请使用此实现。
 
 ```bash
 #!/bin/bash
 
-# Get download link for latest buildx binary. Set $ARCH to the CPU architecture (e.g. amd64, arm64)
+# 获取最新 buildx 二进制文件的下载链接。将 $ARCH 设置为 CPU 架构（例如 amd64, arm64）
 ARCH=amd64
 BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
 COMPOSE_URL=$(curl -sL \
@@ -443,19 +431,19 @@ COMPOSE_URL=$(curl -sL \
   https://api.github.com/repos/docker/compose-desktop/releases \
   | jq "[ .[] | select(.prerelease==false and .draft==false) ] | .[0].assets.[] | select(.name | endswith(\"linux-${ARCH}\")) | .browser_download_url")
 
-# Download docker buildx with Build Cloud support
+# 下载支持 Build Cloud 的 docker buildx
 mkdir -vp ~/.docker/cli-plugins/
 curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
 curl --silent -L --output ~/.docker/cli-plugins/docker-compose $COMPOSE_URL
 chmod a+x ~/.docker/cli-plugins/docker-buildx
 chmod a+x ~/.docker/cli-plugins/docker-compose
 
-# Login to Docker Hub with an access token. See https://docs.docker.com/build-cloud/ci/#creating-access-tokens
+# 使用访问令牌登录 Docker Hub。请参阅 https://docs.docker.com/build-cloud/ci/#creating-access-tokens
 echo "$DOCKER_ACCESS_TOKEN" | docker login --username $DOCKER_ACCOUNT --password-stdin
 
-# Connect to your builder and set it as the default builder
+# 连接到您的构建器并将其设置为默认构建器
 docker buildx create --use --driver cloud "${DOCKER_ACCOUNT}/${CLOUD_BUILDER_NAME}"
 
-# Build the image build
+# 构建镜像
 docker compose build
 ```

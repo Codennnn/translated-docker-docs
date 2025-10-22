@@ -1,55 +1,37 @@
 ---
-title: CIS Benchmark
-description: Learn how Docker Hardened Images comply with the CIS Docker Benchmark to help organizations harden container images for secure deployments.
-keywords: docker cis benchmark, cis docker compliance, cis docker images, docker hardened images, secure container images
+title: CIS 基准
+description: 了解 Docker 加固镜像如何符合 CIS Docker 基准，帮助组织加固容器镜像以实现安全部署。
+keywords: docker cis 基准, cis docker 合规性, cis docker 镜像, docker 加固镜像, 安全容器镜像
 ---
 
-## What is the CIS Docker Benchmark?
+## 什么是 CIS Docker 基准？
 
-The [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker) is part
-of the globally recognized CIS Benchmarks, developed by the [Center for
-Internet Security (CIS)](https://www.cisecurity.org/). It defines recommended secure
-configurations for all aspects of the Docker container ecosystem, including the
-container host, Docker daemon, container images, and the container runtime.
+[CIS Docker 基准](https://www.cisecurity.org/benchmark/docker)是全球公认的 CIS 基准的一部分，由[互联网安全中心 (CIS)](https://www.cisecurity.org/)开发。它定义了 Docker 容器生态系统所有方面的推荐安全配置，包括容器主机、Docker 守护进程、容器镜像和容器运行时。
 
-## Why CIS Benchmark compliance matters
+## 为什么 CIS 基准合规性很重要
 
-Following the CIS Docker Benchmark helps organizations:
+遵循 CIS Docker 基准有助于组织：
 
-- Reduce security risk with widely recognized hardening guidance.
-- Meet regulatory or contractual requirements that reference CIS controls.
-- Standardize image and Dockerfile practices across teams.
-- Demonstrate audit readiness with configuration decisions grounded in a public standard.
+- 通过广泛认可的加固指导降低安全风险。
+- 满足引用 CIS 控制的法规或合同要求。
+- 在团队间标准化镜像和 Dockerfile 实践。
+- 通过基于公共标准的配置决策展示审计准备情况。
 
-## How Docker Hardened Images comply with the CIS Benchmark
+## Docker 加固镜像如何符合 CIS 基准
 
-Docker Hardened Images (DHIs) are designed with security in mind and are
-verified to be compliant with the relevant controls from the latest CIS
-Docker Benchmark (v1.8.0) for the scope that applies to container images and
-Dockerfile configuration.
+Docker 加固镜像（DHIs）在设计时考虑了安全性，并经过验证符合最新 CIS Docker 基准（v1.8.0）中适用于容器镜像和 Dockerfile 配置范围的相关控制。
 
-CIS-compliant DHIs are compliant with all controls in Section 4, with the sole
-exception of the control requiring Docker Content Trust (DCT), which [Docker
-officially retired](https://www.docker.com/blog/retiring-docker-content-trust/).
-Instead, DHIs are [signed](/manuals/dhi/core-concepts/signatures.md) using
-Cosign, providing an even higher level of authenticity and integrity. By
-starting from a CIS-compliant DHI, teams can adopt image-level best practices
-from the benchmark more quickly and confidently.
+符合 CIS 标准的 DHI 符合第 4 节中的所有控制，唯一例外是要求 Docker 内容信任（DCT）的控制，该控制已被 [Docker 正式淘汰](https://www.docker.com/blog/retiring-docker-content-trust/)。相反，DHI 使用 Cosign 进行[签名](/manuals/dhi/core-concepts/signatures.md)，提供了更高级别的真实性和完整性。通过从符合 CIS 标准的 DHI 开始，团队可以更快速、更自信地采用基准中的镜像级最佳实践。
 
 > [!NOTE]
 >
-> The CIS Docker Benchmark also includes controls for the host, daemon, and
-> runtime. CIS-compliant DHIs address only the image and Dockerfile scope (Section
-> 4). Overall compliance still depends on how you configure and operate the
-> broader environment.
+> CIS Docker 基准还包括主机、守护进程和运行时的控制。符合 CIS 标准的 DHI 仅解决镜像和 Dockerfile 范围（第 4 节）。整体合规性仍取决于您如何配置和操作更广泛的环境。
 
-## Identify CIS-compliant images
+## 识别符合 CIS 标准的镜像
 
-CIS-compliant images are labeled as **CIS** in the Docker Hardened Images catalog.
-To find them, [explore images](../how-to/explore.md) and look for the **CIS**
-designation on individual listings.
+符合 CIS 标准的镜像在 Docker 加固镜像目录中标记为 **CIS**。要查找它们，请[探索镜像](../how-to/explore.md)并在单个列表中查找 **CIS** 标记。
 
-## Get the benchmark
+## 获取基准
 
-Download the latest CIS Docker Benchmark directly from CIS:
+直接从 CIS 下载最新的 CIS Docker 基准：
 https://www.cisecurity.org/benchmark/docker

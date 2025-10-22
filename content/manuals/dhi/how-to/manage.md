@@ -1,53 +1,49 @@
 ---
-title: Manage Docker Hardened Images
-linktitle: Manage images
-description: Learn how to manage your mirrored and customized Docker Hardened Images in your organization.
-keywords: manage docker hardened images, custom hardened images
+title: 管理 Docker 加固镜像
+linktitle: 管理镜像
+description: 学习如何在组织中管理已同步和自定义的 Docker 加固镜像。
+keywords: 管理 docker 加固镜像, 自定义加固镜像
 weight: 45
 ---
 
 {{< summary-bar feature_name="Docker Hardened Images" >}}
 
-On the **Management** screen in Docker Hub, you can manage both your mirrored
-Docker Hardened Image (DHI) repositories and customized DHI images in your
-organization.
+在 Docker Hub 的**管理**页面，你可以统一管理组织内已同步的 Docker 加固镜像（DHI）仓库以及自定义的 DHI 镜像。
 
-## Manage mirrored Docker Hardened Images
+## 管理已同步的 Docker 加固镜像
 
-To manage your mirrored DHI repositories:
+要管理已同步的 DHI 仓库：
 
-1. Go to the [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization.
-4. Select **Hardened Images** > **Management**.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中选择你的组织。
+4. 依次选择 **加固镜像** > **管理**。
 
-   On this page, you can view your mirrored DHI
-   repositories and view which source repositories they are mirrored from.
+   在该页面，你可以查看所有已同步的 DHI 仓库，以及它们对应的源仓库。
 
-5. Select the menu icon in the far right column of the repository you want to manage.
+5. 在目标仓库最右侧的菜单图标上点击。
 
-   From here, you can:
+   可选操作包括：
 
-   - **Customize**: Create a customized image based on the source repository.
-   - **Stop mirroring**: Stop mirroring the DHI repository.
+   - **自定义**：基于源仓库创建自定义镜像。
+   - **停止同步**：停止同步该 DHI 仓库。
 
-## Manage customized Docker Hardened Images
+## 管理自定义的 Docker 加固镜像
 
-To manage your customized DHI repositories:
+要管理自定义的 DHI 仓库：
 
-1. Go to [Docker Hub](https://hub.docker.com) and sign in.
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization.
-4. Select **Hardened Images** > **Management**.
-5. Select **Customizations**.
+1. 打开 [Docker Hub](https://hub.docker.com) 并登录。
+2. 点击 **我的 Hub**。
+3. 在命名空间下拉框中选择你的组织。
+4. 依次选择 **加固镜像** > **管理**。
+5. 点击 **自定义镜像**。
 
-   On this page, you can view your customized DHI
-   repositories.
+   在该页面，你可以查看所有自定义的 DHI 仓库。
 
-6. Select the menu icon in the far right column of the repository you want to manage.
+6. 在目标仓库最右侧的菜单图标上点击。
 
-   From here, you can:
+   可选操作包括：
 
-   - **Edit**: Edit the customized image.
-   - **Create new**: Create a new customized image based on the source repository.
-   - **Delete**: Delete the customized image.
+   - **编辑**：修改该自定义镜像。
+   - **新建**：基于源仓库创建新的自定义镜像。
+   - **删除**：删除该自定义镜像。

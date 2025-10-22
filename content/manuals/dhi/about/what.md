@@ -1,95 +1,55 @@
 ---
-title: What are hardened images and why use them?
-linktitle: Hardened images
-description: Learn what a hardened image is, why it matters, and how Docker Hardened Images offer stronger security, compliance, and operational efficiency.
-keywords: hardened container image, docker hardened images, distroless container, slsa build level 3, signed sbom, vulnerability scan, compliance-ready container
+title: 什么是加固镜像以及为何使用它？
+linktitle: 加固镜像
+description: 了解什么是加固镜像、它为何重要，以及 Docker 加固镜像如何提供更强的安全性、合规性和运营效率。
+keywords: 加固容器镜像, docker 加固镜像, 无发行版容器, slsa 构建级别 3, 签名 sbom, 漏洞扫描, 合规就绪容器
 weight: 5
 ---
 
-In today’s diverse software environments, container images are often designed
-for flexibility and broad compatibility. While that makes them ideal for many
-use cases, it can also result in images that include more components than needed
-for specific workloads. Docker Hardened Images take a minimal-by-design approach
-to help reduce image size, limit the attack surface, and streamline security and
-compliance workflows.
+在当今多样化的软件环境中，容器镜像通常设计为具有灵活性和广泛的兼容性。虽然这使得它们适用于许多用例，但也可能导致镜像包含超出特定工作负载所需的多余组件。Docker 加固镜像采用最小化设计原则，帮助减小镜像体积、限制攻击面，并简化安全和合规工作流程。
 
-Hardened images solve this by minimizing what's in the container image. Less
-software means fewer vulnerabilities, faster deployments, and fewer red
-dashboards to chase down every week.
+加固镜像通过最小化容器镜像中的内容来解决这个问题。更少的软件意味着更少的漏洞、更快的部署，以及每周需要处理的告警更少。
 
-For platform engineers and security teams, hardened images offer a way out of
-the CVE triage cycle, letting you focus on delivering secure, compliant
-infrastructure without constant firefighting.
+对于平台工程师和安全团队来说，加固镜像提供了一种摆脱 CVE 分类循环的方法，让您能够专注于提供安全、合规的基础设施，而无需不断地进行应急处理。
 
-## What is a hardened image?
+## 什么是加固镜像？
 
-A hardened image is a container image that has been deliberately minimized and
-secured to reduce vulnerabilities and meet stringent security and compliance
-requirements. Unlike standard images, which may include non-essential components
-that increase risk, hardened images are streamlined to include only what’s
-needed to run your application securely.
+加固镜像是一种经过刻意最小化和安全加固的容器镜像，旨在减少漏洞并满足严格的安全和合规要求。与可能包含增加风险的非必要组件的标准镜像不同，加固镜像经过精简，仅包含安全运行应用程序所需的内容。
 
-## Benefits of hardened images
+## 加固镜像的优势
 
-- Reduced attack surface: By removing non-essential components, hardened images
-  limit potential entry points for attackers.
-- Improved security posture: Regular updates and vulnerability scans help ensure
-  hardened images remain secure over time.
-- Compliance facilitation: Inclusion of signed metadata like SBOMs supports
-  meeting regulatory and organizational compliance standards.
-- Operational efficiency: Smaller image sizes lead to faster pulls, lower runtime overhead, and reduced cloud resource costs.
+- **减少攻击面**：通过移除非必要组件，加固镜像限制了攻击者的潜在入口点。
+- **增强安全态势**：定期更新和漏洞扫描有助于确保加固镜像随时间推移保持安全。
+- **促进合规性**：包含签名元数据（如 SBOM）有助于满足法规和组织合规标准。
+- **提高运营效率**：更小的镜像体积可加快拉取速度、降低运行时开销，并减少云资源成本。
 
-## What is a Docker Hardened Image?
+## 什么是 Docker 加固镜像？
 
-Docker Hardened Images (DHIs) take hardened images even further by combining
-minimal, secure design with enterprise-grade support and tooling. Built with
-security at the core, these images are continuously maintained, tested, and
-validated to meet today’s toughest software supply chain and compliance
-standards.
+Docker 加固镜像（DHI）通过结合最小化、安全的设计与企业级支持和工具，将加固镜像推向更高水平。这些镜像以安全为核心构建，经过持续维护、测试和验证，以满足当今最严格的软件供应链和合规标准。
 
-Docker Hardened Images are secure by default, minimal by design, and maintained
-so you don’t have to.
+Docker 加固镜像默认安全、设计最小化，并由 Docker 持续维护，让您无需自行处理。
 
-## How Docker Hardened Images differ from generic hardened images
+## Docker 加固镜像与通用加固镜像的区别
 
-- SLSA-compliant builds: Docker Hardened Images are built to meet [SLSA Build
-  Level 3](../core-concepts/slsa.md), ensuring a tamper-resistant, verifiable,
-  and auditable build process that protects against supply chain threats.
+- **符合 SLSA 标准的构建**：Docker 加固镜像按照 [SLSA 构建级别 3](../core-concepts/slsa.md) 标准构建，确保构建过程具有防篡改、可验证和可审计的特性，防范供应链威胁。
 
--  Distroless approach: Unlike traditional base images that bundle an entire OS
-   with shells, package managers, and debugging tools, [distroless
-   images](../core-concepts/distroless.md) retain only the minimal OS components
-   required to run your application. By excluding unnecessary tooling and
-   libraries, they reduce the attack surface by up to 95% and can improve
-   performance and image size.
+- **无发行版方法**：与传统包含整个操作系统、Shell、包管理器和调试工具的基础镜像不同，[无发行版镜像](../core-concepts/distroless.md)仅保留运行应用程序所需的最小操作系统组件。通过排除不必要的工具和库，它们可将攻击面减少高达 95%，并能提高性能和减小镜像体积。
 
-- Continuous maintenance: All DHIs are continuously monitored and updated to
-  maintain near-zero known exploitable [CVEs](../core-concepts/cves.md), helping
-  your teams avoid patch fatigue and surprise alerts.
+- **持续维护**：所有 DHI 都经过持续监控和更新，以保持接近零已知可利用 [CVE](../core-concepts/cves.md)，帮助您的团队避免补丁疲劳和意外告警。
 
-- Compliance-ready: Each image includes cryptographically signed metadata:
-  - [SBOMs](../core-concepts/sbom.md) that show what's in the image
-  - [VEX documents](../core-concepts/vex.md) to identify which vulnerabilities
-    are actually exploitable
-  - [Build provenance](../core-concepts/provenance.md) that proves how and where
-    the image was built
+- **合规就绪**：每个镜像都包含加密签名的元数据：
+  - [SBOM](../core-concepts/sbom.md) 显示镜像中的内容
+  - [VEX 文档](../core-concepts/vex.md) 识别哪些漏洞实际上可被利用
+  - [构建来源证明](../core-concepts/provenance.md) 证明镜像的构建方式和位置
 
-- Compatibility-focused design: Docker Hardened Images provide a minimal runtime
-  environment while maintaining compatibility with common Linux distributions.
-  They remove non-essential components like shells and package managers to
-  enhance security, yet retain a small base layer built on familiar distribution
-  standards. Images are typically available with musl libc (Alpine-based) and
-  glibc (Debian-based), supporting a broad range of application compatibility
-  needs.
+- **注重兼容性的设计**：Docker 加固镜像在保持与常见 Linux 发行版兼容性的同时，提供最小化的运行时环境。它们移除了 Shell 和包管理器等非必要组件以增强安全性，但保留了基于熟悉发行版标准构建的小型基础层。镜像通常提供 musl libc（基于 Alpine）和 glibc（基于 Debian）版本，支持广泛的应用兼容性需求。
 
-## Why use Docker Hardened Images?
+## 为何使用 Docker 加固镜像？
 
-Docker Hardened Images (DHIs) are secure by default, minimal by design, and
-maintained so you don't have to. They offer:
+Docker 加固镜像（DHI）默认安全、设计最小化，并由 Docker 持续维护，让您无需自行处理。它们提供：
 
-
-- Images built for peace of mind: Ultra-minimal and distroless, DHIs eliminate up to 95% of the traditional container attack surface.
-- No more patch panic: With continuous CVE scanning and SLA-backed remediation, Docker helps you stay ahead of threats.
-- Audit-ready images: All DHIs include signed SBOMs, VEX, and provenance that support security and compliance workflows.
-- Images that work with your stack: Available in Alpine and Debian flavors, DHIs drop into your existing Dockerfiles and pipelines.
-- Images backed by enterprise support: Get peace of mind with Docker's support and rapid response to critical vulnerabilities.
+- **安心构建的镜像**：超最小化和无发行版设计，DHI 可消除高达 95% 的传统容器攻击面。
+- **不再为补丁恐慌**：通过持续 CVE 扫描和 SLA 支持的修复，Docker 帮助您领先于威胁。
+- **审计就绪的镜像**：所有 DHI 都包含支持安全和合规工作流程的签名 SBOM、VEX 和来源证明。
+- **与您的技术栈兼容的镜像**：提供 Alpine 和 Debian 两种版本，DHI 可轻松集成到您现有的 Dockerfile 和流水线中。
+- **企业级支持的镜像**：通过 Docker 的支持和对关键漏洞的快速响应，让您安心无忧。

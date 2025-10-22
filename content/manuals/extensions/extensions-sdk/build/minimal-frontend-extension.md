@@ -1,6 +1,6 @@
 ---
-title: Create a simple extension
-description: Minimal frontend extension tutorial
+title: 创建简单扩展
+description: 最小前端扩展教程
 keywords: Docker, extensions, sdk, build
 aliases:
  - /desktop/extensions-sdk/tutorials/minimal-frontend-extension/
@@ -9,19 +9,19 @@ aliases:
 weight: 10
 ---
 
-To start creating your extension, you first need a directory with files which range from the extension’s source code to the required extension-specific files. This page provides information on how to set up a minimal frontend extension based on plain HTML.
+要开始创建扩展，首先需要一个包含扩展源代码和必需扩展特定文件的目录结构。本文将介绍如何基于纯 HTML 设置一个最小前端扩展。
 
-Before you start, make sure you have installed the latest version of [Docker Desktop](/manuals/desktop/release-notes.md).
+开始之前，请确保已安装最新版本的 [Docker Desktop](/manuals/desktop/release-notes.md)。
 
-> Tip
+> 提示
 >
-> If you want to start a codebase for your new extension, our [Quickstart guide](../quickstart.md) and `docker extension init <my-extension>` provides a better base for your extension.
+> 如果您想为新扩展创建代码库，我们的[快速入门指南](../quickstart.md)和 `docker extension init <my-extension>` 命令提供了更好的扩展基础。
 
-## Extension folder structure
+## 扩展文件夹结构
 
-In the `minimal-frontend` [sample folder](https://github.com/docker/extensions-sdk/tree/main/samples), you can find a ready-to-go example that represents a UI Extension built on HTML. We will go through this code example in this tutorial.
+在 `minimal-frontend` [示例文件夹](https://github.com/docker/extensions-sdk/tree/main/samples) 中，您可以找到一个基于 HTML 构建的 UI 扩展示例。本教程将详细介绍这个代码示例。
 
-Although you can start from an empty directory, it is highly recommended that you start from the template below and change it accordingly to suit your needs.
+虽然您可以从空目录开始，但强烈建议您从以下模板开始，并根据需要进行相应修改。
 
 ```bash
 .
@@ -31,18 +31,17 @@ Although you can start from an empty directory, it is highly recommended that yo
     └── index.html
 ```
 
-1. Contains everything required to build the extension and run it in Docker Desktop.
-2. A file that provides information about the extension such as the name, description, and version.
-3. The source folder that contains all your HTML, CSS and JS files. There can also be other static assets such as logos
-   and icons. For more information and guidelines on building the UI, see the [Design and UI styling section](../design/design-guidelines.md).
+1. 包含构建扩展并在 Docker Desktop 中运行所需的全部内容。
+2. 提供扩展信息的文件，如名称、描述和版本。
+3. 包含所有 HTML、CSS 和 JS 文件的源文件夹。还可以包含其他静态资源，如徽标和图标。有关构建 UI 的更多信息和指南，请参阅[设计和 UI 样式部分](../design/design-guidelines.md)。
 
-## Create a Dockerfile
+## 创建 Dockerfile
 
-At a minimum, your Dockerfile needs:
+您的 Dockerfile 至少需要包含：
 
-- [Labels](../extensions/labels.md) which provide extra information about the extension, icon and screenshots.
-- The source code which in this case is an `index.html` that sits within the `ui` folder.
-- The `metadata.json` file.
+- [标签](../extensions/labels.md)：提供有关扩展、图标和屏幕截图的额外信息。
+- 源代码：在本例中是位于 `ui` 文件夹内的 `index.html` 文件。
+- `metadata.json` 文件。
 
 ```Dockerfile
 # syntax=docker/dockerfile:1
@@ -58,9 +57,9 @@ COPY ui ./ui
 COPY metadata.json .
 ```
 
-## Configure the metadata file
+## 配置元数据文件
 
-A `metadata.json` file is required at the root of the image filesystem.
+在镜像文件系统的根目录中必须包含 `metadata.json` 文件。
 
 ```json
 {
@@ -74,36 +73,35 @@ A `metadata.json` file is required at the root of the image filesystem.
 }
 ```
 
-For more information on the `metadata.json`, see [Metadata](../architecture/metadata.md).
+有关 `metadata.json` 的更多信息，请参阅[元数据](../architecture/metadata.md)。
 
-## Build the extension and install it
+## 构建并安装扩展
 
-Now that you have configured the extension, you need to build the extension image that Docker Desktop will use to
-install it.
+现在您已经配置好了扩展，需要构建 Docker Desktop 将用于安装的扩展镜像。
 
 ```console
 $ docker build --tag=awesome-inc/my-extension:latest .
 ```
 
-This built an image tagged `awesome-inc/my-extension:latest`, you can run `docker inspect awesome-inc/my-extension:latest` to see more details about it.
+这将构建一个标记为 `awesome-inc/my-extension:latest` 的镜像，您可以运行 `docker inspect awesome-inc/my-extension:latest` 查看更多详细信息。
 
-Finally, you can install the extension and see it appearing in the Docker Desktop Dashboard.
+最后，您可以安装扩展，并看到它出现在 Docker Desktop 仪表板中。
 
 ```console
 $ docker extension install awesome-inc/my-extension:latest
 ```
 
-## Preview the extension
+## 预览扩展
 
-To preview the extension in Docker Desktop, close and open the Docker Desktop Dashboard once the installation is complete.
+要在 Docker Desktop 中预览扩展，安装完成后请关闭并重新打开 Docker Desktop 仪表板。
 
-The left-hand menu displays a new tab with the name of your extension.
+左侧菜单将显示一个带有扩展名称的新标签页。
 
-![Minimal frontend extension](images/ui-minimal-extension.png)
+![最小前端扩展](images/ui-minimal-extension.png)
 
-## What's next?
+## 下一步
 
-- Build a more [advanced frontend](frontend-extension-tutorial.md) extension.
-- Learn how to [test and debug](../dev/test-debug.md) your extension.
-- Learn how to [setup CI for your extension](../dev/continuous-integration.md).
-- Learn more about extensions [architecture](../architecture/_index.md).
+- 构建更[高级的前端](frontend-extension-tutorial.md)扩展。
+- 学习如何[测试和调试](../dev/test-debug.md)您的扩展。
+- 学习如何为扩展[设置 CI](../dev/continuous-integration.md)。
+- 了解更多关于扩展[架构](../architecture/_index.md)的信息。

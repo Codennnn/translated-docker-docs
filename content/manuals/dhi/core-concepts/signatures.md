@@ -1,65 +1,53 @@
 ---
-title: Code signing
-description: Understand how Docker Hardened Images are cryptographically signed using Cosign to verify authenticity, integrity, and secure provenance.
-keywords: container image signing, cosign docker image, verify image signature, signed container image, sigstore cosign
+title: 代码签名
+description: 了解 Docker 加固镜像如何使用 Cosign 进行加密签名，以验证真实性、完整性和安全来源。
+keywords: 容器镜像签名, cosign docker 镜像, 验证镜像签名, 已签名容器镜像, sigstore cosign
 ---
 
-## What is code signing?
+## 什么是代码签名？
 
-Code signing is the process of applying a cryptographic signature to software
-artifacts, such as Docker images, to verify their integrity and authenticity. By
-signing an image, you ensure that it has not been altered since it was signed
-and that it originates from a trusted source.
+代码签名是向软件制品（如 Docker 镜像）应用加密签名的过程，用于验证其完整性和真实性。通过对镜像进行签名，您可以确保镜像自签名以来未被篡改，并且源自可信来源。
 
-In the context of Docker Hardened Images (DHIs), code signing is achieved using
-[Cosign](https://docs.sigstore.dev/), a tool developed by the Sigstore project.
-Cosign enables secure and verifiable signing of container images, enhancing
-trust and security in the software supply chain.
+在 Docker 加固镜像 (DHIs) 的上下文中，代码签名通过 [Cosign](https://docs.sigstore.dev/) 实现，这是由 Sigstore 项目开发的工具。Cosign 支持容器镜像的安全和可验证签名，增强了软件供应链中的信任和安全性。
 
-## Why is code signing important?
+## 为什么代码签名很重要？
 
-Code signing plays a crucial role in modern software development and
-cybersecurity:
+代码签名在现代软件开发和网络安全中扮演着关键角色：
 
-- Authenticity: Verifies that the image was created by a trusted source.
-- Integrity: Ensures that the image has not been tampered with since it was
-  signed.
-- Compliance: Helps meet regulatory and organizational security requirements.
+- **真实性**：验证镜像由可信来源创建
+- **完整性**：确保镜像自签名以来未被篡改
+- **合规性**：帮助满足法规和组织安全要求
 
-## Docker Hardened Image code signing
+## Docker 加固镜像的代码签名
 
-Each DHI is cryptographically signed using Cosign, ensuring that the images have
-not been tampered with and originate from a trusted source.
+每个 DHI 都使用 Cosign 进行加密签名，确保镜像未被篡改且源自可信来源。
 
-## Why sign your own images?
+## 为什么要对自己的镜像进行签名？
 
-Docker Hardened Images are signed by Docker to prove their origin and integrity,
-but if you're building application images that extend or use DHIs as a base, you
-should sign your own images as well.
+Docker 加固镜像已由 Docker 签名以证明其来源和完整性，但如果您构建的应用程序镜像扩展或使用 DHIs 作为基础镜像，您也应该对自己的镜像进行签名。
 
-By signing your own images, you can:
+通过对自己的镜像进行签名，您可以：
 
-- Prove the image was built by your team or pipeline
-- Ensure your build hasn't been tampered with after it's pushed
-- Support software supply chain frameworks like SLSA
-- Enable image verification in deployment workflows
+- **证明镜像由您的团队或流水线构建**
+- **确保构建在推送后未被篡改**
+- **支持软件供应链框架（如 SLSA）**
+- **在部署工作流中启用镜像验证**
 
-This is especially important in CI/CD environments where you build and push
-images frequently, or in any scenario where image provenance must be auditable.
+这在频繁构建和推送镜像的 CI/CD 环境中尤其重要，或者在任何需要可审计镜像来源的场景中。
 
-## How to view and use code signatures
+## 如何查看和使用代码签名
 
-### View signatures
+### 查看签名
 
-You can verify that a Docker Hardened Image is signed and trusted using either Docker Scout or Cosign.
+您可以使用 Docker Scout 或 Cosign 来验证 Docker 加固镜像是否已签名且可信。
 
-To lists all attestations, including signature metadata, attached to the image, use the following command:
+要列出附加到镜像的所有证明（包括签名元数据），请使用以下命令：
 
 ```console
 $ docker scout attest list <image-name>:<tag> --platform <platform>
 ```
 
-To verify a specific signed attestation (e.g., SBOM, VEX, provenance):
+要验证特定的已签名证明（例如 SBOM、VEX、来源）：
 
 ```console
 $ docker scout attest get \
@@ -68,7 +56,7 @@ $ docker scout attest get \
   <image-name>:<tag> --platform <platform>
 ```
 
-For example:
+例如：
 
 ```console
 $ docker scout attest get \
@@ -77,19 +65,14 @@ $ docker scout attest get \
   docs/dhi-python:3.13 --platform linux/amd64
 ```
 
+如果验证有效，Docker Scout 将确认签名并显示签名有效载荷，以及用于验证镜像的等效 Cosign 命令。
 
-If valid, Docker Scout will confirm the signature and display signature payload, as well as the equivalent Cosign command to verify the image.
+### 对镜像进行签名
 
-### Sign images
-
-To sign a Docker image, use [Cosign](https://docs.sigstore.dev/). Replace
-`<image-name>:<tag>` with the image name and tag.
+要对 Docker 镜像进行签名，请使用 [Cosign](https://docs.sigstore.dev/)。将 `<image-name>:<tag>` 替换为镜像名称和标签。
 
 ```console
 $ cosign sign <image-name>:<tag>
 ```
 
-This command will prompt you to authenticate via an OIDC provider (such as
-GitHub, Google, or Microsoft). Upon successful authentication, Cosign will
-generate a short-lived certificate and sign the image. The signature will be
-stored in a transparency log and associated with the image in the registry.
+此命令将提示您通过 OIDC 提供商（如 GitHub、Google 或 Microsoft）进行身份验证。成功验证后，Cosign 将生成短期证书并对镜像进行签名。签名将存储在透明日志中，并与注册表中的镜像关联。

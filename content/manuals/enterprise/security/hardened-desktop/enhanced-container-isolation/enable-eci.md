@@ -158,7 +158,7 @@ $ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock alpine
 - 现有开发工作流程无需修改即可继续工作。
 - 用户在 `docker inspect` 输出中看到 `sysbox-runc` 作为容器运行时。
 
-## 后续步骤
+## 下一步
 
 - 查看[配置 Docker 套接字异常和高级设置](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/config.md)。
 - 查看[增强容器隔离限制](/manuals/enterprise/security/hardened-desktop/enhanced-container-isolation/limitations.md)。

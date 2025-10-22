@@ -1,79 +1,65 @@
 ---
-title: Builder settings
-description: Set your builder settings relating to private registries, disk allocation .
-keywords: build, cloud build, optimize, remote, local, cloud, registry, package repository, vpn
+title: 构建器设置
+description: 设置与私有仓库、磁盘分配相关的构建器设置。
+keywords: 构建, 云构建, 优化, 远程, 本地, 云, 仓库, 包仓库, vpn
 ---
 
-The **Builder settings** page in Docker Build Cloud lets you configure disk allocation, private resource access, and firewall settings for your cloud builders in your organization. These configurations help optimize storage, enable access to private registries, and secure outbound network traffic.
+Docker Build Cloud 中的**构建器设置**页面允许您为组织中的云构建器配置磁盘分配、私有资源访问和防火墙设置。这些配置有助于优化存储、启用对私有仓库的访问和保护出站网络流量。
 
-## Storage and cache management
+## 存储和缓存管理
 
-### Disk allocation
+### 磁盘分配
 
-The **Disk allocation** setting lets you control how much of the available
-storage is dedicated to the build cache. A lower allocation increases
-storage available for active builds.
+**磁盘分配**设置允许您控制有多少可用存储专用于构建缓存。较低的分配会增加可用于活动构建的存储空间。
 
-To make disk allocation changes, navigate to **Builder settings** in Docker
-Build Cloud and then adjust the **Disk allocation** slider to specify the
-percentage of storage used for build caching.
+要进行磁盘分配更改，请在 Docker Build Cloud 中导航到**构建器设置**，然后调整**磁盘分配**滑块以指定用于构建缓存的存储百分比。
 
-Any changes take effect immediately.
+任何更改都会立即生效。
 
-### Build cache space
+### 构建缓存空间
 
-Your subscription includes the following Build cache space:
+您的订阅包含以下构建缓存空间：
 
-| Subscription | Build cache space |
+| 订阅类型 | 构建缓存空间 |
 |--------------|-------------------|
-| Personal     | N/A               |
-| Pro          | 50GB              |
-| Team         | 100GB             |
-| Business     | 200GB             |
+| 个人版     | 不适用               |
+| 专业版          | 50GB              |
+| 团队版         | 100GB             |
+| 商业版     | 200GB             |
 
-### Multi-architecture storage allocation
+### 多架构存储分配
 
-Docker Build Cloud automatically provisions builders for both amd64 and arm64 architectures. Your total build cache space is split equally between these
-two builders:
+Docker Build Cloud 自动为 amd64 和 arm64 架构提供构建器。您的总构建缓存空间在这两个构建器之间平均分配：
 
-- Pro (50GB total): 25GB for amd64 builder + 25GB for arm64 builder
-- Team (100GB total): 50GB for amd64 builder + 50GB for arm64 builder
-- Business (200GB total): 100GB for amd64 builder + 100GB for arm64 builder
+- 专业版（总计 50GB）：amd64 构建器 25GB + arm64 构建器 25GB
+- 团队版（总计 100GB）：amd64 构建器 50GB + arm64 构建器 50GB
+- 商业版（总计 200GB）：amd64 构建器 100GB + arm64 构建器 100GB
 
 > [!IMPORTANT]
 >
-> If you only build for one architecture, be aware that your effective cache
-space is half of your subscription's total allocation.
+> 如果您只构建一种架构，请注意您的有效缓存空间是订阅总分配量的一半。
 
-### Get more build cache space
+### 获取更多构建缓存空间
 
-To get more Build cache space, [upgrade your subscription](/manuals/subscription/scale.md).
+要获取更多构建缓存空间，请[升级您的订阅](/manuals/subscription/scale.md)。
 
 > [!TIP]
 >
-> If you build large images, consider allocating less storage for caching to
-leave more space for active builds.
+> 如果您构建大型镜像，请考虑为缓存分配较少的存储空间，以便为活动构建留出更多空间。
 
-## Private resource access
+## 私有资源访问
 
-Private resource access lets cloud builders pull images and packages from private resources. This feature is useful when builds rely on self-hosted artifact repositories or private OCI registries.
+私有资源访问允许云构建器从私有资源拉取镜像和包。当构建依赖于自托管工件仓库或私有 OCI 仓库时，此功能非常有用。
 
-For example, if your organization hosts a private [PyPI](https://pypi.org/) repository on a private network, Docker Build Cloud would not be able to access it by default, since the cloud builder is not connected to your private network.
+例如，如果您的组织在私有网络上托管私有 [PyPI](https://pypi.org/) 仓库，Docker Build Cloud 默认情况下将无法访问它，因为云构建器未连接到您的私有网络。
 
-To enable your cloud builders to access your private resources, enter the host name and port of your private resource and then select **Add**.
+要启用您的云构建器访问您的私有资源，请输入您的私有资源的主机名和端口，然后选择**添加**。
 
-### Authentication
+### 身份验证
 
-If your internal artifacts require authentication, make sure that you
-authenticate with the repository either before or during the build. For
-internal package repositories for npm or PyPI, use [build secrets](/manuals/build/building/secrets.md)
-to authenticate during the build. For internal OCI registries, use `docker
-login` to authenticate before building.
+如果您的内部工件需要身份验证，请确保您在构建之前或构建期间对仓库进行身份验证。对于 npm 或 PyPI 的内部包仓库，请使用[构建密钥](/manuals/build/building/secrets.md)在构建期间进行身份验证。对于内部 OCI 仓库，请在构建前使用 `docker login` 进行身份验证。
 
-Note that if you use a private registry that requires authentication, you will
-need to authenticate with `docker login` twice before building. This is because
-the cloud builder needs to authenticate with Docker to use the cloud builder,
-and then again to authenticate with the private registry.
+请注意，如果您使用需要身份验证的私有仓库，您需要在构建前使用 `docker login` 进行两次身份验证。这是因为云构建器需要先向 Docker 进行身份验证以使用云构建器，然后再向私有仓库进行身份验证。
 
 ```console
 $ echo $DOCKER_PAT | docker login docker.io -u <username> --password-stdin
@@ -81,10 +67,10 @@ $ echo $REGISTRY_PASSWORD | docker login registry.example.com -u <username> --pa
 $ docker build --builder <cloud-builder> --tag registry.example.com/<image> --push .
 ```
 
-## Firewall
+## 防火墙
 
-Firewall settings let you restrict cloud builder egress traffic to specific IP addresses. This helps enhance security by limiting external network egress from the builder.
+防火墙设置允许您将云构建器的出站流量限制到特定的 IP 地址。这通过限制构建器的外部网络出站来帮助增强安全性。
 
-1. Select the **Enable firewall: Restrict cloud builder egress to specific public IP address** checkbox.
-2. Enter the IP address you want to allow.
-3. Select **Add** to apply the restriction.
+1. 选择**启用防火墙：将云构建器出站限制到特定的公共 IP 地址**复选框。
+2. 输入您想要允许的 IP 地址。
+3. 选择**添加**以应用限制。

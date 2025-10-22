@@ -1,73 +1,54 @@
 ---
-title: Minimal or distroless images
-linktitle: Distroless images
-description: Learn how Docker Hardened Images use distroless variants to minimize attack surface and remove unnecessary components.
-keywords: distroless container image, minimal docker image, secure base image, no shell container, reduced attack surface
+title: 最小化与 distroless 镜像
+linktitle: Distroless 镜像
+description: 了解 Docker 加固镜像（DHI）如何借助 distroless 变体，精简组件、缩小攻击面，并保障软件交付安全。
+keywords: distroless 容器镜像, 最小化 docker 镜像, 安全基础镜像, 无 shell 容器, 缩小攻击面
 ---
 
+最小化镜像（又称 distroless）去除了包管理器、shell 乃至完整操作系统发行版等一切非必要组件。Docker 加固镜像（DHI）采用这一理念，从源头减少漏洞并强化软件供应链安全。[Docker 官方镜像](https://docs.docker.com/docker-hub/image-library/trusted-content/#docker-official-images)与[已验证发布者镜像](https://docs.docker.com/docker-hub/image-library/trusted-content/#verified-publisher-images)也遵循最小化与安全的最佳实践，但为保证更广泛的兼容性，裁剪程度略低于 DHI。
 
-Minimal images, sometimes called distroless images, are container images
-stripped of unnecessary components such as package managers, shells, or even the
-underlying operating system distribution. Docker Hardened Images (DHI) embrace
-this minimal approach to reduce vulnerabilities and enforce secure software
-delivery. [Docker Official
-Images](../../docker-hub/image-library/trusted-content.md#docker-official-images)
-and [Docker Verified Publisher
-Images](../../docker-hub/image-library/trusted-content.md#verified-publisher-images)
-follow similar best practices for minimalism and security but may not be as
-stripped down to ensure compatibility with a wider range of use cases.
+## 什么是最小化 / distroless 镜像？
 
-## What are minimal or distroless images?
+传统镜像往往包含完整操作系统，远超出应用实际需求。最小化镜像仅保留：
 
-Traditional container images include a full OS, often more than what is needed
-to run an application. In contrast, minimal or distroless images include only:
+- 应用本体
+- 运行时依赖（如 libc、JRE、Python）
+- 显式声明的配置或元数据
 
-- The application binary
-- Its runtime dependencies (e.g., libc, Java, Python)
-- Any explicitly required configuration or metadata
+并主动剔除：
 
-They typically exclude:
+- OS 工具（`ls`、`ps`、`cat` 等）
+- Shell（`sh`、`bash`）
+- 包管理器（`apt`、`apk`）
+- 调试工具（`curl`、`wget`、`strace`）
 
-- OS tools (e.g., `ls`, `ps`, `cat`)
-- Shells (e.g., `sh`, `bash`)
-- Package managers (e.g., `apt`, `apk`)
-- Debugging utilities (e.g., `curl`, `wget`, `strace`)
+DHI 基于此模型，运行时攻击面大幅缩小。
 
-Docker Hardened Images are based on this model, ensuring a smaller and more
-secure runtime surface.
+## 采用最小化镜像的收益
 
-## What you gain
+| 收益             | 说明                                                                 |
+|------------------|----------------------------------------------------------------------|
+| 攻击面更小       | 组件越少，潜在漏洞与 CVE 暴露越少                                   |
+| 启动更快         | 镜像体积减小，拉取与启动时间显著缩短                                 |
+| 安全性更高       | 无 shell 与包管理器，即使容器被攻破，攻击者也难以横向移动或安装工具   |
+| 合规审计更易     | 搭配 SBOM 与证明（attestation），审计路径清晰，满足合规要求           |
 
-| Benefit                | Description                                                                   |
-|------------------------|-------------------------------------------------------------------------------|
-| Smaller attack surface | Fewer components mean fewer vulnerabilities and less exposure to CVEs         |
-| Faster startup         | Smaller image sizes result in faster pull and start times                     |
-| Improved security      | Lack of shell and package manager limits what attackers can do if compromised |
-| Better compliance      | Easier to audit and verify, especially with SBOMs and attestations            |
+## 常见顾虑与 DHI 的解决之道
 
-## Addressing common tradeoffs
+最小化镜像带来安全红利的同时，也可能改变日常调试与开发习惯。DHI 在“精简”与“可用”之间做了平衡：
 
-Minimal and distroless images offer strong security benefits, but they can
-change how you work with containers. Docker Hardened Images are designed to
-maintain productivity while enhancing security.
+| 顾虑       | DHI 应对策略                                                                                                                                                                                                                          |
+|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 可调试性   | 默认无 shell 及 CLI 工具。可借助 [Docker Debug](https://docs.docker.com/reference/cli/docker/debug/) 临时挂载调试侧车，无需改动原容器即可排障。                                                                                      |
+| 熟悉度     | 提供 Alpine、Debian 等多种基础变体，开发者可在熟悉的环境里享受加固成果。                                                                                                                                                                |
+| 灵活性     | 运行时不可变保障安全；通过多阶段构建与 CI/CD 管理变更。开发阶段亦可选用面向开发的基础镜像，上线前再切换至 distroless 版本。                                                                                                           |
 
-| Concern           | How Docker Hardened Images help                                                                                                                                                                                         |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Debuggability | Hardened images exclude shells and CLI tools by default. Use [Docker Debug](../../../reference/cli/docker/debug.md) to temporarily attach a debug sidecar for troubleshooting without modifying the original container. |
-| Familiarity   | DHI supports multiple base images, including Alpine and Debian variants, so you can choose a familiar environment while still benefiting from hardening practices.                                                        |
-| Flexibility   | Runtime immutability helps secure your containers. Use multi-stage builds and CI/CD to control changes, and optionally use dev-focused base images during development.                                                  |
+## 使用最小化镜像的最佳实践
 
-By balancing minimalism with practical tooling, Docker Hardened Images support
-modern development workflows without compromising on security or reliability.
+- 采用多阶段构建，彻底分离“编译时”与“运行时”依赖
+- 用 CI 流水线自动化验证镜像行为，而非手工 docker exec 进入排查
+- 在 Dockerfile 中显式声明运行时所需依赖，避免“隐形”引用
+- 即便镜像已最小化，也要持续使用 Docker Scout 监控新生成的 CVE
 
-## Best practices for using minimal images
-
-- Use multi-stage builds to separate build-time and runtime environments
-- Validate image behavior using CI pipelines, not interactive inspection
-- Include runtime-specific dependencies explicitly in your Dockerfile
-- Use Docker Scout to continuously monitor for CVEs, even in minimal images
-
-By adopting minimal or distroless images through Docker Hardened Images, you
-gain a more secure, predictable, and production-ready container environment
-that's designed for automation, clarity, and reduced risk.
+通过 DHI 采用最小化 / distroless 镜像，你将获得更安全、可预测、真正生产级的容器环境——为自动化、清晰性与低风险而设计。
 

@@ -1,29 +1,27 @@
 ---
-title: Building with Docker Build Cloud
-linkTitle: Usage
+title: 使用 Docker Build Cloud 构建
+linkTitle: 使用
 weight: 20
-description: Invoke your cloud builds with the Buildx CLI client
-keywords: build, cloud build, usage, cli, buildx, client
+description: 使用 Buildx CLI 客户端调用您的云构建
+keywords: 构建, 云构建, 使用, cli, buildx, 客户端
 aliases:
   - /build/cloud/usage/
 ---
 
-To build using Docker Build Cloud, invoke a build command and specify the name of the
-builder using the `--builder` flag.
+要使用 Docker Build Cloud 进行构建，请调用构建命令并使用 `--builder` 标志指定构建器的名称。
 
 ```console
 $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> --tag <IMAGE> .
 ```
 
-## Use by default
+## 默认使用
 
-If you want to use Docker Build Cloud without having to specify the `--builder` flag
-each time, you can set it as the default builder.
+如果您希望使用 Docker Build Cloud 而不必每次都指定 `--builder` 标志，可以将其设置为默认构建器。
 
 {{< tabs group="ui" >}}
 {{< tab name="CLI" >}}
 
-Run the following command:
+运行以下命令：
 
 ```console
 $ docker buildx use cloud-<ORG>-<BUILDER_NAME> --global
@@ -32,53 +30,39 @@ $ docker buildx use cloud-<ORG>-<BUILDER_NAME> --global
 {{< /tab >}}
 {{< tab name="Docker Desktop" >}}
 
-1. Open the Docker Desktop settings and navigate to the **Builders** tab.
-2. Find the cloud builder under **Available builders**.
-3. Open the drop-down menu and select **Use**.
+1. 打开 Docker Desktop 设置并导航到**构建器**选项卡。
+2. 在**可用构建器**下找到云构建器。
+3. 打开下拉菜单并选择**使用**。
 
-   ![Selecting the cloud builder as default using the Docker Desktop GUI](/build/images/set-default-builder-gui.webp)
+   ![使用 Docker Desktop GUI 将云构建器设置为默认](/build/images/set-default-builder-gui.webp)
 
 {{< /tab >}}
 {{< /tabs >}}
 
-Changing your default builder with `docker buildx use` only changes the default
-builder for the `docker buildx build` command. The `docker build` command still
-uses the `default` builder, unless you specify the `--builder` flag explicitly.
+使用 `docker buildx use` 更改默认构建器仅更改 `docker buildx build` 命令的默认构建器。`docker build` 命令仍使用 `default` 构建器，除非您明确指定 `--builder` 标志。
 
-If you use build scripts, such as `make`, we recommend that you update your
-build commands from `docker build` to `docker buildx build`, to avoid any
-confusion with regards to builder selection. Alternatively, you can run `docker
-buildx install` to make the default `docker build` command behave like `docker
-buildx build`, without discrepancies.
+如果您使用构建脚本（如 `make`），我们建议您将构建命令从 `docker build` 更新为 `docker buildx build`，以避免在选择构建器时产生任何混淆。或者，您可以运行 `docker buildx install` 使默认的 `docker build` 命令行为与 `docker buildx build` 一致，不会有差异。
 
-## Use with Docker Compose
+## 与 Docker Compose 一起使用
 
-To build with Docker Build Cloud using `docker compose build`, first set the
-cloud builder as your selected builder, then run your build.
+要使用 `docker compose build` 通过 Docker Build Cloud 进行构建，首先将云构建器设置为选定的构建器，然后运行您的构建。
 
 > [!NOTE]
 >
-> Make sure you're using a supported version of Docker Compose, see
-> [Prerequisites](setup.md#prerequisites).
+> 确保您使用的是支持版本的 Docker Compose，请参阅[前置条件](setup.md#prerequisites)。
 
 ```console
 $ docker buildx use cloud-<ORG>-<BUILDER_NAME>
 $ docker compose build
 ```
 
-In addition to `docker buildx use`, you can also use the `docker compose build
---builder` flag or the [`BUILDX_BUILDER` environment
-variable](/manuals/build/building/variables.md#buildx_builder) to select the cloud builder.
+除了 `docker buildx use`，您还可以使用 `docker compose build --builder` 标志或 [`BUILDX_BUILDER` 环境变量](/manuals/build/building/variables.md#buildx_builder)来选择云构建器。
 
-## Loading build results
+## 加载构建结果
 
-Building with `--tag` loads the build result to the local image store
-automatically when the build finishes. To build without a tag and load the
-result, you must pass the `--load` flag.
+使用 `--tag` 构建会在构建完成时自动将构建结果加载到本地镜像存储。要构建不带标签的结果并加载结果，必须传递 `--load` 标志。
 
-Loading the build result for multi-platform images is not supported. Use the
-`docker buildx build --push` flag when building multi-platform images to push
-the output to a registry.
+不支持加载多平台镜像的构建结果。构建多平台镜像时，使用 `docker buildx build --push` 标志将输出推送到仓库。
 
 ```console
 $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
@@ -87,8 +71,7 @@ $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
   --push .
 ```
 
-If you want to build with a tag, but you don't want to load the results to your
-local image store, you can export the build results to the build cache only:
+如果您想使用标签构建，但不想将结果加载到本地镜像存储，可以仅将构建结果导出到构建缓存：
 
 ```console
 $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
@@ -97,10 +80,9 @@ $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
   --output type=cacheonly .
 ```
 
-## Multi-platform builds
+## 多平台构建
 
-To run multi-platform builds, you must specify all of the platforms that you
-want to build for using the `--platform` flag.
+要运行多平台构建，必须使用 `--platform` 标志指定要构建的所有平台。
 
 ```console
 $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
@@ -109,82 +91,60 @@ $ docker buildx build --builder cloud-<ORG>-<BUILDER_NAME> \
   --push .
 ```
 
-If you don't specify the platform, the cloud builder automatically builds for the
-architecture matching your local environment.
+如果不指定平台，云构建器会自动为与您的本地环境匹配的架构进行构建。
 
-To learn more about building for multiple platforms, refer to [Multi-platform
-builds](/build/building/multi-platform/).
+要了解更多关于多平台构建的信息，请参阅[多平台构建](/build/building/multi-platform/)。
 
-## Cloud builds in Docker Desktop
+## Docker Desktop 中的云构建
 
-The Docker Desktop [Builds view](/desktop/use-desktop/builds/) works with
-Docker Build Cloud out of the box. This view can show information about not only your
-own builds, but also builds initiated by your team members using the same
-builder.
+Docker Desktop 的[构建视图](/desktop/use-desktop/builds/)开箱即用地支持 Docker Build Cloud。此视图不仅可以显示您自己的构建信息，还可以显示使用相同构建器的团队成员发起的构建信息。
 
-Teams using a shared builder get access to information such as:
+使用共享构建器的团队可以访问以下信息：
 
-- Ongoing and completed builds
-- Build configuration, statistics, dependencies, and results
-- Build source (Dockerfile)
-- Build logs and errors
+- 进行中和已完成的构建
+- 构建配置、统计信息、依赖项和结果
+- 构建源（Dockerfile）
+- 构建日志和错误
 
-This lets you and your team work collaboratively on troubleshooting and
-improving build speeds, without having to send build logs and benchmarks back
-and forth between each other.
+这使您和您的团队可以协作进行故障排除和提高构建速度，而无需相互之间来回发送构建日志和基准测试。
 
-## Use secrets with Docker Build Cloud
+## 在 Docker Build Cloud 中使用密钥
 
-To use build secrets with Docker Build Cloud,
-such as authentication credentials or tokens,
-use the `--secret` and `--ssh` CLI flags for the `docker buildx` command.
-The traffic is encrypted and secrets are never stored in the build cache.
+要在 Docker Build Cloud 中使用构建密钥（如身份验证凭据或令牌），请使用 `docker buildx` 命令的 `--secret` 和 `--ssh` CLI 标志。流量是加密的，密钥永远不会存储在构建缓存中。
 
 > [!WARNING]
 >
-> If you're misusing build arguments to pass credentials, authentication
-> tokens, or other secrets, you should refactor your build to pass the secrets using
-> [secret mounts](/reference/cli/docker/buildx/build.md#secret) instead.
-> Build arguments are stored in the cache and their values are exposed through attestations.
-> Secret mounts don't leak outside of the build and are never included in attestations.
+> 如果您错误地使用构建参数传递凭据、身份验证令牌或其他密钥，您应该重构构建，改为使用[密钥挂载](/reference/cli/docker/buildx/build.md#secret)来传递密钥。
+> 构建参数存储在缓存中，其值通过证明暴露。
+> 密钥挂载不会在构建外部泄露，也永远不会包含在证明中。
 
-For more information, refer to:
+更多信息，请参阅：
 
 - [`docker buildx build --secret`](/reference/cli/docker/buildx/build/#secret)
 - [`docker buildx build --ssh`](/reference/cli/docker/buildx/build/#ssh)
 
-## Managing build cache
+## 管理构建缓存
 
-You don't need to manage Docker Build Cloud cache manually.
-The system manages it for you through [garbage collection](/build/cache/garbage-collection/).
+您不需要手动管理 Docker Build Cloud 缓存。系统通过[垃圾回收](/build/cache/garbage-collection/)为您管理它。
 
-Old cache is automatically removed if you hit your storage limit.
-You can check your current cache state using the
-[`docker buildx du` command](/reference/cli/docker/buildx/du/).
+如果达到存储限制，旧缓存会自动删除。您可以使用 [`docker buildx du` 命令](/reference/cli/docker/buildx/du/)检查当前缓存状态。
 
-To clear the builder's cache manually,
-use the [`docker buildx prune` command](/reference/cli/docker/buildx/prune/).
-This works like pruning the cache for any other builder.
+要手动清除构建器的缓存，请使用 [`docker buildx prune` 命令](/reference/cli/docker/buildx/prune/)。这就像为任何其他构建器修剪缓存一样工作。
 
 > [!WARNING]
 >
-> Pruning a cloud builder's cache also removes the cache for other team members
-> using the same builder.
+> 修剪云构建器的缓存也会删除使用相同构建器的其他团队成员的缓存。
 
-## Unset Docker Build Cloud as the default builder
+## 取消将 Docker Build Cloud 设置为默认构建器
 
-If you've set a cloud builder as the default builder
-and want to revert to the default `docker` builder,
-run the following command:
+如果您已将云构建器设置为默认构建器并希望恢复为默认的 `docker` 构建器，请运行以下命令：
 
 ```console
 $ docker context use default
 ```
 
-This doesn't remove the builder from your system.
-It only changes the builder that's automatically selected to run your builds.
+这不会从系统中删除构建器。它只更改自动选择运行构建的构建器。
 
-## Registries on internal networks
+## 内部网络上的仓库
 
-It is possible to use Docker Build Cloud with a [private registry](/manuals/build-cloud/builder-settings.md#private-resource-access)
-or registry mirror on an internal network.
+可以在内部网络上使用 Docker Build Cloud 与[私有仓库](/manuals/build-cloud/builder-settings.md#private-resource-access)或仓库镜像。

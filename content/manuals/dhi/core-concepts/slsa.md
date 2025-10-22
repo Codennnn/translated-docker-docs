@@ -1,89 +1,52 @@
 ---
-title: Supply-chain Levels for Software Artifacts (SLSA)
+title: 软件制品供应链安全级别 (SLSA)
 linktitle: SLSA
-description: Learn how Docker Hardened Images comply with SLSA Build Level 3 and how to verify provenance for secure, tamper-resistant builds.
-keywords: slsa docker compliance, slsa build level 3, supply chain security, verified build provenance, secure container build
+description: 了解 Docker 加固镜像如何符合 SLSA 构建级别 3 标准，以及如何验证构建来源以确保安全、防篡改的构建过程。
+keywords: slsa docker 合规性, slsa 构建级别 3, 供应链安全, 已验证构建来源, 安全容器构建
 ---
 
-## What is SLSA?
+## 什么是 SLSA？
 
-Supply-chain Levels for Software Artifacts (SLSA) is a security framework
-designed to enhance the integrity and security of software supply chains.
-Developed by Google and maintained by the Open Source Security Foundation
-(OpenSSF), SLSA provides a set of guidelines and best practices to prevent
-tampering, improve integrity, and secure packages and infrastructure in software
-projects.
+软件制品供应链安全级别 (SLSA) 是一个安全框架，旨在增强软件供应链的完整性和安全性。该框架由 Google 开发，并由开源安全基金会 (OpenSSF) 维护，提供了一套指导原则和最佳实践，用于防止篡改、提升完整性，并保护软件项目中的软件包和基础设施安全。
 
-SLSA defines [four build levels (0–3)](https://slsa.dev/spec/latest/levels) of
-increasing security rigor, focusing on areas such as build provenance, source
-integrity, and build environment security. Each level builds upon the previous
-one, offering a structured approach to achieving higher levels of software
-supply chain security.
+SLSA 定义了[四个构建级别 (0–3)](https://slsa.dev/spec/latest/levels)，每个级别都对应着递增的安全严格程度，重点关注构建来源、源代码完整性以及构建环境安全等领域。每个级别都建立在前一级别的基础上，为实现更高级别的软件供应链安全提供了结构化方法。
 
-## Why is SLSA important?
+## 为什么 SLSA 很重要？
 
-SLSA is crucial for modern software development due to the increasing complexity
-and interconnectedness of software supply chains. Supply chain attacks, such as
-the SolarWinds breach, have highlighted the vulnerabilities in software
-development processes. By implementing SLSA, organizations can:
+SLSA 对于现代软件开发至关重要，因为软件供应链的复杂性和互联性日益增加。供应链攻击（如 SolarWinds 事件）凸显了软件开发过程中的脆弱性。通过实施 SLSA，组织可以：
 
-- Ensure artifact integrity: Verify that software artifacts have not been
-  tampered with during the build and deployment processes.
+- **确保制品完整性**：验证软件制品在构建和部署过程中未被篡改
+- **增强构建来源追溯**：维护可验证的记录，记录软件制品的生产方式和时间，提供透明度和问责制
+- **保护构建环境**：实施控制措施，防止构建系统遭受未经授权的访问和修改
+- **降低供应链风险**：减少在软件供应链中引入漏洞或恶意代码的风险
 
-- Enhance build provenance: Maintain verifiable records of how and when software
-  artifacts were produced, providing transparency and accountability.
+## 什么是 SLSA 构建级别 3？
 
-- Secure build environments: Implement controls to protect build systems from
-  unauthorized access and modifications.
+SLSA 构建级别 3（加固构建）是 SLSA 框架中四个渐进级别中的最高级别。它引入了严格的要求，确保软件制品能够以安全且可追溯的方式构建。要满足级别 3，构建过程必须：
 
-- Mitigate supply chain risks: Reduce the risk of introducing vulnerabilities or
-  malicious code into the software supply chain.
+- **完全自动化和脚本化**：防止手动篡改
+- **使用可信的构建服务**：强制执行源代码和构建器身份验证
+- **生成签名的防篡改来源记录**：描述制品是如何构建的
+- **捕获构建环境、源代码仓库和构建步骤的元数据**
 
-## What is SLSA Build Level 3?
+该级别提供了强有力的保证，确保软件是在受控、可审计的环境中从预期源代码构建的，从而显著降低供应链攻击的风险。
 
-SLSA Build Level 3, Hardened Builds, is the highest of four progressive levels in
-the SLSA framework. It introduces strict requirements to ensure that software
-artifacts are built securely and traceably. To meet Level 3, a build must:
+## Docker 加固镜像与 SLSA
 
-- Be fully automated and scripted to prevent manual tampering
-- Use a trusted build service that enforces source and builder authentication
-- Generate a signed, tamper-resistant provenance record describing how the artifact was built
-- Capture metadata about the build environment, source repository, and build steps
+Docker 加固镜像 (DHIs) 是专为现代生产环境设计的默认安全容器镜像。每个 DHI 都经过加密签名，并符合 [SLSA 构建级别 3 标准](https://slsa.dev/spec/latest/levels#build-l3-hardened-builds)，确保可验证的构建来源和完整性。
 
-This level provides strong guarantees that the software was built from the
-expected source in a controlled, auditable environment, which significantly
-reduces the risk of supply chain attacks.
+通过将符合 SLSA 标准的 DHIs 集成到您的开发和部署流程中，您可以：
 
-## Docker Hardened Images and SLSA
+- **实现更高的安全级别**：使用符合严格安全标准的镜像，降低漏洞和攻击风险
+- **简化合规性**：利用内置功能（如签名的软件物料清单 (SBOMs) 和漏洞例外 (VEX) 声明），促进符合 FedRAMP 等法规的要求
+- **增强透明度**：访问每个镜像组件和构建过程的详细信息，提高透明度和信任度
+- **简化审计流程**：利用可验证的构建记录和签名，简化安全审计和评估
 
-Docker Hardened Images (DHIs) are secure-by-default container images
-purpose-built for modern production environments. Each DHI is cryptographically
-signed and complies with the [SLSA Build Level 3
-standard](https://slsa.dev/spec/latest/levels#build-l3-hardened-builds), ensuring
-verifiable build provenance and integrity.
+## 获取和验证 Docker 加固镜像的 SLSA 来源
 
-By integrating SLSA-compliant DHIs into your development and deployment processes, you can:
+每个 Docker 加固镜像 (DHI) 都经过加密签名并包含证明。这些证明提供了可验证的构建来源，并展示了符合 SLSA 构建级别 3 标准的程度。
 
-- Achieve higher security levels: Utilize images that meet stringent security
-  standards, reducing the risk of vulnerabilities and attacks.
-
-- Simplify compliance: Leverage built-in features like signed Software Bills of
-  Materials (SBOMs) and vulnerability exception (VEX) statements to facilitate
-  compliance with regulations such as FedRAMP.
-
-- Enhance transparency: Access detailed information about the components and
-  build process of each image, promoting transparency and trust.
-
-- Streamline audits: Utilize verifiable build records and signatures to simplify
-  security audits and assessments.
-
-## Get and verify SLSA provenance for Docker Hardened Images
-
-Each Docker Hardened Image (DHI) is cryptographically signed and includes
-attestations. These attestations provide verifiable build provenance and
-demonstrate adherence to SLSA Build Level 3 standards.
-
-To get and verify SLSA provenance for a DHI, you can use Docker Scout.
+要获取和验证 DHI 的 SLSA 来源，您可以使用 Docker Scout：
 
 ```console
 $ docker scout attest get <your-namespace>/dhi-<image>:<tag> \
@@ -91,7 +54,7 @@ $ docker scout attest get <your-namespace>/dhi-<image>:<tag> \
   --verify
 ```
 
-For example:
+例如：
 
 ```console
 $ docker scout attest get docs/dhi-node:20.19-debian12-fips-20250701182639 \
@@ -99,6 +62,6 @@ $ docker scout attest get docs/dhi-node:20.19-debian12-fips-20250701182639 \
   --verify
 ```
 
-## Resources
+## 相关资源
 
-For more details about SLSA definitions and Docker Build, see [SLSA definitions](/build/metadata/attestations/slsa-definitions/).
+有关 SLSA 定义和 Docker Build 的更多详细信息，请参阅 [SLSA 定义](/build/metadata/attestations/slsa-definitions/)。

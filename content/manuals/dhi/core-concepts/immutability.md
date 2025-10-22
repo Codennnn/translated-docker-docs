@@ -1,57 +1,45 @@
 ---
-title: Immutable infrastructure
-linktitle: Immutability
-description: Understand how image digests, read-only containers, and signed metadata ensure Docker Hardened Images are tamper-resistant and immutable.
-keywords: immutable container image, read-only docker image, configuration drift prevention, secure redeployment, image digest verification
+title: 不可变基础设施
+linktitle: 不可变性
+description: 了解镜像摘要、只读容器与签名元数据如何确保 Docker 加固镜像防篡改且不可变。
+keywords: 不可变容器镜像, 只读 Docker 镜像, 防止配置漂移, 安全重部署, 镜像摘要校验
 ---
 
-Immutable infrastructure is a security and operations model where components
-such as servers, containers, and images are never modified after deployment.
-Instead of patching or reconfiguring live systems, you replace them entirely
-with new versions.
+不可变基础设施是一种安全与运维模型，其中**服务器、容器、镜像等组件在部署后绝不被修改**。与其在线打补丁或重新配置，不如**整体替换为新版本**。
 
-When using Docker Hardened Images, immutability is a best practice that
-reinforces the security posture of your software supply chain.
+使用 Docker 加固镜像（DHI）时，“不可变”是强化软件供应链安全的最佳实践。
 
-## Why immutability matters
+## 不可变为何重要
 
-Mutable systems are harder to secure and audit. Live patching or manual updates
-introduce risks such as:
+可变系统更难保护，也难审计。在线打补丁或手动更新会带来：
 
-- Configuration drift
-- Untracked changes
-- Inconsistent environments
-- Increased attack surface
+- 配置漂移
+- 无记录变更
+- 环境不一致
+- 攻击面扩大
 
-Immutable infrastructure solves this by making changes only through controlled,
-repeatable builds and deployments.
+不可变基础设施通过**受控、可重复的构建与部署**来杜绝上述风险。
 
-## How Docker Hardened Images support immutability
+## DHI 如何原生支持不可变
 
-Docker Hardened Images are built to be minimal, locked-down, and
-non-interactive, which discourages in-place modification. For example:
+Docker 加固镜像默认**极简、锁定、无交互**，从源头抑制现场修改：
 
-- Many DHI images exclude shells, package managers, and debugging tools
-- DHI images are designed to be scanned and signed before deployment
-- DHI users are encouraged to rebuild and redeploy images rather than patch running containers
+- 多数 DHI 镜像**移除 shell、包管理器与调试工具**
+- 镜像在部署前**已完成扫描与签名**
+- 官方推荐**重新构建并重新部署**，而非修补运行中的容器
 
-This design aligns with immutable practices and ensures that:
+这一设计确保：
 
-- Updates go through the CI/CD pipeline
-- All changes are versioned and auditable
-- Systems can be rolled back or reproduced consistently
+- 所有更新走 CI/CD 流水线
+- 每次变更可版本化、可审计
+- 系统可一键回滚、可稳定复现
 
-## Immutable patterns in practice
+## 不可变实践模式
 
-Some common patterns that leverage immutability include:
+常见落地模式：
 
-- Container replacement: Instead of logging into a container to fix a bug or
-  apply a patch, rebuild the image and redeploy it.
-- Infrastructure as Code (IaC): Define your infrastructure and image
-  configurations in version-controlled files.
-- Blue/Green or Canary deployments: Roll out new images alongside old ones and
-  gradually shift traffic to the new version.
+- **容器替换**：不登录容器修 bug，而是重新构建镜像并滚动发布。
+- **基础设施即代码（IaC）**：用版本化文件定义基础设施与镜像配置。
+- **蓝绿 / 金丝雀发布**：并排运行新旧镜像，逐步将流量切到新版本。
 
-By combining immutable infrastructure principles with hardened images, you
-create a predictable and secure deployment workflow that resists tampering and
-minimizes long-term risk.
+将不可变原则与加固镜像结合，你将获得**可预测、难篡改、低风险**的部署流程。

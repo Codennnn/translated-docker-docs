@@ -358,7 +358,7 @@ Content-Type: application/json
 1. 选择 **Disable SCIM**（禁用 SCIM）。
 
 
-## 后续步骤
+## 下一步
 
 - 设置[组映射](/manuals/enterprise/security/provisioning/group-mapping.md)。
 - [配置故障排除](/manuals/enterprise/troubleshoot/troubleshoot-provisioning.md)。

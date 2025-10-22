@@ -1,7 +1,7 @@
 ---
-title: Validate your extension
-linkTitle: Validate
-description: Step three in the extension creation process
+title: 验证扩展
+linkTitle: 验证
+description: 扩展创建流程的第三步
 keywords: Docker, Extensions, sdk, validate, install
 aliases:
  - /desktop/extensions-sdk/extensions/validation/
@@ -11,31 +11,31 @@ aliases:
 weight: 20
 ---
 
-Validate your extension before you share or publish it. Validating the extension ensures that the extension:
+在共享或发布扩展之前，请先验证扩展。验证扩展可以确保：
 
-- Is built with the [image labels](labels.md) it requires to display correctly in the marketplace
-- Installs and runs without problems
+- 扩展已构建包含在市场中正确显示所需的[镜像标签](labels.md)
+- 扩展能够正常安装和运行
 
-The Extensions CLI lets you validate your extension before installing and running it locally.
+扩展 CLI 允许你在本地安装和运行扩展之前对其进行验证。
 
-The validation checks if the extension’s `Dockerfile` specifies all the required labels and if the metadata file is valid against the JSON schema file.
+验证过程会检查扩展的 `Dockerfile` 是否指定了所有必需标签，以及元数据文件是否符合 JSON 模式文件的要求。
 
-To validate, run:
+要执行验证，请运行：
 
 ```console
-$ docker extension validate <name-of-your-extension>
+$ docker extension validate <你的扩展名称>
 ```
 
-If your extension is valid, the following message displays:
+如果你的扩展有效，将显示以下消息：
 
 ```console
 The extension image "name-of-your-extension" is valid
 ```
 
-Before the image is built, it's also possible to validate only the `metadata.json` file:
+在构建镜像之前，也可以仅验证 `metadata.json` 文件：
 
 ```console
 $ docker extension validate /path/to/metadata.json
 ```
 
-The JSON schema used to validate the `metadata.json` file against can be found under the [releases page](https://github.com/docker/extensions-sdk/releases/latest).
+用于验证 `metadata.json` 文件的 JSON 模式可以在[发布页面](https://github.com/docker/extensions-sdk/releases/latest)找到。

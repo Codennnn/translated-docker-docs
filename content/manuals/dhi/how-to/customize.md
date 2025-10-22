@@ -1,130 +1,88 @@
 ---
-title: Customize a Docker Hardened Image
-linkTitle: Customize an image
+title: 自定义 Docker 加固镜像
+linkTitle: 自定义镜像
 weight: 25
-keywords: debug, hardened images, DHI, customize, certificate, artifact
-description: Learn how to customize a Docker Hardened Images (DHI).
+keywords: 调试, 加固镜像, DHI, 自定义, 证书, 工件
+description: 学习如何自定义 Docker 加固镜像（DHI）。
 ---
 
-You can customize a Docker Hardened Image (DHI) to suit your specific needs
-using the Docker Hub UI. This allows you to select a base image, add packages,
-add artifacts, and configure settings. In addition, the build pipeline ensures that
-your customized image is built securely and includes attestations.
+您可以使用 Docker Hub 界面自定义 Docker 加固镜像（DHI）以满足您的特定需求。这允许您选择基础镜像、添加软件包、添加工件和配置设置。此外，构建流水线确保您的自定义镜像安全构建并包含证明。
 
-To add a customized Docker Hardened Image to your organization, an organization
-owner must first [mirror](./mirror.md) the DHI repository to your organization.
-Once the repository is mirrored, any user with access to the mirrored DHI
-repository can create a customized image.
+要将自定义的 Docker 加固镜像添加到您的组织，组织所有者必须首先将 DHI 仓库[镜像](./mirror.md)到您的组织。一旦仓库被镜像，任何有权限访问镜像 DHI 仓库的用户都可以创建自定义镜像。
 
-## Customize a Docker Hardened Image
+## 自定义 Docker 加固镜像
 
-To customize a Docker Hardened Image, follow these steps:
+要自定义 Docker 加固镜像，请按照以下步骤操作：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has a mirrored DHI
-   repository.
-4. Select **Hardened Images** > **Management**.
-5. For the mirrored DHI repository you want to customize, select the menu icon in the far right column.
-6. Select **Customize**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+2. 选择 **我的 Hub**。
+3. 在命名空间下拉菜单中，选择具有镜像 DHI 仓库的组织。
+4. 选择 **加固镜像** > **管理**。
+5. 对于您想要自定义的镜像 DHI 仓库，选择最右侧列的菜单图标。
+6. 选择 **自定义**。
 
-   At this point, the on-screen instructions will guide you through the
-   customization process. You can continue with the following steps for more
-   details.
+   此时，屏幕上的说明将指导您完成自定义过程。您可以继续以下步骤以获取更多详细信息。
 
-7. Select the image version you want to customize.
-8. Add packages.
+7. 选择您想要自定义的镜像版本。
+8. 添加软件包。
 
-   1. In the **Packages** drop-down, select the packages you want to add to the
-      image.
+   1. 在 **软件包** 下拉菜单中，选择您想要添加到镜像的软件包。
 
-      The packages available in the drop-down are OS system packages for the
-      selected image variant. For example, if you are customizing the Alpine
-      variant of the Python DHI, the list will include all Alpine system
-      packages.
+      下拉菜单中可用的软件包是所选镜像变体的操作系统系统软件包。例如，如果您正在自定义 Python DHI 的 Alpine 变体，列表将包含所有 Alpine 系统软件包。
 
-   2. In the **OCI artifacts** drop-down, first, select the repository that
-      contains the OCI artifact image. Then, select the tag you want to use from
-      that repository. Finally, specify the specific paths you want to include
-      from the OCI artifact image.
+   2. 在 **OCI 工件** 下拉菜单中，首先选择包含 OCI 工件镜像的仓库。然后，从该仓库中选择您想要使用的标签。最后，指定您想要从 OCI 工件镜像中包含的特定路径。
 
-      The OCI artifacts are images that you have previously
-      built and pushed to a repository in the same namespace as the mirrored
-      DHI. For example, you can add a custom root CA certificate or a another
-      image that contains a tool you need, like adding Python to a Node.js
-      image. For more details on how to create an OCI artifact image, see
-      [Create an OCI artifact image](#create-an-oci-artifact-image).
+      OCI 工件是您之前构建并推送到与镜像 DHI 相同命名空间中的仓库的镜像。例如，您可以添加自定义根 CA 证书或包含您需要的工具的另一个镜像，比如向 Node.js 镜像中添加 Python。有关如何创建 OCI 工件镜像的更多详细信息，请参阅[创建 OCI 工件镜像](#创建-oci-工件镜像)。
 
-      When combining images that contain directories and files with the same
-      path, images later in the list will overwrite files from earlier images.
-      To manage this, you must select paths to include and optionally exclude
-      from each OCI artifact image. This allows you to control which files are
-      included in the final customized image.
+      当组合包含相同路径的目录和文件的镜像时，列表中后面的镜像将覆盖前面镜像的文件。为了管理这一点，您必须为每个 OCI 工件镜像选择要包含的路径，并可选择排除路径。这允许您控制哪些文件包含在最终的自定义镜像中。
 
-      By default, no files are included from the OCI artifact image. You must
-      explicitly include the paths you want. After including a path, you can
-      then explicitly exclude files or directories underneath it.
+      默认情况下，不会从 OCI 工件镜像中包含任何文件。您必须明确包含您想要的路径。包含路径后，您可以明确排除其下的文件或目录。
 
-      > [!NOTE]
+      > [!注意]
       >
-      > When files necessary for runtime are overwritten by OCI artifacts, the
-      > image build still succeeds, but you may have issues when running the
-      > image.
+      > 当 OCI 工件覆盖运行所需的文件时，镜像构建仍然会成功，但您在运行镜像时可能会遇到问题。
 
-9. Select **Next: Configure** and then configure the following options.
+9. 选择 **下一步：配置**，然后配置以下选项。
 
-   1. Specify a suffix that is appended to the customized image's tag. For
-      example, if you specify `custom` when customizing the `dhi-python:3.13`
-      image, the customized image will be tagged as `dhi-python:3.13_custom`.
-   2. Select the platforms you want to build the image for.
-   3. Add [`ENTRYPOINT`](/reference/dockerfile/#entrypoint) and
-      [`CMD`](/reference/dockerfile/#cmd) arguments to the image. These
-      arguments are appended to the base image's entrypoint and command.
-   4. Specify the users to add to the image.
-   5. Specify the user groups to add to the image.
-   6. Select which [user](/reference/dockerfile/#user) to run the images as.
-   7. Specify the [environment variables](/reference/dockerfile/#env) and their
-      values that the image will contain.
-   8. Add [annotations](/build/metadata/annotations/) to the image.
-   9. Add [labels](/reference/dockerfile/#label) to the image.
-10. Select **Create Customization**.
+   1. 指定附加到自定义镜像标签的后缀。例如，如果您在自定义 `dhi-python:3.13` 镜像时指定 `custom`，自定义镜像将被标记为 `dhi-python:3.13_custom`。
+   2. 选择您想要构建镜像的平台。
+   3. 向镜像添加 [`ENTRYPOINT`](/reference/dockerfile/#entrypoint) 和 [`CMD`](/reference/dockerfile/#cmd) 参数。这些参数将附加到基础镜像的入口点和命令。
+   4. 指定要添加到镜像的用户。
+   5. 指定要添加到镜像的用户组。
+   6. 选择以哪个[用户](/reference/dockerfile/#user)运行镜像。
+   7. 指定镜像将包含的[环境变量](/reference/dockerfile/#env)及其值。
+   8. 向镜像添加[注解](/build/metadata/annotations/)。
+   9. 向镜像添加[标签](/reference/dockerfile/#label)。
+10. 选择 **创建自定义**。
 
-    A summary of the customization appears. It may take some time for the image
-    to build. Once built, it will appear in the **Tags** tab of the repository,
-    and your team members can pull it like any other image.
+    自定义摘要出现。镜像构建可能需要一些时间。构建完成后，它将出现在仓库的 **标签** 选项卡中，您的团队成员可以像拉取任何其他镜像一样拉取它。
 
-## Edit or delete a Docker Hardened Image customization
+## 编辑或删除 Docker 加固镜像自定义
 
-To edit or delete a Docker Hardened Image customization, follow these steps:
+要编辑或删除 Docker 加固镜像自定义，请按照以下步骤操作：
 
-1. Sign in to [Docker Hub](https://hub.docker.com).
-2. Select **My Hub**.
-3. In the namespace drop-down, select your organization that has a mirrored DHI.
-4. Select **Hardened Images** > **Management**.
-5. Select **Customizations**.
+1. 登录 [Docker Hub](https://hub.docker.com)。
+2. 选择 **我的 Hub**。
+3. 在命名空间下拉菜单中，选择具有镜像 DHI 的组织。
+4. 选择 **加固镜像** > **管理**。
+5. 选择 **自定义**。
 
-6. For the customized DHI repository you want to manage, select the menu icon in the far right column.
-   From here, you can:
+6. 对于您想要管理的自定义 DHI 仓库，选择最右侧列的菜单图标。
+   从这里，您可以：
 
-   - **Edit**: Edit the customized image.
-   - **Create new**: Create a new customized image based on the source repository.
-   - **Delete**: Delete the customized image.
+   - **编辑**：编辑自定义镜像。
+   - **新建**：基于源仓库创建新的自定义镜像。
+   - **删除**：删除自定义镜像。
 
-7. Follow the on-screen instructions to complete the edit or deletion.
+7. 按照屏幕上的说明完成编辑或删除。
 
-## Create an OCI artifact image
+## 创建 OCI 工件镜像
 
-An OCI artifact image is a Docker image that contains files or directories that
-you want to include in your customized Docker Hardened Image (DHI). This can
-include additional tools, libraries, or configuration files.
+OCI 工件镜像是包含您想要包含在自定义 Docker 加固镜像（DHI）中的文件或目录的 Docker 镜像。这可以包括额外的工具、库或配置文件。
 
-When creating an image to use as an OCI artifact, it should ideally be as
-minimal as possible and contain only the necessary files.
+在创建用作 OCI 工件的镜像时，它应该尽可能最小化，并且只包含必要的文件。
 
-For example, to distribute a custom root CA certificate as part of a trusted CA
-bundle, you can use a multi-stage build. This approach registers your
-certificate with the system and outputs an updated CA bundle, which can be
-extracted into a minimal final image:
+例如，要分发作为受信任 CA 捆绑包一部分的自定义根 CA 证书，您可以使用多阶段构建。这种方法向系统注册您的证书并输出更新的 CA 捆绑包，可以提取到最小化的最终镜像中：
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -142,12 +100,6 @@ FROM scratch
 COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 ```
 
-You can follow this pattern to create other OCI artifacts, such as images
-containing tools or libraries that you want to include in your customized DHI.
-Install the necessary tools or libraries in the first stage, and then copy the
-relevant files to the final stage that uses `FROM scratch`. This ensures that
-your OCI artifact is minimal and contains only the necessary files.
+您可以遵循此模式创建其他 OCI 工件，比如包含您想要包含在自定义 DHI 中的工具或库的镜像。在第一阶段安装必要的工具或库，然后将相关文件复制到使用 `FROM scratch` 的最终阶段。这确保您的 OCI 工件最小化并且只包含必要的文件。
 
-Build and push the OCI artifact image to a repository in your organization's
-namespace and it automatically appears in the customization workflow when you
-select the OCI artifacts to add to your customized Docker Hardened Image.
+构建并推送 OCI 工件镜像到您组织命名空间中的仓库，当您选择要添加到自定义 Docker 加固镜像的 OCI 工件时，它会自动出现在自定义工作流中。

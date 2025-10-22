@@ -1,63 +1,53 @@
 ---
-title: Using the Docker for GitHub Copilot extension
-linkTitle: Usage
+title: 使用 Docker for GitHub Copilot 扩展
+linkTitle: 使用方法
 description: |
-  Learn how to use the Docker for GitHub Copilot extension to interact with the
-  Docker agent, get help Dockerizing projects, and ask Docker-related questions
-  directly from your IDE or GitHub.com.
+  了解如何使用 Docker for GitHub Copilot 扩展与 Docker 代理交互，获取项目容器化帮助，并直接从您的 IDE 或 GitHub.com 提出与 Docker 相关的问题。
 weight: 20
 ---
 
 {{< summary-bar feature_name="Docker GitHub Copilot" >}}
 
-The Docker Extension for GitHub Copilot provides a chat interface that you can
-use to interact with the Docker agent. You can ask questions and get help
-Dockerizing your project.
+Docker for GitHub Copilot 扩展提供了一个聊天界面，您可以使用它与 Docker 代理交互。您可以提出问题并获取项目容器化的帮助。
 
-The Docker agent is trained to understand Docker-related questions, and provide
-guidance on Dockerfiles, Docker Compose files, and other Docker assets.
+Docker 代理经过训练，能够理解与 Docker 相关的问题，并为 Dockerfile、Docker Compose 文件和其他 Docker 资源提供指导。
 
-## Setup
+## 设置
 
-Before you can start interacting with the Docker agent, make sure you've
-[installed](./install.md) the extension for your organization.
+在开始与 Docker 代理交互之前，请确保您已为您的组织[安装](./install.md)了该扩展。
 
-### Enable GitHub Copilot chat in your editor or IDE
+### 在编辑器或 IDE 中启用 GitHub Copilot 聊天
 
-For instructions on how to use the Docker Extension for GitHub Copilot in
-your editor, see:
+有关如何在您的编辑器中使用 Docker for GitHub Copilot 扩展的说明，请参阅：
 
 - [Visual Studio Code](https://docs.github.com/en/copilot/github-copilot-chat/copilot-chat-in-ides/using-github-copilot-chat-in-your-ide?tool=vscode)
 - [Visual Studio](https://docs.github.com/en/copilot/github-copilot-chat/copilot-chat-in-ides/using-github-copilot-chat-in-your-ide?tool=visualstudio)
 - [Codespaces](https://docs.github.com/en/codespaces/reference/using-github-copilot-in-github-codespaces)
 
-### Verify the setup
+### 验证设置
 
-You can verify that the extension has been properly installed by typing
-`@docker` in the Copilot Chat window. As you type, you should see the Docker
-agent appear in the chat interface.
+您可以通过在 Copilot 聊天窗口中输入 `@docker` 来验证扩展是否已正确安装。当您输入时，应该会看到 Docker 代理出现在聊天界面中。
 
-![Docker agent in chat](images/docker-agent-copilot.png)
+![聊天中的 Docker 代理](images/docker-agent-copilot.png)
 
-The first time you interact with the agent, you're prompted to sign in and
-authorize the Copilot extension with your Docker account.
+首次与代理交互时，系统会提示您登录并使用您的 Docker 账户授权 Copilot 扩展。
 
-## Asking Docker questions in your editor
+## 在编辑器中提出 Docker 问题
 
-To interact with the Docker agent from within your editor or IDE:
+要在编辑器或 IDE 中与 Docker 代理交互：
 
-1. Open your project in your editor.
-2. Open the Copilot chat interface.
-3. Interact with the Docker agent by tagging `@docker`, followed by your question.
+1. 在编辑器中打开您的项目。
+2. 打开 Copilot 聊天界面。
+3. 通过标记 `@docker` 来与 Docker 代理交互，然后输入您的问题。
 
-## Asking Docker questions on GitHub.com
+## 在 GitHub.com 上提出 Docker 问题
 
-To interact with the Docker agent from the GitHub web interface:
+要通过 GitHub Web 界面与 Docker 代理交互：
 
-1. Go to [github.com](https://github.com/) and sign in to your account.
-2. Go to any repository.
-3. Select the Copilot logo in the site menu, or select the floating Copilot widget, to open the chat interface.
+1. 访问 [github.com](https://github.com/) 并登录您的账户。
+2. 进入任何仓库。
+3. 选择站点菜单中的 Copilot 徽标，或选择浮动的 Copilot 小部件，以打开聊天界面。
 
-   ![Copilot chat button](images/copilot-button.png?w=400px)
+   ![Copilot 聊天按钮](images/copilot-button.png?w=400px)
 
-4. Interact with the Docker agent by tagging `@docker`, followed by your question.
+4. 通过标记 `@docker` 来与 Docker 代理交互，然后输入您的问题。

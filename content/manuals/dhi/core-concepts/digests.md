@@ -1,103 +1,73 @@
 ---
-title: Image digests
-description: Learn how Docker Hardened Images help secure every stage of your software supply chain with signed metadata, provenance, and minimal attack surface.
-keywords: docker image digest, pull image by digest, immutable container image, secure container reference, multi-platform manifest
+title: 镜像摘要（digest）
+description: 了解 Docker 加固镜像如何通过不可变摘要、签名元数据和多平台清单，保障软件供应链每一阶段的安全与一致性。
+keywords: docker 镜像摘要, 按摘要拉取镜像, 不可变容器镜像, 安全镜像引用, 多平台清单
 ---
 
-## What are Docker image digests?
+## 什么是镜像摘要？
 
-A Docker image digest is a unique, cryptographic identifier (SHA-256 hash)
-representing the content of a Docker image. Unlike tags, which can be reused or
-changed, a digest is immutable and ensures that the exact same image is pulled
-every time. This guarantees consistency across different environments and
-deployments.
+镜像摘要（digest）是 Docker 镜像内容的唯一加密标识（SHA-256 哈希）。与可被重复指向或随意改动的标签不同，摘要一旦生成就不可变，保证每次拉取的都是**完全相同**的镜像，从而在不同环境与部署之间实现绝对一致。
 
-For example, the digest for the `nginx:latest` image might look like:
+以 `nginx:latest` 为例，其摘要形如：
 
 ```text
 sha256:94a00394bc5a8ef503fb59db0a7d0ae9e1110866e8aee8ba40cd864cea69ea1a
 ```
 
-This digest uniquely identifies the specific version of the `nginx:latest` image,
-ensuring that any changes to the image content result in a different digest.
+只要镜像内容有任何改动，摘要就会变化，因此它能精确定位到某一特定版本。
 
-## Why are image digests important?
+## 为什么要用摘要？
 
-Using image digests instead of tags offers several advantages:
+- **不可变**：摘要绑定的是镜像“指纹”，内容不变，指纹不变；用摘要拉取，永远拿到同一份镜像。
+- **防篡改**：哪怕只改一个字节，摘要也会截然不同，可阻断供应链投毒。
+- **一致性**：开发、测试、生产各环境都引用同一摘要，彻底消除“我这边明明没问题”的差异。
 
-- Immutability: Once an image is built and its digest is generated, the content
-  tied to that digest cannot change. This means that if you pull an image using
-  its digest, you can be confident that you are retrieving exactly the same
-  image that was originally built.
+## Docker 加固镜像与摘要
 
-- Security: Digests help prevent supply chain attacks by ensuring that the image
-  content has not been tampered with. Even a small change in the image content
-  will result in a completely different digest.
+通过摘要引用 DHI，可确保应用始终运行在**唯一且安全**的镜像版本上，为合规与审计提供强一致性的基准。
 
-- Consistency: Using digests ensures that the same image is used across
-  different environments, reducing the risk of discrepancies between
-  development, staging, and production environments.
+## 查看镜像摘要
 
-## Docker Hardened Image digests
-
-By using image digests to reference DHIs, you can ensure that your applications are
-always using the exact same secure image version, enhancing security and
-compliance
-
-## View an image digest
-
-### Use the Docker CLI
-
-To view the image digest of a Docker image, you can use the following command. Replace
-`<image-name>:<tag>` with the image name and tag.
+### 使用 Docker CLI
 
 ```console
-$ docker buildx imagetools inspect <image-name>:<tag>
+$ docker buildx imagetools inspect <镜像名>:<标签>
 ```
 
-### Use the Docker Hub UI
+### 使用 Docker Hub 界面
 
-1. Go to [Docker Hub](https://hub.docker.com/) and sign in.
-2. Navigate to your organization's namespace and open the mirrored DHI repository.
-3. Select the **Tags** tab to view image variants.
-4. Each tag in the list includes a **Digest** field showing the image's SHA-256 value.
+1. 登录 [Docker Hub](https://hub.docker.com/)。
+2. 进入组织命名空间，打开对应的 DHI 仓库。
+3. 切到 **Tags** 标签页，即可看到每条标签旁的 **Digest** 字段（SHA-256 值）。
 
-## Pull an image by digest
-
-Pulling an image by digest ensures that you are pulling the exact image version
-identified by the specified digest.
-
-To pull a Docker image using its digest, use the following command. Replace
-`<image-name>` with the image name and `<digest>` with the image digest.
+## 按摘要拉取镜像
 
 ```console
-$ docker pull <image-name>@sha256:<digest>
+$ docker pull <镜像名>@sha256:<摘要>
 ```
 
-For example, to pull a `docs/dhi-python:3.13` image using its digest of
-`94a00394bc5a8ef503fb59db0a7d0ae9e1110866e8aee8ba40cd864cea69ea1a`, you would
-run:
+示例：拉取 `docs/dhi-python:3.13` 的固定版本
 
 ```console
 $ docker pull docs/dhi-python@sha256:94a00394bc5a8ef503fb59db0a7d0ae9e1110866e8aee8ba40cd864cea69ea1a
 ```
 
-## Multi-platform images and manifests
+## 多平台镜像与清单
 
-Docker Hardened Images are published as multi-platform images, which means
-a single image tag (like `docs/dhi-python:3.13`) can support multiple operating
-systems and CPU architectures, such as `linux/amd64`, `linux/arm64`, and more.
+DHI 均以**多平台镜像**形式发布：同一标签（如 `docs/dhi-python:3.13`）背后对应一张**清单列表（manifest list）**，里面再指向不同架构（`linux/amd64`、`linux/arm64` 等）的具体镜像摘要。
 
-Instead of pointing to a single image, a multi-platform tag points to a manifest
-list (also called an index), which is a higher-level object that references
-multiple image digests, one for each supported platform.
+执行：
 
-When you inspect a multi-platform image using `docker buildx imagetools inspect`, you'll see something like this:
+```console
+$ docker buildx imagetools inspect docs/dhi-python:3.13
+```
+
+可看到类似输出：
 
 ```text
 Name:      docs/dhi-python:3.13
 MediaType: application/vnd.docker.distribution.manifest.list.v2+json
-Digest:    sha256:6e05...d231
+Digest:    sha256:6e05...d231   ← 清单列表摘要
 
 Manifests:
   Name:        docs/dhi-python:3.13@sha256:94a0...ea1a
@@ -109,18 +79,11 @@ Manifests:
   ...
 ```
 
-- The manifest list digest (`sha256:6e05...d231`) identifies the overall
-  multi-platform image.
-- Each platform-specific image has its own digest (e.g., `sha256:94a0...ea1a`
-  for `linux/amd64`).
+- **清单列表摘要** 代表整个多平台镜像。  
+- **每条平台记录** 都有自己的摘要，指向对应架构的实体镜像。
 
-### Why this matters
+### 为什么这很重要
 
-- Reproducibility: If you're building or running containers on different
-  architectures, using a tag alone will resolve to the appropriate image digest
-  for your platform.
-- Verification: You can pull and verify a specific image digest for your
-  platform to ensure you're using the exact image version, not just the manifest
-  list.
-- Policy enforcement: When enforcing digest-based policies with Docker Scout,
-  each platform variant is evaluated individually using its digest.
+- **可复现**：跨架构构建或运行时，标签会自动解析到当前平台对应的摘要，保证行为一致。  
+- **可验证**：也能单独拉取某平台摘要，验证镜像内容与清单列表无关，进一步降低风险。  
+- **策略强制**：在使用 Docker Scout 做基于摘要的策略校验时，每个平台变体都会按自身摘要独立评估。

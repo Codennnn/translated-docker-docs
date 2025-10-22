@@ -1,8 +1,8 @@
 ---
-title: Docker Scout release notes
-linkTitle: Platform release notes
-description: Learn about the latest features of Docker Scout
-keywords: docker scout, release notes, changelog, features, changes, delta, new, releases
+title: Docker Scout 发布说明
+linkTitle: 平台发布说明
+description: 了解 Docker Scout 的最新功能
+keywords: docker scout, 发布说明, 更新日志, 功能, 变更, delta, 新功能, 版本
 aliases:
 - /scout/release-notes/
 tags: [Release notes]
@@ -10,10 +10,7 @@ tags: [Release notes]
 
 <!-- vale Docker.We = NO -->
 
-This page contains information about the new features, improvements, known
-issues, and bug fixes in Docker Scout releases. These release notes cover the
-Docker Scout platform, including the Dashboard. For CLI release notes, refer to
-[Docker Scout CLI release notes](./cli.md).
+本页面包含 Docker Scout 版本的新功能、改进、已知问题和错误修复信息。这些发布说明涵盖 Docker Scout 平台，包括仪表板。有关 CLI 发布说明，请参阅 [Docker Scout CLI 发布说明](./cli.md)。
 
 ## Q4 2024
 

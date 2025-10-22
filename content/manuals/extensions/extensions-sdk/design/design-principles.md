@@ -1,33 +1,33 @@
 ---
-title: Docker design principles
-description: Docker extension design
+title: Docker 设计原则
+description: Docker 扩展设计
 keywords: Docker, extensions, design
 aliases: 
  - /desktop/extensions-sdk/design/design-principles/
 weight: 20
 ---
 
-## Provide actionable guidance
+## 提供可操作的指导
 
-We anticipate needs and provide simple explanations with clear actions so people are never lost and always know what to do next. Recommendations lead users to functionality that enhances the experience and extends their knowledge.
+我们预判需求并提供带有明确操作的简单解释，让人们永远不会迷失方向，始终知道下一步该做什么。推荐功能引导用户使用能够增强体验并扩展知识的功能。
 
-## Create value through confidence
+## 通过信心创造价值
 
-People from all levels of experience should feel they know how to use our product. Experiences are familiar, unified, and easy to use so all users feel like experts.
+各个经验水平的用户都应该感觉他们知道如何使用我们的产品。体验是熟悉、统一且易于使用的，让所有用户都感觉自己是专家。
 
-## Infuse productivity with delight
+## 以愉悦提升生产力
 
-We seek out moments of purposeful delight that elevate rather than distract, making work easier and more gratifying. Simple tasks are automated and users are left with more time for innovation.
+我们寻找有目的性的愉悦时刻，这些时刻能够提升而不是分散注意力，使工作更轻松、更有满足感。简单任务被自动化，用户有更多时间进行创新。
 
-## Build trust through transparency
+## 通过透明度建立信任
 
-We always provide clarity on what is happening and why. No amount of detail is withheld; the right information is shown at the right time and is always accessible.
+我们始终清晰地说明正在发生的事情及其原因。不保留任何细节；在正确的时间显示正确的信息，并且始终可访问。
 
-## Scale with intention
+## 有意扩展规模
 
-Our products focus on inclusive growth and are continuously useful and adapt to match changing individual needs. We support all levels of expertise by meeting users where they are with conscious personalization.
+我们的产品专注于包容性增长，持续有用，并适应变化的个人需求。我们通过有意识的个性化来满足用户，支持所有专业水平。
 
-## What's next?
+## 下一步
 
-- Take a look at our [UI styling guidelines](index.md).
-- Learn how to [publish your extension](../extensions/_index.md).
+- 查看我们的[UI 样式指南](index.md)。
+- 了解如何[发布您的扩展](../extensions/_index.md)。

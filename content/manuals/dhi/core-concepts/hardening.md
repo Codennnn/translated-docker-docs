@@ -1,80 +1,64 @@
 ---
-title: Base image hardening
-linktitle: Hardening
-description: Learn how Docker Hardened Images are designed for security, with minimal components, nonroot execution, and secure-by-default configurations.
-keywords: hardened base image, minimal container image, non-root containers, secure container configuration, remove package manager
+title: 基础镜像加固
+linktitle: 加固
+description: 了解 Docker 加固镜像如何通过最小化组件、非 root 执行与默认安全配置实现安全设计。
+keywords: 加固基础镜像, 最小容器镜像, 非 root 容器, 安全容器配置, 移除包管理器
 ---
 
-## What is base image hardening?
+## 什么是基础镜像加固？
 
-Base image hardening is the process of securing the foundational layers of a
-container image by minimizing what they include and configuring them with
-security-first defaults. A hardened base image removes unnecessary components,
-like shells, compilers, and package managers, which limits the available attack
-surface, making it more difficult for an attacker to gain control or escalate
-privileges inside the container.
+基础镜像加固是指**通过最小化容器镜像底层内容并采用安全优先的默认配置**来保护其安全性的过程。加固后的基础镜像会移除 Shell、编译器、包管理器等非必需组件，从而**缩小攻击面**，让攻击者更难在容器内获得控制权或提升权限。
 
-Hardening also involves applying best practices like running as a non-root user,
-reducing writable surfaces, and ensuring consistency through immutability. While
-[Docker Official
-Images](../../docker-hub/image-library/trusted-content.md#docker-official-images)
-and [Docker Verified Publisher
-Images](../../docker-hub/image-library/trusted-content.md#verified-publisher-images)
-follow best practices for security, they may not be as hardened as Docker
-Hardened Images, as they are designed to support a broader range of use cases.
+加固还涵盖以下最佳实践：
+- 默认以非 root 身份运行
+- 减少可写表面
+- 通过不可变性保证一致性
 
-## Why is it important?
+虽然 [Docker 官方镜像](../../docker-hub/image-library/trusted-content.md#docker-official-images) 与 [Docker 验证发布者镜像](../../docker-hub/image-library/trusted-content.md#verified-publisher-images) 已遵循安全最佳实践，但它们需兼顾更广泛的使用场景，因此**加固程度不及 Docker 加固镜像**。
 
-Most containers inherit their security posture from the base image they use. If
-the base image includes unnecessary tools or runs with elevated privileges,
-every container built on top of it is exposed to those risks.
+## 为何重要？
 
-Hardening the base image:
+容器的安全姿态**直接继承自基础镜像**。如果基础镜像包含多余工具或以高权限运行，所有派生容器都会暴露在同等风险之下。
 
-- Reduces the attack surface by removing tools and libraries that could be exploited
-- Enforces least privilege by dropping root access and restricting what the container can do
-- Improves reliability and consistency by avoiding runtime changes and drift
-- Aligns with secure software supply chain practices and helps meet compliance standards
+对基础镜像进行加固可：
+- **缩小攻击面**：剔除可被利用的工具与库
+- **强制执行最小权限**：放弃 root 并限制容器能力
+- **提升可靠性与一致性**：避免运行时变更与漂移
+- **契合安全供应链规范**：助力满足合规要求
 
-Using hardened base images is a critical first step in securing the software you
-build and run in containers.
+使用加固基础镜像是**保障容器内软件安全的第一步**。
 
-## What's removed and why
+## 移除清单与原因
 
-Hardened images typically exclude common components that are risky or unnecessary in secure production environments:
+加固镜像通常会剔除生产环境中高风险或不必要的常见组件：
 
-| Removed component                                | Reason                                                                           |
-|--------------------------------------------------|----------------------------------------------------------------------------------|
-| Shells (e.g., `sh`, `bash`)                      | Prevents users or attackers from executing arbitrary commands inside containers  |
-| Package managers (e.g., `apt`, `apk`)            | Disables the ability to install software post-build, reducing drift and exposure |
-| Compilers and interpreters                       | Avoids introducing tools that could be used to run or inject malicious code      |
-| Debugging tools (e.g., `strace`, `curl`, `wget`) | Reduces risk of exploitation or information leakage                              |
-| Unused libraries or locales                      | Shrinks image size and minimizes attack vectors                                  |
+| 被移除组件                                | 原因说明                                               |
+|--------------------------------------------|--------------------------------------------------------|
+| Shell（如 `sh`、`bash`）                  | 防止用户或攻击者在容器内执行任意命令                 |
+| 包管理器（如 `apt`、`apk`）                | 禁止构建后安装软件，减少漂移与暴露面                 |
+| 编译器与解释器                             | 避免引入可被用来运行或注入恶意代码的工具             |
+| 调试工具（如 `strace`、`curl`、`wget`）    | 降低被利用或信息泄露的风险                           |
+| 未使用的库或本地化文件                     | 缩小镜像体积并减少潜在攻击向量                       |
 
-## How Docker Hardened Images apply base image hardening
+## Docker 加固镜像如何落地基础镜像加固
 
-Docker Hardened Images (DHIs) apply base image hardening principles by design.
-Each image is constructed to include only what is necessary for its specific
-purpose, whether that’s building applications (with `-dev` or `-sdk` tags) or
-running them in production.
+Docker 加固镜像（DHI）**天生遵循基础镜像加固原则**。每张镜像仅保留与其特定用途（开发、构建或生产运行）相关的最小内容。
 
-### Docker Hardened Image traits
+### DHI 的四大特征
 
-Docker Hardened Images are built to be:
+- **极简**：仅包含必要库与二进制文件
+- **不可变**：构建时即固定，运行时禁止安装
+- **默认非 root**：容器以无特权用户运行（除非另行配置）
+- **场景细分**：提供开发（`-dev`）、SDK 构建（`-sdk`）、生产运行等不同标签，按需取用
 
-- Minimal: Only essential libraries and binaries are included
-- Immutable: Images are fixed at build time—no runtime installations
-- Non-root by default: Containers run as an unprivileged user unless configured otherwise
-- Purpose-scoped: Different tags are available for development (`-dev`), SDK-based builds (`-sdk`), and production runtime
+这些特性可在开发、测试、生产全链路**强制执行一致且安全的行为**。
 
-These characteristics help enforce consistent, secure behavior across development, testing, and production environments.
+### 兼容性注意事项
 
-### Docker Hardened Image compatibility considerations
+由于 DHI 剔除了大量常用工具，**某些场景需额外适配**：
 
-Because Docker Hardened Images strip out many common tools, they may not work out of the box for all use cases. You may need to:
+- 采用**多阶段构建**：在 `-dev` 镜像中编译或安装依赖，再将产物复制到加固运行时镜像
+- 用等效二进制入口点替换 Shell 脚本，或按需显式引入 Shell
+- 借助 [Docker Debug](../../../reference/cli/docker/debug.md) 临时排查容器，**无需改动基础镜像**
 
-- Use multi-stage builds to compile code or install dependencies in a `-dev` image and copy the output into a hardened runtime image
-- Replace shell scripts with equivalent entrypoint binaries or explicitly include a shell if needed
-- Use [Docker Debug](../../../reference/cli/docker/debug.md) to temporarily inspect or troubleshoot containers without altering the base image
-
-These trade-offs are intentional and help support best practices for building secure, reproducible, and production-ready containers.
+以上权衡**有意为之**，旨在引导用户构建**安全、可复现、生产就绪**的容器。

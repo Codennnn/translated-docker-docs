@@ -1,58 +1,30 @@
 ---
-title: glibc and musl support in Docker Hardened Images
-linktitle: glibc and musl
-description: Compare glibc and musl variants of DHIs to choose the right base image for your application’s compatibility, size, and performance needs.
-keywords: glibc vs musl, alpine musl image, debian glibc container, docker hardened images compatibility, c library in containers
+title: Docker 加固镜像中的 glibc 与 musl 支持
+linktitle: glibc 与 musl
+description: 对比 glibc 与 musl 两种 DHI 变体，帮助您根据应用的兼容性、体积与性能需求选择最合适的基础镜像。
+keywords: glibc 对比 musl, alpine musl 镜像, debian glibc 容器, docker 加固镜像兼容性, 容器中的 C 库
 ---
 
-Docker Hardened Images (DHI) are built to prioritize security without
-sacrificing compatibility with the broader open source and enterprise software
-ecosystem. A key aspect of this compatibility is support for common Linux
-standard libraries: `glibc` and `musl`.
+Docker 加固镜像（DHI）在“安全优先”的同时，依旧保持与开源及企业软件生态的广泛兼容，其中关键一环便是对 Linux 两大标准 C 库——`glibc` 与 `musl`——的全面支持。
 
-## What are glibc and musl?
+## glibc 与 musl 是什么？
 
-When you run Linux-based containers, the image's C library plays a key role in
-how applications interact with the operating system. Most modern Linux
-distributions rely on one of the following standard C libraries:
+在 Linux 容器里，镜像所携带的 C 库决定了应用与内核的交互方式。主流发行版通常采用以下二者之一：
 
-- `glibc` (GNU C Library): The standard C library on mainstream distributions
-  like Debian, Ubuntu, and Red Hat Enterprise Linux. It is widely supported and
-  typically considered the most compatible option across languages, frameworks,
-  and enterprise software.
+- `glibc`（GNU C Library）：Debian、Ubuntu、RHEL 等“重量级”发行版的默认 C 库，语言运行时、框架及企业软件对其支持最完整，兼容性最佳。
+- `musl`：Alpine Linux 等极简发行版选用的轻量级实现，镜像体积更小、启动更快，但部分依赖 `glibc` 特性的软件可能出现兼容性问题。
 
-- `musl`: A lightweight alternative to `glibc`, commonly used in minimal
-  distributions like Alpine Linux. While it offers smaller image sizes and
-  performance benefits, `musl` is not always fully compatible with software that
-  expects `glibc`.
+## DHI 的兼容性策略
 
-## DHI compatibility
+DHI 同时提供基于 `glibc`（Debian）与 `musl`（Alpine）的两种变体。对于企业级应用或对兼容性要求极高的语言运行时，官方优先推荐使用 glibc 版本。
 
-DHI images are available in both `glibc`-based (e.g., Debian) and `musl`-based
-(e.g., Alpine) variants. For enterprise applications and language runtimes where
-compatibility is critical, we recommend using DHI images based on glibc.
+## 如何抉择：glibc 还是 musl？
 
-## What to choose, glibc or musl?
+| 场景 | 推荐变体 | 理由 |
+|------|----------|------|
+| 企业工作负载、商业软件、多语言运行时 | Debian（glibc） | 兼容性最广，踩坑最少 |
+| .NET、Java、Python 带本地扩展 | Debian（glibc） | 原生扩展默认链接 glibc |
+| 极简体积、已知依赖、可控栈 | Alpine（musl） | 镜像最小，攻击面最小 |
+| 启动速度优先、CI/CD 频繁拉取 | Alpine（musl） | 拉取/解压耗时最低 |
 
-Docker Hardened Images are available in both glibc-based (Debian) and musl-based
-(Alpine) variants, allowing you to choose the best fit for your workload.
-
-Choose Debian-based (`glibc`) images if:
-
-- You need broad compatibility with enterprise workloads, language runtimes, or
-  proprietary software.
-- You're using ecosystems like .NET, Java, or Python with native extensions that
-  depend on `glibc`.
-- You want to minimize the risk of runtime errors due to library
-  incompatibilities.
-
-Choose Alpine-based (`musl`) images if:
-
-- You want a minimal footprint with smaller image sizes and reduced surface
-  area.
-- You're building a custom or tightly controlled application stack where
-  dependencies are known and tested.
-- You prioritize startup speed and lean deployments over maximum compatibility.
-
-If you're unsure, start with a Debian-based image to ensure compatibility, and
-evaluate Alpine once you're confident in your application's dependencies.
+**不确定时**，先用 Debian 版本验证功能；待依赖梳理清晰后，再评估是否迁移至 Alpine，以兼顾安全与性能。

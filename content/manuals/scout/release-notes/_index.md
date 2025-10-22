@@ -1,6 +1,6 @@
 ---
 build:
   render: never
-title: Release notes
+title: 发布说明
 weight: 999
 ---

@@ -1,40 +1,40 @@
 ---
-title: Interacting with Kubernetes from an extension
-linkTitle: Interacting with Kubernetes
-description: How to connect to a Kubernetes cluster from an extension
-keywords: Docker, Extensions, sdk, Kubernetes
+title: 从扩展与 Kubernetes 交互
+linkTitle: 与 Kubernetes 交互
+description: 如何从扩展连接到 Kubernetes 集群
+keywords: Docker, 扩展, sdk, Kubernetes
 aliases:
  - /desktop/extensions-sdk/dev/kubernetes/
  - /desktop/extensions-sdk/guides/kubernetes/
 ---
 
-The Extensions SDK does not provide any API methods to directly interact with the Docker Desktop managed Kubernetes cluster or any other created using other tools such as KinD. However, this page provides a way for you to use other SDK APIs to interact indirectly with a Kubernetes cluster from your extension.
+扩展 SDK 不提供任何直接与 Docker Desktop 管理的 Kubernetes 集群或其他使用 KinD 等工具创建的集群交互的 API 方法。但是，本页面为您提供了使用其他 SDK API 从扩展中间接与 Kubernetes 集群交互的方法。
 
-To request an API that directly interacts with Docker Desktop-managed Kubernetes, you can upvote [this issue](https://github.com/docker/extensions-sdk/issues/181) in the Extensions SDK GitHub repository.
+如果您希望请求直接与 Docker Desktop 管理的 Kubernetes 交互的 API，可以在 Extensions SDK GitHub 仓库中为[此问题](https://github.com/docker/extensions-sdk/issues/181)投票。
 
-## Prerequisites
+## 先决条件
 
-### Turn on Kubernetes
+### 启用 Kubernetes
 
-You can use the built-in Kubernetes in Docker Desktop to start a Kubernetes single-node cluster.
-A `kubeconfig` file is used to configure access to Kubernetes when used in conjunction with the `kubectl` command-line tool, or other clients.
-Docker Desktop conveniently provides the user with a local preconfigured `kubeconfig` file and `kubectl` command within the user’s home area. It is a convenient way to fast-tracking access for those looking to leverage Kubernetes from Docker Desktop.
+您可以使用 Docker Desktop 内置的 Kubernetes 来启动 Kubernetes 单节点集群。
+`kubeconfig` 文件用于配置对 Kubernetes 的访问权限，通常与 `kubectl` 命令行工具或其他客户端一起使用。
+Docker Desktop 会在用户的主目录区域方便地提供预配置的 `kubeconfig` 文件和 `kubectl` 命令。对于希望通过 Docker Desktop 利用 Kubernetes 的用户来说，这是一种快速访问的便捷方式。
 
-## Ship the `kubectl` as part of the extension
+## 将 `kubectl` 作为扩展的一部分
 
-If your extension needs to interact with Kubernetes clusters, it is recommended that you include the `kubectl` command line tool as part of your extension. By doing this, users who install your extension get `kubectl` installed on their host.
+如果您的扩展需要与 Kubernetes 集群交互，建议您将 `kubectl` 命令行工具包含在扩展中。这样做后，安装您的扩展的用户将在其主机上安装 `kubectl`。
 
-To find out how to ship the `kubectl` command line tool for multiple platforms as part of your Docker Extension image, see [Build multi-arch extensions](../extensions/multi-arch.md#adding-multi-arch-binaries).
+要了解如何将多平台的 `kubectl` 命令行工具作为 Docker 扩展镜像的一部分进行分发，请参阅[构建多架构扩展](../extensions/multi-arch.md#adding-multi-arch-binaries)。
 
-## Examples
+## 示例
 
-The following code snippets have been put together in the [Kubernetes Sample Extension](https://github.com/docker/extensions-sdk/tree/main/samples/kubernetes-sample-extension). It shows how to interact with a Kubernetes cluster by shipping the `kubectl` command-line tool.
+以下代码片段来自 [Kubernetes 示例扩展](https://github.com/docker/extensions-sdk/tree/main/samples/kubernetes-sample-extension)。它展示了如何通过分发 `kubectl` 命令行工具与 Kubernetes 集群交互。
 
-### Check the Kubernetes API server is reachable
+### 检查 Kubernetes API 服务器是否可达
 
-Once the `kubectl` command-line tool is added to the extension image in the `Dockerfile`, and defined in the `metadata.json`, the Extensions framework deploys `kubectl` to the users' host when the extension is installed.
+当 `kubectl` 命令行工具在 `Dockerfile` 中添加到扩展镜像中，并在 `metadata.json` 中定义后，扩展框架会在安装扩展时将 `kubectl` 部署到用户的主机上。
 
-You can use the JS API `ddClient.extension.host?.cli.exec` to issue `kubectl` commands to, for instance, check whether the Kubernetes API server is reachable given a specific context:
+您可以使用 JS API `ddClient.extension.host?.cli.exec` 来发出 `kubectl` 命令，例如检查给定上下文下的 Kubernetes API 服务器是否可达：
 
 ```typescript
 const output = await ddClient.extension.host?.cli.exec("kubectl", [
@@ -46,7 +46,7 @@ const output = await ddClient.extension.host?.cli.exec("kubectl", [
 ]);
 ```
 
-### List Kubernetes contexts
+### 列出 Kubernetes 上下文
 
 ```typescript
 const output = await ddClient.extension.host?.cli.exec("kubectl", [
@@ -57,7 +57,7 @@ const output = await ddClient.extension.host?.cli.exec("kubectl", [
 ]);
 ```
 
-### List Kubernetes namespaces
+### 列出 Kubernetes 命名空间
 
 ```typescript
 const output = await ddClient.extension.host?.cli.exec("kubectl", [
@@ -71,17 +71,17 @@ const output = await ddClient.extension.host?.cli.exec("kubectl", [
 ]);
 ```
 
-## Persisting the kubeconfig file
+## 持久化 kubeconfig 文件
 
-Below there are different ways to persist and read the `kubeconfig` file from the host filesystem. Users can add, edit, or remove Kubernetes context to the `kubeconfig` file at any time.
+以下是几种从主机文件系统持久化和读取 `kubeconfig` 文件的不同方法。用户可以随时向 `kubeconfig` 文件添加、编辑或删除 Kubernetes 上下文。
 
-> Warning
+> 警告
 >
-> The `kubeconfig` file is very sensitive and if found can give an attacker administrative access to the Kubernetes Cluster.
+> `kubeconfig` 文件非常敏感，如果被发现可能会让攻击者获得 Kubernetes 集群的管理访问权限。
 
-### Extension's backend container
+### 扩展的后端容器
 
-If you need your extension to persist the `kubeconfig` file after it's been read, you can have a backend container that exposes an HTTP POST endpoint to store the content of the file either in memory or somewhere within the container filesystem. This way, if the user navigates out of the extension to another part of Docker Desktop and then comes back, you don't need to read the `kubeconfig` file again.
+如果您需要扩展在读取 `kubeconfig` 文件后将其持久化，可以让后端容器暴露一个 HTTP POST 端点，将文件内容存储在内存或容器文件系统中的某个位置。这样，当用户从扩展导航到 Docker Desktop 的其他部分然后再回来时，您就不需要再次读取 `kubeconfig` 文件。
 
 ```typescript
 export const updateKubeconfig = async () => {
@@ -98,7 +98,7 @@ export const updateKubeconfig = async () => {
     return false;
   }
 
-  // call backend container to store the kubeconfig retrieved into the container's memory or filesystem
+  // 调用后端容器将检索到的 kubeconfig 存储到容器的内存或文件系统中
   try {
     await ddClient.extension.vm?.service?.post("/store-kube-config", {
       data: kubeConfig?.stdout,
@@ -109,10 +109,10 @@ export const updateKubeconfig = async () => {
 };
 ```
 
-### Docker volume
+### Docker 卷
 
-Volumes are the preferred mechanism for persisting data generated by and used by Docker containers. You can make use of them to persist the `kubeconfig` file.
-By persisting the `kubeconfig` in a volume you won't need to read the `kubeconfig` file again when the extension pane closes. This makes it ideal for persisting data when navigating out of the extension to other parts of Docker Desktop.
+卷是持久化 Docker 容器生成和使用的数据的首选机制。您可以利用它们来持久化 `kubeconfig` 文件。
+通过在卷中持久化 `kubeconfig`，当扩展面板关闭时您无需再次读取 `kubeconfig` 文件。这使得在导航到 Docker Desktop 的其他部分时持久化数据成为理想选择。
 
 ```typescript
 const kubeConfig = await ddClient.extension.host?.cli.exec("kubectl", [
@@ -139,10 +139,10 @@ await ddClient.docker.cli.exec("run", [
 ]);
 ```
 
-### Extension's `localStorage`
+### 扩展的 `localStorage`
 
-`localStorage` is one of the mechanisms of a browser's web storage. It allows users to save data as key-value pairs in the browser for later use.
-`localStorage` does not clear data when the browser (the extension pane) closes. This makes it ideal for persisting data when navigating out of the extension to other parts of Docker Desktop.
+`localStorage` 是浏览器 Web 存储的机制之一。它允许用户在浏览器中以键值对的形式保存数据供以后使用。
+当浏览器（扩展面板）关闭时，`localStorage` 不会清除数据。这使得在导航到 Docker Desktop 的其他部分时持久化数据成为理想选择。
 
 ```typescript
 localStorage.setItem("kubeconfig", kubeConfig);

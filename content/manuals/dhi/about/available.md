@@ -1,94 +1,65 @@
 ---
-linktitle: Image types
-title: Available types of Docker Hardened Images
-description: Learn about the different image types, distributions, and variants offered in the Docker Hardened Images catalog.
-keywords: docker hardened images, distroless containers, distroless images, docker distroless, alpine base image, debian base image, development containers, runtime containers, secure base image, multi-stage builds
+linktitle: 镜像类型
+title: 可用的 Docker 加固镜像类型
+description: 了解 Docker 加固镜像目录中提供的不同镜像类型、发行版和变体。
+keywords: docker 加固镜像, 无发行版容器, 无发行版镜像, docker 无发行版, alpine 基础镜像, debian 基础镜像, 开发容器, 运行时容器, 安全基础镜像, 多阶段构建
 weight: 20
 ---
 
-Docker Hardened Images (DHI) is a comprehensive catalog of
-security-hardened container images built to meet diverse
-development and production needs.
+Docker 加固镜像（DHI）是一个全面的目录，包含经过安全强化的容器镜像，专为满足多样化的开发和生产需求而构建。
 
-## Framework and application images
+## 框架和应用镜像
 
-DHI includes a selection of popular frameworks and application images, each
-hardened and maintained to ensure security and compliance. These images
-integrate seamlessly into existing workflows, allowing developers to focus on
-building applications without compromising on security.
+DHI 包含了一系列流行的框架和应用镜像，每个镜像都经过强化和维护，以确保安全性和合规性。这些镜像可以无缝集成到现有工作流程中，让开发人员能够专注于构建应用程序，而无需在安全性上做出妥协。
 
-For example, you might find repositories like the following in the DHI catalog:
+例如，您可能在 DHI 目录中找到以下仓库：
 
-- `node`: framework for Node.js applications
-- `python`: framework for Python applications
-- `nginx`: web server image
+- `node`：用于 Node.js 应用程序的框架
+- `python`：用于 Python 应用程序的框架
+- `nginx`：Web 服务器镜像
 
-## Compatibility options
+## 兼容性选项
 
-Docker Hardened Images are available in different base image options, giving you
-flexibility to choose the best match for your environment and workload
-requirements:
+Docker 硬化镜像提供不同的基础镜像选项，让您能够灵活选择最适合自己环境和工作负载需求的版本：
 
-- Debian-based images: A good fit if you're already working in glibc-based
-  environments. Debian is widely used and offers strong compatibility across
-  many language ecosystems and enterprise systems.
+- 基于 Debian 的镜像：如果您已经在基于 glibc 的环境中工作，这是一个很好的选择。Debian 使用广泛，在许多语言生态系统和企业系统中都提供强大的兼容性。
 
-- Alpine-based images: A smaller and more lightweight option using musl libc.
-  These images tend to be small and are therefore faster to pull and have a
-  reduced footprint.
+- 基于 Alpine 的镜像：使用 musl libc 的更小、更轻量级的选项。这些镜像往往体积较小，因此拉取速度更快，占用空间更少。
 
-Each image maintains a minimal and secure runtime layer by removing
-non-essential components like shells, package managers, and debugging tools.
-This helps reduce the attack surface while retaining compatibility with common
-runtime environments.
+每个镜像都通过移除非必要组件（如 shell、包管理器和调试工具）来保持最小化和安全的运行时层。这有助于减少攻击面，同时保持与常见运行时环境的兼容性。
 
-Example tags include:
+示例标签包括：
 
-- `3.9.23-alpine3.21`: Alpine-based image for Python 3.9.23
-- `3.9.23-debian12`: Debian-based image for Python 3.9.23
+- `3.9.23-alpine3.21`：基于 Alpine 的 Python 3.9.23 镜像
+- `3.9.23-debian12`：基于 Debian 的 Python 3.9.23 镜像
 
-If you're not sure which to choose, start with the base you're already familiar
-with. Debian tends to offer the broadest compatibility.
+如果您不确定选择哪个，可以从您已经熟悉的基础镜像开始。Debian 通常提供最广泛的兼容性。
 
-## Development and runtime variants
+## 开发和运行时变体
 
-To accommodate different stages of the application lifecycle, DHI offers all
-language framework images and select application images in two variants:
+为了适应应用程序生命周期的不同阶段，DHI 为所有语言框架镜像和部分应用镜像提供两种变体：
 
-- Development (dev) images: Equipped with necessary development tools and
-libraries, these images facilitate the building and testing of applications in a
-secure environment. They include a shell, package manager, a root user, and
-other tools needed for development.
+- 开发（dev）镜像：配备必要的开发工具和库，这些镜像在安全环境中促进应用程序的构建和测试。它们包含 shell、包管理器、root 用户和其他开发所需的工具。
 
-- Runtime images: Stripped of development tools, these images contain only the
-essential components needed to run applications, ensuring a minimal attack
-surface in production.
+- 运行时镜像：去除了开发工具，这些镜像只包含运行应用程序所需的基本组件，确保在生产环境中具有最小的攻击面。
 
-This separation supports multi-stage builds, enabling developers to compile code
-in a secure build environment and deploy it using a lean runtime image.
+这种分离支持多阶段构建，使开发人员能够在安全的构建环境中编译代码，并使用精简的运行时镜像进行部署。
 
-For example, you might find tags like the following in a DHI repository:
+例如，您可能在 DHI 仓库中找到以下标签：
 
-- `3.9.23-debian12`: runtime image for Python 3.9.23
-- `3.9.23-debian12-dev`: development image for Python 3.9.23
+- `3.9.23-debian12`：Python 3.9.23 的运行时镜像
+- `3.9.23-debian12-dev`：Python 3.9.23 的开发镜像
 
-## FIPS variants
+## FIPS 变体
 
-Some Docker Hardened Images include a `-fips` variant. These variants use
-cryptographic modules that have been validated under [FIPS
-140](../core-concepts/fips.md), a U.S. government standard for secure
-cryptographic operations.
+一些 Docker 硬化镜像包含 `-fips` 变体。这些变体使用经过 [FIPS 140](../core-concepts/fips.md) 验证的加密模块，FIPS 140 是美国政府制定的安全加密操作标准。
 
-FIPS variants are designed to help organizations meet regulatory and compliance
-requirements related to cryptographic use in sensitive or regulated
-environments.
+FIPS 变体旨在帮助组织满足在敏感或受监管环境中使用加密的相关法规和合规要求。
 
-You can recognize FIPS variants by their tag that includes `-fips`.
+您可以通过包含 `-fips` 的标签识别 FIPS 变体。
 
-For example:
-- `3.13-fips`: FIPS variant of the Python 3.13 image
-- `3.9.23-debian12-fips`: FIPS variant of the Debian-based Python 3.9.23 image
+例如：
+- `3.13-fips`：Python 3.13 镜像的 FIPS 变体
+- `3.9.23-debian12-fips`：基于 Debian 的 Python 3.9.23 镜像的 FIPS 变体
 
-FIPS variants can be used in the same way as any other Docker Hardened Image and
-are ideal for teams operating in regulated industries or under compliance
-frameworks that require cryptographic validation.
+FIPS 变体可以像任何其他 Docker 硬化镜像一样使用，非常适合在受监管行业运营或在需要加密验证的合规框架下工作的团队。

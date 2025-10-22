@@ -1,52 +1,26 @@
 ---
-title: Software Supply Chain Security
-linktitle: Software Supply Chain Security
-description: Learn how Docker Hardened Images help secure every stage of your software supply chain with signed metadata, provenance, and minimal attack surface.
-keywords: software supply chain security, secure container images, signed image provenance, docker sbom, distroless security
+title: 软件供应链安全
+linktitle: 软件供应链安全
+description: 了解 Docker 加固镜像如何通过签名元数据、来源证明和最小攻击面来保护软件供应链的每个阶段。
+keywords: 软件供应链安全, 安全容器镜像, 签名镜像来源证明, docker sbom, 无发行版安全
 ---
 
-## What is Software Supply Chain Security (SSCS)?
+## 什么是软件供应链安全 (SSCS)？
 
-SSCS encompasses practices and strategies designed to safeguard the entire
-lifecycle of software development from initial code creation to deployment and
-maintenance. It focuses on securing all components. This includes code,
-dependencies, build processes, and distribution channels in order to prevent
-malicious actors from compromising the software supply chain. Given the
-increasing reliance on open-source libraries and third-party components,
-ensuring the integrity and security of these elements is paramount
+软件供应链安全 (Software Supply Chain Security, SSCS) 包含旨在保护软件开发从初始代码创建到部署和维护的整个生命周期的实践和策略。它专注于保护所有组件，包括代码、依赖项、构建过程和分发渠道，以防止恶意行为者破坏软件供应链。鉴于对开源库和第三方组件的日益依赖，确保这些元素的完整性和安全性至关重要。
 
-## Why is SSCS important?
+## 为什么 SSCS 很重要？
 
-The significance of SSCS has escalated due to the rise in sophisticated
-cyberattacks targeting software supply chains. Recent incidents and the
-exploitation of vulnerabilities in open-source components have underscored the
-critical need for robust supply chain security measures. Compromises at any
-stage of the software lifecycle can lead to widespread vulnerabilities, data
-breaches, and significant financial losses.
+SSCS 的重要性因针对软件供应链的复杂网络攻击的增加而升级。最近的事件以及对开源组件漏洞的利用凸显了对强大供应链安全措施的迫切需求。软件生命周期任何阶段的妥协都可能导致广泛的漏洞、数据泄露和重大的财务损失。
 
-## How Docker Hardened Images contribute to SSCS
+## Docker 加固镜像如何贡献于 SSCS
 
-Docker Hardened Images (DHI) are purpose-built container images designed with
-security at their core, addressing the challenges of modern software supply
-chain security. By integrating DHI into your development and deployment
-pipelines, you can enhance your organization's SSCS posture through the
-following features:
+Docker 加固镜像 (DHI) 是专门构建的容器镜像，以安全为核心设计，应对现代软件供应链安全的挑战。通过将 DHI 集成到您的开发和部署流水线中，您可以通过以下特性增强组织的 SSCS 态势：
 
-- Minimal attack surface: DHIs are engineered to be ultra-minimal, stripping
-  away unnecessary components and reducing the attack surface by up to 95%. This
-  distroless approach minimizes potential entry points for malicious actors.
+- **最小攻击面**：DHI 被设计为超小型，剥离不必要的组件，将攻击面减少高达 95%。这种无发行版方法最大限度地减少了恶意行为者的潜在入口点。
 
-- Cryptographic signing and provenance: Each DHI is cryptographically signed,
-  ensuring authenticity and integrity. Build provenance is maintained, providing
-  verifiable evidence of the image's origin and build process, aligning with
-  standards like SLSA (Supply-chain Levels for Software Artifacts).
+- **加密签名和来源证明**：每个 DHI 都经过加密签名，确保真实性和完整性。构建来源证明得到维护，提供镜像来源和构建过程的可验证证据，符合 SLSA（软件制品供应链级别）等标准。
 
-- Software Bill of Materials (SBOM): DHIs include a comprehensive SBOM,
-  detailing all components and dependencies within the image. This transparency
-  aids in vulnerability management and compliance tracking, enabling teams to
-  assess and mitigate risks effectively.
+- **软件物料清单 (SBOM)**：DHI 包含全面的 SBOM，详细说明镜像内的所有组件和依赖项。这种透明度有助于漏洞管理和合规性跟踪，使团队能够有效评估和缓解风险。
 
-- Continuous maintenance and rapid CVE remediation: Docker maintains DHIs with
-  regular updates and security patches, backed by an SLA for addressing critical
-  and high-severity vulnerabilities. This proactive approach helps ensure that
-  images remain secure and compliant with enterprise standards.
+- **持续维护和快速 CVE 修复**：Docker 通过定期更新和安全补丁维护 DHI，并支持 SLA 来处理关键和高严重性漏洞。这种主动方法有助于确保镜像保持安全并符合企业标准。

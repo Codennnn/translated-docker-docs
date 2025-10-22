@@ -1,7 +1,7 @@
 ---
-title: UI styling overview for Docker extensions
-linkTitle: Design and UI styling
-description: Docker extension design
+title: Docker 扩展 UI 样式概述
+linkTitle: 设计和 UI 样式
+description: Docker 扩展设计
 keywords: Docker, extensions, design
 aliases:
  - /desktop/extensions-sdk/design/design-overview/
@@ -10,46 +10,46 @@ aliases:
 weight: 60
 ---
 
-Our Design System is a constantly evolving set of specifications that aim to ensure visual consistency across Docker products, and meet [level AA accessibility standards](https://www.w3.org/WAI/WCAG2AA-Conformance). We've opened parts of it to extension authors, documenting basic styles (color, typography) and components. See: [Docker Extensions Styleguide](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771).
+我们的设计系统是一套不断发展的规范，旨在确保 Docker 产品之间的视觉一致性，并满足 [AA 级无障碍标准](https://www.w3.org/WAI/WCAG2AA-Conformance)。我们已向扩展开发者开放了部分系统内容，包括基本样式（颜色、排版）和组件。请参阅：[Docker 扩展样式指南](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771)。
 
-We require extensions to match the wider Docker Desktop UI to a certain degree, and reserve the right to make this stricter in the future.
+我们要求扩展在一定程度上与更广泛的 Docker Desktop UI 保持一致，并保留在未来使这一要求更加严格的权利。
 
-To get started on your UI, follow the steps below.
+要开始构建您的 UI，请遵循以下步骤。
 
-## Step one: Choose your framework
+## 步骤一：选择您的框架
 
-### Recommended: React+MUI, using our theme
+### 推荐：使用我们的主题的 React+MUI
 
-Docker Desktop's UI is written in React and [MUI](https://mui.com/) (using Material UI to specific). This is the only officially supported framework for building extensions, and the one that our `init` command automatically configures for you. Using it brings significant benefits to authors:
+Docker Desktop 的 UI 是使用 React 和 [MUI](https://mui.com/)（具体来说是 Material UI）编写的。这是构建扩展的唯一官方支持框架，也是我们的 `init` 命令为您自动配置的框架。使用它为开发者带来显著优势：
 
-- You can use our [Material UI theme](https://www.npmjs.com/package/@docker/docker-mui-theme) to automatically replicate Docker Desktop's look and feel.
-- In future, we'll release utilities and components specifically targeting this combination (e.g. custom MUI components, or React hooks for interacting with Docker).
+- 您可以使用我们的 [Material UI 主题](https://www.npmjs.com/package/@docker/docker-mui-theme) 自动复制 Docker Desktop 的外观和感觉。
+- 未来，我们将发布专门针对这种组合的工具和组件（例如自定义 MUI 组件，或用于与 Docker 交互的 React hooks）。
 
-Read our [MUI best practices](mui-best-practices.md) guide to learn future-proof ways to use MUI with Docker Desktop.
+阅读我们的 [MUI 最佳实践](mui-best-practices.md) 指南，了解在 Docker Desktop 中使用 MUI 的面向未来的方法。
 
-### Not recommended: Some other framework
+### 不推荐：其他框架
 
-You may prefer to use another framework, perhaps because you or your team are more familiar with it or because you have existing assets you want to reuse. This is possible, but highly discouraged. It means that:
+您可能更喜欢使用另一个框架，也许是因为您或您的团队更熟悉它，或者因为您有想要重用的现有资源。这是可能的，但非常不推荐。这意味着：
 
-- You'll need to manually replicate the look and feel of Docker Desktop. This takes a lot of effort, and if you don't match our theme closely enough, users will find your extension jarring and we may ask you to make changes during a review process.
-- You'll have a higher maintenance burden. Whenever Docker Desktop's theme changes (which could happen in any release), you'll need to manually change your extension to match it.
-- If your extension is open-source, deliberately avoiding common conventions will make it harder for the community to contribute to it.
+- 您需要手动复制 Docker Desktop 的外观和感觉。这需要大量工作，如果您不能足够接近地匹配我们的主题，用户会觉得您的扩展不协调，我们可能会在审查过程中要求您进行更改。
+- 您将有更高的维护负担。每当 Docker Desktop 的主题发生变化（可能在任何版本中发生），您都需要手动更改扩展以匹配它。
+- 如果您的扩展是开源的，故意避免常见约定将使社区更难为其做出贡献。
 
-## Step two: Follow the below recommendations
+## 步骤二：遵循以下建议
 
-### Follow our MUI best practices (if applicable)
+### 遵循我们的 MUI 最佳实践（如果适用）
 
-See our [MUI best practices](mui-best-practices.md) article.
+请参阅我们的 [MUI 最佳实践](mui-best-practices.md) 文章。
 
-### Only use colors from our palette
+### 仅使用我们调色板中的颜色
 
-With minor exceptions, displaying your logo for example, you should only use colors from our palette. These can be found in our [style guide document](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771), and will also soon be available in our MUI theme and via CSS variables.
+除了少数例外，例如显示您的徽标，您应该只使用我们调色板中的颜色。这些可以在我们的 [样式指南文档](https://www.figma.com/file/U7pLWfEf6IQKUHLhdateBI/Docker-Design-Guidelines?node-id=1%3A28771) 中找到，并且很快也将在我们的 MUI 主题和通过 CSS 变量提供。
 
-### Use counterpart colors in light/dark mode
+### 在浅色/深色模式中使用对应的颜色
 
-Our colors have been chosen so that the counterpart colors in each variant of the palette should have the same essential characteristics. Anywhere you use `red-300` in light mode, you should use `red-300` in dark mode too.
+我们的颜色经过精心选择，使得调色板的每个变体中的对应颜色应具有相同的基本特征。无论在浅色模式还是深色模式中，您都应该使用相同的颜色（例如，在浅色模式中使用 `red-300`，在深色模式中也使用 `red-300`）。
 
-## What's next?
+## 下一步
 
-- Take a look at our [MUI best practices](mui-best-practices.md).
-- Learn how to [publish your extension](../extensions/_index.md).
+- 查看我们的 [MUI 最佳实践](mui-best-practices.md)。
+- 了解如何[发布您的扩展](../extensions/_index.md)。

@@ -8,56 +8,37 @@ params:
       text: EA
 weight: 50
 description: |
-  Learn how to streamline Docker-related tasks with the Docker for GitHub
-  Copilot extension. This integration helps you generate Docker assets, analyze
-  vulnerabilities, and automate containerization through GitHub Copilot Chat in
-  various development environments.
-keywords: Docker, GitHub Copilot, extension, Visual Studio Code, chat, ai, containerization
+  了解如何使用 Docker for GitHub Copilot 扩展简化 Docker 相关任务。该集成帮助您在各种开发环境中通过 GitHub Copilot Chat 生成 Docker 资源、分析漏洞并自动化容器化。
+keywords: Docker, GitHub Copilot, 扩展, Visual Studio Code, 聊天, 人工智能, 容器化
 ---
 
 {{< summary-bar feature_name="Docker GitHub Copilot" >}}
 
-The [Docker for GitHub Copilot](https://github.com/marketplace/docker-for-github-copilot)
-extension integrates Docker's capabilities with GitHub Copilot, providing
-assistance with containerizing applications, generating Docker assets, and
-analyzing project vulnerabilities. This extension helps you streamline
-Docker-related tasks wherever GitHub Copilot Chat is available.
+[Docker for GitHub Copilot](https://github.com/marketplace/docker-for-github-copilot)
+扩展将 Docker 的功能与 GitHub Copilot 集成，为应用容器化、生成 Docker 资源和分析项目漏洞提供帮助。此扩展帮助您在任何支持 GitHub Copilot Chat 的环境中简化 Docker 相关任务。
 
-## Key features
+## 主要功能
 
-Key features of the Docker for GitHub Copilot extension include:
+Docker for GitHub Copilot 扩展的主要功能包括：
 
-- Ask questions and receive responses about containerization in any context
-  where GitHub Copilot Chat is available, such as on GitHub.com and in Visual Studio Code.
-- Automatically generate Dockerfiles, Docker Compose files, and `.dockerignore`
-  files for a project.
-- Open pull requests with generated Docker assets directly from the chat
-  interface.
-- Get summaries of project vulnerabilities from [Docker
-  Scout](/manuals/scout/_index.md) and receive next steps via the CLI.
+- 在任何支持 GitHub Copilot Chat 的环境中（如 GitHub.com 和 Visual Studio Code）询问有关容器化的问题并获得响应。
+- 自动为项目生成 Dockerfile、Docker Compose 文件和 `.dockerignore` 文件。
+- 直接从聊天界面使用生成的 Docker 资源打开拉取请求。
+- 从 [Docker Scout](/manuals/scout/_index.md) 获取项目漏洞摘要，并通过命令行界面接收后续操作建议。
 
-## Data Privacy
+## 数据隐私
 
-The Docker agent is trained exclusively on Docker's documentation and tools to
-assist with containerization and related tasks. It does not have access to your
-project's data outside the context of the questions you ask.
+Docker 代理仅基于 Docker 的文档和工具进行训练，以协助容器化及相关任务。它无法访问您所提问题上下文之外的项目数据。
 
-When using the Docker Extension for GitHub Copilot, GitHub Copilot may include
-a reference to the currently open file in its request if authorized by the
-user. The Docker agent can read the file to provide context-aware responses.
+使用 Docker for GitHub Copilot 扩展时，如果获得用户授权，GitHub Copilot 可能会在其请求中包含对当前打开文件的引用。Docker 代理可以读取该文件以提供上下文相关的响应。
 
-If the agent is requested to check for vulnerabilities or generate
-Docker-related assets, it will clone the referenced repository into in-memory
-storage to perform the necessary actions.
+如果代理被要求检查漏洞或生成 Docker 相关资源，它将把引用的仓库克隆到内存存储中以执行必要的操作。
 
-Source code or project metadata is never persistently stored. Questions and
-answers are retained for analytics and troubleshooting. Data processed by the
-Docker agent is never shared with third parties.
+源代码或项目元数据永远不会被持久存储。问题和答案会保留用于分析和故障排除。Docker 代理处理的数据绝不会与第三方共享。
 
-## Supported languages
+## 支持的语言
 
-The Docker Extension for GitHub Copilot supports the following programming
-languages for tasks involving containerizing a project from scratch:
+Docker for GitHub Copilot 扩展支持以下编程语言，用于从头开始容器化项目的任务：
 
 - Go
 - Java

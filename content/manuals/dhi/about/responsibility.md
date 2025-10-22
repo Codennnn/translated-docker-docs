@@ -1,66 +1,42 @@
 ---
-title: Understanding roles and responsibilities for Docker Hardened Images
-linkTitle: Responsibility overview
-description: Understand the division of responsibilities between Docker, upstream projects, and you when using Docker Hardened Images.
-keywords: software supply chain security, signed sbom, vex document, container provenance, image attestation
+title: 了解 Docker 加固镜像的角色与责任
+linkTitle: 责任概述
+description: 了解在使用 Docker 加固镜像时，Docker、上游项目和您之间的责任分工。
+keywords: 软件供应链安全, 签名 sbom, vex 文档, 容器来源, 镜像证明
 weight: 46
 ---
 
-Docker Hardened Images (DHIs) are curated and maintained by Docker, and built
-using upstream open source components. To deliver security, reliability, and
-compliance, responsibilities are shared among three groups:
+Docker 加固镜像（DHI）由 Docker 精心策划和维护，并使用上游开源组件构建。为了提供安全性、可靠性和合规性，责任在以下三个群体之间进行分工：
 
-- Upstream maintainers: the developers and communities responsible for the
-  open source software included in each image.
-- Docker: the provider of hardened, signed, and maintained container images.
-- You (the customer): the consumer who runs and, optionally, customizes DHIs
-  in your environment.
+- 上游维护者：负责每个镜像中包含的开源软件的开发人员和社区。
+- Docker：提供经过强化、签名和维护的容器镜像的供应商。
+- 您（客户）：在环境中运行和（可选地）自定义 DHI 的使用者。
 
-This topic outlines who handles what, so you can use DHIs effectively and
-securely.
+本主题概述了各方的职责，以便您能够有效且安全地使用 DHI。
 
-## Releases
+## 版本发布
 
-- Upstream: Publishes and maintains official releases of the software
-  components included in DHIs. This includes versioning, changelogs, and
-  deprecation notices.
-- Docker: Builds, hardens, and signs Docker Hardened Images based on
-  upstream versions. Docker maintains these images in line with upstream release
-  timelines and internal policies.
-- You: Ensure you're staying on supported versions of DHIs and upstream
-  projects. Using outdated or unsupported components can introduce security
-  risk.
+- 上游：发布和维护 DHI 中包含的软件组件的官方版本。这包括版本控制、变更日志和弃用通知。
+- Docker：基于上游版本构建、强化和签名 Docker 加固镜像。Docker 会根据上游发布时间表和内部策略维护这些镜像。
+- 您：确保您使用的是受支持的 DHI 和上游项目版本。使用过时或不受支持的组件可能会带来安全风险。
 
-## Patching
+## 补丁更新
 
-- Upstream: Maintains and updates the source code for each component,
-  including fixing vulnerabilities in libraries and dependencies.
-- Docker: Rebuilds and re-releases images with upstream patches applied.
-  Docker also monitors for vulnerabilities and rapidly publishes updates to
-  affected images.
-- You: Apply DHI updates in your environments and patch any software or
-  dependencies you install on top of the base image.
+- 上游：维护和更新每个组件的源代码，包括修复库和依赖项中的漏洞。
+- Docker：重新构建和重新发布应用了上游补丁的镜像。Docker 还会监控漏洞并快速发布受影响镜像的更新。
+- 您：在环境中应用 DHI 更新，并修补您在基础镜像之上安装的任何软件或依赖项。
 
-## Testing
+## 测试验证
 
-- Upstream: Defines the behavior and functionality of the original software,
-  and is responsible for validating core features.
-- Docker: Validates that DHIs start, run, and behave consistently with
-  upstream expectations. Docker also runs security scans and includes a [testing
-  attestation](../core-concepts/attestations.md) with each image.
-- You: Test your application on top of DHIs and validate that any changes or
-  customizations function as expected in your environment.
+- 上游：定义原始软件的行为和功能，并负责验证核心特性。
+- Docker：验证 DHI 能够正常启动、运行，并与上游预期保持一致。Docker 还会运行安全扫描，并在每个镜像中包含[测试证明](../core-concepts/attestations.md)。
+- 您：在 DHI 之上测试您的应用程序，并验证任何变更或自定义在您的环境中按预期工作。
 
-## Security and compliance
+## 安全与合规
 
-- Docker: Publishes signed SBOMs, VEX documents, provenance data, and CVE
-  scan results with each image to support compliance and supply chain security.
-- You: Integrate DHIs into your security and compliance workflows, including
-  vulnerability management and auditing.
+- Docker：随每个镜像发布签名的 SBOM、VEX 文档、来源数据和 CVE 扫描结果，以支持合规性和供应链安全。
+- 您：将 DHI 集成到您的安全和合规工作流程中，包括漏洞管理和审计。
 
-## Summary
+## 总结
 
-Docker Hardened Images give you a secure foundation, complete with signed
-metadata and upstream transparency. Your role is to make informed use of these
-images, apply updates promptly, and validate that your configurations and
-applications meet your internal requirements.
+Docker 加固镜像为您提供了一个安全的基础，包含签名的元数据和上游透明度。您的角色是明智地使用这些镜像，及时应用更新，并验证您的配置和应用程序符合内部要求。

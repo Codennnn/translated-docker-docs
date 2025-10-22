@@ -1,48 +1,27 @@
 ---
-title: Hardened, secure images
-description: Learn how Docker Hardened Images reduce vulnerabilities, enforce non-root execution, and include SLSA-compliant metadata for supply chain security.
-keywords: non-root containers, slsa build level 3, signed sbom, vex document, hardened container image
+title: 加固安全镜像
+description: 了解 Docker 加固镜像如何减少漏洞、强制非 root 运行，并通过 SLSA 合规元数据保障供应链安全。
+keywords: 非 root 容器, SLSA 构建三级, 已签名 SBOM, VEX 文档, 加固容器镜像
 ---
 
-Docker Hardened Images (DHI) are engineered to provide a robust security
-foundation for containerized applications, addressing the evolving challenges of
-software supply chain security.
+Docker 加固镜像（DHI）专为容器化应用打造稳健的安全基座，全面应对软件供应链安全的新挑战。
 
-## Near-zero vulnerabilities and non-root execution
+## 近零漏洞与非 root 运行
 
-Each DHI is meticulously built to eliminate known vulnerabilities, achieving
-near-zero Common Vulnerabilities and Exposures (CVEs) through continuous
-scanning and updates. By adhering to the principle of least privilege, DHI
-images run as non-root by default, reducing the risk of privilege escalation
-attacks in production environments.
+每款 DHI 都经过精细构建，以持续扫描与更新实现近零 CVE（通用漏洞披露）。遵循最小权限原则，镜像默认以非 root 身份运行，显著降低生产环境提权风险。
 
-## Comprehensive supply chain security
+## 全链路供应链安全
 
-DHI incorporates multiple layers of security metadata to ensure transparency and
-trust:
+DHI 通过多层安全元数据确保透明可验证：
 
-- SLSA Level 3 compliance: Each image includes detailed build provenance,
-  meeting the standards set by the Supply-chain Levels for Software Artifacts
-  (SLSA) framework.
+- **SLSA 三级合规**：每份镜像均附带详细构建来源，满足“软件制品供应链等级”（SLSA）框架标准。
+- **软件物料清单（SBOM）**：完整列出镜像内所有组件，方便漏洞管理与合规审计。
+- **漏洞可利用性交换（VEX）声明**：随镜像提供 VEX 文档，说明已知漏洞及其可利用状态。
+- **加密签名与证明**：镜像及全部元数据均经加密签名，保障完整性与真实性。
 
-- Software Bill of Materials (SBOMs): Comprehensive SBOMs are provided,
-  detailing all components within the image to facilitate vulnerability
-  management and compliance audits.
+## 极简与开发者友好双形态
 
-- Vulnerability Exploitability eXchange (VEX) statements: VEX documents
-  accompany each image, providing context about known vulnerabilities and their
-  exploitability status.
+DHI 提供“极简”与“开发”两种变体：
 
-- Cryptographic signing and attestations: All images and associated metadata are
-  cryptographically signed, ensuring integrity and authenticity.
-
-## Minimal and developer-friendly options
-
-DHI provides both minimal and development-friendly image variants:
-
-- Minimal images: Built using a distroless approach, these images remove
-  unnecessary components, reducing the attack surface by up to 95% and improving
-  startup times.
-
-- Development images: Equipped with essential development tools and libraries,
-  these images facilitate secure application building and testing.
+- **极简镜像**：采用 distroless 方案，剔除冗余组件，攻击面缩小高达 95%，启动更快。
+- **开发镜像**：内置常用开发工具与库，助你安全构建与测试应用。

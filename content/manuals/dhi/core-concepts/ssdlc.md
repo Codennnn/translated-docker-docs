@@ -1,113 +1,89 @@
 ---
-title: Secure Software Development Lifecycle
+title: 安全软件开发生命周期
 linktitle: SSDLC
-description: See how Docker Hardened Images support a secure SDLC by integrating with scanning, signing, and debugging tools.
-keywords: secure software development, ssdlc containers, slsa compliance, docker scout integration, secure container debugging
+description: 了解 Docker 加固镜像如何通过与扫描、签名和调试工具集成来支持安全 SDLC。
+keywords: 安全软件开发, ssdlc 容器, slsa 合规性, docker scout 集成, 安全容器调试
 ---
 
-## What is a Secure Software Development Lifecycle?
+## 什么是安全软件开发生命周期？
 
-A Secure Software Development Lifecycle (SSDLC) integrates security practices
-into every phase of software delivery, from design and development to deployment
-and monitoring. It’s not just about writing secure code, but about embedding
-security throughout the tools, environments, and workflows used to build and
-ship software.
+安全软件开发生命周期 (Secure Software Development Lifecycle, SSDLC) 将安全实践集成到软件交付的每个阶段，从设计和开发到部署和监控。它不仅仅是编写安全代码，而是将安全性嵌入到用于构建和交付软件的工具、环境和工作流程中。
 
-SSDLC practices are often guided by compliance frameworks, organizational
-policies, and supply chain security standards such as SLSA (Supply-chain Levels
-for Software Artifacts) or NIST SSDF.
+SSDLC 实践通常受到合规框架、组织策略和供应链安全标准（如 SLSA（软件制品供应链级别）或 NIST SSDF）的指导。
 
-## Why SSDLC matters
+## SSDLC 的重要性
 
-Modern applications depend on fast, iterative development, but rapid delivery
-often introduces security risks if protections aren’t built in early. An SSDLC
-helps:
+现代应用程序依赖于快速、迭代式的开发，但如果早期没有构建保护措施，快速交付往往会引入安全风险。SSDLC 有助于：
 
-- Prevent vulnerabilities before they reach production
-- Ensure compliance through traceable and auditable workflows
-- Reduce operational risk by maintaining consistent security standards
-- Enable secure automation in CI/CD pipelines and cloud-native environments
+- **在生产环境之前预防漏洞**
+- **通过可追溯和可审计的工作流程确保合规性**
+- **通过维护一致的安全标准降低运营风险**
+- **在 CI/CD 流水线和云原生环境中实现安全自动化**
 
-By making security a first-class citizen in each stage of software delivery,
-organizations can shift left and reduce both cost and complexity.
+通过将安全性作为软件交付每个阶段的一等公民，组织可以左移并降低成本和复杂性。
 
-## How Docker supports a secure SDLC
+## Docker 如何支持安全 SDLC
 
-Docker provides tools and secure content that make SSDLC practices easier to
-adopt across the container lifecycle. With [Docker Hardened
-Images](../_index.md) (DHIs), [Docker
-Debug](../../../reference/cli/docker/debug.md), and [Docker
-Scout](../../../manuals/scout/_index.md), teams can add security without losing
-velocity.
+Docker 提供工具和安全内容，使 SSDLC 实践更容易在整个容器生命周期中采用。通过 [Docker 加固镜像](../_index.md) (DHI)、[Docker Debug](../../../reference/cli/docker/debug.md) 和 [Docker Scout](../../../manuals/scout/_index.md)，团队可以在不损失速度的情况下增加安全性。
 
-### Plan and design
+### 规划和设计
 
-During planning, teams define architectural constraints, compliance goals, and
-threat models. Docker Hardened Images help at this stage by providing:
+在规划阶段，团队定义架构约束、合规目标和威胁模型。Docker 加固镜像在此阶段通过以下方式提供帮助：
 
-- Secure-by-default base images for common languages and runtimes
-- Verified metadata including SBOMs, provenance, and VEX documents
-- Support for both glibc and musl across multiple Linux distributions
+- **默认安全的常用语言和运行时基础镜像**
+- **经过验证的元数据，包括 SBOM、来源证明和 VEX 文档**
+- **支持多种 Linux 发行版中的 glibc 和 musl**
 
-You can use DHI metadata and attestations to support design reviews, threat
-modeling, or architecture sign-offs.
+您可以使用 DHI 元数据和证明来支持设计评审、威胁建模或架构签核。
 
-### Develop
+### 开发
 
-In development, security should be transparent and easy to apply. Docker
-Hardened Images support secure-by-default development:
+在开发过程中，安全性应该是透明且易于应用的。Docker 加固镜像支持默认安全的开发：
 
-- Dev variants include shells, package managers, and compilers for convenience
-- Minimal runtime variants reduce attack surface in final images
-- Multi-stage builds let you separate build-time tools from runtime environments
+- **开发变体包含 shell、包管理器和编译器，方便使用**
+- **最小运行时变体减少最终镜像的攻击面**
+- **多阶段构建让您可以将构建时工具与运行时环境分离**
 
-[Docker Debug](../../../reference/cli/docker/debug.md) helps developers:
+[Docker Debug](../../../reference/cli/docker/debug.md) 帮助开发人员：
 
-- Temporarily inject debugging tools into minimal containers
-- Avoid modifying base images during troubleshooting
-- Investigate issues securely, even in production-like environments
+- **临时将调试工具注入最小化容器**
+- **在故障排除期间避免修改基础镜像**
+- **安全地调查问题，即使在类似生产环境中也是如此**
 
-### Build and test
+### 构建和测试
 
-Build pipelines are an ideal place to catch issues early. Docker Scout
-integrates with Docker Hub and the CLI to:
+构建流水线是早期发现问题的理想场所。Docker Scout 与 Docker Hub 和 CLI 集成，可以：
 
-- Scan for known CVEs using multiple vulnerability databases
-- Trace vulnerabilities to specific layers and dependencies
-- Interpret signed VEX data to suppress known-irrelevant issues
-- Export JSON scan reports for CI/CD workflows
+- **使用多个漏洞数据库扫描已知 CVE**
+- **将漏洞追溯到特定层和依赖项**
+- **解释签名的 VEX 数据以抑制已知无关问题**
+- **导出 JSON 扫描报告用于 CI/CD 工作流程**
 
-Build pipelines that use Docker Hardened Images benefit from:
+使用 Docker 加固镜像的构建流水线受益于：
 
-- Reproducible, signed images
-- Minimal build surfaces to reduce exposure
-- Built-in compliance with SLSA Build Level 3 standards
+- **可重现的签名镜像**
+- **最小化构建表面以减少暴露**
+- **内置符合 SLSA 构建级别 3 标准的合规性**
 
-### Release and deploy
+### 发布和部署
 
-Security automation is critical as you release software at scale. Docker
-supports this phase by enabling:
+在规模化发布软件时，安全自动化至关重要。Docker 通过以下方式支持此阶段：
 
-- Signature verification and provenance validation before deployment
-- Policy enforcement gates using Docker Scout
-- Safe, non-invasive container inspection using Docker Debug
+- **部署前的签名验证和来源验证**
+- **使用 Docker Scout 的策略执行门控**
+- **使用 Docker Debug 进行安全、非侵入式的容器检查**
 
-DHIs ship with the metadata and signatures required to automate image
-verification during deployment.
+DHI 附带部署期间自动化镜像验证所需的元数据和签名。
 
-### Monitor and improve
+### 监控和改进
 
-Security continues after release. With Docker tools, you can:
+安全性在发布后仍在继续。使用 Docker 工具，您可以：
 
-- Continuously monitor image vulnerabilities through Docker Hub
-- Get CVE remediation guidance and patch visibility using Docker Scout
-- Receive updated DHI images with rebuilt and re-signed secure layers
-- Debug running workloads with Docker Debug without modifying the image
+- **通过 Docker Hub 持续监控镜像漏洞**
+- **使用 Docker Scout 获取 CVE 修复指导和补丁可见性**
+- **接收重新构建和重新签名的安全层的更新 DHI 镜像**
+- **使用 Docker Debug 调试运行中的工作负载，无需修改镜像**
 
-## Summary
+## 总结
 
-Docker helps teams embed security throughout the SSDLC by combining secure
-content (DHIs) with developer-friendly tooling (Docker Scout and Docker Debug).
-These integrations promote secure practices without introducing friction, making
-it easier to adopt compliance and supply chain security across your software
-delivery lifecycle.
+Docker 通过将安全内容（DHI）与开发者友好的工具（Docker Scout 和 Docker Debug）相结合，帮助团队在整个 SSDLC 中嵌入安全性。这些集成促进了安全实践，而不会引入摩擦，使您更容易在整个软件交付生命周期中采用合规性和供应链安全性。

@@ -1,13 +1,11 @@
 ---
-title: Docker Scout CLI release notes
-linkTitle: CLI release notes
-description: Learn about the latest features of the Docker Scout CLI plugin
-keywords: docker scout, release notes, changelog, cli, features, changes, delta, new, releases, github actions
+title: Docker Scout CLI 发布说明
+linkTitle: CLI 发布说明
+description: 了解 Docker Scout CLI 插件的最新功能
+keywords: docker scout, 发布说明, 更新日志, cli, 功能, 变更, 差异, 新功能, 版本, github actions
 ---
 
-This page contains information about the new features, improvements, known
-issues, and bug fixes in the Docker Scout [CLI plugin](https://github.com/docker/scout-cli/)
-and the `docker/scout-action` [GitHub Action](https://github.com/docker/scout-action).
+本页面包含 Docker Scout [CLI 插件](https://github.com/docker/scout-cli/)和 `docker/scout-action` [GitHub Action](https://github.com/docker/scout-action) 的新功能、改进、已知问题和错误修复信息。
 
 ## 1.18.4
 

@@ -1,7 +1,7 @@
 ---
-title: Authentication
-description: Docker extension OAuth 2.0 flow
-keywords: Docker, extensions, sdk, OAuth 2.0
+title: 身份验证
+description: Docker 扩展 OAuth 2.0 流程
+keywords: Docker, 扩展, sdk, OAuth 2.0
 aliases:
  - /desktop/extensions-sdk/dev/oauth2-flow/
  - /desktop/extensions-sdk/guides/oauth2-flow/
@@ -9,40 +9,39 @@ aliases:
 
 > [!NOTE]
 >
-> This page assumes that you already have an Identity Provider (IdP), such as Google, Entra ID (formerly Azure AD) or Okta, which handles the authentication process and returns an access token.
+> 本页面假设您已经拥有一个身份提供商 (IdP)，例如 Google、Entra ID（前身为 Azure AD）或 Okta，它们处理身份验证过程并返回访问令牌。
 
-Learn how you can let users authenticate from your extension using OAuth 2.0 via a web browser, and return to your extension.
+了解如何让用户通过 Web 浏览器使用 OAuth 2.0 从您的扩展进行身份验证，并返回到您的扩展。
 
-In OAuth 2.0, the term "grant type" refers to the way an application gets an access token. Although OAuth 2.0 defines several grant types, this page only describes how to authorize users from your extension using the Authorization Code grant type.
+在 OAuth 2.0 中，"授权类型"一词指的是应用程序获取访问令牌的方式。虽然 OAuth 2.0 定义了几种授权类型，但本页面仅描述如何使用授权码授权类型从您的扩展授权用户。
 
-## Authorization code grant flow
+## 授权码授权流程
 
-The Authorization Code grant type is used by confidential and public clients to exchange an authorization code for an access token.
+授权码授权类型由机密和公共客户端使用，用于将授权码交换为访问令牌。
 
-After the user returns to the client via the redirect URL, the application gets the authorization code from the URL and uses it to request an access token.
+用户通过重定向 URL 返回客户端后，应用程序从 URL 获取授权码并使用它来请求访问令牌。
 
-![Flow for OAuth 2.0](images/oauth.png)
+![OAuth 2.0 流程](images/oauth.png)
 
-The image above shows that:
+上图显示了以下过程：
 
-- The Docker extension asks the user to authorize access to their data.
-- If the user grants access, the extension then requests an access token from the service provider, passing the access grant from the user and authentication details to identify the client.
-- The service provider then validates these details and returns an access token.
-- The extension uses the access token to request the user data with the service provider.
+- Docker 扩展要求用户授权访问其数据。
+- 如果用户授予访问权限，扩展会向服务提供商请求访问令牌，传递来自用户的访问授权和用于识别客户端的身份验证详细信息。
+- 服务提供商验证这些详细信息并返回访问令牌。
+- 扩展使用访问令牌向服务提供商请求用户数据。
 
-### OAuth 2.0 terminology
+### OAuth 2.0 术语
 
-- Auth URL: The endpoint for the API provider authorization server, to retrieve the auth code.
-- Redirect URI: The client application callback URL to redirect to after auth. This must be registered with the API provider.
+- 授权 URL：API 提供商授权服务器的端点，用于获取授权码。
+- 重定向 URI：身份验证后重定向到的客户端应用程序回调 URL。这必须在 API 提供商处注册。
 
-Once the user enters the username and password, they're successfully authenticated.
+用户输入用户名和密码后，即成功完成身份验证。
 
-## Open a browser page to authenticate the user
+## 打开浏览器页面以验证用户身份
 
-From the extension UI, you can provide a button that, when selected, opens a new window in a browser to authenticate the user.
+从扩展 UI 中，您可以提供一个按钮，当用户选择时，会在浏览器中打开一个新窗口来验证用户身份。
 
-Use the [ddClient.host.openExternal](../dev/api/dashboard.md#open-a-url) API to open a browser to the auth URL. For
-example:
+使用 [ddClient.host.openExternal](../dev/api/dashboard.md#open-a-url) API 打开浏览器到授权 URL。例如：
 
 ```typescript
 window.ddClient.openExternal("https://authorization-server.com/authorize?
@@ -51,23 +50,23 @@ window.ddClient.openExternal("https://authorization-server.com/authorize?
   &redirect_uri=${REDIRECT_URI});
 ```
 
-## Get the authorization code and access token
+## 获取授权码和访问令牌
 
-You can get the authorization code from the extension UI by listing `docker-desktop://dashboard/extension-tab?extensionId=awesome/my-extension` as the `redirect_uri` in the OAuth app you're using and concatenating the authorization code as a query parameter. The extension UI code will then be able to read the corresponding code query-param.
+您可以通过在使用的 OAuth 应用中将 `docker-desktop://dashboard/extension-tab?extensionId=awesome/my-extension` 列为 `redirect_uri`，并将授权码作为查询参数连接，从扩展 UI 获取授权码。然后扩展 UI 代码将能够读取相应的代码查询参数。
 
 > [!IMPORTANT]
 >
-> Using this feature requires the extension SDK 0.3.3 in Docker Desktop. You need to ensure that the required SDK version for your extension set with `com.docker.desktop.extension.api.version` in [image labels](../extensions/labels.md) is higher than 0.3.3.
+> 使用此功能需要 Docker Desktop 中的扩展 SDK 0.3.3。您需要确保在[镜像标签](../extensions/labels.md)中使用 `com.docker.desktop.extension.api.version` 设置的扩展所需 SDK 版本高于 0.3.3。
 
-#### Authorization
+#### 授权
 
-This step is where the user enters their credentials in the browser. After the authorization is complete, the user is redirected back to your extension user interface, and the extension UI code can consume the authorization code that's part of the query parameters in the URL.
+在此步骤中，用户在浏览器中输入其凭据。授权完成后，用户将被重定向回您的扩展用户界面，扩展 UI 代码可以使用 URL 中查询参数部分的授权码。
 
-#### Exchange the Authorization Code
+#### 交换授权码
 
-Next, you exchange the authorization code for an access token.
+接下来，您将授权码交换为访问令牌。
 
-The extension must send a `POST` request to the 0Auth authorization server with the following parameters:
+扩展必须向 OAuth 授权服务器发送 `POST` 请求，包含以下参数：
 
 ```text
 POST https://authorization-server.com/token
@@ -79,18 +78,18 @@ POST https://authorization-server.com/token
 
 > [!NOTE]
 >
-> The client's credentials are included in the `POST` query params in this example. OAuth authorization servers may require that the credentials are sent as a HTTP Basic Authentication header or might support different formats. See your OAuth provider docs for details.
+> 在此示例中，客户端凭据包含在 `POST` 查询参数中。OAuth 授权服务器可能要求将凭据作为 HTTP 基本身份验证标头发送，或者可能支持不同的格式。有关详细信息，请参阅您的 OAuth 提供商文档。
 
-### Store the access token
+### 存储访问令牌
 
-The Docker Extensions SDK doesn't provide a specific mechanism to store secrets.
+Docker 扩展 SDK 不提供存储机密的特定机制。
 
-It's highly recommended that you use an external source of storage to store the access token.
+强烈建议您使用外部存储源来存储访问令牌。
 
 > [!NOTE]
 >
-> The user interface Local Storage is isolated between extensions (an extension can't access another extension's local storage), and each extension's local storage gets deleted when users uninstall an extension.
+> 用户界面本地存储在扩展之间是隔离的（一个扩展无法访问另一个扩展的本地存储），并且当用户卸载扩展时，每个扩展的本地存储都会被删除。
 
-## What's next
+## 下一步
 
-Learn how to [publish and distribute your extension](../extensions/_index.md)
+了解如何[发布和分发您的扩展](../extensions/_index.md)

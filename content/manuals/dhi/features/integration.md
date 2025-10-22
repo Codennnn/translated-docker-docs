@@ -1,61 +1,42 @@
 ---
-title: Seamless integration
-description: Learn how Docker Hardened Images integrate into your existing development and deployment workflows for enhanced security without compromising usability.
-description_short: See how Docker Hardened Images integrate with CI/CD pipelines, vulnerability scanners, and container registries across your toolchain
-keywords: ci cd containers, vulnerability scanning, slsa build level 3, signed sbom, oci compliant registry
+title: 无缝集成
+description: 了解 Docker 加固镜像如何在不改变现有研发与部署流程的前提下，为你注入更高等级的安全能力。
+description_short: 看 DHI 如何与 CI/CD、漏洞扫描、容器仓库等现有工具链无缝协同。
+keywords: 容器 CI CD, 漏洞扫描, SLSA 构建三级, 签名 SBOM, OCI 兼容仓库
 ---
 
-Docker Hardened Images (DHI) are designed to integrate effortlessly into your
-existing development and deployment workflows, ensuring that enhanced security
-does not come at the cost of usability.
+Docker 加固镜像（DHI）专为“零改造”而生：无需打乱现有流程，就能让安全能力一键落地。
 
-## Explore images in Docker Hub
+## 在 Docker Hub 上即点即看
 
-After your organization [signs
-up](https://www.docker.com/products/hardened-images/#getstarted), teams can
-explore the full DHI catalog directly on Docker Hub. There, developers and
-security teams can:
+组织[开通服务](https://www.docker.com/products/hardened-images/#getstarted)后，开发与安全团队可直接在 Docker Hub 内：
 
-- Review available images and language/framework variants
-- Understand supported distros
-- Compare development vs. runtime variants
+- 浏览全量镜像及语言/框架变体
+- 查看支持的发行版
+- 对比 dev 与 runtime 版本差异
 
-Each repository includes metadata like supported tags, base image
-configurations, and image-specific documentation, helping you choose the right variant
-for your project.
+每个仓库都附带标签清单、基础镜像配置及专属文档，助你秒选最适合的变体。
 
-## Use DHIs in CI/CD workflows
+## CI/CD 即插即用
 
-You can use DHIs as the same base image in any CI/CD pipeline that is built
-using a Dockerfile. They integrate easily into platforms like GitHub Actions,
-GitLab CI/CD, Jenkins, CircleCI, and other automation systems your team already
-uses.
+DHI 与普通基础镜像用法完全一致，任何基于 Dockerfile 的流水线都能直接替换。GitHub Actions、GitLab CI/CD、Jenkins、CircleCI 等主流平台无需额外配置即可接入。
 
-## Built to fit your DevSecOps stack
+## 专为 DevSecOps 生态打造
 
-Docker Hardened Images are designed to work seamlessly with your existing
-DevSecOps toolchain. They integrate with scanning tools, registries, CI/CD
-systems, and policy engines that teams already use.
+DHI 已提前对接扫描工具、镜像仓库、CI/CD 及策略引擎。Docker 与多家生态伙伴深度合作，确保镜像开箱即用，扫描结果、元数据验证与合规洞察可直接回流你的流水线。
 
-Docker has partnered with a broad range of ecosystem providers in order to
-ensure that DHIs work out of the box with your existing workflows and tools.
-These partners help deliver enhanced scanning, metadata validation, and
-compliance insights directly into your pipelines.
+所有 DHI 均内置：
 
-All DHIs include:
+- 已签名的软件物料清单（SBOM）
+- CVE 漏洞数据
+- VEX 漏洞可利用性交换文档
+- SLSA 构建三级来源证明
 
-- Signed Software Bill of Materials (SBOMs)
-- CVE data
-- Vulnerability Exploitability eXchange (VEX) documents
-- SLSA Build Level 3 provenance
+结构化且已签名的元数据，可被策略引擎或合规仪表盘直接消费，审计零负担。
 
-Because the metadata is signed and structured, you can feed it into policy
-engines and dashboards for auditing or compliance workflows.
+## 想推到哪里就推到哪里
 
-## Distribute through your preferred registry
-
-DHIs are mirrored to your organization's namespace on Docker Hub. From there,
-you can optionally push them to any OCI-compliant registry, such as:
+DHI 先同步至你在 Docker Hub 的组织命名空间；随后可一键推送至任意 OCI 兼容仓库：
 
 - Amazon ECR
 - Google Artifact Registry
@@ -63,19 +44,16 @@ you can optionally push them to any OCI-compliant registry, such as:
 - Azure Container Registry
 - Harbor
 - JFrog Artifactory
-- Other OCI-compliant on-premises or cloud registries
+- 或其他私有/公有 OCI 仓库
 
-Mirroring ensures teams can pull images from their preferred location without
-breaking policies or build systems.
+多仓库分发，策略与构建系统零中断。
 
-## Summary
+## 一句话总结
 
-Docker Hardened Images integrate with the tools you already use, from development
-and CI to scanning and deployment. They:
+DHI 与你现有工具同频共振：
 
-- Work with standard Docker tooling and pipelines
-- Support popular scanners and registries
-- Include security metadata that plugs into your existing compliance systems
+- 标准 Docker 命令与流水线无需改造
+- 主流扫描器与仓库全部适配
+- 安全元数据直接对接合规体系
 
-This means you can adopt stronger security controls without disrupting your
-engineering workflows.
+升级安全，不打扰工程效率。

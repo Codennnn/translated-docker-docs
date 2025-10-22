@@ -1,79 +1,50 @@
 ---
-title: Common Vulnerabilities and Exposures (CVEs)
-linktitle: CVEs
-description: Understand what CVEs are, how Docker Hardened Images reduce exposure, and how to scan images for vulnerabilities using popular tools.
-keywords: docker cve scan, grype vulnerability scanner, trivy image scan, vex attestation, secure container images
+title: 常见漏洞与暴露（CVE）
+linktitle: CVE
+description: 了解 CVE 的概念、Docker 加固镜像如何降低暴露风险，以及如何使用主流工具扫描镜像漏洞。
+keywords: docker cve 扫描, grype 漏洞扫描器, trivy 镜像扫描, vex 证明, 安全容器镜像
 ---
 
-## What are CVEs?
+## CVE 是什么？
 
-CVEs are publicly disclosed cybersecurity flaws in software or hardware. Each
-CVE is assigned a unique identifier (e.g., CVE-2024-12345) and includes a
-standardized description, allowing organizations to track and address
-vulnerabilities consistently.
+CVE（Common Vulnerabilities and Exposures）是公开发布的软硬件安全缺陷。每个 CVE 都拥有唯一编号（如 CVE-2024-12345）和标准化描述，方便组织统一追踪与修复漏洞。
 
-In the context of Docker, CVEs often pertain to issues within base images, or
-application dependencies. These vulnerabilities can range from minor bugs to
-critical security risks, such as remote code execution or privilege escalation.
+在 Docker 场景中，CVE 多出现在基础镜像或应用依赖里，轻则小 Bug，重则远程代码执行、权限提升等高危风险。
 
-## Why are CVEs important?
+## 为什么要重视 CVE？
 
-Regularly scanning and updating Docker images to mitigate CVEs is crucial for
-maintaining a secure and compliant environment. Ignoring CVEs can lead to severe
-security breaches, including:
+定期扫描并更新镜像、修复 CVE，是保持环境安全与合规的关键。忽视 CVE 可能导致：
 
-- Unauthorized access: Exploits can grant attackers unauthorized access to
-  systems.
-- Data breaches: Sensitive information can be exposed or stolen.
-- Service disruptions: Vulnerabilities can be leveraged to disrupt services or
-  cause downtime.
-- Compliance violations: Failure to address known vulnerabilities can lead to
-  non-compliance with industry regulations and standards.
+- 未授权访问：攻击者利用漏洞直接拿到系统权限。  
+- 数据泄露：敏感信息被窃取或曝光。  
+- 业务中断：漏洞被用来制造拒绝服务或停机。  
+- 合规违规：已知漏洞未修复，审计直接亮红灯。
 
-## How Docker Hardened Images help mitigate CVEs
+## Docker 加固镜像（DHI）如何降低 CVE 风险
 
-Docker Hardened Images (DHIs) are crafted to minimize the risk of CVEs from the
-outset. By adopting a security-first approach, DHIs offer several advantages in
-CVE mitigation:
+DHI 从设计阶段就把“安全”写进 DNA，带来三大优势：
 
-- Reduced attack surface: DHIs are built using a distroless approach, stripping
-  away unnecessary components and packages. This reduction in image size, up to
-  95% smaller than traditional images, limits the number of potential
-  vulnerabilities, making it harder for attackers to exploit unneeded software.
+- 攻击面极小：采用 distroless 思路，仅保留运行时必备组件，镜像体积最多缩小 95%，无用软件越少，漏洞自然越少。
 
-- Faster CVE remediation: Maintained by Docker with an enterprise-grade SLA,
-  DHIs are continuously updated to address known vulnerabilities. Critical and
-  high-severity CVEs are patched quickly, ensuring that your containers remain
-  secure without manual intervention.
+- 修复速度极快：Docker 官方企业级 SLA 保障，高危与严重级别 CVE 通常在第一时间打补丁，无需你手动干预。
 
-- Proactive vulnerability management: By utilizing DHIs, organizations can
-  proactively manage vulnerabilities. The images come with CVE and Vulnerability
-  Exposure (VEX) feeds, enabling teams to stay informed about potential threats
-  and take necessary actions promptly.
+- 风险前置管理：镜像内置 CVE 与 VEX（Vulnerability Exploitability eXchange）源，团队可提前获知威胁并快速处置。
 
-## Scan images for CVEs
+## 如何扫描镜像中的 CVE
 
-Regularly scanning Docker images for CVEs is essential for maintaining a secure
-containerized environment. While Docker Scout is integrated into Docker Desktop
-and the Docker CLI, tools like Grype and Trivy offer alternative scanning
-capabilities. The following are instructions for using each tool to scan Docker
-images for CVEs.
+再坚固的镜像也要定期“体检”。除了 Docker Desktop 与 CLI 集成的 Docker Scout，主流开源工具 Grype、Trivy 同样能帮你快速发现问题。
 
 ### Docker Scout
 
-Docker Scout is integrated into Docker Desktop and the Docker CLI. It provides
-vulnerability insights, CVE summaries, and direct links to remediation guidance.
+Docker Scout 已集成在 Docker Desktop 与 CLI，可提供漏洞概览、CVE 清单及一键修复指引。
 
-#### Scan a DHI using Docker Scout
-
-To scan a Docker Hardened Image using Docker Scout, run the following
-command:
+#### 用 Scout 扫描 DHI
 
 ```console
 $ docker scout cves <your-namespace>/dhi-<image>:<tag>
 ```
 
-Example output:
+示例输出：
 
 ```plaintext
     v SBOM obtained from attestation, 101 packages found
@@ -83,25 +54,20 @@ Example output:
     ...
 ```
 
-For more detailed filtering and JSON output, see [Docker Scout CLI reference](../../../reference/cli/docker/scout/_index.md).
+更多过滤与 JSON 输出格式，请参考 [Docker Scout CLI 手册](../../../reference/cli/docker/scout/_index.md)。
 
 ### Grype
 
-[Grype](https://github.com/anchore/grype) is an open-source scanner that checks
-container images against vulnerability databases like the NVD and distro
-advisories.
+[Grype](https://github.com/anchore/grype) 是 Anchore 开源的漏洞扫描器，同步 NVD 及各大发行版安全公告。
 
-#### Scan a DHI using Grype
-
-After installing Grype, you can scan a Docker Hardened Image by pulling
-the image and running the scan command:
+#### 用 Grype 扫描 DHI
 
 ```console
 $ docker pull <your-namespace>/dhi-<image>:<tag>
 $ grype <your-namespace>/dhi-<image>:<tag>
 ```
 
-Example output:
+示例输出：
 
 ```plaintext
 NAME               INSTALLED              FIXED-IN     TYPE  VULNERABILITY     SEVERITY    EPSS%  RISK
@@ -113,21 +79,16 @@ perl-base          5.36.0-7+deb12u2       (won't fix)  deb   CVE-2023-31484    H
 
 ### Trivy
 
-[Trivy](https://github.com/aquasecurity/trivy) is an open-source vulnerability
-scanner for containers and other artifacts. It detects vulnerabilities in OS
-packages and application dependencies.
+[Trivy](https://github.com/aquasecurity/trivy) 是 Aqua 开源的多引擎扫描器，覆盖系统包与应用依赖。
 
-#### Scan a DHI using Trivy
-
-After installing Trivy, you can scan a Docker Hardened Image by pulling
-the image and running the scan command:
+#### 用 Trivy 扫描 DHI
 
 ```console
 $ docker pull <your-namespace>/dhi-<image>:<tag>
 $ trivy image <your-namespace>/dhi-<image>:<tag>
 ```
 
-Example output:
+示例输出：
 
 ```plaintext
 Report Summary
@@ -135,22 +96,19 @@ Report Summary
 ┌──────────────────────────────────────────────────────────────────────────────┬────────────┬─────────────────┬─────────┐
 │                                    Target                                    │    Type    │ Vulnerabilities │ Secrets │
 ├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
-│ <namespace>/dhi-<image>:<tag> (debian 12.11)                                 │   debian   │       66        │    -    │
+│ <namespace>/dhi-<image>:<tag> (debian 12.11)                               │   debian   │       66        │    -    │
 ├──────────────────────────────────────────────────────────────────────────────┼────────────┼─────────────────┼─────────┤
 │ opt/python-3.13.4/lib/python3.13/site-packages/pip-25.1.1.dist-info/METADATA │ python-pkg │        0        │    -    │
 └──────────────────────────────────────────────────────────────────────────────┴────────────┴─────────────────┴─────────┘
 ```
 
-## Use VEX to filter known non-exploitable CVEs
+## 利用 VEX 过滤“不可利用”CVE
 
-Docker Hardened Images include signed [VEX (Vulnerability Exploitability
-eXchange)](./vex.md) attestations that identify vulnerabilities not relevant to the image’s
-runtime behavior.
+DHI 自带已签名的 [VEX（漏洞可利用性交换）](./vex.md) 证明，明确标注哪些 CVE 在镜像实际运行环境中无法触发。
 
-When using Docker Scout, these VEX statements are automatically applied and no
-manual configuration needed.
+使用 Docker Scout 时，VEX 会自动生效，无需额外配置。
 
-To manually retrieve the VEX attestation for tools that support it:
+如需手动获取 VEX 文件供其他工具使用：
 
 ```console
 $ docker scout vex get <your-namespace>/dhi-<image>:<tag> --output vex.json
@@ -158,20 +116,15 @@ $ docker scout vex get <your-namespace>/dhi-<image>:<tag> --output vex.json
 
 > [!NOTE]
 >
-> The `docker scout vex get` command requires [Docker Scout
-> CLI](https://github.com/docker/scout-cli/) version 1.18.3 or later.
+> `docker scout vex get` 需 Docker Scout CLI ≥ 1.18.3。
 
-For example:
+示例：
 
 ```console
 $ docker scout vex get docs/dhi-python:3.13 --output vex.json
 ```
 
-This creates a `vex.json` file containing the VEX statements for the specified
-image. You can then use this file with tools that support VEX to filter out known non-exploitable CVEs.
-
-For example, with Grype and Trivy, you can use the `--vex` flag to apply the VEX
-statements during the scan:
+生成的 `vex.json` 可直接用于 Grype、Trivy 等支持 VEX 的工具，在扫描时过滤掉已知不可利用的 CVE：
 
 ```console
 $ grype <your-namespace>/dhi-<image>:<tag> --vex vex.json
